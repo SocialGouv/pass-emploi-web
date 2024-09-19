@@ -4,11 +4,13 @@ import { OngletOffres } from 'components/favoris/offres/OngletOffres'
 import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type TabFavorisProps = {
+  beneficiaire: BaseBeneficiaire
   offres: Offre[]
   recherches: Recherche[]
   lectureSeule?: boolean
@@ -20,6 +22,7 @@ export enum OngletFavoris {
 }
 
 export function TabFavoris({
+  beneficiaire,
   offres,
   recherches,
   lectureSeule,
@@ -48,7 +51,10 @@ export function TabFavoris({
 
   return (
     <>
-      <TabList className='mt-10'>
+      <TabList
+        label={`Offres et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
+        className='mt-10'
+      >
         <Tab
           label='Offres'
           count={offres.length}

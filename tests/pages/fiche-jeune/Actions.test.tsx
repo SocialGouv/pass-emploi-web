@@ -121,7 +121,9 @@ describe('Actions dans la fiche jeune', () => {
       })
 
       // When
-      const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
+      const tabActions = screen.getByRole('tab', {
+        name: 'Actions 14 éléments',
+      })
       await userEvent.click(tabActions)
 
       // Then
@@ -130,7 +132,7 @@ describe('Actions dans la fiche jeune', () => {
       })
 
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Actions 14'
+        'Actions 14 éléments'
       )
       expect(() =>
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
@@ -152,7 +154,9 @@ describe('Actions dans la fiche jeune', () => {
         })
 
         // When
-        const tabActions = screen.getByRole('tab', { name: 'Actions 15' })
+        const tabActions = screen.getByRole('tab', {
+          name: 'Actions 15 éléments',
+        })
         await userEvent.click(tabActions)
         ;(qualifierActions as jest.Mock).mockResolvedValue({
           idsActionsEnErreur: [],
@@ -338,7 +342,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Actions 14')
+        ).toHaveAccessibleName('Actions 14 éléments')
       })
     })
 
@@ -444,7 +448,9 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByText('Statut'))
         await userEvent.click(screen.getByLabelText('À faire'))
         await userEvent.click(
-          screen.getByRole('button', { name: 'Valider la sélection des statuts' })
+          screen.getByRole('button', {
+            name: 'Valider la sélection des statuts',
+          })
         )
       })
 
@@ -510,7 +516,9 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByText('Catégorie'))
         await userEvent.click(screen.getByLabelText('SNP 1'))
         await userEvent.click(
-          screen.getByRole('button', { name: 'Valider la sélection des catégories' })
+          screen.getByRole('button', {
+            name: 'Valider la sélection des catégories',
+          })
         )
       })
 
@@ -651,7 +659,7 @@ async function renderFicheJeuneMILO({
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
@@ -675,7 +683,7 @@ async function renderFicheJeuneFT(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         categoriesActions={[]}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}

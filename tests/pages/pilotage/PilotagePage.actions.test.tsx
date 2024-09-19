@@ -97,7 +97,7 @@ describe('PilotagePage client side - Actions', () => {
         '25 À qualifier'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Actions 25'
+        'Actions 25 éléments'
       )
     })
 
@@ -159,7 +159,7 @@ describe('PilotagePage client side - Actions', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', {
-            name: `Accéder au détail de l’action : ${action.titre}`,
+            name: `Accéder au détail de l’action terminée le ${dateFinReelle} : ${action.titre}`,
           })
         ).toHaveAttribute(
           'href',
@@ -228,7 +228,9 @@ describe('PilotagePage client side - Actions', () => {
         await userEvent.click(screen.getByLabelText('SNP 1'))
         await userEvent.click(screen.getByLabelText('SNP 2'))
         await userEvent.click(
-          screen.getByRole('button', { name: 'Valider la sélection des catégories' })
+          screen.getByRole('button', {
+            name: 'Valider la sélection des catégories',
+          })
         )
       })
 
@@ -280,7 +282,9 @@ describe('PilotagePage client side - Actions', () => {
       await userEvent.click(screen.getByText('Catégorie'))
       await userEvent.click(screen.getByLabelText('SNP 1'))
       await userEvent.click(
-        screen.getByRole('button', { name: 'Valider la sélection des catégories' })
+        screen.getByRole('button', {
+          name: 'Valider la sélection des catégories',
+        })
       )
       await userEvent.click(screen.getByLabelText('Page 2'))
 

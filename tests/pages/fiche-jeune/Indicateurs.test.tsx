@@ -33,7 +33,7 @@ describe('Indicateurs dans la fiche jeune', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}

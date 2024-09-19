@@ -279,7 +279,7 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={jeune}
+        beneficiaire={jeune}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

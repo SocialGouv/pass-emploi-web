@@ -28,7 +28,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estMilo, estFranceTravail } from 'interfaces/conseiller'
+import { estFranceTravail, estMilo } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
@@ -72,7 +72,7 @@ const ongletProps: {
 }
 
 type FicheBeneficiaireProps = {
-  jeune: DetailBeneficiaire
+  beneficiaire: DetailBeneficiaire
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   actionsInitiales: {
@@ -89,7 +89,7 @@ type FicheBeneficiaireProps = {
 }
 
 function FicheBeneficiairePage({
-  jeune,
+  beneficiaire,
   rdvs,
   categoriesActions,
   actionsInitiales,
@@ -121,6 +121,8 @@ function FicheBeneficiairePage({
   const [indicateursSemaine, setIndicateursSemaine] = useState<
     IndicateursSemaine | undefined
   >()
+  const [focusCurrentTabContent, setFocusCurrentTabContent] =
+    useState<boolean>(false)
 
   const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
     useState<boolean>(false)
@@ -136,7 +138,7 @@ function FicheBeneficiairePage({
   const debutSemaine = aujourdHui.startOf('week')
   const finSemaine = aujourdHui.endOf('week')
 
-  let pageTracking: string = jeune.isActivated
+  let pageTracking: string = beneficiaire.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
   if (lectureSeule) pageTracking += ' - hors portefeuille'
@@ -161,7 +163,8 @@ function FicheBeneficiairePage({
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
 
-  async function switchTab(tab: Onglet) {
+  function switchTab(tab: Onglet, { withFocus = false } = {}) {
+    setFocusCurrentTabContent(withFocus)
     setCurrentTab(tab)
 
     setTrackingLabel(
@@ -169,7 +172,7 @@ function FicheBeneficiairePage({
     )
 
     router.replace(
-      `${pathPrefix}/${jeune.id}?onglet=${ongletProps[tab].queryParam}`
+      `${pathPrefix}/${beneficiaire.id}?onglet=${ongletProps[tab].queryParam}`
     )
   }
 
@@ -181,7 +184,7 @@ function FicheBeneficiairePage({
     const { getActionsBeneficiaireClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsBeneficiaireClientSide(jeune.id, {
+    const result = await getActionsBeneficiaireClientSide(beneficiaire.id, {
       page,
       filtres,
       tri,
@@ -195,14 +198,14 @@ function FicheBeneficiairePage({
     const { recupererAgenda: _recupererAgenda } = await import(
       'services/agenda.service'
     )
-    return _recupererAgenda(jeune.id, DateTime.now())
+    return _recupererAgenda(beneficiaire.id, DateTime.now())
   }
 
   async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
 
-    if (jeune.isActivated) {
+    if (beneficiaire.isActivated) {
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
@@ -212,7 +215,7 @@ function FicheBeneficiairePage({
       }
     }
 
-    if (!jeune.isActivated) {
+    if (!beneficiaire.isActivated) {
       setShowModaleDeleteJeuneInactif(true)
     }
   }
@@ -222,9 +225,9 @@ function FicheBeneficiairePage({
   ): Promise<void> {
     try {
       const { archiverJeune } = await import('services/jeunes.service')
-      await archiverJeune(jeune.id, payload)
+      await archiverJeune(beneficiaire.id, payload)
 
-      removeBeneficiaireFromPortefeuille(jeune.id)
+      removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       router.push('/mes-jeunes')
       router.refresh()
@@ -241,9 +244,9 @@ function FicheBeneficiairePage({
       const { supprimerJeuneInactif: _supprimerJeuneInactif } = await import(
         'services/jeunes.service'
       )
-      await _supprimerJeuneInactif(jeune.id)
+      await _supprimerJeuneInactif(beneficiaire.id)
 
-      removeBeneficiaireFromPortefeuille(jeune.id)
+      removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       router.push('/mes-jeunes')
       router.refresh()
@@ -268,19 +271,35 @@ function FicheBeneficiairePage({
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
-    if (!lectureSeule) setIdCurrentJeune(jeune.id)
-  }, [jeune, lectureSeule])
+    if (!lectureSeule) setIdCurrentJeune(beneficiaire.id)
+  }, [beneficiaire, lectureSeule])
 
   useEffect(() => {
     if (!estFranceTravail(conseiller) && !indicateursSemaine) {
       getIndicateursJeuneAlleges(
         conseiller.id,
-        jeune.id,
+        beneficiaire.id,
         debutSemaine,
         finSemaine
       ).then(setIndicateursSemaine)
     }
-  }, [conseiller, debutSemaine, finSemaine, indicateursSemaine, jeune.id])
+  }, [
+    conseiller,
+    debutSemaine,
+    finSemaine,
+    indicateursSemaine,
+    beneficiaire.id,
+  ])
+
+  useEffect(() => {
+    if (focusCurrentTabContent) {
+      const table = document.querySelector<HTMLDivElement>(
+        '[role="tabpanel"] > table'
+      )
+      table?.setAttribute('tabIndex', '-1')
+      table?.focus()
+    }
+  }, [currentTab])
 
   return (
     <>
@@ -309,7 +328,7 @@ function FicheBeneficiairePage({
         />
       )}
 
-      {jeune.estAArchiver && (
+      {beneficiaire.estAArchiver && (
         <FailureAlert
           label='La récupération des informations de ce bénéficiaire depuis i-milo a échoué.'
           sub={
@@ -320,43 +339,49 @@ function FicheBeneficiairePage({
         />
       )}
 
-      {!jeune.estAArchiver && !jeune.isActivated && !estMilo(conseiller) && (
-        <FailureAlert
-          label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
-          sub={
-            <p className='pl-8'>
-              <strong>Il ne pourra pas échanger de messages avec vous.</strong>
-            </p>
-          }
-        />
-      )}
-
-      {!jeune.estAArchiver && !jeune.isActivated && estMilo(conseiller) && (
-        <FailureAlert
-          label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
-          sub={
-            <ul className='list-disc pl-[48px]'>
-              <li>
+      {!beneficiaire.estAArchiver &&
+        !beneficiaire.isActivated &&
+        !estMilo(conseiller) && (
+          <FailureAlert
+            label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+            sub={
+              <p className='pl-8'>
                 <strong>
                   Il ne pourra pas échanger de messages avec vous.
                 </strong>
-              </li>
-              <li>
-                <strong>
-                  Le lien d’activation envoyé par i-milo à l’adresse e-mail du
-                  jeune n’est valable que 24h.
-                </strong>
-              </li>
-              <li>
-                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
-                l’option : mot de passe oublié.
-              </li>
-            </ul>
-          }
-        />
-      )}
+              </p>
+            }
+          />
+        )}
 
-      {jeune.isReaffectationTemporaire && (
+      {!beneficiaire.estAArchiver &&
+        !beneficiaire.isActivated &&
+        estMilo(conseiller) && (
+          <FailureAlert
+            label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+            sub={
+              <ul className='list-disc pl-[48px]'>
+                <li>
+                  <strong>
+                    Il ne pourra pas échanger de messages avec vous.
+                  </strong>
+                </li>
+                <li>
+                  <strong>
+                    Le lien d’activation envoyé par i-milo à l’adresse e-mail du
+                    jeune n’est valable que 24h.
+                  </strong>
+                </li>
+                <li>
+                  Si le délai est dépassé, veuillez orienter ce bénéficiaire
+                  vers l’option : mot de passe oublié.
+                </li>
+              </ul>
+            }
+          />
+        )}
+
+      {beneficiaire.isReaffectationTemporaire && (
         <div className='mb-6'>
           <InformationMessage
             iconName={IconName.Schedule}
@@ -365,7 +390,7 @@ function FicheBeneficiairePage({
         </div>
       )}
 
-      {jeune.structureMilo?.id !== conseiller.structureMilo?.id && (
+      {beneficiaire.structureMilo?.id !== conseiller.structureMilo?.id && (
         <div className='mb-6'>
           <FailureAlert label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Il ne pourra ni visualiser les événements partagés ni y être inscrit.' />
         </div>
@@ -382,7 +407,7 @@ function FicheBeneficiairePage({
 
       <div className='mb-6'>
         <DetailsJeune
-          jeune={jeune}
+          jeune={beneficiaire}
           conseiller={conseiller}
           indicateursSemaine={indicateursSemaine}
         />
@@ -395,7 +420,7 @@ function FicheBeneficiairePage({
               {!lectureSeule && (
                 <>
                   <ButtonLink
-                    href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}
+                    href={`/mes-jeunes/edition-rdv?idJeune=${beneficiaire.id}`}
                   >
                     <IconComponent
                       name={IconName.Add}
@@ -407,7 +432,7 @@ function FicheBeneficiairePage({
                   </ButtonLink>
 
                   <ButtonLink
-                    href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+                    href={`/mes-jeunes/${beneficiaire.id}/actions/nouvelle-action`}
                     className='ml-4'
                   >
                     <IconComponent
@@ -437,7 +462,10 @@ function FicheBeneficiairePage({
             </div>
           </div>
 
-          <TabList className='mt-10'>
+          <TabList
+            label={`Activités de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+            className='mt-10'
+          >
             <Tab
               label='Actions'
               count={!estFranceTravail(conseiller) ? totalActions : undefined}
@@ -482,9 +510,11 @@ function FicheBeneficiairePage({
               className='mt-8 pb-8 border-b border-primary_lighten'
             >
               <OngletAgendaBeneficiaire
-                idBeneficiaire={jeune.id}
+                idBeneficiaire={beneficiaire.id}
                 recupererAgenda={recupererAgenda}
-                goToActions={() => switchTab('ACTIONS')}
+                goToActions={() => {
+                  switchTab('ACTIONS', { withFocus: true })
+                }}
               />
             </div>
           )}
@@ -499,7 +529,7 @@ function FicheBeneficiairePage({
             >
               <OngletRdvsBeneficiaire
                 conseiller={conseiller}
-                beneficiaire={jeune}
+                beneficiaire={beneficiaire}
                 rdvs={rdvs}
                 erreurSessions={erreurSessions}
               />
@@ -516,7 +546,7 @@ function FicheBeneficiairePage({
             >
               <OngletActions
                 conseiller={conseiller}
-                jeune={jeune}
+                jeune={beneficiaire}
                 categories={categoriesActions}
                 actionsInitiales={actionsInitiales}
                 lectureSeule={lectureSeule}
@@ -535,7 +565,7 @@ function FicheBeneficiairePage({
               className='mt-8 pb-8'
             >
               <BlocFavoris
-                idBeneficiaire={jeune.id}
+                idBeneficiaire={beneficiaire.id}
                 metadonneesFavoris={metadonneesFavoris}
               />
             </div>
@@ -555,6 +585,7 @@ function FicheBeneficiairePage({
                   mises en favoris.
                 </p>
                 <TabFavoris
+                  beneficiaire={beneficiaire}
                   offres={offresFT}
                   recherches={recherchesFT}
                   lectureSeule={lectureSeule}
@@ -571,7 +602,7 @@ function FicheBeneficiairePage({
 
       {showModaleDeleteJeuneActif && (
         <DeleteJeuneActifModal
-          jeune={jeune}
+          jeune={beneficiaire}
           onClose={() => setShowModaleDeleteJeuneActif(false)}
           motifsSuppression={motifsSuppression}
           soumettreSuppression={archiverJeuneActif}
@@ -580,7 +611,7 @@ function FicheBeneficiairePage({
 
       {showModaleDeleteJeuneInactif && (
         <DeleteJeuneInactifModal
-          jeune={jeune}
+          jeune={beneficiaire}
           onClose={() => setShowModaleDeleteJeuneInactif(false)}
           onDelete={supprimerJeuneInactif}
         />
