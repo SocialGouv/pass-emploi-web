@@ -5,8 +5,8 @@ import FavorisPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[
 import Favoris, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/page'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -54,6 +54,7 @@ describe('Favoris', () => {
     expect(metadata).toEqual({ title: 'Favoris - Jirac Kenji - Portefeuille' })
     expect(FavorisPage).toHaveBeenCalledWith(
       {
+        beneficiaire: unDetailBeneficiaire(),
         offres,
         recherches,
         lectureSeule: false,

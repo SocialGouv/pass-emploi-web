@@ -4,15 +4,15 @@ import { DateTime } from 'luxon'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
 import { uneAction } from 'fixtures/action'
-import { unConseiller } from 'fixtures/conseiller'
-import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
-import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDOffres } from 'fixtures/favoris'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
+import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
+import { unEvenementListItem } from 'fixtures/evenement'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -106,7 +106,9 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
-          jeune: unDetailBeneficiaire({ structureMilo: { id: 'id-test' } }),
+          beneficiaire: unDetailBeneficiaire({
+            structureMilo: { id: 'id-test' },
+          }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),

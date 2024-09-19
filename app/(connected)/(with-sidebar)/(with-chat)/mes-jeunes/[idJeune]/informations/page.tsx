@@ -63,7 +63,7 @@ export default async function Informations({
         idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
-        jeune={beneficiaire}
+        beneficiaire={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
         onglet={searchParamToOnglet(
           searchParams?.onglet,

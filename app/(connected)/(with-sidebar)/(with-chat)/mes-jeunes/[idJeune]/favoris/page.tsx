@@ -49,6 +49,7 @@ export default async function Favoris({ params }: { params: FavorisParams }) {
         <PageHeaderPortal header='Favoris' />
 
         <FavorisPage
+          beneficiaire={beneficiaire}
           offres={offres}
           recherches={recherches}
           lectureSeule={lectureSeule}

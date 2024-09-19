@@ -218,7 +218,7 @@ function PilotagePage({
         </dl>
       </div>
 
-      <TabList className='mt-10'>
+      <TabList label='Activités à qualifier ou émarger' className='mt-10'>
         <Tab
           label='Actions'
           count={totalActions}
@@ -229,6 +229,7 @@ function PilotagePage({
         />
         <Tab
           label='AC app CEJ'
+          ariaLabel='Animations collectives de l’application du CEJ'
           count={conseiller.agence?.id ? totalAnimationsCollectives : undefined}
           selected={currentTab === 'ANIMATIONS_COLLECTIVES'}
           controls='liste-animations-collectives-a-clore'
