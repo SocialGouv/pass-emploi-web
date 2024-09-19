@@ -128,51 +128,57 @@ export default function DossierBeneficiaireMilo({
         </div>
       )}
 
-      <div className='flex items-center mt-14 gap-4'>
-        <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
-          <IconComponent
-            name={IconName.ArrowBackward}
-            className='mr-2.5 w-3 h-3'
-            role='img'
-            focusable={false}
-            aria-label="Retour Création d'un compte bénéficiaire étape 1"
-          />
-          Retour
-        </Button>
-
-        {dossier.email && (
-          <>
-            {erreurMessageHttpPassEmploi && (
-              <InputError id='creation-button--error'>
-                {erreurMessageHttpPassEmploi}
-              </InputError>
-            )}
-
-            <Button
-              id='creation-button'
-              type='button'
-              onClick={addBeneficiaire}
-              isLoading={creationEnCours}
-              disabled={Boolean(erreurMessageHttpPassEmploi)}
-              describedBy={
-                erreurMessageHttpPassEmploi && 'creation-button--error'
-              }
-            >
-              Créer le compte
-            </Button>
-          </>
+      <div className='mt-14'>
+        {erreurMessageHttpPassEmploi && (
+          <InputError
+            className='mb-2'
+            id='creation-button--error'
+            ref={(e) => e?.focus()}
+          >
+            {erreurMessageHttpPassEmploi}
+          </InputError>
         )}
 
-        {!dossier.email && (
-          <Button type='button' onClick={onRefresh}>
-            <RefreshIcon
-              className='w-4 h-4 mr-2.5'
-              aria-hidden={true}
+        <div className='flex items-center gap-4'>
+          <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
+            <IconComponent
+              name={IconName.ArrowBackward}
+              className='mr-2.5 w-3 h-3'
+              role='img'
               focusable={false}
+              aria-label="Retour Création d'un compte bénéficiaire étape 1"
             />
-            Rafraîchir le compte
+            Retour
           </Button>
-        )}
+
+          {dossier.email && (
+            <>
+              <Button
+                id='creation-button'
+                type='button'
+                onClick={addBeneficiaire}
+                isLoading={creationEnCours}
+                disabled={Boolean(erreurMessageHttpPassEmploi)}
+                describedBy={
+                  erreurMessageHttpPassEmploi && 'creation-button--error'
+                }
+              >
+                Créer le compte
+              </Button>
+            </>
+          )}
+
+          {!dossier.email && (
+            <Button type='button' onClick={onRefresh}>
+              <RefreshIcon
+                className='w-4 h-4 mr-2.5'
+                aria-hidden={true}
+                focusable={false}
+              />
+              Rafraîchir le compte
+            </Button>
+          )}
+        </div>
       </div>
     </>
   )
