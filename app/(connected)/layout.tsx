@@ -8,6 +8,7 @@ import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.s
 import { getConseillerServerSide } from 'services/conseiller.service'
 import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { getActualites } from 'services/actualites.service'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { accessToken, user } = await getMandatorySessionServerSide()
@@ -30,9 +31,15 @@ export default async function LayoutWhenConnected({
     getBeneficiairesDuConseillerServerSide(user.id, accessToken),
   ])
 
+  const actualitesData = await getActualites()
+
   return (
     <>
-      <AppContextProviders conseiller={conseiller} portefeuille={portefeuille}>
+      <AppContextProviders
+        conseiller={conseiller}
+        portefeuille={portefeuille}
+        actualitesData={actualitesData}
+      >
         <LiensEvitement />
 
         {children}

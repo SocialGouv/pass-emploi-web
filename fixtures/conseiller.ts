@@ -40,6 +40,7 @@ export const unConseillerJson = (
     notificationsSonores: false,
     aDesBeneficiairesARecuperer: false,
     dateSignatureCGU: '2023-10-03',
+    dateVisionnageActus: '2023-10-03',
   }
   return { ...defaults, ...overrides }
 }

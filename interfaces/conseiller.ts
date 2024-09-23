@@ -34,6 +34,7 @@ export interface Conseiller extends BaseConseiller {
   agence?: { nom: string; id?: string }
   structureMilo?: { id: string; nom: string }
   dateSignatureCGU?: string
+  dateVisionnageActus?: string
 }
 
 export function estMilo(conseiller: Conseiller): boolean {
@@ -113,4 +114,16 @@ export function doitSignerLesCGU(conseiller: Conseiller): boolean {
         DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
     : DateTime.fromISO(conseiller.dateSignatureCGU) <
         DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
+}
+
+export function aDeNouvellesActualites(
+  { dateVisionnageActus }: Conseiller,
+  dernierePublication: string
+): boolean {
+  if (!dateVisionnageActus) return true
+
+  return (
+    DateTime.fromISO(dateVisionnageActus) <
+    DateTime.fromISO(dernierePublication)
+  )
 }
