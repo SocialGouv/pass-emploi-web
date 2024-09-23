@@ -40,6 +40,10 @@ export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
 }
 
+export function estConseilDepartemental(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.CONSEIL_DEPT
+}
+
 export function estBRSA(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }

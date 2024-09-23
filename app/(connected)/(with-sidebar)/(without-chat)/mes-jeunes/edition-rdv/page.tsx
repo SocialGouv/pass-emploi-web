@@ -21,11 +21,11 @@ import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import {
   getDetailsEvenement,
   getTypesRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -115,7 +115,7 @@ async function buildProps(
     const evenement = await getDetailsEvenement(searchParams.idRdv, accessToken)
     if (!evenement) notFound()
 
-    const beneficiaires = await getJeunesDuConseillerServerSide(
+    const beneficiaires = await getBeneficiairesDuConseillerServerSide(
       user.id,
       accessToken
     )

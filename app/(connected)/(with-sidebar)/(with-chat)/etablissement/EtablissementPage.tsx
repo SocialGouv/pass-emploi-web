@@ -51,7 +51,7 @@ function EtablissementPage() {
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
       const { rechercheBeneficiairesDeLEtablissement } = await import(
-        'services/jeunes.service'
+        'services/beneficiaires.service'
       )
       const resultats = await rechercheBeneficiairesDeLEtablissement(
         conseiller.agence!.id!,

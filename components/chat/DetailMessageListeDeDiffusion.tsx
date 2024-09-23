@@ -8,7 +8,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getIdentitesBeneficiairesClientSide } from 'services/jeunes.service'
+import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { toShortDate } from 'utils/date'
 
 export function DetailMessageListeDeDiffusion({

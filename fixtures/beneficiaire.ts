@@ -2,14 +2,14 @@ import { DateTime } from 'luxon'
 
 import {
   BaseBeneficiaire,
+  BeneficiaireAvecCompteursActionsRdvs,
+  BeneficiaireChat,
+  BeneficiaireFromListe,
   CategorieSituation,
   Chat,
   ConseillerHistorique,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireAvecCompteursActionsRdvs,
-  BeneficiaireChat,
-  BeneficiaireFromListe,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
@@ -193,7 +193,7 @@ export const unBeneficiaireAvecActionsNonTerminees = (
 ): BeneficiaireAvecCompteursActionsRdvs => {
   const defaults: BeneficiaireAvecCompteursActionsRdvs = {
     ...unItemBeneficiaire(),
-    nbActionsNonTerminees: 5,
+    actionsCreees: 5,
     rdvs: 2,
   }
   return { ...defaults, ...overrides }
@@ -208,7 +208,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       nom: 'Sanfamiye',
       isActivated: false,
       lastActivity: '2022-01-30T17:30:07.756Z',
-      nbActionsNonTerminees: 0,
+      actionsCreees: 0,
     }),
     unBeneficiaireAvecActionsNonTerminees({
       id: 'beneficiaire-3',
@@ -216,7 +216,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       nom: "D'Aböville-Muñoz François",
       lastActivity: '2022-02-07T17:30:07.756Z',
       isReaffectationTemporaire: true,
-      nbActionsNonTerminees: 8,
+      actionsCreees: 8,
       dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
     }),
   ]

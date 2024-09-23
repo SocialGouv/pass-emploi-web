@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -28,12 +28,12 @@ import {
   qualifierActions,
 } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { MetadonneesPagination } from 'types/pagination'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')

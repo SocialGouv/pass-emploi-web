@@ -9,8 +9,8 @@ import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/ag
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unDetailSession } from 'fixtures/session'
 import {
-  CategorieSituation,
   BeneficiaireEtablissement,
+  CategorieSituation,
 } from 'interfaces/beneficiaire'
 import { Session } from 'interfaces/session'
 import {
@@ -23,7 +23,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/sessions.service')
 
 describe('Détails Session Page Client', () => {

@@ -84,10 +84,10 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
     e.stopPropagation()
     setShowModaleSuppressionCompte(true)
     if (conseiller) {
-      const { getJeunesDuConseillerClientSide } = await import(
-        'services/jeunes.service'
+      const { getBeneficiairesDuConseillerClientSide } = await import(
+        'services/beneficiaires.service'
       )
-      const beneficiaires = await getJeunesDuConseillerClientSide()
+      const beneficiaires = await getBeneficiairesDuConseillerClientSide()
       setPortefeuilleAvecBeneficiaires(beneficiaires.length > 0)
     }
   }

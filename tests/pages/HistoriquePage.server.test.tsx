@@ -13,13 +13,13 @@ import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 )

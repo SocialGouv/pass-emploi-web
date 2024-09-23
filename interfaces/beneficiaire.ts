@@ -77,7 +77,7 @@ export interface MetadonneesFavoris {
 }
 
 export type BeneficiaireAvecCompteursActionsRdvs = BeneficiaireFromListe & {
-  nbActionsNonTerminees: number
+  actionsCreees: number
   rdvs: number
 }
 

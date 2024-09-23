@@ -6,12 +6,12 @@ import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
 import {
-  CategorieSituation,
   BeneficiaireEtablissement,
+  CategorieSituation,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -19,7 +19,7 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock('services/conseiller.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/sessions.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
