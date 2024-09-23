@@ -6,13 +6,13 @@ import EditionRdvPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-je
 import EditionRdv, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/page'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   typesAnimationCollective,
   typesEvenement,
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   getDetailsEvenement,
@@ -35,7 +35,7 @@ describe('EditionRdvPage server side', () => {
     // Given
     ;(headers as jest.Mock).mockReturnValue(new Map())
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller', structure: 'MILO' },
       accessToken: 'accessToken',
     })
     ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())
@@ -152,7 +152,7 @@ describe('EditionRdvPage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller' },
+        user: { id: 'id-conseiller', structure: 'MILO' },
         accessToken: 'accessToken',
       })
       ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(

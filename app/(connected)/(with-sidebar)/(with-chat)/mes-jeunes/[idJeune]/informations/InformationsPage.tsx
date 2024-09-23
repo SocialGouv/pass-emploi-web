@@ -21,7 +21,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estFranceTravail, estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -79,7 +79,7 @@ function InformationsPage({
     if (
       currentTab === 'INDICATEURS' &&
       !indicateursSemaine &&
-      !estFranceTravail(conseiller)
+      estMilo(conseiller)
     ) {
       getIndicateursJeuneComplets(
         conseiller.id,
@@ -114,7 +114,7 @@ function InformationsPage({
           onSelectTab={() => setCurrentTab('INFORMATIONS')}
           iconName={IconName.Description}
         />
-        {!estFranceTravail(conseiller) && (
+        {estMilo(conseiller) && (
           <Tab
             label='Indicateurs'
             selected={currentTab === 'INDICATEURS'}

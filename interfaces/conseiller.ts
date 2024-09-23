@@ -40,13 +40,6 @@ export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
 }
 
-export function estFranceTravail(conseiller: Conseiller): boolean {
-  return (
-    conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    estPassEmploi(conseiller)
-  )
-}
-
 export function estBRSA(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }
@@ -68,14 +61,6 @@ export function estSuperviseurResponsable(conseiller: Conseiller): boolean {
 
 export function estUserMilo(user: Session.HydratedUser): boolean {
   return user.structure === StructureConseiller.MILO
-}
-
-export function estUserFranceTravail(user: Session.HydratedUser): boolean {
-  return (
-    user.structure === StructureConseiller.POLE_EMPLOI ||
-    user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
-    user.structure === StructureConseiller.POLE_EMPLOI_AIJ
-  )
 }
 
 export function aEtablissement(conseiller: Conseiller): boolean {

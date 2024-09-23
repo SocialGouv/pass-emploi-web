@@ -48,7 +48,7 @@ describe('PilotagePage server side', () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { id: 'conseiller-id' },
+        user: { id: 'conseiller-id', structure: 'MILO' },
       })
       ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
         actions: uneListeDActionsAQualifier(),
@@ -101,7 +101,7 @@ describe('PilotagePage server side', () => {
         'accessToken'
       )
       expect(getConseillerServerSide).toHaveBeenCalledWith(
-        { id: 'conseiller-id' },
+        { id: 'conseiller-id', structure: 'MILO' },
         'accessToken'
       )
       expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(

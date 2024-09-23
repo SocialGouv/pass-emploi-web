@@ -2,12 +2,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { Conseiller, estFranceTravail } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 
 interface OngletRdvsBeneficiaireProps {
@@ -29,35 +28,27 @@ export default function OngletRdvsBeneficiaire({
 
   return (
     <>
-      {estFranceTravail(conseiller) && (
-        <IntegrationFranceTravail label='convocations' />
+      {erreurSessions && (
+        <FailureAlert label='Impossible de récupérer les sessions' />
       )}
-
-      {!estFranceTravail(conseiller) && (
-        <>
-          {erreurSessions && (
-            <FailureAlert label='Impossible de récupérer les sessions' />
-          )}
-          <TableauRdvsBeneficiaire
-            rdvs={rdvs}
-            idConseiller={conseiller.id}
-            beneficiaire={beneficiaire}
-            additionalColumn='Modalité'
-          />
-          <Link
-            href={`${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`}
-            className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
-          >
-            Voir les événements passés
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='w-4 h-5 fill-[inherit]'
-              aria-hidden={true}
-              focusable={false}
-            />
-          </Link>
-        </>
-      )}
+      <TableauRdvsBeneficiaire
+        rdvs={rdvs}
+        idConseiller={conseiller.id}
+        beneficiaire={beneficiaire}
+        additionalColumn='Modalité'
+      />
+      <Link
+        href={`${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`}
+        className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
+      >
+        Voir les événements passés
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </Link>
     </>
   )
 }

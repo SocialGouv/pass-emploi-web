@@ -5,11 +5,7 @@ import React, { useState } from 'react'
 import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  estFranceTravail,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -80,7 +76,7 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {!estFranceTravail(conseiller) && (
+        {estMilo(conseiller) && (
           <ResumeIndicateursJeune
             idBeneficiaire={jeune.id}
             debutDeLaSemaine={debutSemaine}

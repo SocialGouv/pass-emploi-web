@@ -17,7 +17,7 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
-  estFranceTravail,
+  estMilo,
   estPassEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
@@ -135,7 +135,7 @@ export default function AidePage() {
               <li>Répondre à vos questions</li>
               <li>Collecter vos retours utilisateurs</li>
 
-              {estFranceTravail(conseiller) && (
+              {!estMilo(conseiller) && (
                 <li>Vous aider dans la réaffectation de vos bénéficiaires</li>
               )}
             </ul>
