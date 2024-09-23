@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import Checkbox from 'components/offres/Checkbox'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'

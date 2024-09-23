@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ForwardedRef, forwardRef, ReactNode } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -9,9 +9,16 @@ type EtapeProps = {
   children: Exclude<ReactNode, string | number | boolean | null | undefined>
 }
 
-export function Etape({ numero, titre, children }: EtapeProps) {
+function Etape(
+  { numero, titre, children }: EtapeProps,
+  ref: ForwardedRef<HTMLFieldSetElement>
+) {
   return (
-    <fieldset className='flex flex-col mb-7'>
+    <fieldset
+      className='flex flex-col mb-7'
+      ref={ref}
+      tabIndex={ref ? -1 : undefined}
+    >
       <legend className='flex items-center text-m-bold text-grey_800 mb-4'>
         <IconComponent
           name={getIconNumero(numero)}
@@ -40,3 +47,5 @@ export function Etape({ numero, titre, children }: EtapeProps) {
     }
   }
 }
+
+export default forwardRef(Etape)

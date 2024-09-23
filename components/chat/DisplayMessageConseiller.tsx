@@ -8,7 +8,7 @@ import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   isDeleted,
   isEdited,

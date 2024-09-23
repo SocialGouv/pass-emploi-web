@@ -7,7 +7,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
 
 interface ListeConversationsProps {
