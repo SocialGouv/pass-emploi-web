@@ -50,7 +50,7 @@ export default function DetailsJeune({
     nouvelleValeur: string
   ): Promise<void> {
     const { modifierIdentifiantPartenaire } = await import(
-      'services/jeunes.service'
+      'services/beneficiaires.service'
     )
     modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
       .then(() => {

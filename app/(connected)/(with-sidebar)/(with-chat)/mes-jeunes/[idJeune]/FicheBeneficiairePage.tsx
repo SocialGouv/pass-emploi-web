@@ -34,7 +34,7 @@ import { Offre, Recherche } from 'interfaces/favoris'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -209,7 +209,9 @@ function FicheBeneficiairePage({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
-        const { getMotifsSuppression } = await import('services/jeunes.service')
+        const { getMotifsSuppression } = await import(
+          'services/beneficiaires.service'
+        )
         const result = await getMotifsSuppression()
         setMotifsSuppression(result)
       }
@@ -224,7 +226,7 @@ function FicheBeneficiairePage({
     payload: SuppressionBeneficiaireFormData
   ): Promise<void> {
     try {
-      const { archiverJeune } = await import('services/jeunes.service')
+      const { archiverJeune } = await import('services/beneficiaires.service')
       await archiverJeune(beneficiaire.id, payload)
 
       removeBeneficiaireFromPortefeuille(beneficiaire.id)
@@ -242,7 +244,7 @@ function FicheBeneficiairePage({
   async function supprimerJeuneInactif(): Promise<void> {
     try {
       const { supprimerJeuneInactif: _supprimerJeuneInactif } = await import(
-        'services/jeunes.service'
+        'services/beneficiaires.service'
       )
       await _supprimerJeuneInactif(beneficiaire.id)
 

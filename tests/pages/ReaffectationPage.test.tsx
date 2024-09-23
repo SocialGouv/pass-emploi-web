@@ -7,12 +7,15 @@ import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffe
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  getJeunesDuConseillerParId,
+  reaffecter,
+} from 'services/beneficiaires.service'
 import { getConseillers } from 'services/conseiller.service'
-import { getJeunesDuConseillerParId, reaffecter } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('Reaffectation', () => {
   let container: HTMLElement

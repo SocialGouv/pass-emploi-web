@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
-import { unConseiller } from 'fixtures/conseiller'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
+import { modifierIdentifiantPartenaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {

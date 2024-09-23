@@ -7,14 +7,14 @@ import { redirect } from 'next/navigation'
 
 import { GET } from 'app/api/milo/[numeroDossier]/route'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { getIdJeuneMilo } from 'services/jeunes.service'
+import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('utils/analytics/matomo')
 

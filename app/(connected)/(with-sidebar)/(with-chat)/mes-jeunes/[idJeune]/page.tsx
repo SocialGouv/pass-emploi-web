@@ -17,13 +17,13 @@ import {
   getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
-import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import {
   getJeuneDetails,
   getMetadonneesFavorisJeune,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
+import { getConseillerServerSide } from 'services/conseiller.service'
+import { getRendezVousJeune } from 'services/evenements.service'
+import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'

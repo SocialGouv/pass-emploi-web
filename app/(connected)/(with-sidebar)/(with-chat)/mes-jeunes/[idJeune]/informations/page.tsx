@@ -15,7 +15,7 @@ import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type InformationsParams = { idJeune: string }

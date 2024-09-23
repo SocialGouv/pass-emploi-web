@@ -7,15 +7,15 @@ import Favoris, {
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/page'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/favoris.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/FavorisPage'

@@ -6,7 +6,7 @@ import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeu
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
 import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
@@ -15,13 +15,15 @@ jest.mock('utils/auth/auth', () => ({
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 )
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
 
 describe('PortefeuillePage server side', () => {
   beforeEach(() => {
     const jeunes = desItemsBeneficiaires()
-    ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(jeunes)
+    ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+      jeunes
+    )
     ;(
       recupereCompteursBeneficiairesPortefeuilleMilo as jest.Mock
     ).mockResolvedValue(
@@ -44,7 +46,7 @@ describe('PortefeuillePage server side', () => {
     await Portefeuille({})
 
     // Then
-    expect(getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
+    expect(getBeneficiairesDuConseillerServerSide).toHaveBeenCalledWith(
       'id-conseiller',
       'accessToken'
     )
@@ -76,7 +78,7 @@ describe('PortefeuillePage server side', () => {
           conseillerJeunes: desItemsBeneficiaires()
             .map((jeune) => ({
               ...jeune,
-              nbActionsNonTerminees: 0,
+              actionsCreees: 0,
               rdvs: 0,
             }))
             .sort(compareBeneficiairesByNom),
@@ -119,7 +121,7 @@ describe('PortefeuillePage server side', () => {
           conseillerJeunes: desItemsBeneficiaires()
             .map((jeune) => ({
               ...jeune,
-              nbActionsNonTerminees: 7,
+              actionsCreees: 7,
               rdvs: 3,
             }))
             .sort(compareBeneficiairesByNom),

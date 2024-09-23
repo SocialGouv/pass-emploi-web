@@ -22,7 +22,7 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/conseiller'
-import { getIndicateursJeuneComplets } from 'services/jeunes.service'
+import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'

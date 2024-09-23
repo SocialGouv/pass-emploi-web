@@ -13,8 +13,8 @@ import {
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
@@ -23,10 +23,10 @@ import {
   getIndicateursJeuneAlleges,
   getMotifsSuppression,
   supprimerJeuneInactif,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')

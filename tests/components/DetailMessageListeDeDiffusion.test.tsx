@@ -6,11 +6,11 @@ import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 import { unMessageListeDiffusion } from 'fixtures/message'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getIdentitesBeneficiairesClientSide } from 'services/jeunes.service'
+import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('DetailMessageListeDeDiffusion', () => {
   let message: MessageListeDiffusion

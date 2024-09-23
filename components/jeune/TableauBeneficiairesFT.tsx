@@ -218,41 +218,21 @@ export default function TableauBeneficiairesFT({
             <TR key={jeune.id}>
               <TD isBold className='rounded-l-base'>
                 <span className='flex items-baseline'>
-                  {jeune.structureMilo?.id === conseiller.structureMilo?.id &&
-                    jeune.isReaffectationTemporaire && (
-                      <span className='self-center mr-2'>
-                        <IconComponent
-                          name={IconName.Schedule}
-                          focusable={false}
-                          className='w-4 h-4'
-                          role='img'
-                          aria-labelledby={`label-beneficiaire-temporaire-${jeune.id}`}
-                          title='bénéficiaire temporaire'
-                        />
-                        <span
-                          id={`label-beneficiaire-temporaire-${jeune.id}`}
-                          className='sr-only'
-                        >
-                          bénéficiaire temporaire
-                        </span>
-                      </span>
-                    )}
-                  {jeune.structureMilo?.id !== conseiller.structureMilo?.id && (
+                  {jeune.isReaffectationTemporaire && (
                     <span className='self-center mr-2'>
                       <IconComponent
-                        name={IconName.Error}
+                        name={IconName.Schedule}
                         focusable={false}
+                        className='w-4 h-4'
                         role='img'
-                        aria-labelledby={`label-ml-differente-${jeune.id}`}
-                        className='w-4 h-4 fill-warning'
-                        title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
+                        aria-labelledby={`label-beneficiaire-temporaire-${jeune.id}`}
+                        title='bénéficiaire temporaire'
                       />
                       <span
-                        id={`label-ml-differente-${jeune.id}`}
+                        id={`label-beneficiaire-temporaire-${jeune.id}`}
                         className='sr-only'
                       >
-                        Ce bénéficiaire est rattaché à une Mission Locale
-                        différente de la vôtre.
+                        bénéficiaire temporaire
                       </span>
                     </span>
                   )}

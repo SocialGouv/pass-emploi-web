@@ -10,14 +10,14 @@ import { unCommentaire, uneAction } from 'fixtures/action'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { getAction, recupererLesCommentaires } from 'services/actions.service'
-import { getJeuneDetails } from 'services/jeunes.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock('services/actions.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 )

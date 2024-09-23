@@ -11,15 +11,15 @@ import {
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   BaseBeneficiaire,
-  ConseillerHistorique,
   BeneficiaireChat,
+  ConseillerHistorique,
 } from 'interfaces/beneficiaire'
-import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>

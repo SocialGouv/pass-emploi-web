@@ -12,12 +12,12 @@ import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import {
   BaseBeneficiaire,
-  ConseillerHistorique,
   BeneficiaireChat,
+  ConseillerHistorique,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -25,7 +25,7 @@ import {
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 

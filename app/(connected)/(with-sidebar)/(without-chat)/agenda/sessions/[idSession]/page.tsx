@@ -8,8 +8,8 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
+import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import redirectedFromHome from 'utils/redirectedFromHome'
