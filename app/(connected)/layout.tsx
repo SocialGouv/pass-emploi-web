@@ -9,6 +9,19 @@ import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
+async function getWordPressPage() {
+  const res = await fetch(
+    'https://doc.pass-emploi.beta.gouv.fr/wp-json/wp/v2/pages/796'
+  )
+
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des données WordPress')
+  }
+
+  const data = await res.json()
+  return data
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const { accessToken, user } = await getMandatorySessionServerSide()
   const conseiller = await getConseillerServerSide(user, accessToken)
@@ -31,6 +44,8 @@ export default async function LayoutWhenConnected({
   ])
   const theme = estPassEmploi(conseiller) ? 'pass-emploi' : 'cej'
 
+  const actualitesData = await getWordPressPage()
+
   return (
     <>
       <LienEvitement />
@@ -39,6 +54,7 @@ export default async function LayoutWhenConnected({
         conseiller={conseiller}
         portefeuille={portefeuille}
         theme={theme}
+        actualitesData={actualitesData}
       >
         {children}
       </AppContextProviders>
