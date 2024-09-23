@@ -1,6 +1,7 @@
 import { render, RenderResult } from '@testing-library/react'
 import React, { Dispatch, ReactNode, SetStateAction } from 'react'
 
+import { uneActualite } from 'fixtures/actualites'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
@@ -9,7 +10,9 @@ import { unConseiller } from 'fixtures/conseiller'
 import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { ActualitesProvider } from 'utils/actualitesContext'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
+import { RenderedWPPageType } from 'utils/AppContextProviders'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 import {
@@ -62,6 +65,8 @@ export default function renderWithContexts(
   } = options
   const conseiller = unConseiller(customConseiller)
 
+  const actualites = uneActualite()
+
   const portefeuille = {
     ...customPortefeuille,
     value:
@@ -77,6 +82,7 @@ export default function renderWithContexts(
   const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
   const withContexts = (element: ReactNode) =>
     provideContexts(
+      actualites,
       element,
       conseiller,
       portefeuille,
@@ -97,6 +103,7 @@ export default function renderWithContexts(
 }
 
 function provideContexts(
+  actualites: string,
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
@@ -127,36 +134,38 @@ function provideContexts(
         portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
-        <ChatCredentialsProvider
-          credentials={{
-            token: 'firebaseToken',
-            cleChiffrement: 'cleChiffrement',
-          }}
-        >
-          <ChatsProvider chatsForTests={chats ?? []}>
-            <CurrentConversationProvider
-              stateForTests={currentConversation.value}
-              setterForTests={currentConversation.setter}
-            >
-              <AlerteProvider
-                alerteForTests={alerte.value}
-                setterForTests={alerte.setter}
+        <ActualitesProvider actualites={actualites}>
+          <ChatCredentialsProvider
+            credentials={{
+              token: 'firebaseToken',
+              cleChiffrement: 'cleChiffrement',
+            }}
+          >
+            <ChatsProvider chatsForTests={chats ?? []}>
+              <CurrentConversationProvider
+                stateForTests={currentConversation.value}
+                setterForTests={currentConversation.setter}
               >
-                <ShowRubriqueListeDeDiffusionProvider
-                  valueForTests={showRubriqueListeDeDiffusion.value}
-                  setterForTests={showRubriqueListeDeDiffusion.setter}
+                <AlerteProvider
+                  alerteForTests={alerte.value}
+                  setterForTests={alerte.setter}
                 >
-                  <ListeDeDiffusionSelectionneeProvider
-                    setterForTests={listeDeDiffusionSelectionnee.setter}
-                    valueForTests={listeDeDiffusionSelectionnee.value}
+                  <ShowRubriqueListeDeDiffusionProvider
+                    valueForTests={showRubriqueListeDeDiffusion.value}
+                    setterForTests={showRubriqueListeDeDiffusion.setter}
                   >
-                    {children}
-                  </ListeDeDiffusionSelectionneeProvider>
-                </ShowRubriqueListeDeDiffusionProvider>
-              </AlerteProvider>
-            </CurrentConversationProvider>
-          </ChatsProvider>
-        </ChatCredentialsProvider>
+                    <ListeDeDiffusionSelectionneeProvider
+                      setterForTests={listeDeDiffusionSelectionnee.setter}
+                      valueForTests={listeDeDiffusionSelectionnee.value}
+                    >
+                      {children}
+                    </ListeDeDiffusionSelectionneeProvider>
+                  </ShowRubriqueListeDeDiffusionProvider>
+                </AlerteProvider>
+              </CurrentConversationProvider>
+            </ChatsProvider>
+          </ChatCredentialsProvider>
+        </ActualitesProvider>
       </PortefeuilleProvider>
     </ConseillerProvider>
   )
