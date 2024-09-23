@@ -11,7 +11,7 @@ import BeneficiairesMultiselectAutocomplete, {
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
