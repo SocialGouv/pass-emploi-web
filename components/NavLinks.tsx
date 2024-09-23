@@ -1,12 +1,15 @@
 'use client'
 
+import { DateTime } from 'luxon'
 import { usePathname, useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
+import ActualitesModal from 'components/ActualitesModal'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import { estMilo, estSuperviseur, utiliseChat } from 'interfaces/conseiller'
+import { useActualites } from 'utils/actualitesContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -34,6 +37,10 @@ export default function NavLinks({
   const pathname = usePathname()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
+  const [actualites] = useActualites()
+
+  const [afficherActualiteModal, setAfficherActualiteModal] =
+    useState<boolean>(false)
 
   const aDesBeneficiaires = portefeuille.length > 0
   const lienProfilBadgeLabel = !conseiller.email
@@ -63,6 +70,15 @@ export default function NavLinks({
       nom: '',
       aDesBeneficiaires,
     })
+  }
+
+  async function ouvreActualites() {
+    setAfficherActualiteModal(true)
+    trackActualite()
+  }
+
+  function permuterAffichageModal() {
+    setAfficherActualiteModal(!afficherActualiteModal)
   }
 
   return (
@@ -181,10 +197,27 @@ export default function NavLinks({
 
         {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
           items.includes(NavItem.Actualites) && (
-            <ActualitesMenuButton
-              conseiller={conseiller}
-              onClick={trackActualite}
-            />
+            <>
+              {estMilo(conseiller) && (
+                <NavLink
+                  label='Actualités'
+                  iconName={IconName.Notification}
+                  className='break-all'
+                  onClick={permuterAffichageModal}
+                  showLabelOnSmallScreen={showLabelsOnSmallScreen}
+                  badgeLabel={
+                    DateTime.fromISO(actualites.date) ? '!' : undefined
+                  }
+                />
+              )}
+
+              {!estMilo(conseiller) && (
+                <ActualitesMenuButton
+                  conseiller={conseiller}
+                  onClick={trackActualite}
+                />
+              )}
+            </>
           )}
       </ul>
       <ul className='border-t-2 border-solid border-white pt-2'>
@@ -222,6 +255,10 @@ export default function NavLinks({
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
       </ul>
+
+      {afficherActualiteModal && (
+        <ActualitesModal onClose={permuterAffichageModal} />
+      )}
     </>
   )
 }
