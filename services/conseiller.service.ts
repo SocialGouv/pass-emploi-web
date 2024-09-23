@@ -72,6 +72,17 @@ export async function modifierDateSignatureCGU(date: DateTime): Promise<void> {
   )
 }
 
+export async function modifierDateVisionnageActus(
+  date: DateTime
+): Promise<void> {
+  const session = await getSession()
+  return apiPut(
+    `/conseillers/${session!.user.id}`,
+    { dateVisionnageActus: date },
+    session!.accessToken
+  )
+}
+
 export async function modifierNotificationsSonores(
   idConseiller: string,
   hasNotificationsSonores: boolean
