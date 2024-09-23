@@ -10,6 +10,7 @@ import {
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
 import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
+import { ActualitesProvider } from 'utils/actualitesContext'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -20,13 +21,19 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { MobileViewportProvider } from 'utils/mobileViewportContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
+export type RenderedWPPageType = {
+  rendered: string
+}
+
 export default function AppContextProviders({
   conseiller,
   portefeuille,
+  actualitesData,
   children,
 }: {
   conseiller: Conseiller
   portefeuille: BeneficiaireFromListe[]
+  actualitesData: string
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
@@ -45,25 +52,27 @@ export default function AppContextProviders({
     <MobileViewportProvider>
       <ConseillerProvider conseiller={conseiller}>
         <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-          <ChatCredentialsProvider>
-            <ChatsProvider>
-              <CurrentConversationProvider>
-                <ShowRubriqueListeDeDiffusionProvider>
-                  <ListeDeDiffusionSelectionneeProvider>
-                    <AlerteProvider>
-                      <ThemeProvider
-                        defaultTheme={'neutral'}
-                        themes={['neutral', 'darker']}
-                        forcedTheme={theme}
-                      >
-                        {children}
-                      </ThemeProvider>
-                    </AlerteProvider>
-                  </ListeDeDiffusionSelectionneeProvider>
-                </ShowRubriqueListeDeDiffusionProvider>
-              </CurrentConversationProvider>
-            </ChatsProvider>
-          </ChatCredentialsProvider>
+          <ActualitesProvider actualites={actualitesData}>
+            <ChatCredentialsProvider>
+              <ChatsProvider>
+                <CurrentConversationProvider>
+                  <ShowRubriqueListeDeDiffusionProvider>
+                    <ListeDeDiffusionSelectionneeProvider>
+                      <AlerteProvider>
+                        <ThemeProvider
+                          defaultTheme={'neutral'}
+                          themes={['neutral', 'darker']}
+                          forcedTheme={theme}
+                        >
+                          {children}
+                        </ThemeProvider>
+                      </AlerteProvider>
+                    </ListeDeDiffusionSelectionneeProvider>
+                  </ShowRubriqueListeDeDiffusionProvider>
+                </CurrentConversationProvider>
+              </ChatsProvider>
+            </ChatCredentialsProvider>
+          </ActualitesProvider>
         </PortefeuilleProvider>
       </ConseillerProvider>
     </MobileViewportProvider>
