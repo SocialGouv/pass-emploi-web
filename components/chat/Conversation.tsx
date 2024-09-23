@@ -20,7 +20,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'

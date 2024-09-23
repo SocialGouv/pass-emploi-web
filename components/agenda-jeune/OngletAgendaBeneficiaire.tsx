@@ -7,7 +7,7 @@ import {
 } from 'components/agenda-jeune/EntreesAgendaParJourDeLaSemaine'
 import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
 import { estFranceTravail } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'

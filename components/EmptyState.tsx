@@ -50,7 +50,7 @@ export default function EmptyState({
 }: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps) {
   return (
     <div
-      tabIndex={shouldFocus ? -1 : 0}
+      tabIndex={shouldFocus ? -1 : undefined}
       ref={shouldFocus ? (e) => e?.focus() : undefined}
     >
       <IllustrationComponent
