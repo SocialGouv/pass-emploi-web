@@ -8,10 +8,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import {
-  estUserFranceTravail,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import {
   getActionsAQualifierServerSide,
@@ -37,7 +34,7 @@ export default async function Pilotage({
   searchParams?: PilotageSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) notFound()
+  if (!estUserMilo(user)) notFound()
 
   const [conseiller, actions, categoriesActions] = await Promise.all([
     getConseillerServerSide(user, accessToken),

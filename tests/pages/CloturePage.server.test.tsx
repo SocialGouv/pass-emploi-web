@@ -22,7 +22,7 @@ describe('CloturePage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller' },
+        user: { id: 'id-conseiller', structure: 'MILO' },
         accessToken: 'accessToken',
       })
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(

@@ -7,7 +7,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { PeriodeEvenements } from 'interfaces/evenement'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getJeuneDetails } from 'services/jeunes.service'
@@ -35,17 +35,16 @@ export default async function RendezVousPasses({
   params: RendezVousPassesParams
 }) {
   const { accessToken, user } = await getMandatorySessionServerSide()
-  const isFranceTravail = estUserFranceTravail(user)
 
   const [beneficiaire, rdvs] = await Promise.all([
     getJeuneDetails(params.idJeune, accessToken),
-    isFranceTravail
-      ? []
-      : await getRendezVousJeune(
+    estUserMilo(user)
+      ? await getRendezVousJeune(
           params.idJeune,
           PeriodeEvenements.PASSES,
           accessToken
-        ),
+        )
+      : [],
   ])
   if (!beneficiaire) notFound()
 

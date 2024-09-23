@@ -5,11 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import {
-  estFranceTravail,
-  estMilo,
-  estSuperviseur,
-} from 'interfaces/conseiller'
+import { estMilo, estSuperviseur } from 'interfaces/conseiller'
 import { trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -39,7 +35,7 @@ function PlanDuSitePage() {
           conseillerEstSuperviseur={conseillerEstSuperviseur}
         />
       )}
-      {estFranceTravail(conseiller) && (
+      {!estMilo(conseiller) && (
         <LiensFT
           trackExternalLink={trackExternalLink}
           conseillerEstSuperviseur={conseillerEstSuperviseur}
