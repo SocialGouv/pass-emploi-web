@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 
 import { MODAL_ROOT_ID } from 'components/ids'
 import LienEvitement from 'components/LienEvitement'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estConseilDepartemental, estPassEmploi } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import AppContextProviders from 'utils/AppContextProviders'
@@ -29,17 +29,12 @@ export default async function LayoutWhenConnected({
     getConseillerServerSide(user, accessToken),
     getBeneficiairesDuConseillerServerSide(user.id, accessToken),
   ])
-  const theme = estPassEmploi(conseiller) ? 'pass-emploi' : 'cej'
 
   return (
     <>
       <LienEvitement />
 
-      <AppContextProviders
-        conseiller={conseiller}
-        portefeuille={portefeuille}
-        theme={theme}
-      >
+      <AppContextProviders conseiller={conseiller} portefeuille={portefeuille}>
         {children}
       </AppContextProviders>
 

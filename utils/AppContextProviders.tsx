@@ -9,7 +9,11 @@ import {
   BeneficiaireFromListe,
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import {
+  Conseiller,
+  estConseilDepartemental,
+  estPassEmploi,
+} from 'interfaces/conseiller'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -22,17 +26,20 @@ import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 export default function AppContextProviders({
   conseiller,
   portefeuille,
-  theme,
   children,
 }: {
   conseiller: Conseiller
   portefeuille: BeneficiaireFromListe[]
-  theme: 'cej' | 'pass-emploi'
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
     .map(extractBaseBeneficiaire)
     .sort(compareBeneficiairesByNom)
+
+  const theme =
+    estPassEmploi(conseiller) || estConseilDepartemental(conseiller)
+      ? 'darker'
+      : 'neutral'
 
   apm.setUserContext({
     id: conseiller.id,
@@ -50,8 +57,8 @@ export default function AppContextProviders({
                 <ListeDeDiffusionSelectionneeProvider>
                   <AlerteProvider>
                     <ThemeProvider
-                      defaultTheme={'cej'}
-                      themes={['cej', 'pass-emploi']}
+                      defaultTheme={'neutral'}
+                      themes={['neutral', 'darker']}
                       forcedTheme={theme}
                     >
                       {children}
