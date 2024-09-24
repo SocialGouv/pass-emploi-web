@@ -10,7 +10,11 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { SituationNonProfessionnelle } from 'interfaces/action'
-import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
+import {
+  estUserCD,
+  estUserMilo,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
@@ -18,6 +22,7 @@ import {
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import {
+  getDemarchesBeneficiaire,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
@@ -65,6 +70,7 @@ export default async function FicheBeneficiaire({
     rdvs,
     actions,
     categoriesActions,
+    demarches,
   ] = await Promise.all([
     getConseillerServerSide(user, accessToken),
     getJeuneDetails(params.idJeune, accessToken),
@@ -85,6 +91,14 @@ export default async function FicheBeneficiaire({
     beneficiaireHasExtraContent
       ? getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken)
       : ([] as SituationNonProfessionnelle[]),
+    estUserCD(user)
+      ? getDemarchesBeneficiaire(
+          params.idJeune,
+          DateTime.now().startOf('week'),
+          user.id,
+          accessToken
+        )
+      : [],
   ])
   if (!jeune) notFound()
 
@@ -153,6 +167,7 @@ export default async function FicheBeneficiaire({
         onglet={onglet}
         lectureSeule={jeune.idConseiller !== user.id}
         erreurSessions={erreurSessions}
+        demarches={demarches}
       />
     </>
   )

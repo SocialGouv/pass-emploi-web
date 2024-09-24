@@ -111,6 +111,7 @@ describe('FicheBeneficiairePage server side', () => {
           }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
+          demarches: expect.objectContaining([]),
           metadonneesFavoris: expect.objectContaining({}),
           offresFT: expect.arrayContaining([]),
           recherchesFT: expect.arrayContaining([]),

@@ -7,7 +7,21 @@ import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   MetadonneesFavoris,
+  Demarche,
 } from 'interfaces/beneficiaire'
+
+export enum StatutDemarche {
+  EN_COURS = 'EN_COURS',
+  A_FAIRE = 'A_FAIRE',
+  REALISEE = 'REALISEE',
+  ANNULEE = 'ANNULEE',
+}
+
+export interface AttributDemarche {
+  label: string
+  valeur: string | number
+  cle: string
+}
 
 interface Situation {
   etat: string
@@ -89,6 +103,22 @@ export type IndicateursSemaineJson = {
   favoris: {
     offresSauvegardees: number
     recherchesSauvegardees: number
+  }
+}
+
+export type DemarcheJson = {
+  id: string
+  statut: StatutDemarche
+  dateFin: string
+  dateCreation: string
+}
+
+export function jsonToDemarche(demarche: DemarcheJson): Demarche {
+  return {
+    id: demarche.id,
+    statut: demarche.statut,
+    dateCreation: demarche.dateCreation,
+    dateFin: demarche.dateFin,
   }
 }
 

@@ -8,16 +8,19 @@ import {
   CategorieSituation,
   Chat,
   ConseillerHistorique,
+  Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
+  DemarcheJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
   MetadonneesFavorisJson,
+  StatutDemarche,
 } from 'interfaces/json/beneficiaire'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 
@@ -356,6 +359,35 @@ export const desIndicateursSemaine = (
       offresSauvegardees: 6,
       recherchesSauvegardees: 7,
     },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneDemarche = (overrides: Partial<Demarche> = {}): Demarche => {
+  const defaults: Demarche = {
+    id: 'id-demarche',
+    statut: StatutDemarche.EN_COURS,
+    dateCreation: '2024-09-23T17:30:07.756Z',
+    dateFin: '2024-09-30T17:30:07.756Z',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneListeDeDemarches = (): Demarche[] => {
+  return [
+    uneDemarche(),
+    uneDemarche({ id: 'id-demarche-2', statut: StatutDemarche.A_FAIRE }),
+  ]
+}
+
+export const uneDemarcheJson = (
+  overrides: Partial<DemarcheJson> = {}
+): DemarcheJson => {
+  const defaults: DemarcheJson = {
+    id: 'id-demarche',
+    statut: StatutDemarche.EN_COURS,
+    dateCreation: '2024-09-23T17:30:07.756Z',
+    dateFin: '2024-09-30T17:30:07.756Z',
   }
   return { ...defaults, ...overrides }
 }

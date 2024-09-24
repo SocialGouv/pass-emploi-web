@@ -24,6 +24,7 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
+  Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
@@ -86,6 +87,7 @@ type FicheBeneficiaireProps = {
   metadonneesFavoris?: MetadonneesFavoris
   offresFT?: Offre[]
   recherchesFT?: Recherche[]
+  demarches: Demarche[]
 }
 
 function FicheBeneficiairePage({
@@ -99,6 +101,7 @@ function FicheBeneficiairePage({
   offresFT,
   recherchesFT,
   erreurSessions,
+  demarches,
 }: FicheBeneficiaireProps) {
   const router = useRouter()
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -371,7 +374,7 @@ function FicheBeneficiairePage({
                 <li>
                   <strong>
                     Le lien d’activation envoyé par i-milo à l’adresse e-mail du
-                    jeune n’est valable que 24h.
+                    bénéficiaire n’est valable que 24h.
                   </strong>
                 </li>
                 <li>
@@ -411,6 +414,7 @@ function FicheBeneficiairePage({
         <DetailsJeune
           jeune={beneficiaire}
           conseiller={conseiller}
+          demarches={demarches}
           indicateursSemaine={indicateursSemaine}
         />
       </div>

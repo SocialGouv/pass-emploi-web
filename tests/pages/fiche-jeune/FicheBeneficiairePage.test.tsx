@@ -196,7 +196,7 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 24h/
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du bénéficiaire n’est valable que 24h/
           )
         ).toBeInTheDocument()
       })
@@ -345,6 +345,7 @@ async function renderFicheJeune(
         metadonneesFavoris={metadonnees}
         offresFT={offresFT}
         recherchesFT={recherchesFT}
+        demarches={[]}
       />,
       {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
