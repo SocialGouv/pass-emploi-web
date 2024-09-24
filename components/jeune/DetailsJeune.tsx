@@ -3,9 +3,19 @@ import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
+import { ResumeDemarchesBeneficiaire } from 'components/jeune/ResumeDemarchesBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
-import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
-import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
+import {
+  Demarche,
+  DetailBeneficiaire,
+  IndicateursSemaine,
+} from 'interfaces/beneficiaire'
+import {
+  Conseiller,
+  StructureConseiller,
+  estMilo,
+  estConseilDepartemental,
+} from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -18,12 +28,14 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 interface DetailsJeuneProps {
   jeune: DetailBeneficiaire
   conseiller: Conseiller
+  demarches: Demarche[] | undefined
   indicateursSemaine: IndicateursSemaine | undefined
 }
 
 export default function DetailsJeune({
   jeune,
   conseiller,
+  demarches,
   indicateursSemaine,
 }: DetailsJeuneProps) {
   const [_, setAlerte] = useAlerte()
@@ -82,6 +94,14 @@ export default function DetailsJeune({
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
             indicateursSemaine={indicateursSemaine}
+          />
+        )}
+
+        {estConseilDepartemental(conseiller) && (
+          <ResumeDemarchesBeneficiaire
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            demarches={demarches!}
           />
         )}
 

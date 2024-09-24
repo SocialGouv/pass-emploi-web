@@ -10,6 +10,7 @@ import {
   DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
+  Demarche,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
@@ -25,6 +26,8 @@ import {
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
   SuppressionBeneficiaireFormData,
+  jsonToDemarche,
+  DemarcheJson,
 } from 'interfaces/json/beneficiaire'
 import {
   ConseillerHistoriqueJson,
@@ -377,4 +380,21 @@ async function getIdentitesBeneficiaires(
   )
 
   return beneficiaires
+}
+
+export async function getDemarchesBeneficiaire(
+  idBeneficiaire: string,
+  dateDebut: DateTime,
+  idConseiller: string,
+  accessToken: string
+): Promise<Demarche[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const {
+    content: { queryModel: demarchesJson },
+  } = await apiGet<{ queryModel: DemarcheJson[] }>(
+    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
+    accessToken
+  )
+
+  return demarchesJson.map(jsonToDemarche)
 }

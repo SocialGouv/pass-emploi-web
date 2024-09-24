@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { compareDates, compareDatesDesc } from 'utils/date'
 
 export enum EtatSituation {
@@ -140,6 +141,13 @@ export type IndicateursSemaine = {
     offresSauvegardees: number
     recherchesSauvegardees: number
   }
+}
+
+export type Demarche = {
+  id: string
+  statut: StatutDemarche
+  dateCreation: string
+  dateFin: string
 }
 
 export function compareBeneficiairesByNom(
