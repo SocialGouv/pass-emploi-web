@@ -15,11 +15,12 @@ import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
+  uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { Action, StatutAction } from 'interfaces/action'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { Demarche, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
@@ -639,6 +640,35 @@ describe('Actions dans la fiche jeune', () => {
       })
     })
   })
+
+  describe("quand l'utilisateur est un conseiller départemental", () => {
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
+      metadonneesFavoris: MetadonneesFavoris,
+      demarches: Demarche[]
+    beforeEach(async () => {
+      metadonneesFavoris = uneMetadonneeFavoris()
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
+      demarches = uneListeDeDemarches()
+      await renderFicheBeneficiaireCD(
+        StructureConseiller.CONSEIL_DEPT,
+        demarches,
+        [],
+        metadonneesFavoris,
+        offresFT,
+        recherchesFT
+      )
+    })
+    it("n'affiche pas de lien vers les actions du jeune", async () => {
+      expect(() => screen.getByText(/Actions/)).toThrow()
+    })
+
+    it('ne permet pas la création d’action', async () => {
+      // Then
+      expect(() => screen.getByText('Créer une nouvelle action')).toThrow()
+    })
+  })
 })
 
 interface FicheJeuneParams {
@@ -665,6 +695,7 @@ async function renderFicheJeuneMILO({
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
         onglet={onglet ?? 'AGENDA'}
         lectureSeule={false}
+        demarches={[]}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
@@ -692,6 +723,38 @@ async function renderFicheJeuneFT(
         recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
+        demarches={[]}
+      />,
+      {
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: structure,
+        },
+      }
+    )
+  })
+}
+
+async function renderFicheBeneficiaireCD(
+  structure: StructureConseiller,
+  demarches: Demarche[],
+  rdvs: EvenementListItem[] = [],
+  metadonnees: MetadonneesFavoris,
+  offresFT: Offre[],
+  recherchesFT: Recherche[]
+) {
+  await act(async () => {
+    renderWithContexts(
+      <FicheBeneficiairePage
+        beneficiaire={unDetailBeneficiaire()}
+        rdvs={rdvs}
+        categoriesActions={[]}
+        actionsInitiales={desActionsInitiales()}
+        metadonneesFavoris={metadonnees}
+        lectureSeule={false}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
+        demarches={demarches}
       />,
       {
         customConseiller: {

@@ -101,26 +101,27 @@ describe('<DetailsJeune>', () => {
         ).toBeInTheDocument()
         expect(screen.queryByText('10/10/2022')).toBeInTheDocument()
       })
-      describe('Conseiller non MILO', () => {
-        it("n'affiche pas la date de fin du CEJ", () => {
-          // Given
-          const jeune = unDetailBeneficiaire({
-            dateFinCEJ: '2022-10-10T10:10:10Z',
-          })
-
-          // When
-          renderWithContexts(
-            <DetailsJeune
-              jeune={jeune}
-              conseiller={unConseiller({
-                structure: StructureConseiller.POLE_EMPLOI,
-              })}
-            />
-          )
-
-          // Then
-          expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
+    })
+    describe('Conseiller non MILO', () => {
+      it("n'affiche pas la date de fin du CEJ", () => {
+        // Given
+        const jeune = unDetailBeneficiaire({
+          dateFinCEJ: '2022-10-10T10:10:10Z',
         })
+
+        // When
+        renderWithContexts(
+          <DetailsJeune
+            jeune={jeune}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
+            demarches={[]}
+          />
+        )
+
+        // Then
+        expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
       })
     })
   })
@@ -142,6 +143,7 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
+            demarches={[]}
           />,
           {
             customAlerte: { alerteSetter },
@@ -224,6 +226,7 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
+            demarches={[]}
           />,
           {
             customAlerte: { alerteSetter },

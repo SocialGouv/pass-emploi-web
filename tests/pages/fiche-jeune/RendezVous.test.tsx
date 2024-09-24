@@ -206,6 +206,7 @@ async function renderFicheJeuneFT(
         recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
+        demarches={[]}
       />,
       {
         customConseiller: {
