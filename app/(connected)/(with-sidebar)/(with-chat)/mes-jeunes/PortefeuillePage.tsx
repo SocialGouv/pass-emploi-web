@@ -19,7 +19,11 @@ import {
   BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireAvecInfosComplementaires,
 } from 'interfaces/beneficiaire'
-import { estMilo, utiliseChat } from 'interfaces/conseiller'
+import {
+  estConseilDepartemental,
+  estMilo,
+  utiliseChat,
+} from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -196,7 +200,11 @@ function PortefeuillePage({
             />
 
             {estMilo(conseiller) && <TutorielAjoutBeneficiaireMilo />}
-            {!estMilo(conseiller) && <TutorielAjoutBeneficiaireFranceTravail />}
+            {!estMilo(conseiller) && (
+              <TutorielAjoutBeneficiaireFranceTravail
+                aAccesMap={!estConseilDepartemental(conseiller)}
+              />
+            )}
           </div>
         )}
 
@@ -207,7 +215,6 @@ function PortefeuillePage({
           </div>
 
           {!jeunesFiltres && <SpinningLoader />}
-
           {jeunesFiltres && (
             <TableauBeneficiaires
               ref={refTableau}
