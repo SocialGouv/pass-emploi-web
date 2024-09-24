@@ -6,17 +6,18 @@ import NavLinks, { NavItem } from 'components/NavLinks'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estConseilDepartemental, estPassEmploi } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function Sidebar() {
   const [conseiller] = useConseiller()
 
-  const estConseillerPassEmploi = estPassEmploi(conseiller)
+  const aThemePassEmploi =
+    estPassEmploi(conseiller) || estConseilDepartemental(conseiller)
 
   return (
     <>
-      {estConseillerPassEmploi && (
+      {aThemePassEmploi && (
         <IllustrationComponent
           name={IllustrationName.LogoPassemploi}
           role='img'
@@ -27,7 +28,7 @@ export default function Sidebar() {
         />
       )}
 
-      {!estConseillerPassEmploi && (
+      {!aThemePassEmploi && (
         <IllustrationComponent
           name={IllustrationName.LogoCEJ}
           role='img'
