@@ -294,6 +294,45 @@ describe('FicheBeneficiairePage client side', () => {
     })
   })
 
+  describe('pour les conseillers départementaux', () => {
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
+      metadonneesFavoris: MetadonneesFavoris
+    beforeEach(async () => {
+      //Given
+      metadonneesFavoris = uneMetadonneeFavoris()
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
+    })
+
+    it('affiche un message pour la récupération des démarches', async () => {
+      //When
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          beneficiaire={unDetailBeneficiaire()}
+          rdvs={[]}
+          actionsInitiales={desActionsInitiales()}
+          categoriesActions={desCategories()}
+          lectureSeule={false}
+          metadonneesFavoris={metadonneesFavoris}
+          offresFT={offresFT}
+          recherchesFT={recherchesFT}
+          demarches={[]}
+        />,
+        {
+          customConseiller: { structure: StructureConseiller.CONSEIL_DEPT },
+        }
+      )
+
+      //Then
+      expect(
+        screen.getByText(
+          'Vous pouvez consulter les démarches de votre bénéficiaire s’il se connecte à son application dans un délai de 30 jours.'
+        )
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('quand la structure du bénéficiaire est différente du conseiller', () => {
     it('affiche un message', async () => {
       // When
