@@ -19,7 +19,11 @@ export function ResumeDemarchesBeneficiaire({
   demarches,
 }: ResumeIndicateursJeuneProps) {
   const { demarchesCrees, demarchesTerminees, demarchesEnRetard } =
-    demarches.reduce(
+    demarches.reduce<{
+      demarchesCrees: Demarche[]
+      demarchesTerminees: Demarche[]
+      demarchesEnRetard: Demarche[]
+    }>(
       (acc, demarche) => {
         const dateCreation = DateTime.fromISO(demarche.dateCreation)
         const dateFin = DateTime.fromISO(demarche.dateFin)
