@@ -14,13 +14,13 @@ import {
   BeneficiaireChat,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
-import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
 import { observeConseillerChats, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 
 jest.mock('services/messages.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
@@ -55,7 +55,9 @@ describe('Intégration notifications sonores', () => {
         return Promise.resolve(() => {})
       }
     )
-    ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(jeunes)
+    ;(getBeneficiairesDuConseillerClientSide as jest.Mock).mockResolvedValue(
+      jeunes
+    )
   })
 
   describe('quand le conseiller active ses notification', () => {

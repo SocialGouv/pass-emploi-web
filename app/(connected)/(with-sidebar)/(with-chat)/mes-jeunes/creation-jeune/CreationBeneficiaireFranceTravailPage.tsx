@@ -27,7 +27,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
 
     try {
       const { createCompteJeuneFranceTravail } = await import(
-        'services/jeunes.service'
+        'services/beneficiaires.service'
       )
       const beneficiaireCree = await createCompteJeuneFranceTravail({
         firstName: nouveauBeneficiaire.prenom,

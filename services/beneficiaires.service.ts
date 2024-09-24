@@ -4,24 +4,24 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   BaseBeneficiaire,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
   ConseillerHistorique,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireEtablissement,
-  BeneficiaireFromListe,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
+  BeneficiaireEtablissementJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
-  BeneficiaireEtablissementJson,
   jsonToBaseBeneficiaire,
+  jsonToBeneficiaireEtablissement,
   jsonToDetailBeneficiaire,
   jsonToIndicateursSemaine,
   jsonToItemBeneficiaire,
-  jsonToBeneficiaireEtablissement,
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
   SuppressionBeneficiaireFormData,
@@ -53,14 +53,14 @@ export async function getIdentitesBeneficiairesClientSide(
   )
 }
 
-export async function getJeunesDuConseillerServerSide(
+export async function getBeneficiairesDuConseillerServerSide(
   idConseiller: string,
   accessToken: string
 ): Promise<BeneficiaireFromListe[]> {
   return getBeneficiairesDuConseiller(idConseiller, accessToken)
 }
 
-export async function getJeunesDuConseillerClientSide(): Promise<
+export async function getBeneficiairesDuConseillerClientSide(): Promise<
   BeneficiaireFromListe[]
 > {
   const session = await getSession()

@@ -218,7 +218,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
     try {
       const { getJeunesDuConseillerParId } = await import(
-        'services/jeunes.service'
+        'services/beneficiaires.service'
       )
       const beneficiairesDuConseiller = await getJeunesDuConseillerParId(
         conseiller.id
@@ -304,7 +304,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
     setReaffectationEnCours(true)
     try {
-      const { reaffecter } = await import('services/jeunes.service')
+      const { reaffecter } = await import('services/beneficiaires.service')
       await reaffecter(
         conseillerInitial.value!.id,
         conseillerDestination.value!.id,

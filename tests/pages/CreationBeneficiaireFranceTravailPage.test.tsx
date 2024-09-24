@@ -12,10 +12,10 @@ import {
 } from 'fixtures/beneficiaire'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createCompteJeuneFranceTravail } from 'services/jeunes.service'
+import { createCompteJeuneFranceTravail } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('CreationBeneficiaireFranceTravailPage client side', () => {
   let container: HTMLElement

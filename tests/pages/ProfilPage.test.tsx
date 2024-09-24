@@ -9,17 +9,17 @@ import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
 import {
   modifierAgence,
   modifierNotificationsSonores,
   supprimerConseiller,
 } from 'services/conseiller.service'
-import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/Modal')
 
 describe('ProfilPage client side', () => {
@@ -364,7 +364,9 @@ describe('ProfilPage client side', () => {
     describe('en tant que FT sans bénéficiaires', () => {
       beforeEach(async () => {
         // Given
-        ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue([])
+        ;(
+          getBeneficiairesDuConseillerClientSide as jest.Mock
+        ).mockResolvedValue([])
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
 
@@ -430,9 +432,9 @@ describe('ProfilPage client side', () => {
       beforeEach(async () => {
         // Given
         jeunes = desItemsBeneficiaires()
-        ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(
-          jeunes
-        )
+        ;(
+          getBeneficiairesDuConseillerClientSide as jest.Mock
+        ).mockResolvedValue(jeunes)
 
         // When
         await act(async () => {

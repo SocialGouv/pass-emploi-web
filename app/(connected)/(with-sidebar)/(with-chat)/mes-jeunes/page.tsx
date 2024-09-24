@@ -10,7 +10,7 @@ import {
 } from 'interfaces/beneficiaire'
 import { estUserMilo } from 'interfaces/conseiller'
 import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = { title: 'Portefeuille' }
@@ -22,7 +22,7 @@ export default async function Portefeuille({
   searchParams?: PortfeuilleSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaires = await getJeunesDuConseillerServerSide(
+  const beneficiaires = await getBeneficiairesDuConseillerServerSide(
     user.id,
     accessToken
   )
@@ -46,14 +46,14 @@ export default async function Portefeuille({
 
       return {
         ...beneficiaire,
-        nbActionsNonTerminees: compteursPeriode?.actions ?? 0,
+        actionsCreees: compteursPeriode?.actions ?? 0,
         rdvs: compteursPeriode?.rdvs ?? 0,
       }
     })
   } else {
     beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({
       ...beneficiaire,
-      nbActionsNonTerminees: 0,
+      actionsCreees: 0,
       rdvs: 0,
     }))
   }

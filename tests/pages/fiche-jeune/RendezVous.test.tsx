@@ -18,11 +18,11 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 

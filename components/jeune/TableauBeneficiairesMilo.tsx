@@ -33,12 +33,20 @@ export default function TableauBeneficiairesMilo({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const beneficiaireSituationColumn = 'Bénéficiaire et situation'
   const dateFinCEJColumn = 'Fin de CEJ'
   const actionsColumn = 'Actions créées'
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
-  const voirDetailColumn = 'Voir le détail'
+
+  function getRowLabel(beneficiaire: BeneficiaireAvecInfosComplementaires) {
+    const labelFiche = `Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`
+    const labelActivite = beneficiaire.isActivated
+      ? `dernière activité ${toRelativeDateTime(beneficiaire.lastActivity!)}`
+      : 'non activé'
+    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus`
+
+    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
+  }
 
   useEffect(() => {
     setBeneficiairesAffiches(
@@ -52,12 +60,12 @@ export default function TableauBeneficiairesMilo({
     <>
       <thead className='sr-only'>
         <TR isHeader={true}>
-          <TH>{beneficiaireSituationColumn}</TH>
+          <TH>Bénéficiaire et situation</TH>
           <TH>{dateFinCEJColumn}</TH>
-          <TH estCliquable={true}>{actionsColumn}</TH>
+          <TH>{actionsColumn}</TH>
           <TH>{rdvColumn}</TH>
           <TH>{derniereActiviteColumn}</TH>
-          <TH>{voirDetailColumn}</TH>
+          <TH>Voir le détail</TH>
         </TR>
       </thead>
 
@@ -150,7 +158,7 @@ export default function TableauBeneficiairesMilo({
                   {actionsColumn}
                 </div>
                 <span className='text-m-bold'>
-                  {beneficiaire.nbActionsNonTerminees}
+                  {beneficiaire.actionsCreees}
                 </span>
               </TD>
 
@@ -187,7 +195,7 @@ export default function TableauBeneficiairesMilo({
 
               <TDLink
                 href={`/mes-jeunes/${beneficiaire.id}`}
-                label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+                label={getRowLabel(beneficiaire)}
                 className='!p-2 row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
               />
             </TR>

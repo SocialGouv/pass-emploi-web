@@ -21,7 +21,7 @@ import {
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
+import { getBeneficiairesDeLEtablissementClientSide } from 'services/beneficiaires.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'

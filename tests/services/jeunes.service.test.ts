@@ -22,25 +22,25 @@ import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import {
   archiverJeune,
+  getBeneficiairesDeLaStructureMilo,
+  getBeneficiairesDeLEtablissementClientSide,
+  getBeneficiairesDuConseillerClientSide,
+  getBeneficiairesDuConseillerServerSide,
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
-  getIdJeuneMilo,
   getIdentitesBeneficiairesClientSide,
+  getIdJeuneMilo,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
-  getBeneficiairesDeLEtablissementClientSide,
-  getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParId,
-  getJeunesDuConseillerServerSide,
   getMetadonneesFavorisJeune,
   getMotifsSuppression,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
-  getBeneficiairesDeLaStructureMilo,
   supprimerJeuneInactif,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -53,7 +53,7 @@ describe('JeunesApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await getJeunesDuConseillerClientSide()
+      const actual = await getBeneficiairesDuConseillerClientSide()
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
@@ -92,7 +92,7 @@ describe('JeunesApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await getJeunesDuConseillerServerSide(
+      const actual = await getBeneficiairesDuConseillerServerSide(
         idConseiller,
         accessToken
       )

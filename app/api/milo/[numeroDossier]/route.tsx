@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { estUserMilo, StructureConseiller } from 'interfaces/conseiller'
-import { getIdJeuneMilo } from 'services/jeunes.service'
+import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

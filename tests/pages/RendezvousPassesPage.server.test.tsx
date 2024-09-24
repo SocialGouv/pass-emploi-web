@@ -4,10 +4,10 @@ import RendezVousPasses, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/page'
 import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
-import { unEvenementListItem } from 'fixtures/evenement'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
+import { unEvenementListItem } from 'fixtures/evenement'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
@@ -17,7 +17,7 @@ jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 )
 jest.mock('services/evenements.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('RendezVousPassesPage server side', () => {
   beforeEach(async () => {

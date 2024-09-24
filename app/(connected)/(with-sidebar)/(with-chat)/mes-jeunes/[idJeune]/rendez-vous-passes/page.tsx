@@ -9,8 +9,8 @@ import {
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserMilo } from 'interfaces/conseiller'
 import { PeriodeEvenements } from 'interfaces/evenement'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type RendezVousPassesParams = { idJeune: string }
