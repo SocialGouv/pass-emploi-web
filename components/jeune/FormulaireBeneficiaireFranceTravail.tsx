@@ -9,6 +9,7 @@ import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireBeneficiaireFranceTravailProps = {
+  aAccesMap: boolean
   creerBeneficiaireFranceTravail: (
     nouveauBeneficiaire: BeneficiaireFranceTravailFormData
   ) => void
@@ -17,6 +18,7 @@ type FormulaireBeneficiaireFranceTravailProps = {
 }
 
 function FormulaireBeneficiaireFranceTravail({
+  aAccesMap,
   creerBeneficiaireFranceTravail,
   creationError,
   creationEnCours,
@@ -146,8 +148,11 @@ function FormulaireBeneficiaireFranceTravail({
           {{ main: 'E-mail', helpText: '(ex : monemail@exemple.com)' }}
         </Label>
         <p className='text-base-regular mb-3'>
-          Attention à bien renseigner l&apos;e-mail qui se trouve sous le
-          dossier MAP du bénéficiaire.
+          <>
+            {aAccesMap
+              ? 'Attention à bien renseigner l’e-mail qui se trouve sous le dossier MAP du bénéficiaire.'
+              : 'Attention à bien renseigner l’adresse e-mail que votre bénéficiaire utilise pour se connecter à son espace France Travail.'}
+          </>
         </p>
         {email.error && (
           <InputError id='jeune-email--error'>{email.error}</InputError>
