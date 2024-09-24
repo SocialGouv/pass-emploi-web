@@ -8,7 +8,7 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
-import { estFranceTravail, estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
@@ -69,7 +69,7 @@ function TableauBeneficiaires(
               />
             )}
 
-            {estFranceTravail(conseiller) && (
+            {!estMilo(conseiller) && (
               <TableauBeneficiairesFT
                 beneficiairesFiltres={beneficiairesFiltres}
                 page={page}

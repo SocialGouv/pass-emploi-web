@@ -4,14 +4,14 @@ import React from 'react'
 
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { estUserMilo, estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = { title: 'Établissement' }
 
 export default async function Etablissement() {
   const { user } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) notFound()
+  if (!estUserMilo(user)) notFound()
 
   return (
     <>

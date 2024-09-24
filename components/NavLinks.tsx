@@ -6,12 +6,7 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import {
-  estMilo,
-  estFranceTravail,
-  estSuperviseur,
-  utiliseChat,
-} from 'interfaces/conseiller'
+import { estMilo, estSuperviseur, utiliseChat } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -88,7 +83,7 @@ export default function NavLinks({
           />
         )}
 
-        {!estFranceTravail(conseiller) && items.includes(NavItem.Rdvs) && (
+        {estMilo(conseiller) && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
@@ -116,7 +111,7 @@ export default function NavLinks({
           />
         )}
 
-        {!estFranceTravail(conseiller) && items.includes(NavItem.Pilotage) && (
+        {estMilo(conseiller) && items.includes(NavItem.Pilotage) && (
           <NavLink
             iconName={
               isCurrentRoute('/pilotage')
@@ -130,21 +125,20 @@ export default function NavLinks({
           />
         )}
 
-        {!estFranceTravail(conseiller) &&
-          items.includes(NavItem.Etablissement) && (
-            <NavLink
-              iconName={
-                isCurrentRoute('/etablissement')
-                  ? IconName.ArrowCircleRightFill
-                  : IconName.ArrowCircleRightOutline
-              }
-              className='break-all'
-              label='Bénéficiaires'
-              href='/etablissement'
-              isActive={isCurrentRoute('/etablissement')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          )}
+        {estMilo(conseiller) && items.includes(NavItem.Etablissement) && (
+          <NavLink
+            iconName={
+              isCurrentRoute('/etablissement')
+                ? IconName.ArrowCircleRightFill
+                : IconName.ArrowCircleRightOutline
+            }
+            className='break-all'
+            label='Bénéficiaires'
+            href='/etablissement'
+            isActive={isCurrentRoute('/etablissement')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
 
         {estSuperviseur(conseiller) &&
           items.includes(NavItem.Reaffectation) && (

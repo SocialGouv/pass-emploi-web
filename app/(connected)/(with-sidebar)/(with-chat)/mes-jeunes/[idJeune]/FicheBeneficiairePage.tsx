@@ -28,7 +28,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estFranceTravail, estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
@@ -275,7 +275,7 @@ function FicheBeneficiairePage({
   }, [beneficiaire, lectureSeule])
 
   useEffect(() => {
-    if (!estFranceTravail(conseiller) && !indicateursSemaine) {
+    if (estMilo(conseiller) && !indicateursSemaine) {
       getIndicateursJeuneAlleges(
         conseiller.id,
         beneficiaire.id,
@@ -413,7 +413,7 @@ function FicheBeneficiairePage({
         />
       </div>
 
-      {!estFranceTravail(conseiller) && (
+      {estMilo(conseiller) && (
         <>
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
@@ -468,7 +468,7 @@ function FicheBeneficiairePage({
           >
             <Tab
               label='Actions'
-              count={!estFranceTravail(conseiller) ? totalActions : undefined}
+              count={estMilo(conseiller) ? totalActions : undefined}
               selected={currentTab === 'ACTIONS'}
               controls='liste-actions'
               onSelectTab={() => switchTab('ACTIONS')}
@@ -483,7 +483,7 @@ function FicheBeneficiairePage({
             />
             <Tab
               label='Rendez-vous'
-              count={!estFranceTravail(conseiller) ? rdvs.length : undefined}
+              count={estMilo(conseiller) ? rdvs.length : undefined}
               selected={currentTab === 'RDVS'}
               controls='liste-rdvs'
               onSelectTab={() => switchTab('RDVS')}
@@ -545,7 +545,6 @@ function FicheBeneficiairePage({
               className='mt-8 pb-8'
             >
               <OngletActions
-                conseiller={conseiller}
                 jeune={beneficiaire}
                 categories={categoriesActions}
                 actionsInitiales={actionsInitiales}
@@ -573,7 +572,7 @@ function FicheBeneficiairePage({
         </>
       )}
 
-      {estFranceTravail(conseiller) && (
+      {!estMilo(conseiller) && (
         <>
           {metadonneesFavoris?.autoriseLePartage &&
             offresFT &&

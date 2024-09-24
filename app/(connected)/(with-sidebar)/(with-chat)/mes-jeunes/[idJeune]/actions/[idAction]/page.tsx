@@ -8,7 +8,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { getAction, recupererLesCommentaires } from 'services/actions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params: DetailActionParams
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) notFound()
+  if (!estUserMilo(user)) notFound()
 
   const actionEtJeune = await getAction(params.idAction, accessToken)
   if (!actionEtJeune) notFound()
@@ -41,7 +41,7 @@ export default async function DetailAction({
   params: DetailActionParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) notFound()
+  if (!estUserMilo(user)) notFound()
   const { idJeune, idAction } = params
 
   const actionEtJeune = await getAction(idAction, accessToken)

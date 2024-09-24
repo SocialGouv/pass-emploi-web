@@ -10,10 +10,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { SituationNonProfessionnelle } from 'interfaces/action'
-import {
-  estUserFranceTravail,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
@@ -57,7 +54,7 @@ export default async function FicheBeneficiaire({
   searchParams?: FicheBeneficiaireSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const userIsFranceTravail = estUserFranceTravail(user)
+  const beneficiaireHasExtraContent = estUserMilo(user)
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
@@ -72,19 +69,22 @@ export default async function FicheBeneficiaire({
     getConseillerServerSide(user, accessToken),
     getJeuneDetails(params.idJeune, accessToken),
     getMetadonneesFavorisJeune(params.idJeune, accessToken),
-    userIsFranceTravail
-      ? ([] as EvenementListItem[])
-      : getRendezVousJeune(
+    beneficiaireHasExtraContent
+      ? getRendezVousJeune(
           params.idJeune,
           PeriodeEvenements.FUTURS,
           accessToken
-        ),
-    userIsFranceTravail
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : getActionsBeneficiaireServerSide(params.idJeune, page, accessToken),
-    userIsFranceTravail
-      ? ([] as SituationNonProfessionnelle[])
-      : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+        )
+      : ([] as EvenementListItem[]),
+    beneficiaireHasExtraContent
+      ? getActionsBeneficiaireServerSide(params.idJeune, page, accessToken)
+      : {
+          actions: [],
+          metadonnees: { nombreTotal: 0, nombrePages: 0 },
+        },
+    beneficiaireHasExtraContent
+      ? getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken)
+      : ([] as SituationNonProfessionnelle[]),
   ])
   if (!jeune) notFound()
 
@@ -109,8 +109,10 @@ export default async function FicheBeneficiaire({
   let recherchesPE: Recherche[] = []
   if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
-      userIsFranceTravail ? getOffres(params.idJeune, accessToken) : [],
-      userIsFranceTravail
+      !beneficiaireHasExtraContent
+        ? getOffres(params.idJeune, accessToken)
+        : [],
+      !beneficiaireHasExtraContent
         ? getRecherchesSauvegardees(params.idJeune, accessToken)
         : [],
     ])
