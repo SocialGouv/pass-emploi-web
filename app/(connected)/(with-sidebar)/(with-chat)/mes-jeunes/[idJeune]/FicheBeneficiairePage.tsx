@@ -29,7 +29,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estMilo } from 'interfaces/conseiller'
+import { estConseilDepartemental, estMilo } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
@@ -136,6 +136,11 @@ function FicheBeneficiairePage({
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
+
+  const [
+    afficheMessageRecuperationDemarches,
+    setAfficheMessageRecuperationDemarches,
+  ] = useState<boolean>(estConseilDepartemental(conseiller))
 
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
@@ -407,6 +412,15 @@ function FicheBeneficiairePage({
             Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne
             fait pas partie de votre portefeuille.
           </InformationMessage>
+        </div>
+      )}
+
+      {afficheMessageRecuperationDemarches && (
+        <div className='mb-6'>
+          <InformationMessage
+            label='Vous pouvez consulter les démarches de votre bénéficiaire s’il se connecte à son application dans un délai de 30 jours.'
+            onAcknowledge={() => setAfficheMessageRecuperationDemarches(false)}
+          />
         </div>
       )}
 
