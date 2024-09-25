@@ -6,14 +6,13 @@ import NavLinks, { NavItem } from 'components/NavLinks'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { estConseilDepartemental, estPassEmploi } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function Sidebar() {
   const [conseiller] = useConseiller()
 
-  const aThemePassEmploi =
-    estPassEmploi(conseiller) || estConseilDepartemental(conseiller)
+  const aThemePassEmploi = estPassEmploi(conseiller)
 
   return (
     <>
