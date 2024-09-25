@@ -31,6 +31,7 @@ export default function AuthError({
       break
     case 'UTILISATEUR_DEJA_PE_BRSA':
     case 'UTILISATEUR_DEJA_PE_AIJ':
+    case 'UTILISATEUR_DEJA_CONSEIL_DEPT':
       erreur =
         "Veuillez vous connecter en choisissant France Travail sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
       break
