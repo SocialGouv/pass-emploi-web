@@ -13,7 +13,7 @@ interface TagProps {
   isSmallTag?: boolean
 }
 
-interface TagCategorieActionProps {
+interface TagCategorieProps {
   categorie?: string
 }
 
@@ -121,7 +121,7 @@ export function TagType({
   )
 }
 
-export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
+export function TagCategorie({ categorie }: TagCategorieProps) {
   if (categorie)
     return (
       <Tag

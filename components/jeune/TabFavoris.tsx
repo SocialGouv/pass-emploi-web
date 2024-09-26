@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 
 import { OngletOffres } from 'components/favoris/offres/OngletOffres'
 import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
+import OngletDemarches from 'components/OngletDemarches'
+import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
+import { estConseilDepartemental } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type TabFavorisProps = {
@@ -14,9 +18,11 @@ type TabFavorisProps = {
   offres: Offre[]
   recherches: Recherche[]
   lectureSeule?: boolean
+  demarches?: Demarche[]
 }
 
 export enum OngletFavoris {
+  DEMARCHES = 'DEMARCHES',
   OFFRES = 'OFFRES',
   RECHERCHES = 'RECHERCHES',
 }
@@ -25,12 +31,16 @@ export function TabFavoris({
   beneficiaire,
   offres,
   recherches,
+  demarches,
   lectureSeule,
 }: TabFavorisProps) {
   const [portefeuille] = usePortefeuille()
+  const [conseiller] = useConseiller()
+
+  const conseillerEstCD = estConseilDepartemental(conseiller)
 
   const [currentTab, setCurrentTab] = useState<OngletFavoris>(
-    OngletFavoris.OFFRES
+    conseillerEstCD ? OngletFavoris.DEMARCHES : OngletFavoris.OFFRES
   )
   const favorisTracking = `Détail jeune – Favoris${
     lectureSeule ? ' - hors portefeuille' : ''
@@ -55,6 +65,16 @@ export function TabFavoris({
         label={`Offres et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
         className='mt-10'
       >
+        {estConseilDepartemental(conseiller) && demarches && (
+          <Tab
+            label='Démarches'
+            count={demarches.length}
+            selected={currentTab === 'DEMARCHES'}
+            controls='liste-demarches'
+            onSelectTab={() => switchTab(OngletFavoris.DEMARCHES)}
+            iconName={IconName.ChecklistRtlFill}
+          />
+        )}
         <Tab
           label='Offres'
           count={offres.length}
@@ -70,6 +90,17 @@ export function TabFavoris({
           onSelectTab={() => switchTab(OngletFavoris.RECHERCHES)}
         />
       </TabList>
+      {currentTab === OngletFavoris.DEMARCHES && demarches && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-offres--tab'
+          tabIndex={0}
+          id='liste-offres'
+          className='mt-8 pb-8'
+        >
+          <OngletDemarches demarches={demarches} jeune={beneficiaire} />
+        </div>
+      )}
       {currentTab === OngletFavoris.OFFRES && (
         <div
           role='tabpanel'

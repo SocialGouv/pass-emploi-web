@@ -366,6 +366,7 @@ export const desIndicateursSemaine = (
 export const uneDemarche = (overrides: Partial<Demarche> = {}): Demarche => {
   const defaults: Demarche = {
     id: 'id-demarche',
+    label: 'Mes candidatures',
     statut: StatutDemarche.EN_COURS,
     dateCreation: '2024-09-23T17:30:07.756Z',
     dateFin: '2024-09-30T17:30:07.756Z',
@@ -385,6 +386,7 @@ export const uneDemarcheJson = (
 ): DemarcheJson => {
   const defaults: DemarcheJson = {
     id: 'id-demarche',
+    label: 'Mes candidatures',
     statut: StatutDemarche.EN_COURS,
     dateCreation: '2024-09-23T17:30:07.756Z',
     dateFin: '2024-09-30T17:30:07.756Z',

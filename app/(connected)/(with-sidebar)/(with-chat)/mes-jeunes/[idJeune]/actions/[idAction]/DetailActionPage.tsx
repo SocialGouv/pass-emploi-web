@@ -14,7 +14,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
+import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
@@ -202,7 +202,7 @@ function DetailActionPage({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            {action.qualification?.libelle ?? <TagCategorieAction />}
+            {action.qualification?.libelle ?? <TagCategorie />}
           </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>

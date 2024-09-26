@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { TabFavoris } from 'components/jeune/TabFavoris'
+import OngletDemarches from 'components/OngletDemarches'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -62,13 +63,14 @@ const DeleteJeuneInactifModal = dynamic(
   { ssr: false }
 )
 
-export type Onglet = 'AGENDA' | 'ACTIONS' | 'RDVS' | 'FAVORIS'
+export type Onglet = 'AGENDA' | 'ACTIONS' | 'DEMARCHES' | 'RDVS' | 'FAVORIS'
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
 } = {
   AGENDA: { queryParam: 'agenda', trackingLabel: 'Agenda' },
   ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
+  DEMARCHES: { queryParam: 'demarches', trackingLabel: 'Démarches' },
   RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
   FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
@@ -546,6 +548,18 @@ function FicheBeneficiairePage({
             </div>
           )}
 
+          {currentTab === 'DEMARCHES' && demarches && (
+            <div
+              role='tabpanel'
+              aria-labelledby='demarches--tab'
+              tabIndex={0}
+              id='demarches'
+              className='mt-8 pb-8 border-b border-primary_lighten'
+            >
+              <OngletDemarches demarches={demarches} jeune={beneficiaire} />
+            </div>
+          )}
+
           {currentTab === 'RDVS' && (
             <div
               role='tabpanel'
@@ -612,6 +626,7 @@ function FicheBeneficiairePage({
                 </p>
                 <TabFavoris
                   beneficiaire={beneficiaire}
+                  demarches={demarches}
                   offres={offresFT}
                   recherches={recherchesFT}
                   lectureSeule={lectureSeule}

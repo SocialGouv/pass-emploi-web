@@ -148,6 +148,7 @@ export type Demarche = {
   statut: StatutDemarche
   dateCreation: string
   dateFin: string
+  label: string
 }
 
 export function compareBeneficiairesByNom(
