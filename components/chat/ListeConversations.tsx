@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from 'react'
+import React, { ForwardedRef, forwardRef, useEffect } from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
@@ -14,6 +14,7 @@ interface ListeConversationsProps {
   conversations: BeneficiaireEtChat[] | undefined
   onToggleFlag: (idChat: string, flagged: boolean) => void
   onSelectConversation: (conversation: BeneficiaireEtChat) => void
+  idConversationToFocus?: string
 }
 
 function ListeConversations(
@@ -21,9 +22,20 @@ function ListeConversations(
     conversations,
     onSelectConversation,
     onToggleFlag,
+    idConversationToFocus,
   }: ListeConversationsProps,
   ref: ForwardedRef<HTMLUListElement>
 ) {
+  useEffect(() => {
+    if (conversations?.length && idConversationToFocus) {
+      document
+        .querySelector<HTMLButtonElement>(
+          'button#chat-' + idConversationToFocus
+        )
+        ?.focus()
+    }
+  }, [conversations, idConversationToFocus])
+
   return (
     <>
       <div

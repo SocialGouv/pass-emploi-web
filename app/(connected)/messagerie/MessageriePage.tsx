@@ -64,7 +64,14 @@ function MessageriePage() {
           {currentConversation && (
             <div className='px-6 bg-grey_100 h-full min-h-0'>
               <ConversationBeneficiaire
-                onBack={() => setCurrentConversation(undefined)}
+                onBack={() => {
+                  document
+                    .getElementById(
+                      'chat-' + currentConversation.conversation.id
+                    )
+                    ?.focus()
+                  setCurrentConversation(undefined)
+                }}
                 beneficiaireChat={currentConversation.conversation}
                 shouldFocusOnFirstRender={true}
                 conseillers={conseillers}

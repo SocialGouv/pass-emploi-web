@@ -1,6 +1,12 @@
 'use client'
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
@@ -28,6 +34,8 @@ export default function ChatContainer({
   menuState: [showMenu, setShowMenu],
   messagerieFullScreen,
 }: ChatContainerProps) {
+  const conversationIdRef = useRef<string | undefined>(undefined)
+
   const chats = useChats()
   const [currentConversation, setCurrentConversation] = useCurrentConversation()
 
@@ -39,6 +47,13 @@ export default function ChatContainer({
     useShowRubriqueListeDeDiffusion()
   const [listesDeDiffusion, setListesDeDiffusion] =
     useState<ListeDeDiffusion[]>()
+
+  function afficherConversation(conversation: BeneficiaireEtChat | undefined) {
+    if (conversation) conversationIdRef.current = conversation.id
+    setCurrentConversation(
+      conversation && { conversation, shouldFocusOnRender: true }
+    )
+  }
 
   useEffect(() => {
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
@@ -86,12 +101,7 @@ export default function ChatContainer({
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }
-              onAccesConversation={(conversation) =>
-                setCurrentConversation({
-                  conversation,
-                  shouldFocusOnRender: true,
-                })
-              }
+              onAccesConversation={afficherConversation}
             />
           )}
         </>
@@ -101,7 +111,7 @@ export default function ChatContainer({
         <>
           {currentConversation && (
             <ConversationBeneficiaire
-              onBack={() => setCurrentConversation(undefined)}
+              onBack={() => afficherConversation(undefined)}
               beneficiaireChat={currentConversation.conversation}
               shouldFocusOnFirstRender={currentConversation.shouldFocusOnRender}
               conseillers={conseillers}
@@ -124,12 +134,8 @@ export default function ChatContainer({
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }
-              onAccesConversation={(conversation) =>
-                setCurrentConversation({
-                  conversation,
-                  shouldFocusOnRender: true,
-                })
-              }
+              onAccesConversation={afficherConversation}
+              idConversationToFocus={conversationIdRef.current}
             />
           )}
         </>

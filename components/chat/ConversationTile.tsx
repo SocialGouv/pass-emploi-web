@@ -43,6 +43,7 @@ export function ConversationTile({
   return (
     <div className='relative'>
       <button
+        id={id}
         className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
         aria-label={`Consulter vos messages avec ${beneficiaireFullname}`}
         onClick={onClick}

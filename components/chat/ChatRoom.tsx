@@ -29,6 +29,7 @@ interface ChatRoomProps {
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
+  idConversationToFocus?: string
 }
 
 export default function ChatRoom({
@@ -37,6 +38,7 @@ export default function ChatRoom({
   onOuvertureMenu,
   onAccesListesDiffusion,
   onAccesConversation,
+  idConversationToFocus,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -329,6 +331,7 @@ export default function ChatRoom({
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}
+            idConversationToFocus={idConversationToFocus}
           />
         </>
       )}
