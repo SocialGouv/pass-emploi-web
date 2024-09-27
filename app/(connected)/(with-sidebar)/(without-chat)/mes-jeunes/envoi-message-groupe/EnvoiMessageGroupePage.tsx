@@ -78,6 +78,8 @@ function EnvoiMessageGroupePage({
       value: getNomBeneficiaireComplet(jeune),
     }))
   }
+
+  const isFirstRender = useRef<boolean>(true)
   const formErrorsRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const fileSelectionRef = useRef<HTMLButtonElement>(null)
@@ -248,9 +250,15 @@ function EnvoiMessageGroupePage({
   }
 
   useEffect(() => {
+    if (isFirstRender.current) return
+
     if (pieceJointe) fileSelectionRef.current!.focus()
     else fileInputRef.current!.focus()
   }, [pieceJointe])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   return (
     <>
