@@ -99,7 +99,7 @@ describe('EditionRdvPage client side', () => {
           />,
           {
             customConseiller: { email: 'fake@email.com' },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })
@@ -860,7 +860,7 @@ describe('EditionRdvPage client side', () => {
             conseillerEstObservateur={false}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })

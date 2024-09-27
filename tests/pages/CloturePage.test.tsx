@@ -38,7 +38,7 @@ describe('CloturePage client side', () => {
         returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}
       />,
       {
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     ))
   })

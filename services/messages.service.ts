@@ -26,7 +26,7 @@ import {
 import {
   BaseBeneficiaire,
   Chat,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
 } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -49,7 +49,7 @@ type FormNouveauMessage = {
 }
 
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
-  beneficiaireChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireEtChat
 }
 export type FormNouveauMessageImportant = {
   newMessage: string
@@ -127,7 +127,7 @@ export async function toggleFlag(
 export async function observeConseillerChats(
   cleChiffrement: string,
   jeunes: BaseBeneficiaire[],
-  updateChats: (chats: BeneficiaireChat[]) => void
+  updateChats: (chats: BeneficiaireEtChat[]) => void
 ): Promise<() => void> {
   const session = await getSession()
   return findAndObserveChatsDuConseiller(
@@ -137,7 +137,7 @@ export async function observeConseillerChats(
         .filter((jeune) => Boolean(chats[jeune.id]))
         .map((jeune) => {
           const chat = chats[jeune.id]
-          const newJeuneChat: BeneficiaireChat = {
+          const newJeuneChat: BeneficiaireEtChat = {
             ...jeune,
             ...chat,
             lastMessageContent: chat.lastMessageIv

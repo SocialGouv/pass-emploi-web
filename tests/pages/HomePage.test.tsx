@@ -93,7 +93,7 @@ describe('HomePage client side', () => {
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })

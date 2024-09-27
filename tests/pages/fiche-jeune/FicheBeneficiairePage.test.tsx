@@ -1,13 +1,14 @@
 import { act, screen } from '@testing-library/react'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
+  unBeneficiaireChat,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
@@ -18,6 +19,7 @@ import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { CurrentConversation } from 'utils/chat/currentConversationContext'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
@@ -33,14 +35,15 @@ describe('FicheBeneficiairePage client side', () => {
   describe('pour tous les conseillers', () => {
     it('modifie le currentJeune', async () => {
       // Given
-      const setIdJeune = jest.fn()
-      const jeune = unDetailBeneficiaire()
+      const setCurrentConversation = jest.fn()
+      const beneficiaire = unDetailBeneficiaire()
+      const conversation = unBeneficiaireChat({ ...beneficiaire })
 
       // When
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            beneficiaire={jeune}
+            beneficiaire={beneficiaire}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -48,23 +51,29 @@ describe('FicheBeneficiairePage client side', () => {
             lectureSeule={false}
           />,
           {
-            customCurrentJeune: { idSetter: setIdJeune },
-            customConseiller: { id: jeune.idConseiller },
+            customChats: [conversation],
+            customCurrentConversation: { setter: setCurrentConversation },
+            customConseiller: { id: beneficiaire.idConseiller },
           }
         )
       })
 
       // Then
-      expect(setIdJeune).toHaveBeenCalledWith('beneficiaire-1')
+      expect(setCurrentConversation).toHaveBeenCalledWith({
+        conversation,
+        shouldFocusOnRender: false,
+      })
     })
   })
 
   describe('pour les conseillers non référent', () => {
     let container: HTMLElement
-    let setIdJeune: (id: string | undefined) => void
+    let setCurrentConversation: Dispatch<
+      SetStateAction<CurrentConversation | undefined>
+    >
     beforeEach(async () => {
       // Given
-      setIdJeune = jest.fn()
+      setCurrentConversation = jest.fn()
 
       // When
       await act(async () => {
@@ -79,7 +88,7 @@ describe('FicheBeneficiairePage client side', () => {
           />,
           {
             customConseiller: { id: 'fake-id' },
-            customCurrentJeune: { idSetter: setIdJeune },
+            customCurrentConversation: { setter: setCurrentConversation },
           }
         ))
       })
@@ -92,7 +101,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('ne modifie pas le currentJeune', async () => {
       //Then
-      expect(setIdJeune).not.toHaveBeenCalled()
+      expect(setCurrentConversation).not.toHaveBeenCalled()
     })
 
     it('restreint l‘accès aux boutons', async () => {
@@ -216,11 +225,11 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('a11y', async () => {
       let results: AxeResults
-      const container = await renderFicheJeune(
+      const container = await renderFicheJeune({
         metadonneesFavoris,
         offresFT,
-        recherchesFT
-      )
+        recherchesFT,
+      })
 
       await act(async () => {
         results = await axe(container)
@@ -231,7 +240,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -241,7 +250,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -253,7 +262,7 @@ describe('FicheBeneficiairePage client side', () => {
       metadonneesFavoris.autoriseLePartage = false
 
       //When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(screen.getByText(/Emplois/)).toBeInTheDocument()
@@ -295,34 +304,15 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers départementaux', () => {
-    let offresFT: Offre[],
-      recherchesFT: Recherche[],
-      metadonneesFavoris: MetadonneesFavoris
-    beforeEach(async () => {
-      //Given
-      metadonneesFavoris = uneMetadonneeFavoris()
-      offresFT = uneListeDOffres()
-      recherchesFT = uneListeDeRecherches()
-    })
-
     it('affiche un message pour la récupération des démarches', async () => {
+      //Given
       //When
-      await renderWithContexts(
-        <FicheBeneficiairePage
-          beneficiaire={unDetailBeneficiaire()}
-          rdvs={[]}
-          actionsInitiales={desActionsInitiales()}
-          categoriesActions={desCategories()}
-          lectureSeule={false}
-          metadonneesFavoris={metadonneesFavoris}
-          offresFT={offresFT}
-          recherchesFT={recherchesFT}
-          demarches={[]}
-        />,
-        {
-          customConseiller: { structure: StructureConseiller.CONSEIL_DEPT },
-        }
-      )
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
 
       //Then
       expect(
@@ -365,12 +355,19 @@ describe('FicheBeneficiairePage client side', () => {
   })
 })
 
-async function renderFicheJeune(
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[],
+async function renderFicheJeune({
+  lectureSeule,
+  metadonneesFavoris,
+  offresFT,
+  recherchesFT,
+  structure,
+}: {
+  metadonneesFavoris: MetadonneesFavoris
+  offresFT: Offre[]
+  recherchesFT: Recherche[]
   lectureSeule?: boolean
-): Promise<HTMLElement> {
+  structure?: StructureConseiller
+}): Promise<HTMLElement> {
   let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
@@ -381,13 +378,15 @@ async function renderFicheJeune(
         categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={lectureSeule ?? false}
-        metadonneesFavoris={metadonnees}
+        metadonneesFavoris={metadonneesFavoris}
         offresFT={offresFT}
         recherchesFT={recherchesFT}
         demarches={[]}
       />,
       {
-        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customConseiller: {
+          structure: structure ?? StructureConseiller.POLE_EMPLOI,
+        },
       }
     ))
   })

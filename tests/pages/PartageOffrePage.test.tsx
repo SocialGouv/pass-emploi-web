@@ -44,7 +44,7 @@ describe('PartageOffrePage client side', () => {
       ;({ container } = renderWithContexts(
         <PartageOffrePage offre={offre} returnTo='/return/to' />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
         }
       ))
     })

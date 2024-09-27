@@ -21,7 +21,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
@@ -41,7 +41,8 @@ type ConversationProps = {
   beneficiaireNomComplet: string
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
-  beneficiaireChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireEtChat
+  shouldFocusOnFirstRender: boolean
   toggleAfficherRecherche: () => void
 }
 
@@ -50,6 +51,7 @@ export function Conversation({
   onBack,
   getConseillerNomComplet,
   beneficiaireChat,
+  shouldFocusOnFirstRender,
   toggleAfficherRecherche,
 }: ConversationProps) {
   const chatCredentials = useChatCredentials()
@@ -291,7 +293,7 @@ export function Conversation({
   useEffect(() => {
     if (!messagesByDay?.length) {
       headerChatRef.current!.querySelector<HTMLButtonElement>('button')!.focus()
-    } else if (nombrePagesChargees === 1) {
+    } else if (nombrePagesChargees === 1 && shouldFocusOnFirstRender) {
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
       const lastMessage =
         dernierJour!.querySelector<HTMLLIElement>('li:last-child')

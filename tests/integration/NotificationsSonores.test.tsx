@@ -11,7 +11,7 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import {
   BaseBeneficiaire,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
 import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
@@ -32,7 +32,7 @@ global.Audio = class FakeAudio {
 }
 
 describe('Intégration notifications sonores', () => {
-  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   const jeunes: BeneficiaireFromListe[] = desItemsBeneficiaires()
 
   beforeEach(async () => {
@@ -117,7 +117,7 @@ async function toggleNotifications() {
 }
 
 async function unNouveauMessageArrive(
-  updateChatsRef: (chat: BeneficiaireChat[]) => void,
+  updateChatsRef: (chat: BeneficiaireEtChat[]) => void,
   jeunes: BeneficiaireFromListe[]
 ) {
   await act(async () => {

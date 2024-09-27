@@ -63,7 +63,7 @@ describe('Cloture Session', () => {
         returnTo='/agenda/sessions/id-session'
       />,
       {
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     ))
   })

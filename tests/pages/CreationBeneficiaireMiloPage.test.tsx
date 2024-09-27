@@ -85,7 +85,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
       ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />, {
-        customAlerte: { alerteSetter: setAlerte },
+        customAlerte: { setter: setAlerte },
         customPortefeuille: { setter: setPortefeuille },
       }))
 

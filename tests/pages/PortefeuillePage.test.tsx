@@ -163,7 +163,7 @@ describe('PortefeuillePage client side', () => {
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
           {
             customConseiller: conseiller,
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })

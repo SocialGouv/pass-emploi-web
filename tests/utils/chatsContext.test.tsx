@@ -7,7 +7,7 @@ import {
   extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -23,7 +23,7 @@ global.Audio = class FakeAudio {
 }
 
 describe('ChatsProvider', () => {
-  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
   const conversations = [
     unBeneficiaireChat({

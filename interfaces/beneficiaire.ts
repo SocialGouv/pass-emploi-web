@@ -107,7 +107,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export type BeneficiaireChat = BaseBeneficiaire & Chat
+export type BeneficiaireEtChat = BaseBeneficiaire & Chat
 
 export interface DossierMilo {
   id: string
@@ -183,8 +183,8 @@ export function compareBeneficiairesBySituationDesc(
 }
 
 export function compareBeneficiaireChat(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ) {
   return (
     comparerParMessageNonLu(a, b) ||
@@ -232,8 +232,8 @@ export function compareParId(idA: string, idB: string): number {
 }
 
 function comparerParMessageNonLu(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ): number {
   if (a.seenByConseiller && !b.seenByConseiller) return 1
   if (!a.seenByConseiller && b.seenByConseiller) return -1
@@ -241,15 +241,15 @@ function comparerParMessageNonLu(
 }
 
 function comparerParConversationSuivie(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ): number {
   if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
   if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
   return 0
 }
 
-function comparerParDate(a: BeneficiaireChat, b: BeneficiaireChat): number {
+function comparerParDate(a: BeneficiaireEtChat, b: BeneficiaireEtChat): number {
   if (a.lastMessageSentAt && b.lastMessageSentAt) {
     return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
   }

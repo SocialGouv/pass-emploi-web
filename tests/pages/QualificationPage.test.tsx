@@ -56,7 +56,7 @@ describe('QualificationPage client side', () => {
         returnToListe='/pilotage'
       />,
       {
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     ))
   })

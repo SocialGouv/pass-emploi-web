@@ -12,7 +12,7 @@ import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import {
   BaseBeneficiaire,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   ConseillerHistorique,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -34,10 +34,10 @@ describe('MessageriePage client side', () => {
   const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
-  let beneficiairesChats: BeneficiaireChat[]
+  let beneficiairesChats: BeneficiaireEtChat[]
 
   let conseillers: ConseillerHistorique[]
-  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   let messages: ByDay<MessageListeDiffusion>[]
 
   beforeEach(async () => {

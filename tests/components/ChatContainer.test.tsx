@@ -11,7 +11,7 @@ import {
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   BaseBeneficiaire,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   ConseillerHistorique,
 } from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
@@ -24,7 +24,7 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>
   // eslint-disable-next-line react/display-name
-  ({ beneficiaireChat }: { beneficiaireChat: BeneficiaireChat }) => (
+  ({ beneficiaireChat }: { beneficiaireChat: BeneficiaireEtChat }) => (
     <>conversation-{beneficiaireChat.id}</>
   )
 )
@@ -34,7 +34,7 @@ describe('<ChatContainer />', () => {
   const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
-  let beneficiairesChats: BeneficiaireChat[]
+  let beneficiairesChats: BeneficiaireEtChat[]
 
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
@@ -68,13 +68,9 @@ describe('<ChatContainer />', () => {
     it('affiche la messagerie', async () => {
       // When
       await act(async () => {
-        renderWithContexts(
-          <ChatContainer
-            beneficiairesChats={beneficiairesChats}
-            menuState={[false, () => {}]}
-          />,
-          {}
-        )
+        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+          customChats: beneficiairesChats,
+        })
       })
 
       // Then
@@ -91,15 +87,15 @@ describe('<ChatContainer />', () => {
     beforeEach(async () => {
       // When
       await act(async () => {
-        renderWithContexts(
-          <ChatContainer
-            beneficiairesChats={beneficiairesChats}
-            menuState={[false, () => {}]}
-          />,
-          {
-            customCurrentJeune: { id: beneficiaires[2].id },
-          }
-        )
+        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+          customChats: beneficiairesChats,
+          customCurrentConversation: {
+            value: {
+              conversation: beneficiairesChats[2],
+              shouldFocusOnRender: true,
+            },
+          },
+        })
       })
     })
 
@@ -124,13 +120,9 @@ describe('<ChatContainer />', () => {
   describe('listes de diffusion', () => {
     beforeEach(async () => {
       await act(async () => {
-        renderWithContexts(
-          <ChatContainer
-            beneficiairesChats={[]}
-            menuState={[false, () => {}]}
-          />,
-          {}
-        )
+        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+          customChats: [],
+        })
       })
     })
 
