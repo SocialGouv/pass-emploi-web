@@ -87,10 +87,11 @@ export function Conversation({
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
+  const headerChatRef = useRef<HTMLDivElement>(null)
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
-  const addFileRef = useRef<HTMLInputElement>(null)
-  const deleteFileRef = useRef<HTMLButtonElement>(null)
+  const addFileRef = useRef<HTMLInputElement | null>(null)
+  const deleteFileRef = useRef<HTMLButtonElement | null>(null)
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -288,25 +289,26 @@ export function Conversation({
   }, [beneficiaireChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (messagesByDay?.length && nombrePagesChargees === 1) {
+    if (!messagesByDay?.length) {
+      headerChatRef.current!.querySelector<HTMLButtonElement>('button')!.focus()
+    } else if (nombrePagesChargees === 1) {
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
-      const lastMessage = dernierJour!.querySelector('li:last-child')
+      const lastMessage =
+        dernierJour!.querySelector<HTMLLIElement>('li:last-child')
 
-      lastMessage!.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      lastMessage!.setAttribute('tabIndex', '-1')
+      lastMessage!.focus()
     }
   }, [messagesByDay, nombrePagesChargees])
 
   useEffect(() => {
+    if (uploadedFileInfo) deleteFile()
+    resetTextbox()
     const unsubscribe = observeJeuneReadingDate(
       beneficiaireChat.chatId,
       setLastSeenByJeune
     )
     return () => unsubscribe()
-  }, [beneficiaireChat.chatId])
-
-  useEffect(() => {
-    if (uploadedFileInfo) deleteFile()
-    resetTextbox()
   }, [beneficiaireChat.chatId])
 
   useEffect(() => {
@@ -317,6 +319,7 @@ export function Conversation({
   return (
     <>
       <HeaderChat
+        ref={headerChatRef}
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
         titre={

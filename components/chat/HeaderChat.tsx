@@ -1,27 +1,30 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ForwardedRef, forwardRef, ReactElement, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-export default function HeaderChat({
-  labelRetour,
-  onBack,
-  onPermuterBookMark,
-  isFlaggedByConseiller,
-  onLancerRecherche,
-  titre,
-  onPermuterVisibiliteMessagerie,
-  messagerieEstVisible,
-}: {
-  onBack: () => void
-  labelRetour: string
-  messagerieEstVisible: boolean
-  afficherBlurBtn?: boolean
-  titre: string | ReactElement
-  isFlaggedByConseiller?: boolean
-  onPermuterVisibiliteMessagerie: () => void
-  onPermuterBookMark?: () => void
-  onLancerRecherche?: () => void
-}) {
+function HeaderChat(
+  {
+    labelRetour,
+    onBack,
+    onPermuterBookMark,
+    isFlaggedByConseiller,
+    onLancerRecherche,
+    titre,
+    onPermuterVisibiliteMessagerie,
+    messagerieEstVisible,
+  }: {
+    onBack: () => void
+    labelRetour: string
+    messagerieEstVisible: boolean
+    afficherBlurBtn?: boolean
+    titre: string | ReactElement
+    isFlaggedByConseiller?: boolean
+    onPermuterVisibiliteMessagerie: () => void
+    onPermuterBookMark?: () => void
+    onLancerRecherche?: () => void
+  },
+  ref: ForwardedRef<HTMLDivElement>
+) {
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
 
@@ -51,7 +54,7 @@ export default function HeaderChat({
       : { label: 'Suivre la conversation', icon: IconName.BookmarkOutline })
 
   return (
-    <div className='items-center mx-4 my-6 short:hidden'>
+    <div className='items-center mx-4 my-6 short:hidden' ref={ref}>
       <div className='pb-3 flex items-center justify-between'>
         <button
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
@@ -151,3 +154,5 @@ export default function HeaderChat({
     </div>
   )
 }
+
+export default forwardRef(HeaderChat)
