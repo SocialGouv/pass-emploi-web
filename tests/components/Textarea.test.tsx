@@ -6,18 +6,18 @@ import Textarea from 'components/ui/Form/Textarea'
 describe('<Textarea>', () => {
   it('compte le nombre de caractères', async () => {
     // Given
-    render(<Textarea id='id' onChange={() => {}} maxLength={250} />)
+    render(<Textarea id='id' onChange={() => {}} maxLength={500} />)
     const textarea = screen.getByRole('textbox')
 
     // When
-    await userEvent.type(textarea, 'a'.repeat(300))
+    await userEvent.type(textarea, 'a'.repeat(500))
     await waitForDebounce(500)
 
     // Then
     expect(textarea).toHaveAccessibleDescription(
-      '250 sur 250 caractères autorisés'
+      '500 sur 500 caractères autorisés'
     )
-    expect(screen.getByText('250 / 250')).toBeInTheDocument()
+    expect(screen.getByText('500 / 500')).toBeInTheDocument()
   })
 
   it('permet de dépasser le maximum de caractères', async () => {

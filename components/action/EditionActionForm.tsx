@@ -81,7 +81,7 @@ export function EditionActionForm({
     ValueWithError<string | undefined>
   >({ value: dateFinReelle })
 
-  const INPUT_MAX_LENGTH = 250
+  const INPUT_MAX_LENGTH = 500
 
   const optionsTitre = actionsPredefinies.concat({
     id: 'autre',
