@@ -9,7 +9,10 @@ import {
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
-import { ConseillerHistorique, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  ConseillerHistorique,
+} from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
@@ -74,6 +77,7 @@ describe('<ConversationBeneficiaire />', () => {
           beneficiaireChat={beneficiaireChat}
           conseillers={conseillersBeneficiaires}
           onBack={jest.fn()}
+          shouldFocusOnFirstRender={false}
         />
       )
       rerender = renderResult.rerender
@@ -173,6 +177,7 @@ describe('<ConversationBeneficiaire />', () => {
         beneficiaireChat={newBeneficiaireChat}
         conseillers={conseillersBeneficiaires}
         onBack={jest.fn()}
+        shouldFocusOnFirstRender={false}
       />
     )
     // Then

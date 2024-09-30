@@ -23,7 +23,12 @@ import IllustrationComponent, {
 import SpinningLoader from 'components/ui/SpinningLoader'
 import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { ByDay, fromConseiller, Message } from 'interfaces/message'
+import {
+  ByDay,
+  fromConseiller,
+  getPreviousItemId,
+  Message,
+} from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
   modifierMessage as _modifierMessage,
@@ -243,11 +248,25 @@ export function Conversation({
   }
 
   async function supprimerMessage(message: Message) {
+    const idMessageToFocus = getPreviousItemId(message, messagesByDay!)
+
     await _supprimerMessage(
       beneficiaireChat.chatId,
       message,
       chatCredentials!.cleChiffrement
     )
+
+    if (idMessageToFocus) {
+      const messageToFocus = document.querySelector<HTMLLIElement>(
+        'li#message-' + idMessageToFocus
+      )!
+      messageToFocus.setAttribute('tabIndex', '-1')
+      messageToFocus.focus()
+    } else {
+      document
+        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')!
+        .focus()
+    }
 
     trackEvent({
       structure: conseiller.structure,

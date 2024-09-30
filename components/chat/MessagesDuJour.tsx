@@ -10,6 +10,7 @@ import {
   modifierMessage as _modifierMessage,
   supprimerMessage as _supprimerMessage,
 } from 'services/messages.service'
+import { getPreviousItemId } from 'utils/algo'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -69,6 +70,10 @@ export default function MessagesDuJour({
   }
 
   async function supprimerMessage(messageASupprimer: Message) {
+    const idMessageToFocus = getPreviousItemId(
+      messageASupprimer,
+      messagesDuJour
+    )
     const messageSupprime = await _supprimerMessage(
       conversation.chatId,
       messageASupprimer,
@@ -82,11 +87,23 @@ export default function MessagesDuJour({
       nom: '',
       aDesBeneficiaires: true,
     })
+
     setMessagesDuJour((messages) => {
       const index = messages.findIndex(({ id }) => id === messageSupprime.id)
       messages[index] = messageSupprime
       return [...messages]
     })
+    if (idMessageToFocus) {
+      const messageToFocus = document.querySelector<HTMLLIElement>(
+        'li#message-' + idMessageToFocus
+      )!
+      messageToFocus.setAttribute('tabIndex', '-1')
+      messageToFocus.focus()
+    } else {
+      document
+        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')
+        ?.focus()
+    }
   }
 
   useEffect(() => {

@@ -57,6 +57,7 @@ function HeaderChat(
     <div className='items-center mx-4 my-6 short:hidden' ref={ref}>
       <div className='pb-3 flex items-center justify-between'>
         <button
+          id='chat-bouton-retour'
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
           aria-label={labelRetour}
           onClick={onBack}
