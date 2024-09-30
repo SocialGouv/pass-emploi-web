@@ -9,11 +9,7 @@ import {
   BeneficiaireFromListe,
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  estConseilDepartemental,
-  estPassEmploi,
-} from 'interfaces/conseiller'
+import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -36,10 +32,7 @@ export default function AppContextProviders({
     .map(extractBaseBeneficiaire)
     .sort(compareBeneficiairesByNom)
 
-  const theme =
-    estPassEmploi(conseiller) || estConseilDepartemental(conseiller)
-      ? 'darker'
-      : 'neutral'
+  const theme = estPassEmploi(conseiller) ? 'darker' : 'neutral'
 
   apm.setUserContext({
     id: conseiller.id,
