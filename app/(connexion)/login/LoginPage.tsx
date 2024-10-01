@@ -144,7 +144,9 @@ function LoginPage({
                 label='Connexion Conseil départemental'
                 className='whitespace-nowrap'
                 style={ButtonStyle.PRIMARY_DARK}
-                handleSubmit={(event) => handleSignin(event, 'conseiller-dept')}
+                handleSubmit={(event) =>
+                  handleSignin(event, 'conseildepartemental-conseiller')
+                }
               />
             </li>
           )}

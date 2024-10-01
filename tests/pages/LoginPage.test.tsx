@@ -144,7 +144,7 @@ describe('LoginPage client side', () => {
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
         { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'conseiller-dept' }
+        { kc_idp_hint: 'conseildepartemental-conseiller' }
       )
     })
 
