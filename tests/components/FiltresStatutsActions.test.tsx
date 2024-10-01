@@ -1,17 +1,15 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
+import FiltresStatuts from 'components/action/FiltresStatuts'
 import { StatutAction } from 'interfaces/action'
 
-describe('FiltresStatutsAction', () => {
+describe('FiltresStatuts', () => {
   let filtrerActions: (statutsSelectionnes: StatutAction[]) => void
   beforeEach(async () => {
     // Given
     filtrerActions = jest.fn()
-    render(
-      <FiltresStatutsActions defaultValue={[]} onFiltres={filtrerActions} />
-    )
+    render(<FiltresStatuts defaultValue={[]} onFiltres={filtrerActions} />)
 
     // When
     await userEvent.click(screen.getByText('Statut'))

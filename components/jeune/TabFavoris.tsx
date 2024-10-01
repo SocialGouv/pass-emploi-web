@@ -62,7 +62,7 @@ export function TabFavoris({
   return (
     <>
       <TabList
-        label={`Offres et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
+        label={`${conseillerEstCD ? 'Démarches ainsi que les' : ''} offres et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
         className='mt-10'
       >
         {estConseilDepartemental(conseiller) && demarches && (

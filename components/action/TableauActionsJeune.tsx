@@ -3,8 +3,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
-import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
+import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
+import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
@@ -277,10 +278,14 @@ export default function TableauActionsJeune({
                   />
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresStatutsActions
+                  <FiltresStatuts
                     ref={filtresStatutRef}
                     defaultValue={statutsValides}
                     onFiltres={filtrerActionsParStatuts}
+                    statuts={Object.keys(StatutAction)}
+                    entites='actions'
+                    propsStatuts={propsStatutsActions}
+                    typeEstAction={true}
                   />
                 </TH>
                 <TH>Voir le détail</TH>

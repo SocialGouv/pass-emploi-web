@@ -619,11 +619,16 @@ function FicheBeneficiairePage({
             offresFT &&
             recherchesFT && (
               <>
-                <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
-                <p className='text-base-regular'>
-                  Retrouvez les offres et recherches que votre bénéficiaire a
-                  mises en favoris.
-                </p>
+                {!estConseilDepartemental(conseiller) && (
+                  <>
+                    <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+                    <p className='text-base-regular'>
+                      Retrouvez les offres et recherches que votre bénéficiaire
+                      a mises en favoris.
+                    </p>
+                  </>
+                )}
+
                 <TabFavoris
                   beneficiaire={beneficiaire}
                   demarches={demarches}
