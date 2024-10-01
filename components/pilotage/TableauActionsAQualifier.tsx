@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRowPilotage from 'components/action/ActionRowPilotage'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
+import FiltresCategories from 'components/action/FiltresCategories'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
@@ -251,10 +251,11 @@ export default function TableauActionsAQualifier({
               </TH>
               <TH>Titre de l’action</TH>
               <TH estCliquable={true}>
-                <FiltresCategoriesActions
+                <FiltresCategories
                   ref={filtresRef}
                   categories={categories}
                   defaultValue={categoriesValidees}
+                  entites='actions'
                   onFiltres={filtrerActionsParCategorie}
                 />
               </TH>

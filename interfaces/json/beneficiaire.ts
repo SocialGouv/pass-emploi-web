@@ -17,12 +17,6 @@ export enum StatutDemarche {
   ANNULEE = 'ANNULEE',
 }
 
-export interface AttributDemarche {
-  label: string
-  valeur: string | number
-  cle: string
-}
-
 interface Situation {
   etat: string
   categorie: string

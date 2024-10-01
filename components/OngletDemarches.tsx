@@ -1,13 +1,19 @@
+import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
+import FiltresCategories from 'components/action/FiltresCategories'
 import FiltresStatuts from 'components/action/FiltresStatuts'
+import { TRI } from 'components/action/OngletActions'
+import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
 import TagStatutDemarche from 'components/action/TagStatutDemarche'
 import EmptyState from 'components/EmptyState'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { TagCategorie } from 'components/ui/Indicateurs/Tag'
+import SortIcon from 'components/ui/SortIcon'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
@@ -17,13 +23,6 @@ import TR from 'components/ui/Table/TR'
 import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { compareDates, compareDatesDesc, toLongMonthDate } from 'utils/date'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { StatutAction } from 'interfaces/action'
-import propsStatutsActions from 'components/action/propsStatutsActions'
-import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
-import SortIcon from 'components/ui/SortIcon'
-import { TRI } from 'components/action/OngletActions'
-import { DateTime } from 'luxon'
 
 interface OngletDemarchesProps {
   demarches: Demarche[]
@@ -62,15 +61,43 @@ function TableauDemarche({
   beneficiaire: BaseBeneficiaire
 }) {
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
-  const [filtreStatut, setFiltreStatut] = useState<StatutDemarche[]>()
+  const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
+  const stateChanged = useRef<boolean>(false)
+
+  const [filtreStatut, setFiltreStatut] = useState<string[]>([])
+  const [filtreCategories, setFiltreCategories] = useState<string[]>([])
   const [demarchesAffichees, setDemarchesAffichees] =
     useState<Demarche[]>(demarches)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
 
-  const stateChanged = useRef<boolean>(false)
+  const categories = genererCategories()
 
-  function filtrerDemarchesParStatuts(statutsSelectionnes: StatutDemarche[]) {
+  function genererCategories() {
+    const categoriesLabels = Array.from(
+      new Set(demarches.map((demarche) => demarche.label))
+    )
+
+    return categoriesLabels.map((categorie) => ({
+      code: categorieCodeToId(categorie),
+      label: categorie,
+    }))
+  }
+
+  function categorieCodeToId(label: string) {
+    return label
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]/g, '')
+  }
+
+  function filtrerDemarchesParCategorie(categoriesSelectionnees: string[]) {
+    setFiltreCategories(categoriesSelectionnees)
+    filtresCategoriesRef.current!.focus()
+    stateChanged.current = true
+  }
+
+  function filtrerDemarchesParStatuts(statutsSelectionnes: string[]) {
     setFiltreStatut(statutsSelectionnes)
     filtresStatutRef.current!.focus()
     stateChanged.current = true
@@ -101,15 +128,34 @@ function TableauDemarche({
     return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
   }
 
+  function reinitialiserFiltres() {
+    setFiltreCategories([])
+    setFiltreStatut([])
+  }
+
   useEffect(() => {
     if (stateChanged.current) {
       setIsLoading(true)
-      const demarchesFiltreesParStatut = filtreStatut
-        ? demarches.filter((demarche) =>
-            filtreStatut?.includes(demarche.statut)
-          )
-        : demarches
-      const demarchesTriee = demarchesFiltreesParStatut.sort(
+      const labelsCategoriesSelectionnees = filtreCategories
+        .map(
+          (categorieSelectionnee) =>
+            categories.find((c) => c.code === categorieSelectionnee)?.label
+        )
+        .filter((e) => e !== undefined)
+
+      const demarchesFiltreesParCategorie =
+        filtreCategories.length > 0
+          ? demarches.filter((demarche) =>
+              labelsCategoriesSelectionnees.includes(demarche.label)
+            )
+          : demarches
+      const demarchesFiltreesParStatut =
+        filtreStatut?.length > 0
+          ? demarchesFiltreesParCategorie.filter((demarche) =>
+              filtreStatut?.includes(demarche.statut)
+            )
+          : demarchesFiltreesParCategorie
+      const demarchesTrieesEtFiltrees = demarchesFiltreesParStatut.sort(
         (demarche1, demarche2) => {
           const dateFin1 = DateTime.fromISO(demarche1.dateFin)
           const dateFin2 = DateTime.fromISO(demarche2.dateFin)
@@ -119,15 +165,36 @@ function TableauDemarche({
         }
       )
 
-      setDemarchesAffichees(demarchesTriee)
+      setDemarchesAffichees(demarchesTrieesEtFiltrees)
 
       setIsLoading(false)
     }
-  }, [tri, filtreStatut])
+  }, [tri, filtreStatut, filtreCategories])
 
   return (
     <>
       {isLoading && <SpinningLoader alert={true} />}
+
+      {demarchesAffichees.length === 0 && (
+        <div className='flex flex-col justify-center'>
+          <IllustrationComponent
+            name={IllustrationName.Search}
+            focusable={false}
+            aria-hidden={true}
+            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
+          />
+          <p className='text-base-bold text-center'>Aucun résultat.</p>
+          <p className='text-center'>Modifiez vos filtres.</p>
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            onClick={reinitialiserFiltres}
+            className='mx-auto mt-8'
+          >
+            Réinitialiser les filtres
+          </Button>
+        </div>
+      )}
 
       {!isLoading && demarchesAffichees.length > 0 && (
         <Table
@@ -153,7 +220,15 @@ function TableauDemarche({
                   />
                 </button>
               </TH>
-              <TH>Catégorie</TH>
+              <TH estCliquable={true}>
+                <FiltresCategories
+                  ref={filtresCategoriesRef}
+                  categories={categories}
+                  defaultValue={filtreCategories}
+                  entites='démarches'
+                  onFiltres={filtrerDemarchesParCategorie}
+                />
+              </TH>
               <TH estCliquable={true}>
                 <FiltresStatuts
                   ref={filtresStatutRef}

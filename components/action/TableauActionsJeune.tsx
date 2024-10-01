@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
+import FiltresCategories from 'components/action/FiltresCategories'
 import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
@@ -30,7 +30,7 @@ interface TableauActionsJeuneProps {
   actionsFiltrees: Action[]
   isLoading: boolean
   onFiltres: (
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
+    filtres: Array<{ colonne: 'categories' | 'statuts'; values: string[] }>
   ) => void
   onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
@@ -54,7 +54,7 @@ export default function TableauActionsJeune({
 }: TableauActionsJeuneProps) {
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
-  const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
+  const [statutsValides, setStatutsValides] = useState<string[]>([])
   const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
 
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
@@ -110,7 +110,7 @@ export default function TableauActionsJeune({
     ])
   }
 
-  function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
+  function filtrerActionsParStatuts(statutsSelectionnes: string[]) {
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
     onFiltres([
@@ -270,10 +270,11 @@ export default function TableauActionsJeune({
                   </button>
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresCategoriesActions
+                  <FiltresCategories
                     ref={filtresCategoriesRef}
                     categories={categories}
                     defaultValue={categoriesValidees}
+                    entites='actions'
                     onFiltres={filtrerActionsParCategorie}
                   />
                 </TH>
@@ -285,7 +286,6 @@ export default function TableauActionsJeune({
                     statuts={Object.keys(StatutAction)}
                     entites='actions'
                     propsStatuts={propsStatutsActions}
-                    typeEstAction={true}
                   />
                 </TH>
                 <TH>Voir le détail</TH>

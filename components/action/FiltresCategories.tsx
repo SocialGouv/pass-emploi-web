@@ -15,11 +15,17 @@ import { SituationNonProfessionnelle } from 'interfaces/action'
 type FiltresCategoriesActionsProps = {
   categories: SituationNonProfessionnelle[]
   defaultValue: string[]
+  entites: string
   onFiltres: (categoriesSelectionnees: string[]) => void
 }
 
-function FiltresCategoriesActions(
-  { categories, defaultValue, onFiltres }: FiltresCategoriesActionsProps,
+function FiltresCategories(
+  {
+    categories,
+    defaultValue,
+    entites,
+    onFiltres,
+  }: FiltresCategoriesActionsProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
@@ -72,7 +78,7 @@ function FiltresCategoriesActions(
         aria-controls='filtres-categories'
         aria-expanded={afficherFiltres}
         onClick={() => setAfficherFiltres(!afficherFiltres)}
-        title='Filtrer les actions par catégorie'
+        title={`Filtrer les ${entites} par catégorie`}
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
       >
@@ -80,7 +86,7 @@ function FiltresCategoriesActions(
         <IconComponent
           name={IconName.Filter}
           role='img'
-          aria-label='Filtrer les actions'
+          aria-label={`Filtrer les ${entites}`}
           className='h-6 w-6 fill-primary'
         />
         {categoriesSelectionnees.length > 0 && (
@@ -118,4 +124,4 @@ function FiltresCategoriesActions(
   )
 }
 
-export default forwardRef(FiltresCategoriesActions)
+export default forwardRef(FiltresCategories)

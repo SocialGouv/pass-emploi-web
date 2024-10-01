@@ -22,6 +22,7 @@ function FavorisPage({
 }: FavorisProps) {
   return (
     <TabFavoris
+      demarches={[]}
       beneficiaire={beneficiaire}
       offres={offres}
       recherches={recherches}

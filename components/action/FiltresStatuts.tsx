@@ -3,6 +3,7 @@ import React, {
   FormEvent,
   ForwardedRef,
   forwardRef,
+  ReactElement,
   useEffect,
   useState,
 } from 'react'
@@ -10,30 +11,36 @@ import React, {
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { StatutAction } from 'interfaces/action'
-import { StatutDemarche } from 'interfaces/json/beneficiaire'
 
-function FiltresStatuts<T extends StatutAction | StatutDemarche>(
+type FiltresStatutsProps = {
+  defaultValue: string[]
+  entites: string
+  propsStatuts: {
+    [key: string]: {
+      label: string
+      color: string
+      altColor: string
+    }
+  }
+  statuts: string[]
+  onFiltres: (statutsSelectionnes: string[]) => void
+}
+
+function FiltresStatuts(
   {
     defaultValue = [],
     propsStatuts,
     statuts,
     entites,
     onFiltres,
-  }: {
-    defaultValue: T[]
-    entites: string
-    propsStatuts: Record<T, { label: string; color: string; altColor: string }>
-    statuts: string[]
-    onFiltres: (statutsSelectionnes: T[]) => void
-  },
+  }: FiltresStatutsProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const [afficherFiltresStatuts, setAfficherFiltresStatuts] =
     useState<boolean>(false)
-  const [statutsSelectionnes, setStatutsSelectionnes] = useState<T[]>([])
+  const [statutsSelectionnes, setStatutsSelectionnes] = useState<string[]>([])
 
-  function renderFiltresStatuts(statut: T): JSX.Element {
+  function renderFiltresStatuts(statut: string): ReactElement {
     const id = `statut-${statut.toLowerCase()}`
     return (
       <label key={id} htmlFor={id} className='flex items-center pb-4'>
@@ -54,7 +61,7 @@ function FiltresStatuts<T extends StatutAction | StatutDemarche>(
   function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
     const statut = e.target.value
     if (statut === 'Tout sélectionner') setStatutsSelectionnes([])
-    else setStatutsSelectionnes([statut as T])
+    else setStatutsSelectionnes([statut])
   }
 
   function filtrer(e: FormEvent) {
@@ -124,7 +131,7 @@ function FiltresStatuts<T extends StatutAction | StatutDemarche>(
               />
               <span className='pl-5'>Tout sélectionner</span>
             </label>
-            {statuts.map((statut) => renderFiltresStatuts(statut as T))}
+            {statuts.map(renderFiltresStatuts)}
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider

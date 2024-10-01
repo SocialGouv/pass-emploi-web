@@ -3,13 +3,22 @@ import userEvent from '@testing-library/user-event'
 
 import FiltresStatuts from 'components/action/FiltresStatuts'
 import { StatutAction } from 'interfaces/action'
+import propsStatutsActions from 'components/action/propsStatutsActions'
 
 describe('FiltresStatuts', () => {
   let filtrerActions: (statutsSelectionnes: StatutAction[]) => void
   beforeEach(async () => {
     // Given
     filtrerActions = jest.fn()
-    render(<FiltresStatuts defaultValue={[]} onFiltres={filtrerActions} />)
+    render(
+      <FiltresStatuts
+        defaultValue={[]}
+        onFiltres={filtrerActions}
+        statuts={Object.keys(StatutAction)}
+        entites='actions'
+        propsStatuts={propsStatutsActions}
+      />
+    )
 
     // When
     await userEvent.click(screen.getByText('Statut'))
