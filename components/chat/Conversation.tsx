@@ -492,7 +492,7 @@ export function Conversation({
             className='p-3'
           >
             {uploadedFileError && (
-              <InputError id='piece-jointe--error'>
+              <InputError id='piece-jointe--error' ref={(e) => e?.focus()}>
                 {uploadedFileError}
               </InputError>
             )}
