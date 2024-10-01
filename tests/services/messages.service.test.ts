@@ -220,10 +220,10 @@ describe('MessagesFirebaseAndApiService', () => {
       onMessagesAntechronologiques = jest.fn()
 
       // When
-      await observeDerniersMessages(
+      observeDerniersMessages(
         idChat,
         cleChiffrement,
-        2,
+        { pages: 2, taillePage: 10 },
         onMessagesAntechronologiques
       )
     })

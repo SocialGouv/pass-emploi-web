@@ -71,7 +71,7 @@ export default function MessagesDuJour({
 
   async function supprimerMessage(messageASupprimer: Message) {
     const idMessageToFocus = getPreviousItemId(
-      messageASupprimer,
+      messageASupprimer.id,
       messagesDuJour
     )
     const messageSupprime = await _supprimerMessage(

@@ -161,13 +161,12 @@ export async function observeConseillerChats(
 export function observeDerniersMessages(
   idChat: string,
   cleChiffrement: string,
-  pages: number,
+  { pages, taillePage }: { pages: number; taillePage: number },
   onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
 ): () => void {
-  const NB_MESSAGES_PAR_PAGE = 10
   return observeDerniersMessagesDuChat(
     idChat,
-    pages * NB_MESSAGES_PAR_PAGE,
+    pages * taillePage,
     (messagesAntechronologiques: Message[]) => {
       const messagesGroupesParJour: ByDay<Message>[] = grouperMessagesParJour(
         [...messagesAntechronologiques].reverse(),

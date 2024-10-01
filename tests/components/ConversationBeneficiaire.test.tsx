@@ -89,7 +89,7 @@ describe('<ConversationBeneficiaire />', () => {
     expect(observeDerniersMessages).toHaveBeenCalledWith(
       beneficiaireChat.chatId,
       'cleChiffrement',
-      1,
+      { pages: 1, taillePage: 10 },
       expect.any(Function)
     )
   })
@@ -102,37 +102,18 @@ describe('<ConversationBeneficiaire />', () => {
       })
     )
 
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: 'Voir messages plus anciens',
-      })
-    )
-
     // Then
-    expect(unsubscribe).toHaveBeenCalledTimes(2)
+    expect(unsubscribe).toHaveBeenCalledTimes(1)
     expect(observeDerniersMessages).toHaveBeenCalledWith(
       beneficiaireChat.chatId,
       'cleChiffrement',
-      2,
-      expect.any(Function)
-    )
-
-    expect(observeDerniersMessages).toHaveBeenCalledWith(
-      beneficiaireChat.chatId,
-      'cleChiffrement',
-      3,
+      { pages: 2, taillePage: 10 },
       expect.any(Function)
     )
   })
 
   it('informe qu’il n’y a pas de messages plus anciens', async () => {
     // When
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: 'Voir messages plus anciens',
-      })
-    )
-
     await userEvent.click(
       screen.getByRole('button', {
         name: 'Voir messages plus anciens',

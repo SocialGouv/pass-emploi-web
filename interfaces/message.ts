@@ -90,18 +90,22 @@ export function fromConseiller(message: Message): boolean {
   return message.sentBy === UserType.CONSEILLER.toLowerCase()
 }
 
+export function countItems(days: ByDay<any>[]): number {
+  return days.reduce((count, { messages }) => count + messages.length, 0)
+}
+
 export function getPreviousItemId<T extends { id: string }>(
-  item: T,
-  days: ByDay<T>[]
+  idCible: string,
+  days: ByDay<T>[],
+  { orNext }: { orNext?: boolean } = {}
 ): string | undefined {
-  if (days.reduce((count, { messages }) => count + messages.length, 0) === 0)
-    return
+  if (countItems(days) === 0) return
 
   let indexDay = 0,
     indexItem = 0,
     day = days[indexDay]
   do {
-    if (day?.messages[indexItem]?.id === item.id) break
+    if (day?.messages[indexItem]?.id === idCible) break
 
     if (indexItem < day?.messages.length - 1) indexItem++
     else {
@@ -109,7 +113,7 @@ export function getPreviousItemId<T extends { id: string }>(
       indexItem = 0
     }
   } while (indexDay < days.length)
-  if (indexDay === days.length) return undefined // item non trouvé
+  if (indexDay === days.length) return // item non trouvé
 
   const indexPreviousItem = indexItem - 1
   if (indexPreviousItem >= 0) return day.messages[indexPreviousItem].id // item précédent dans le même jour
@@ -121,8 +125,10 @@ export function getPreviousItemId<T extends { id: string }>(
     indexPreviousDay--
   }
 
+  if (!orNext) return // pas d’item précédent
+
   const indexNextItem = indexItem + 1
-  if (indexNextItem < day.messages.length) return day.messages[indexNextItem].id // item suivant du même jour]
+  if (indexNextItem < day.messages.length) return day.messages[indexNextItem].id // item suivant du même jour
 
   let indexNextDay = indexDay + 1
   while (indexNextDay < days.length) {
@@ -130,6 +136,4 @@ export function getPreviousItemId<T extends { id: string }>(
     if (nextDay.messages.length) return nextDay.messages[0].id // premier item du 1er jour précédent avec des items
     indexNextDay++
   }
-
-  return undefined // un seul item dans la liste
 }
