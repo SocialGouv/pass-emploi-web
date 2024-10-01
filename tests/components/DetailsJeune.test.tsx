@@ -146,7 +146,7 @@ describe('<DetailsJeune>', () => {
             demarches={[]}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })
@@ -229,7 +229,7 @@ describe('<DetailsJeune>', () => {
             demarches={[]}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })

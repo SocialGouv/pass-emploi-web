@@ -118,6 +118,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
     message,
     conseillerNomComplet,
     isConseillerCourant,
+    highlight,
     isEnCoursDeModification,
   } = props
 
@@ -133,9 +134,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
 
       <TexteAvecLien
         texte={message.content}
-        highlight={
-          props.highlight?.key === 'content' ? props.highlight : undefined
-        }
+        highlight={highlight?.key === 'content' ? highlight : undefined}
       />
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
@@ -168,9 +167,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
             nom={nom}
             className='fill-primary'
             highlight={
-              props.highlight?.key === 'piecesJointes.nom'
-                ? props.highlight
-                : undefined
+              highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }
           />
         ))}

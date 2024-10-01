@@ -54,7 +54,7 @@ describe('ActionPage client side', () => {
           from='beneficiaire'
         />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
         }
       ))
     })
@@ -146,7 +146,7 @@ describe('ActionPage client side', () => {
           from='beneficiaire'
         />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
           customConseiller: { id: 'fake-id' },
         }
       ))
@@ -218,7 +218,7 @@ describe('ActionPage client side', () => {
             customConseiller: {
               structure: StructureConseiller.MILO,
             },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
 
@@ -246,7 +246,7 @@ describe('ActionPage client side', () => {
             customConseiller: {
               structure: StructureConseiller.MILO,
             },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
 
@@ -272,7 +272,7 @@ describe('ActionPage client side', () => {
               customConseiller: {
                 structure: StructureConseiller.MILO,
               },
-              customAlerte: { alerteSetter },
+              customAlerte: { setter: alerteSetter },
             }
           )
 
@@ -354,7 +354,7 @@ describe('ActionPage client side', () => {
             customConseiller: {
               structure: StructureConseiller.MILO,
             },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })
@@ -412,7 +412,7 @@ describe('ActionPage client side', () => {
             customConseiller: {
               structure: StructureConseiller.MILO,
             },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })

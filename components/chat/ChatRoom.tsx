@@ -7,7 +7,7 @@ import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import {
   FormNouveauMessageImportant,
   getMessageImportant,
@@ -24,11 +24,12 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  beneficiairesChats: BeneficiaireChat[] | undefined
+  beneficiairesChats: BeneficiaireEtChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
-  onAccesConversation: (idJeune: string) => void
+  onAccesConversation: (conversation: BeneficiaireEtChat) => void
+  idConversationToFocus?: string
 }
 
 export default function ChatRoom({
@@ -37,6 +38,7 @@ export default function ChatRoom({
   onOuvertureMenu,
   onAccesListesDiffusion,
   onAccesConversation,
+  idConversationToFocus,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -44,7 +46,7 @@ export default function ChatRoom({
 
   const listeConversationsRef = useRef<HTMLUListElement>(null)
 
-  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
+  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
@@ -329,6 +331,7 @@ export default function ChatRoom({
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}
+            idConversationToFocus={idConversationToFocus}
           />
         </>
       )}

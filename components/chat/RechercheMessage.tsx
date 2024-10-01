@@ -12,7 +12,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import {
   fromConseiller,
   Message,
@@ -24,7 +24,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 type RechercheMessageProps = {
   beneficiaireNomComplet: string
   getConseillerNomComplet: (message: Message) => string | undefined
-  beneficiaireChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireEtChat
   toggleAfficherRecherche: () => void
 }
 export function RechercheMessage({
@@ -100,6 +100,7 @@ function HeaderRechercheMessage({
   return (
     <button
       ref={ref}
+      id='chat-bouton-retour'
       className='m-4 border-none rounded-full bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
       aria-label='Retourner à la discussion'
       onClick={messageSelectionne ? onRetourMessage : onFermerRecherche}

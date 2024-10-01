@@ -51,7 +51,7 @@ describe('EnvoiMessageGroupePage client side', () => {
         returnTo='/mes-jeunes'
       />,
       {
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     ))
 

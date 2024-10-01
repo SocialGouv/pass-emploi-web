@@ -54,7 +54,7 @@ describe('Partage Recherche', () => {
           returnTo='/return/to'
         />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
         }
       ))
 

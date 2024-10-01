@@ -4,13 +4,13 @@ import Dot from 'components/ui/Dot'
 import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { toRelativeDateTime } from 'utils/date'
 
 interface ConversationTileProps {
   id: string
-  beneficiaireChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireEtChat
   onClick: () => void
   onToggleFlag: (flagged: boolean) => void
 }
@@ -43,6 +43,7 @@ export function ConversationTile({
   return (
     <div className='relative'>
       <button
+        id={id}
         className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
         aria-label={`Consulter vos messages avec ${beneficiaireFullname}`}
         onClick={onClick}

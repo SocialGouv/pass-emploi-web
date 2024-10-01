@@ -35,7 +35,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
     ;({ container } = renderWithContexts(
       <CreationBeneficiaireFranceTravailPage />,
       {
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
         customPortefeuille: { setter: portefeuilleSetter },
       }
     ))

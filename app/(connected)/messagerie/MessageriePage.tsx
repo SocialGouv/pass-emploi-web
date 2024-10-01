@@ -10,43 +10,41 @@ import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BeneficiaireChat, ConseillerHistorique } from 'interfaces/beneficiaire'
+import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChats } from 'utils/chat/chatsContext'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useCurrentConversation } from 'utils/chat/currentConversationContext'
 import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function MessageriePage() {
   const [portefeuille] = usePortefeuille()
-  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const chats = useChats()
+  const [currentConversation, setCurrentConversation] = useCurrentConversation()
+
   const [showRubriqueListesDeDiffusion] = useShowRubriqueListeDeDiffusion()
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
 
-  const [currentChat, setCurrentChat] = useState<BeneficiaireChat | undefined>()
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
   const [messageSelectionne, setMessageSelectionne] = useState<
     MessageListeDiffusion | undefined
   >()
 
   useEffect(() => {
-    if (idCurrentJeune) {
-      getConseillersDuJeuneClientSide(idCurrentJeune).then(
+    if (
+      currentConversation &&
+      !listeSelectionnee &&
+      !showRubriqueListesDeDiffusion
+    ) {
+      getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
-
-      if (chats) {
-        setCurrentChat(chats.find((chat) => chat.id === idCurrentJeune))
-      }
-    } else {
-      setCurrentChat(undefined)
     }
-  }, [idCurrentJeune, chats])
+  }, [currentConversation, chats])
 
   useMatomo('Messagerie', portefeuille.length > 0)
 
@@ -54,7 +52,7 @@ function MessageriePage() {
     <>
       {!showRubriqueListesDeDiffusion && (
         <>
-          {!currentChat && (
+          {!currentConversation && (
             <div className='flex flex-col justify-center items-center h-full'>
               <ConversationImage focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
@@ -63,11 +61,19 @@ function MessageriePage() {
             </div>
           )}
 
-          {currentChat && (
+          {currentConversation && (
             <div className='px-6 bg-grey_100 h-full min-h-0'>
               <ConversationBeneficiaire
-                onBack={() => setIdCurrentJeune(undefined)}
-                beneficiaireChat={currentChat}
+                onBack={() => {
+                  document
+                    .getElementById(
+                      'chat-' + currentConversation.conversation.id
+                    )
+                    ?.focus()
+                  setCurrentConversation(undefined)
+                }}
+                beneficiaireChat={currentConversation.conversation}
+                shouldFocusOnFirstRender={true}
                 conseillers={conseillers}
               />
             </div>

@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from 'react'
+import React, { ForwardedRef, forwardRef, useEffect } from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
@@ -8,12 +8,13 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 
 interface ListeConversationsProps {
-  conversations: BeneficiaireChat[] | undefined
+  conversations: BeneficiaireEtChat[] | undefined
   onToggleFlag: (idChat: string, flagged: boolean) => void
-  onSelectConversation: (idChat: string) => void
+  onSelectConversation: (conversation: BeneficiaireEtChat) => void
+  idConversationToFocus?: string
 }
 
 function ListeConversations(
@@ -21,9 +22,20 @@ function ListeConversations(
     conversations,
     onSelectConversation,
     onToggleFlag,
+    idConversationToFocus,
   }: ListeConversationsProps,
   ref: ForwardedRef<HTMLUListElement>
 ) {
+  useEffect(() => {
+    if (conversations?.length && idConversationToFocus) {
+      document
+        .querySelector<HTMLButtonElement>(
+          'button#chat-' + idConversationToFocus
+        )
+        ?.focus()
+    }
+  }, [conversations, idConversationToFocus])
+
   return (
     <>
       <div
@@ -58,12 +70,12 @@ function ListeConversations(
 
         {conversations && conversations.length > 0 && (
           <ul tabIndex={-1} ref={ref} className='px-4 pb-24'>
-            {conversations.map((beneficiaireChat: BeneficiaireChat) => (
+            {conversations.map((beneficiaireChat: BeneficiaireEtChat) => (
               <li key={`chat-${beneficiaireChat.id}`} className='mb-2'>
                 <ConversationTile
                   beneficiaireChat={beneficiaireChat}
                   id={`chat-${beneficiaireChat.id}`}
-                  onClick={() => onSelectConversation(beneficiaireChat.id)}
+                  onClick={() => onSelectConversation(beneficiaireChat)}
                   onToggleFlag={(flagged) =>
                     onToggleFlag(beneficiaireChat.chatId, flagged)
                   }

@@ -1,18 +1,22 @@
 import { render, RenderResult } from '@testing-library/react'
-import React, { ReactNode } from 'react'
+import React, { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { ChatsProvider } from 'utils/chat/chatsContext'
+import {
+  CurrentConversation,
+  CurrentConversationProvider,
+} from 'utils/chat/currentConversationContext'
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -26,13 +30,14 @@ export default function renderWithContexts(
       value: BaseBeneficiaire[]
       setter: (portefeuille: BaseBeneficiaire[]) => void
     }>
-    customCurrentJeune?: Partial<{
-      id: string
-      idSetter: (id: string | undefined) => void
+    customChats?: BeneficiaireEtChat[]
+    customCurrentConversation?: Partial<{
+      value: CurrentConversation
+      setter: Dispatch<SetStateAction<CurrentConversation | undefined>>
     }>
     customAlerte?: Partial<{
-      alerte: Alerte
-      alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+      value: Alerte
+      setter: (key: AlerteParam | undefined, target?: string) => void
     }>
     customShowRubriqueListeDeDiffusion?: Partial<{
       value: boolean | undefined
@@ -49,7 +54,8 @@ export default function renderWithContexts(
   const {
     customConseiller,
     customPortefeuille,
-    customCurrentJeune,
+    customChats,
+    customCurrentConversation,
     customAlerte,
     customShowRubriqueListeDeDiffusion,
     customListeDeDiffusionSelectionnee,
@@ -63,7 +69,7 @@ export default function renderWithContexts(
       desItemsBeneficiaires().map(extractBaseBeneficiaire),
   }
 
-  const currentJeune = { ...customCurrentJeune }
+  const currentConversation = { ...customCurrentConversation }
 
   const alerte = { ...customAlerte }
 
@@ -74,7 +80,8 @@ export default function renderWithContexts(
       element,
       conseiller,
       portefeuille,
-      currentJeune,
+      customChats,
+      currentConversation,
       alerte,
       showRubriqueListeDeDiffusion,
       listeDeDiffusionSelectionnee
@@ -96,13 +103,14 @@ function provideContexts(
     value: BaseBeneficiaire[]
     setter: (portefeuille: BaseBeneficiaire[]) => void
   }>,
-  currentJeune: Partial<{
-    id: string
-    idSetter: (id: string | undefined) => void
+  chats: BeneficiaireEtChat[] | undefined,
+  currentConversation: Partial<{
+    value: CurrentConversation
+    setter: Dispatch<SetStateAction<CurrentConversation | undefined>>
   }>,
   alerte: Partial<{
-    alerte: Alerte
-    alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    value: Alerte
+    setter: (key: AlerteParam | undefined, target?: string) => void
   }>,
   showRubriqueListeDeDiffusion: Partial<{
     value: boolean | undefined
@@ -125,27 +133,29 @@ function provideContexts(
             cleChiffrement: 'cleChiffrement',
           }}
         >
-          <CurrentJeuneProvider
-            idForTests={currentJeune.id}
-            setterForTests={currentJeune.idSetter}
-          >
-            <AlerteProvider
-              alerteForTests={alerte.alerte}
-              setterForTests={alerte.alerteSetter}
+          <ChatsProvider chatsForTests={chats ?? []}>
+            <CurrentConversationProvider
+              stateForTests={currentConversation.value}
+              setterForTests={currentConversation.setter}
             >
-              <ShowRubriqueListeDeDiffusionProvider
-                valueForTests={showRubriqueListeDeDiffusion.value}
-                setterForTests={showRubriqueListeDeDiffusion.setter}
+              <AlerteProvider
+                alerteForTests={alerte.value}
+                setterForTests={alerte.setter}
               >
-                <ListeDeDiffusionSelectionneeProvider
-                  setterForTests={listeDeDiffusionSelectionnee.setter}
-                  valueForTests={listeDeDiffusionSelectionnee.value}
+                <ShowRubriqueListeDeDiffusionProvider
+                  valueForTests={showRubriqueListeDeDiffusion.value}
+                  setterForTests={showRubriqueListeDeDiffusion.setter}
                 >
-                  {children}
-                </ListeDeDiffusionSelectionneeProvider>
-              </ShowRubriqueListeDeDiffusionProvider>
-            </AlerteProvider>
-          </CurrentJeuneProvider>
+                  <ListeDeDiffusionSelectionneeProvider
+                    setterForTests={listeDeDiffusionSelectionnee.setter}
+                    valueForTests={listeDeDiffusionSelectionnee.value}
+                  >
+                    {children}
+                  </ListeDeDiffusionSelectionneeProvider>
+                </ShowRubriqueListeDeDiffusionProvider>
+              </AlerteProvider>
+            </CurrentConversationProvider>
+          </ChatsProvider>
         </ChatCredentialsProvider>
       </PortefeuilleProvider>
     </ConseillerProvider>

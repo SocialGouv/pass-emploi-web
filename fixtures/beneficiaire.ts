@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import {
   BaseBeneficiaire,
   BeneficiaireAvecCompteursActionsRdvs,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   BeneficiaireFromListe,
   CategorieSituation,
   Chat,
@@ -241,9 +241,9 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
 }
 
 export const unBeneficiaireChat = (
-  overrides: Partial<BeneficiaireChat> = {}
-): BeneficiaireChat => {
-  const defaults: BeneficiaireChat = {
+  overrides: Partial<BeneficiaireEtChat> = {}
+): BeneficiaireEtChat => {
+  const defaults: BeneficiaireEtChat = {
     id: 'beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',

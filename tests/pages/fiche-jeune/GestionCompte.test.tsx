@@ -290,7 +290,7 @@ async function renderFicheJeune(
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
         customPortefeuille: { setter: portefeuilleSetter },
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     )
   })

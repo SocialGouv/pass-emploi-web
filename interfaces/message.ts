@@ -40,7 +40,7 @@ export interface MessageListeDiffusion {
   infoPiecesJointes?: InfoFichier[]
 }
 
-export interface ByDay<T> {
+export interface ByDay<T extends { id: string }> {
   date: DateTime
   messages: T[]
 }
@@ -88,4 +88,52 @@ export function isEdited(message: Message): boolean {
 
 export function fromConseiller(message: Message): boolean {
   return message.sentBy === UserType.CONSEILLER.toLowerCase()
+}
+
+export function countItems(days: ByDay<any>[]): number {
+  return days.reduce((count, { messages }) => count + messages.length, 0)
+}
+
+export function getPreviousItemId<T extends { id: string }>(
+  idCible: string,
+  days: ByDay<T>[],
+  { orNext }: { orNext?: boolean } = {}
+): string | undefined {
+  if (countItems(days) === 0) return
+
+  let indexDay = 0,
+    indexItem = 0,
+    day = days[indexDay]
+  do {
+    if (day?.messages[indexItem]?.id === idCible) break
+
+    if (indexItem < day?.messages.length - 1) indexItem++
+    else {
+      day = days[++indexDay]
+      indexItem = 0
+    }
+  } while (indexDay < days.length)
+  if (indexDay === days.length) return // item non trouvé
+
+  const indexPreviousItem = indexItem - 1
+  if (indexPreviousItem >= 0) return day.messages[indexPreviousItem].id // item précédent dans le même jour
+
+  let indexPreviousDay = indexDay - 1
+  while (indexPreviousDay >= 0) {
+    const previousDay = days[indexPreviousDay]
+    if (previousDay.messages.length) return previousDay.messages.at(-1)!.id // dernier item du 1er jour précédent avec des items
+    indexPreviousDay--
+  }
+
+  if (!orNext) return // pas d’item précédent
+
+  const indexNextItem = indexItem + 1
+  if (indexNextItem < day.messages.length) return day.messages[indexNextItem].id // item suivant du même jour
+
+  let indexNextDay = indexDay + 1
+  while (indexNextDay < days.length) {
+    const nextDay = days[indexNextDay]
+    if (nextDay.messages.length) return nextDay.messages[0].id // premier item du 1er jour précédent avec des items
+    indexNextDay++
+  }
 }

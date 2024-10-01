@@ -39,7 +39,8 @@ import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useChats } from 'utils/chat/chatsContext'
+import { useCurrentConversation } from 'utils/chat/currentConversationContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -87,7 +88,7 @@ type FicheBeneficiaireProps = {
   metadonneesFavoris?: MetadonneesFavoris
   offresFT?: Offre[]
   recherchesFT?: Recherche[]
-  demarches: Demarche[]
+  demarches?: Demarche[]
 }
 
 function FicheBeneficiairePage({
@@ -109,7 +110,8 @@ function FicheBeneficiairePage({
     : '/mes-jeunes'
 
   const [portefeuille, setPortefeuille] = usePortefeuille()
-  const [, setIdCurrentJeune] = useCurrentJeune()
+  const chats = useChats()
+  const [currentConversation, setCurrentConversation] = useCurrentConversation()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
 
@@ -275,14 +277,19 @@ function FicheBeneficiairePage({
     )
     updatedPortefeuille.splice(index, 1)
     setPortefeuille(updatedPortefeuille)
-    setIdCurrentJeune(undefined)
+    if (currentConversation?.conversation.id === idBeneficiaire)
+      setCurrentConversation(undefined)
   }
 
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
-    if (!lectureSeule) setIdCurrentJeune(beneficiaire.id)
-  }, [beneficiaire, lectureSeule])
+    if (!lectureSeule && chats) {
+      const conversation = chats.find(({ id }) => id === beneficiaire.id)
+      if (conversation)
+        setCurrentConversation({ conversation, shouldFocusOnRender: false })
+    }
+  }, [beneficiaire, lectureSeule, chats])
 
   useEffect(() => {
     if (estMilo(conseiller) && !indicateursSemaine) {
