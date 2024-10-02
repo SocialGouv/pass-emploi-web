@@ -242,6 +242,12 @@ export function Conversation({
     })
     setMessageAModifier(undefined)
     resetTextbox()
+
+    const messageToFocus = document.querySelector<HTMLLIElement>(
+      `li#message-${messageAModifier.id}`
+    )!
+    messageToFocus.setAttribute('tabIndex', '-1')
+    messageToFocus.focus()
   }
 
   async function supprimerMessage(message: Message) {
