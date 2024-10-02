@@ -4,6 +4,7 @@ import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import { estPassEmploi } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -32,13 +33,14 @@ export default function ConseillerIntrouvableSuggestionModal({
   return (
     <Modal
       ref={modalRef}
-      title={`Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller CEJ dans la liste ?`}
+      title='Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller dans la liste ?'
       titleIcon={IconName.Help}
       onClose={onClose}
     >
       <p className='mb-4 text-base-bold text-content_color text-center'>
         La conseillère ou le conseiller en question ne s’est peut-être jamais
-        connecté(e) à l’Application du CEJ.
+        connecté(e) à l’Application{' '}
+        {estPassEmploi(conseiller) ? 'pass emploi' : 'du CEJ'}.
       </p>
       <p className='mb-12 text-base-regular text-content_color text-center'>
         Nous l’invitons à effectuer une première connexion pour apparaître dans
@@ -46,7 +48,7 @@ export default function ConseillerIntrouvableSuggestionModal({
         <span className='text-primary_darken hover:text-primary'>
           <ExternalLink
             href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-            label={'contactez le support'}
+            label='contactez le support'
             iconName={IconName.OutgoingMail}
             onClick={trackContacterSupportClick}
           />
