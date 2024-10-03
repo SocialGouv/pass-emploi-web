@@ -77,6 +77,8 @@ export function EditionRdvForm({
   evenementTypeAC,
   lectureSeule,
 }: EditionRdvFormProps) {
+  const MAX_INPUT_LENGTH = 250
+
   const formErrorsRef = useRef<HTMLDivElement>(null)
 
   const defaultBeneficiaires = initBeneficiairesFromRdvOrIdBeneficiaire()
@@ -458,7 +460,7 @@ export function EditionRdvForm({
 
   function validateDescription() {
     const descriptionEstValide =
-      !description.value || description.value.length < 250
+      !description.value || description.value.length < MAX_INPUT_LENGTH
 
     if (!descriptionEstValide) {
       setDescription({
@@ -756,7 +758,7 @@ export function EditionRdvForm({
           <Label htmlFor='description' withBulleMessageSensible={true}>
             {{
               main: 'Description',
-              helpText: '500 caractères maximum',
+              helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
             }}
           </Label>
           {description.error && (
@@ -767,7 +769,7 @@ export function EditionRdvForm({
           <Textarea
             id='description'
             defaultValue={description.value}
-            maxLength={500}
+            maxLength={MAX_INPUT_LENGTH}
             onChange={(value: string) => setDescription({ value })}
             invalid={Boolean(description.error)}
             onBlur={validateDescription}
