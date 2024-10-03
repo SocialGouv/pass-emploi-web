@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategories from 'components/action/FiltresCategories'
+import FiltresCategories, {
+  Categorie,
+} from 'components/action/FiltresCategories'
 import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
@@ -55,7 +57,7 @@ export default function TableauActionsJeune({
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
   const [statutsValides, setStatutsValides] = useState<string[]>([])
-  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+  const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
 
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -96,16 +98,19 @@ export default function TableauActionsJeune({
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function getOrdreTriParDate() {
-    return `Trier les actions ordre ${
+    return `Trier les actions dans l’ordre ${
       getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
     }`
   }
 
-  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+  function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
     onFiltres([
-      { colonne: 'categories', values: categoriesSelectionnees },
+      {
+        colonne: 'categories',
+        values: categoriesSelectionnees.map(({ code }) => code),
+      },
       { colonne: 'statuts', values: statutsValides },
     ])
   }
@@ -114,7 +119,10 @@ export default function TableauActionsJeune({
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
     onFiltres([
-      { colonne: 'categories', values: categoriesValidees },
+      {
+        colonne: 'categories',
+        values: categoriesValidees.map(({ code }) => code),
+      },
       { colonne: 'statuts', values: statutsSelectionnes },
     ])
   }

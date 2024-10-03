@@ -356,7 +356,7 @@ describe('FicheBeneficiairePage client side', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('row', {
-          name: /id-demarche 30 septembre 2024 Mes candidatures En cours Voir le détail de la démarche id-demarche du 30 septembre 2024/,
+          name: /Réalisation d’entretiens d’embauche 30 septembre 2024 Mes candidatures En cours Voir le détail/,
         })
       ).toBeInTheDocument()
     })

@@ -18,8 +18,6 @@ type FiltresStatutsProps = {
   propsStatuts: {
     [key: string]: {
       label: string
-      color: string
-      altColor: string
     }
   }
   statuts: string[]

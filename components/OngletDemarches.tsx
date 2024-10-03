@@ -2,16 +2,15 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
-import FiltresCategories from 'components/action/FiltresCategories'
+import FiltresCategories, {
+  Categorie,
+} from 'components/action/FiltresCategories'
 import FiltresStatuts from 'components/action/FiltresStatuts'
-import { TRI } from 'components/action/OngletActions'
 import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
 import TagStatutDemarche from 'components/action/TagStatutDemarche'
 import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import SortIcon from 'components/ui/SortIcon'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -23,6 +22,11 @@ import TR from 'components/ui/Table/TR'
 import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { compareDates, compareDatesDesc, toLongMonthDate } from 'utils/date'
+
+export enum TRI {
+  dateEcheanceDecroissante = 'date_echeance_decroissante',
+  dateEcheanceCroissante = 'date_echeance_croissante',
+}
 
 interface OngletDemarchesProps {
   demarches: Demarche[]
@@ -60,18 +64,20 @@ function TableauDemarche({
   demarches: Demarche[]
   beneficiaire: BaseBeneficiaire
 }) {
+  const listeDemarchesRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
-  const stateChanged = useRef<boolean>(false)
 
+  const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
+    useState<boolean>(false)
   const [filtreStatut, setFiltreStatut] = useState<string[]>([])
-  const [filtreCategories, setFiltreCategories] = useState<string[]>([])
+  const [filtreCategories, setFiltreCategories] = useState<Categorie[]>([])
   const [demarchesAffichees, setDemarchesAffichees] =
     useState<Demarche[]>(demarches)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
 
-  const categories = genererCategories()
+  const categories: Categorie[] = genererCategories()
 
   function genererCategories() {
     const categoriesLabels = Array.from(
@@ -91,100 +97,93 @@ function TableauDemarche({
       .replace(/[^\w\-]/g, '')
   }
 
-  function filtrerDemarchesParCategorie(categoriesSelectionnees: string[]) {
+  function filtrerDemarchesParCategorie(categoriesSelectionnees: Categorie[]) {
     setFiltreCategories(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
-    stateChanged.current = true
   }
 
   function filtrerDemarchesParStatuts(statutsSelectionnes: string[]) {
     setFiltreStatut(statutsSelectionnes)
     filtresStatutRef.current!.focus()
-    stateChanged.current = true
   }
 
   function trierParDateEcheance() {
-    let nouveauTri: TRI = TRI.dateEcheanceDecroissante
-    if (getIsSortedByDateEcheance() && getIsSortedDesc()) {
-      nouveauTri = TRI.dateEcheanceCroissante
-    }
+    let nouveauTri = getIsSortedDesc()
+      ? TRI.dateEcheanceCroissante
+      : TRI.dateEcheanceDecroissante
     setTri(nouveauTri)
-    stateChanged.current = true
   }
 
   function getOrdreTriParDate() {
-    return `Trier les démarches ordre ${
+    return `Trier les démarches dans l’ordre ${
       getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
     }`
   }
 
-  function getIsSortedByDateEcheance(): boolean {
-    return (
-      tri === TRI.dateEcheanceCroissante || tri === TRI.dateEcheanceDecroissante
-    )
-  }
-
   function getIsSortedDesc(): boolean {
-    return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
+    return tri === TRI.dateEcheanceDecroissante
   }
 
   function reinitialiserFiltres() {
     setFiltreCategories([])
     setFiltreStatut([])
+    setAReinitialiseLesFiltres(true)
   }
 
   useEffect(() => {
-    if (stateChanged.current) {
-      setIsLoading(true)
-      const labelsCategoriesSelectionnees = filtreCategories
-        .map(
-          (categorieSelectionnee) =>
-            categories.find((c) => c.code === categorieSelectionnee)?.label
-        )
-        .filter((e) => e !== undefined)
+    setIsLoading(true)
 
-      const demarchesFiltreesParCategorie =
-        filtreCategories.length > 0
-          ? demarches.filter((demarche) =>
-              labelsCategoriesSelectionnees.includes(demarche.label)
-            )
-          : demarches
-      const demarchesFiltreesParStatut =
-        filtreStatut?.length > 0
-          ? demarchesFiltreesParCategorie.filter((demarche) =>
-              filtreStatut?.includes(demarche.statut)
-            )
-          : demarchesFiltreesParCategorie
-      const demarchesTrieesEtFiltrees = demarchesFiltreesParStatut.sort(
-        (demarche1, demarche2) => {
-          const dateFin1 = DateTime.fromISO(demarche1.dateFin)
-          const dateFin2 = DateTime.fromISO(demarche2.dateFin)
-          return tri === TRI.dateEcheanceCroissante
-            ? compareDates(dateFin1, dateFin2)
-            : compareDatesDesc(dateFin1, dateFin2)
-        }
-      )
+    const labelsCategoriesSelectionnees = filtreCategories
+      .map((categorieSelectionnee) => categorieSelectionnee.label)
+      .filter((e) => e !== undefined)
 
-      setDemarchesAffichees(demarchesTrieesEtFiltrees)
+    const demarchesFiltreesParCategorie =
+      filtreCategories.length > 0
+        ? demarches.filter((demarche) =>
+            labelsCategoriesSelectionnees.includes(demarche.label)
+          )
+        : demarches
+    const demarchesFiltreesParStatut =
+      filtreStatut.length > 0
+        ? demarchesFiltreesParCategorie.filter((demarche) =>
+            filtreStatut.includes(demarche.statut)
+          )
+        : demarchesFiltreesParCategorie
 
-      setIsLoading(false)
-    }
+    const demarchesTrieesEtFiltrees = demarchesFiltreesParStatut.toSorted(
+      (demarche1, demarche2) => {
+        const dateFin1 = DateTime.fromISO(demarche1.dateFin)
+        const dateFin2 = DateTime.fromISO(demarche2.dateFin)
+        return tri === TRI.dateEcheanceCroissante
+          ? compareDates(dateFin1, dateFin2)
+          : compareDatesDesc(dateFin1, dateFin2)
+      }
+    )
+
+    setDemarchesAffichees(demarchesTrieesEtFiltrees)
+
+    setIsLoading(false)
   }, [tri, filtreStatut, filtreCategories])
+
+  useEffect(() => {
+    if (aReinitialiseLesFiltres && demarchesAffichees.length) {
+      listeDemarchesRef.current!.focus()
+      setAReinitialiseLesFiltres(false)
+    }
+  }, [aReinitialiseLesFiltres, demarchesAffichees])
 
   return (
     <>
       {isLoading && <SpinningLoader alert={true} />}
 
-      {demarchesAffichees.length === 0 && (
+      {!isLoading && demarchesAffichees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <IllustrationComponent
-            name={IllustrationName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
+          <EmptyState
+            shouldFocus={true}
+            illustrationName={IllustrationName.Search}
+            titre='Aucun résultat.'
+            sousTitre='Modifiez vos filtres.'
           />
-          <p className='text-base-bold text-center'>Aucun résultat.</p>
-          <p className='text-center'>Modifiez vos filtres.</p>
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}
@@ -198,6 +197,7 @@ function TableauDemarche({
 
       {!isLoading && demarchesAffichees.length > 0 && (
         <Table
+          ref={listeDemarchesRef}
           caption={{
             text: `Liste des démarches de ${beneficiaire.prenom} ${beneficiaire.nom}`,
           }}
@@ -214,10 +214,7 @@ function TableauDemarche({
                   type='button'
                 >
                   Date d’échéance
-                  <SortIcon
-                    isSorted={getIsSortedByDateEcheance()}
-                    isDesc={getIsSortedDesc()}
-                  />
+                  <SortIcon isDesc={getIsSortedDesc()} />
                 </button>
               </TH>
               <TH estCliquable={true}>
@@ -275,7 +272,7 @@ function DemarcheRow({
     <TR>
       <TD className='rounded-l-base max-w-[400px]'>
         <span className='flex items-baseline wrap text-ellipsis overflow-hidden'>
-          {demarche.id}
+          {demarche.titre}
         </span>
       </TD>
       <TD>
@@ -293,7 +290,7 @@ function DemarcheRow({
       </TD>
       <TDLink
         href={`${pathPrefix}/${beneficiaireId}/demarches/${demarche.id}`}
-        label={`Voir le détail de la démarche ${demarche.id} du ${dateEcheance} : ${demarche.id}`}
+        label={`Voir le détail de la démarche ${demarche.statut} ${demarche.label} du ${dateEcheance} : ${demarche.titre}`}
       />
     </TR>
   )

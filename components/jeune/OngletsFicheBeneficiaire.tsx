@@ -13,7 +13,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type TabFavorisProps = {
+type OngletsFicheBeneficiaireProps = {
   beneficiaire: BaseBeneficiaire
   offres: Offre[]
   recherches: Recherche[]
@@ -27,13 +27,13 @@ export enum OngletFavoris {
   RECHERCHES = 'RECHERCHES',
 }
 
-export function TabFavoris({
+export function OngletsFicheBeneficiaire({
   beneficiaire,
   offres,
   recherches,
   demarches,
   lectureSeule,
-}: TabFavorisProps) {
+}: OngletsFicheBeneficiaireProps) {
   const [portefeuille] = usePortefeuille()
   const [conseiller] = useConseiller()
 
@@ -62,7 +62,7 @@ export function TabFavoris({
   return (
     <>
       <TabList
-        label={`${conseillerEstCD ? 'Démarches ainsi que les' : ''} offres et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
+        label={`${conseillerEstCD ? 'Démarches ainsi que les offres' : 'Offres'} et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
         className='mt-10'
       >
         {estConseilDepartemental(conseiller) && demarches && (
@@ -90,6 +90,7 @@ export function TabFavoris({
           onSelectTab={() => switchTab(OngletFavoris.RECHERCHES)}
         />
       </TabList>
+
       {currentTab === OngletFavoris.DEMARCHES && demarches && (
         <div
           role='tabpanel'

@@ -10,13 +10,14 @@ import React, {
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { SituationNonProfessionnelle } from 'interfaces/action'
+
+export type Categorie = { code: string; label: string }
 
 type FiltresCategoriesActionsProps = {
-  categories: SituationNonProfessionnelle[]
-  defaultValue: string[]
+  categories: Categorie[]
+  defaultValue: Categorie[]
   entites: string
-  onFiltres: (categoriesSelectionnees: string[]) => void
+  onFiltres: (categoriesSelectionnees: Categorie[]) => void
 }
 
 function FiltresCategories(
@@ -30,10 +31,10 @@ function FiltresCategories(
 ) {
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
   const [categoriesSelectionnees, setCategoriesSelectionnees] = useState<
-    string[]
+    Categorie[]
   >([])
 
-  function renderFiltres(categorie: SituationNonProfessionnelle) {
+  function renderFiltres(categorie: Categorie) {
     const id = `categorie-${categorie.code}`
     return (
       <label key={id} htmlFor={id} className='flex items-center pb-4'>
@@ -42,7 +43,9 @@ function FiltresCategories(
           value={categorie.code}
           id={id}
           className='h-5 w-5 shrink-0'
-          checked={categoriesSelectionnees.includes(categorie.code)}
+          checked={categoriesSelectionnees.some(
+            ({ code }) => code === categorie.code
+          )}
           onChange={actionnerCategorie}
         />
         <span className='pl-5'>{categorie.label}</span>
@@ -53,11 +56,15 @@ function FiltresCategories(
   function actionnerCategorie(e: ChangeEvent<HTMLInputElement>) {
     const codeCategorie = e.target.value
     const index = categoriesSelectionnees.findIndex(
-      (code) => code === codeCategorie
+      ({ code }) => code === codeCategorie
     )
     const nouvellesCategoriesSelectionnees = [...categoriesSelectionnees]
+
     if (index > -1) nouvellesCategoriesSelectionnees.splice(index, 1)
-    else nouvellesCategoriesSelectionnees.push(codeCategorie)
+    else
+      nouvellesCategoriesSelectionnees.push(
+        categories.find(({ code }) => code === codeCategorie)!
+      )
     setCategoriesSelectionnees(nouvellesCategoriesSelectionnees)
   }
 
