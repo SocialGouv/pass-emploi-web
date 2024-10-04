@@ -107,6 +107,7 @@ export type DemarcheJson = {
   dateCreation: string
   label: string
   titre: string
+  sousTitre?: string
 }
 
 export function jsonToDemarche(demarche: DemarcheJson): Demarche {
@@ -117,6 +118,7 @@ export function jsonToDemarche(demarche: DemarcheJson): Demarche {
     dateFin: demarche.dateFin,
     label: demarche.label,
     titre: demarche.titre,
+    sousTitre: demarche.sousTitre,
   }
 }
 

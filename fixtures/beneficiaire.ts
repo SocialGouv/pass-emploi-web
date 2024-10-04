@@ -371,6 +371,7 @@ export const uneDemarche = (overrides: Partial<Demarche> = {}): Demarche => {
     dateCreation: '2024-09-23T17:30:07.756Z',
     dateFin: '2024-09-30T17:30:07.756Z',
     titre: 'Réalisation d’entretiens d’embauche',
+    sousTitre: 'Par internet',
   }
   return { ...defaults, ...overrides }
 }
@@ -392,6 +393,7 @@ export const uneDemarcheJson = (
     dateCreation: '2024-09-23T17:30:07.756Z',
     dateFin: '2024-09-30T17:30:07.756Z',
     titre: 'Réalisation d’entretiens d’embauche',
+    sousTitre: 'Par internet',
   }
   return { ...defaults, ...overrides }
 }

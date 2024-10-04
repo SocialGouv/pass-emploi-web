@@ -119,7 +119,7 @@ function FicheBeneficiairePage({
     MotifSuppressionBeneficiaire[]
   >([])
 
-  const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
+  const [currentTab, setCurrentTab] = useState<Onglet | 'DEMARCHES'>(onglet)
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
