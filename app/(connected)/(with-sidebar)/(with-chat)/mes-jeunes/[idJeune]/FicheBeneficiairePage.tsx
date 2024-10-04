@@ -425,7 +425,7 @@ function FicheBeneficiairePage({
       {afficheMessageRecuperationDemarches && (
         <div className='mb-6'>
           <InformationMessage
-            label='Vous pouvez consulter les démarches de votre bénéficiaire s’il se connecte à son application dans un délai de 30 jours.'
+            label='Vous pouvez consulter les démarches de votre bénéficiaire si une connexion de sa part a été effectuée dans les 30 derniers jours.'
             onAcknowledge={() => setAfficheMessageRecuperationDemarches(false)}
           />
         </div>
