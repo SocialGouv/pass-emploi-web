@@ -8640,9 +8640,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-toploader@npm:3.6.15":
-  version: 3.6.15
-  resolution: "nextjs-toploader@npm:3.6.15"
+"nextjs-toploader@npm:3.7.15":
+  version: 3.7.15
+  resolution: "nextjs-toploader@npm:3.7.15"
   dependencies:
     nprogress: "npm:^0.2.0"
     prop-types: "npm:^15.8.1"
@@ -8650,7 +8650,7 @@ __metadata:
     next: ">= 6.0.0"
     react: ">= 16.0.0"
     react-dom: ">= 16.0.0"
-  checksum: 10c0/f7a40227ef2e579aa6742af7a6e98cb3109b145d5c8fb0eee36008bef33f7e22cac4ae0b6712cfbddf4bccdebc480eb8720fb077a04e871a6d98d7fcfcb1c6ee
+  checksum: 10c0/0ef7bd5ae034b1bb4ef05c68bd7808e311b9eaa26d8b33582f414708a852b5d2ad4dfc2291c07e5863f131a1e086ba485eef9df1fe21a727dd550dc699800ceb
   languageName: node
   linkType: hard
 
@@ -9120,7 +9120,7 @@ __metadata:
     next-auth: "npm:4.24.7"
     next-logger: "npm:5.0.1"
     next-themes: "npm:0.3.0"
-    nextjs-toploader: "npm:3.6.15"
+    nextjs-toploader: "npm:3.7.15"
     pino: "npm:9.4.0"
     pino-pretty: "npm:^11.2.2"
     postcss: "npm:^8.4.47"
