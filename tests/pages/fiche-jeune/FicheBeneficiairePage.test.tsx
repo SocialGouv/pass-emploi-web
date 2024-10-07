@@ -318,7 +318,7 @@ describe('FicheBeneficiairePage client side', () => {
       //Then
       expect(
         screen.getByText(
-          'Vous pouvez consulter les démarches de votre bénéficiaire s’il se connecte à son application dans un délai de 30 jours.'
+          'Vous pouvez consulter les démarches de votre bénéficiaire si une connexion de sa part a été effectuée dans les 30 derniers jours.'
         )
       ).toBeInTheDocument()
     })
