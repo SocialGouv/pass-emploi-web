@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
@@ -24,6 +24,7 @@ export default function ListeListesDeDiffusion({
 }: ListeListesDeDiffusionProps) {
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
+  const listesDeDiffusionRef = useRef<HTMLHeadingElement>(null)
 
   function permuterVisibiliteMessagerie() {
     setMessagerieEstVisible(!messagerieEstVisible)

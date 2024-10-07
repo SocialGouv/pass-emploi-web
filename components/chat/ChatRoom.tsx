@@ -45,6 +45,7 @@ export default function ChatRoom({
   const chatCredentials = useChatCredentials()
 
   const listeConversationsRef = useRef<HTMLUListElement>(null)
+  const listesDeDiffusionRef = useRef<HTMLButtonElement>(null)
 
   const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
@@ -79,6 +80,16 @@ export default function ChatRoom({
     setAfficherMenuActionsMessagerie(false)
     setMessagerieEstVisible(!messagerieEstVisible)
   }
+
+  function focusOnListesDeDiffusionButton() {
+    if (listesDeDiffusionRef.current) {
+      console.log('focus' + listesDeDiffusionRef.current.focus())
+    }
+  }
+  useEffect(() => {
+    // Example: focus the button when the component first renders
+    focusOnListesDeDiffusionButton()
+  }, [])
 
   async function envoyerMessageImportant(
     message: string,
@@ -199,6 +210,7 @@ export default function ChatRoom({
         >
           <button
             type='button'
+            ref={listesDeDiffusionRef}
             onClick={onOuvertureMenu}
             aria-controls='menu-mobile'
             aria-expanded={showMenu}
