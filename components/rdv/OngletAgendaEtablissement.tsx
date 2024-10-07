@@ -177,7 +177,7 @@ export default function OngletAgendaEtablissement({
       {evenementsAffiches?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
-            shouldFocus={true}
+            shouldFocus={filtres.length > 0}
             illustrationName={IllustrationName.Checklist}
             titre={
               filtres.length === 0
