@@ -10,10 +10,11 @@ import {
   desIndicateursSemaine,
   unBeneficiaireChat,
   unDetailBeneficiaire,
+  uneDemarche,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { Demarche, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
@@ -321,6 +322,44 @@ describe('FicheBeneficiairePage client side', () => {
         )
       ).toBeInTheDocument()
     })
+
+    it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
+      // When
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
+
+      // Then
+      expect(screen.getByText('Offres')).toBeInTheDocument()
+      expect(screen.getByText('Recherches')).toBeInTheDocument()
+    })
+
+    it('affiche le tableau des démarches', async () => {
+      // When
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        demarches: [uneDemarche()],
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
+
+      // Then
+      expect(screen.getByRole('tab', { name: /Démarches/ })).toBeInTheDocument()
+      expect(
+        screen.getByRole('table', {
+          name: 'Liste des démarches de Kenji Jirac',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('row', {
+          name: /Réalisation d’entretiens d’embauche 30 septembre 2024 Mes candidatures En cours Voir le détail/,
+        })
+      ).toBeInTheDocument()
+    })
   })
 
   describe('quand la structure du bénéficiaire est différente du conseiller', () => {
@@ -361,11 +400,13 @@ async function renderFicheJeune({
   offresFT,
   recherchesFT,
   structure,
+  demarches,
 }: {
   metadonneesFavoris: MetadonneesFavoris
   offresFT: Offre[]
   recherchesFT: Recherche[]
   lectureSeule?: boolean
+  demarches?: Demarche[]
   structure?: StructureConseiller
 }): Promise<HTMLElement> {
   let container: HTMLElement
@@ -381,7 +422,7 @@ async function renderFicheJeune({
         metadonneesFavoris={metadonneesFavoris}
         offresFT={offresFT}
         recherchesFT={recherchesFT}
-        demarches={[]}
+        demarches={demarches}
       />,
       {
         customConseiller: {

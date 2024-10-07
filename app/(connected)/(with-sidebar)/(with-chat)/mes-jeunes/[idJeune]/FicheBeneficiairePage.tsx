@@ -7,8 +7,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
+import { OngletsFicheBeneficiaire } from 'components/jeune/OngletsFicheBeneficiaire'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
-import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -605,13 +605,19 @@ function FicheBeneficiairePage({
             offresFT &&
             recherchesFT && (
               <>
-                <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
-                <p className='text-base-regular'>
-                  Retrouvez les offres et recherches que votre bénéficiaire a
-                  mises en favoris.
-                </p>
-                <TabFavoris
+                {!estConseilDepartemental(conseiller) && (
+                  <>
+                    <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+                    <p className='text-base-regular'>
+                      Retrouvez les offres et recherches que votre bénéficiaire
+                      a mises en favoris.
+                    </p>
+                  </>
+                )}
+
+                <OngletsFicheBeneficiaire
                   beneficiaire={beneficiaire}
+                  demarches={demarches}
                   offres={offresFT}
                   recherches={recherchesFT}
                   lectureSeule={lectureSeule}

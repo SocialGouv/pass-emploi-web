@@ -4,7 +4,7 @@ import React from 'react'
 
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import TagStatutAction from 'components/action/TagStatutAction'
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
+import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
@@ -72,7 +72,7 @@ export default function ActionRow({
       </TD>
       <TD>
         <p className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
-          <TagCategorieAction categorie={action.qualification?.libelle} />
+          <TagCategorie categorie={action.qualification?.libelle} />
         </p>
       </TD>
       <TD>

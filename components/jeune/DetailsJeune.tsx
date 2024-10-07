@@ -97,11 +97,11 @@ export default function DetailsJeune({
           />
         )}
 
-        {estConseilDepartemental(conseiller) && (
+        {estConseilDepartemental(conseiller) && demarches && (
           <ResumeDemarchesBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
-            demarches={demarches!}
+            demarches={demarches}
           />
         )}
 

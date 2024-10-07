@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
-import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
+import FiltresCategories, {
+  Categorie,
+} from 'components/action/FiltresCategories'
+import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
+import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
@@ -29,7 +32,7 @@ interface TableauActionsJeuneProps {
   actionsFiltrees: Action[]
   isLoading: boolean
   onFiltres: (
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
+    filtres: Array<{ colonne: 'categories' | 'statuts'; values: string[] }>
   ) => void
   onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
@@ -53,8 +56,8 @@ export default function TableauActionsJeune({
 }: TableauActionsJeuneProps) {
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
-  const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
-  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+  const [statutsValides, setStatutsValides] = useState<string[]>([])
+  const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
 
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -95,25 +98,31 @@ export default function TableauActionsJeune({
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function getOrdreTriParDate() {
-    return `Trier les actions ordre ${
+    return `Trier les actions dans l’ordre ${
       getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
     }`
   }
 
-  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+  function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
     onFiltres([
-      { colonne: 'categories', values: categoriesSelectionnees },
+      {
+        colonne: 'categories',
+        values: categoriesSelectionnees.map(({ code }) => code),
+      },
       { colonne: 'statuts', values: statutsValides },
     ])
   }
 
-  function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
+  function filtrerActionsParStatuts(statutsSelectionnes: string[]) {
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
     onFiltres([
-      { colonne: 'categories', values: categoriesValidees },
+      {
+        colonne: 'categories',
+        values: categoriesValidees.map(({ code }) => code),
+      },
       { colonne: 'statuts', values: statutsSelectionnes },
     ])
   }
@@ -269,18 +278,22 @@ export default function TableauActionsJeune({
                   </button>
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresCategoriesActions
+                  <FiltresCategories
                     ref={filtresCategoriesRef}
                     categories={categories}
                     defaultValue={categoriesValidees}
+                    entites='actions'
                     onFiltres={filtrerActionsParCategorie}
                   />
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresStatutsActions
+                  <FiltresStatuts
                     ref={filtresStatutRef}
                     defaultValue={statutsValides}
                     onFiltres={filtrerActionsParStatuts}
+                    statuts={Object.keys(StatutAction)}
+                    entites='actions'
+                    propsStatuts={propsStatutsActions}
                   />
                 </TH>
                 <TH>Voir le détail</TH>
