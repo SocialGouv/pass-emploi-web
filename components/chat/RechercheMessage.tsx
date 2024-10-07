@@ -1,4 +1,10 @@
-import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
+import React, {
+  FormEvent,
+  ForwardedRef,
+  forwardRef,
+  Fragment,
+  useState,
+} from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
@@ -45,7 +51,7 @@ export function RechercheMessage({
   return (
     <>
       <HeaderRechercheMessage
-        messageSelectionne={messageSelectionne}
+        messageSelectionne={Boolean(messageSelectionne)}
         onFermerRecherche={toggleAfficherRecherche}
         onRetourMessage={() => setMessageSelectionne(undefined)}
       />
@@ -63,6 +69,7 @@ export function RechercheMessage({
       {!messageSelectionne && (
         <>
           <RechercheMessageForm
+            ref={!resultatsRecherche ? (e) => e?.focus() : undefined}
             idJeuneChat={beneficiaireChat.id}
             onResultat={setResultatsRecherche}
           />
@@ -87,19 +94,12 @@ function HeaderRechercheMessage({
   onFermerRecherche,
   onRetourMessage,
 }: {
-  messageSelectionne?: Message
+  messageSelectionne: boolean
   onFermerRecherche: () => void
   onRetourMessage: () => void
 }) {
-  const ref = useRef<HTMLButtonElement | null>(null)
-
-  useEffect(() => {
-    if (messageSelectionne) ref.current!.focus()
-  }, [messageSelectionne])
-
   return (
     <button
-      ref={ref}
       id='chat-bouton-retour'
       className='m-4 border-none rounded-full bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
       aria-label='Retourner à la discussion'
@@ -121,78 +121,92 @@ function HeaderRechercheMessage({
   )
 }
 
-function RechercheMessageForm({
-  idJeuneChat,
-  onResultat,
-}: {
-  idJeuneChat: string
-  onResultat: (
-    messages: Array<{ message: Message; matches: MessageRechercheMatch[] }>
-  ) => void
-}) {
-  const chatCredentials = useChatCredentials()
+const RechercheMessageForm = forwardRef(
+  (
+    {
+      idJeuneChat,
+      onResultat,
+    }: {
+      idJeuneChat: string
+      onResultat: (
+        messages: Array<{ message: Message; matches: MessageRechercheMatch[] }>
+      ) => void
+    },
+    ref: ForwardedRef<HTMLInputElement>
+  ) => {
+    const chatCredentials = useChatCredentials()
 
-  const [rechercheMessage, setRechercheMessage] =
-    useState<ValueWithError<string | undefined>>()
+    const [rechercheMessage, setRechercheMessage] =
+      useState<ValueWithError<string | undefined>>()
+    const [rechercheEnCours, setRechercheEnCours] = useState<boolean>(false)
 
-  async function rechercherMessages(e: FormEvent) {
-    e.preventDefault()
-    if (!chatCredentials) return
+    async function rechercherMessages(e: FormEvent) {
+      e.preventDefault()
+      if (!chatCredentials) return
 
-    if (!rechercheMessage?.value) {
-      setRechercheMessage({
-        value: undefined,
-        error: 'Le champ “Recherche" est vide. Renseignez une recherche.',
-      })
-      return
+      if (!rechercheMessage?.value) {
+        setRechercheMessage({
+          value: undefined,
+          error: 'Le champ “Recherche" est vide. Renseignez une recherche.',
+        })
+        return
+      }
+
+      const { rechercherMessagesConversation } = await import(
+        'services/messages.service'
+      )
+
+      setRechercheEnCours(true)
+      try {
+        const resultats = await rechercherMessagesConversation(
+          idJeuneChat,
+          rechercheMessage.value,
+          chatCredentials.cleChiffrement
+        )
+        onResultat(resultats)
+      } finally {
+        setRechercheEnCours(false)
+      }
     }
 
-    const { rechercherMessagesConversation } = await import(
-      'services/messages.service'
-    )
-
-    const resultats = await rechercherMessagesConversation(
-      idJeuneChat,
-      rechercheMessage.value,
-      chatCredentials.cleChiffrement
-    )
-    onResultat(resultats)
-  }
-
-  return (
-    <form onSubmit={rechercherMessages} className='p-4'>
-      <Label htmlFor='recherche-message' inputRequired={true}>
-        Rechercher dans la conversation
-      </Label>
-      {rechercheMessage?.error && (
-        <InputError id='recherche-message--error'>
-          {rechercheMessage.error}
-        </InputError>
-      )}
-      <Input
-        id='recherche-message'
-        type='text'
-        required={true}
-        invalid={Boolean(rechercheMessage?.error)}
-        onChange={(value: string) => setRechercheMessage({ value })}
-      />
-      <Button
-        style={ButtonStyle.PRIMARY}
-        type='submit'
-        label='Rechercher des messages'
-        className='w-full'
-      >
-        <IconComponent
-          name={IconName.Search}
-          focusable={false}
-          aria-hidden={true}
-          className='w-4 h-4 mr-2'
+    return (
+      <form onSubmit={rechercherMessages} className='p-4'>
+        <Label htmlFor='recherche-message' inputRequired={true}>
+          Rechercher dans la conversation
+        </Label>
+        {rechercheMessage?.error && (
+          <InputError id='recherche-message--error'>
+            {rechercheMessage.error}
+          </InputError>
+        )}
+        <Input
+          ref={ref}
+          id='recherche-message'
+          type='text'
+          required={true}
+          invalid={Boolean(rechercheMessage?.error)}
+          onChange={(value: string) => setRechercheMessage({ value })}
         />
-        Rechercher
-      </Button>
-    </form>
-  )
-}
+        <Button
+          style={ButtonStyle.PRIMARY}
+          type='submit'
+          label='Rechercher des messages'
+          className='w-full'
+          isLoading={rechercheEnCours}
+        >
+          <IconComponent
+            name={IconName.Search}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 mr-2'
+          />
+          Rechercher
+        </Button>
+      </form>
+    )
+  }
+)
+RechercheMessageForm.displayName = 'RechercheMessageForm'
 
 function ResultatsRecherche({
   resultatsRecherche,
@@ -212,12 +226,17 @@ function ResultatsRecherche({
 }) {
   return (
     <>
-      <p className='text-base-bold text-center mb-2'>
+      <p
+        ref={(e) => e?.focus()}
+        tabIndex={-1}
+        className='text-base-bold text-center mb-2'
+      >
         {resultatsRecherche.length}{' '}
         {resultatsRecherche.length > 1
           ? 'résultats trouvés'
           : 'résultat trouvé'}
       </p>
+
       {resultatsRecherche.length >= 1 && (
         <ul className='p-4 overflow-y-auto'>
           {resultatsRecherche.map(({ message, matches }, key) => (
