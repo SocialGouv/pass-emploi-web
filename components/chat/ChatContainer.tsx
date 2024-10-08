@@ -95,6 +95,9 @@ export default function ChatContainer({
 
           {!showRubriqueListesDeDiffusion && (
             <ChatRoom
+              shouldFocusAccesListesDiffusion={
+                showRubriqueListesDeDiffusion === false
+              }
               beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
@@ -128,6 +131,9 @@ export default function ChatContainer({
 
           {!currentConversation && !showRubriqueListesDeDiffusion && (
             <ChatRoom
+              shouldFocusAccesListesDiffusion={
+                showRubriqueListesDeDiffusion === false
+              }
               beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}

@@ -30,6 +30,7 @@ interface ChatRoomProps {
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
   idConversationToFocus?: string
+  shouldFocusAccesListesDiffusion: boolean
 }
 
 export default function ChatRoom({
@@ -39,13 +40,13 @@ export default function ChatRoom({
   onAccesListesDiffusion,
   onAccesConversation,
   idConversationToFocus,
+  shouldFocusAccesListesDiffusion,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
   const listeConversationsRef = useRef<HTMLUListElement>(null)
-  const listesDeDiffusionRef = useRef<HTMLButtonElement>(null)
 
   const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
@@ -80,16 +81,6 @@ export default function ChatRoom({
     setAfficherMenuActionsMessagerie(false)
     setMessagerieEstVisible(!messagerieEstVisible)
   }
-
-  function focusOnListesDeDiffusionButton() {
-    if (listesDeDiffusionRef.current) {
-      console.log('focus' + listesDeDiffusionRef.current.focus())
-    }
-  }
-  useEffect(() => {
-    // Example: focus the button when the component first renders
-    focusOnListesDeDiffusionButton()
-  }, [])
 
   async function envoyerMessageImportant(
     message: string,
@@ -198,6 +189,7 @@ export default function ChatRoom({
 
   useEffect(() => {
     setChatsFiltres(beneficiairesChats)
+    console.log('logFocus')
   }, [beneficiairesChats])
 
   return (
@@ -210,7 +202,6 @@ export default function ChatRoom({
         >
           <button
             type='button'
-            ref={listesDeDiffusionRef}
             onClick={onOuvertureMenu}
             aria-controls='menu-mobile'
             aria-expanded={showMenu}
@@ -316,6 +307,11 @@ export default function ChatRoom({
 
           {chatsFiltres && (
             <button
+              ref={
+                shouldFocusAccesListesDiffusion && !idConversationToFocus
+                  ? (e) => e?.focus()
+                  : undefined
+              }
               className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
               type='button'
