@@ -189,7 +189,6 @@ export default function ChatRoom({
 
   useEffect(() => {
     setChatsFiltres(beneficiairesChats)
-    console.log('logFocus')
   }, [beneficiairesChats])
 
   return (
