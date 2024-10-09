@@ -95,7 +95,7 @@ export default function MessagesDuJour({
     })
     if (idMessageToFocus) {
       const messageToFocus = document.querySelector<HTMLLIElement>(
-        'li#message-' + idMessageToFocus
+        `li#message-${idMessageToFocus}`
       )!
       messageToFocus.setAttribute('tabIndex', '-1')
       messageToFocus.focus()
@@ -117,7 +117,11 @@ export default function MessagesDuJour({
   }, [chatCredentials])
 
   useEffect(() => {
-    document.getElementById(messageSelectionne.id)?.scrollIntoView()
+    const messageToFocus = document.querySelector<HTMLLIElement>(
+      `li#message-${messageSelectionne.id}`
+    )!
+    messageToFocus.setAttribute('tabIndex', '-1')
+    messageToFocus.focus()
   }, [messagesDuJour])
 
   useEffect(() => {
