@@ -30,6 +30,7 @@ interface ChatRoomProps {
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
   idConversationToFocus?: string
+  shouldFocusAccesListesDiffusion: boolean
 }
 
 export default function ChatRoom({
@@ -39,6 +40,7 @@ export default function ChatRoom({
   onAccesListesDiffusion,
   onAccesConversation,
   idConversationToFocus,
+  shouldFocusAccesListesDiffusion,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -304,6 +306,11 @@ export default function ChatRoom({
 
           {chatsFiltres && (
             <button
+              ref={
+                shouldFocusAccesListesDiffusion && !idConversationToFocus
+                  ? (e) => e?.focus()
+                  : undefined
+              }
               className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
               type='button'
