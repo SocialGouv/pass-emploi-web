@@ -22,26 +22,8 @@ export async function generateMetadata({
 }: {
   params: DetailDemarcheParams
 }): Promise<Metadata> {
-  const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserCD(user)) notFound()
-
-  const aujourdhui = DateTime.now().startOf('day')
-
-  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
-  if (!beneficiaire) notFound()
-
-  const demarches = await getDemarchesBeneficiaire(
-    params.idJeune,
-    aujourdhui,
-    user.id,
-    accessToken
-  )
-  if (!demarches) notFound()
-
-  const demarche = demarches.find(({ id }) => id === params.idDemarche)
-  if (!demarche) notFound()
-
-  const lectureSeule = beneficiaire.idConseiller !== user.id
+  const { beneficiaire, demarche, lectureSeule } =
+    await getDemarcheProps(params)
 
   return {
     title: `${demarche.titre} - Démarches de ${beneficiaire.prenom} ${beneficiaire.nom} - ${
@@ -55,14 +37,26 @@ export default async function DetailDemarche({
 }: {
   params: DetailDemarcheParams
 }) {
+  const { demarche, lectureSeule } = await getDemarcheProps(params)
+
+  return (
+    <>
+      <PageFilArianePortal />
+      <PageHeaderPortal header='Détails de la démarche' />
+
+      <DetailDemarchePage demarche={demarche} lectureSeule={lectureSeule} />
+    </>
+  )
+}
+
+async function getDemarcheProps({ idJeune, idDemarche }: DetailDemarcheParams) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserCD(user)) notFound()
-  const { idJeune, idDemarche } = params
 
   const aujourdhui = DateTime.now().startOf('day')
 
   const demarches = await getDemarchesBeneficiaire(
-    params.idJeune,
+    idJeune,
     aujourdhui,
     user.id,
     accessToken
@@ -77,12 +71,5 @@ export default async function DetailDemarche({
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
 
-  return (
-    <>
-      <PageFilArianePortal />
-      <PageHeaderPortal header='Détails de la démarche' />
-
-      <DetailDemarchePage demarche={demarche} lectureSeule={lectureSeule} />
-    </>
-  )
+  return { beneficiaire, demarche, lectureSeule }
 }

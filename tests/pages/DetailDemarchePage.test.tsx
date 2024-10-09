@@ -32,9 +32,9 @@ describe('DetailDemarchePage client side', () => {
     })
 
     it("affiche les information d'une démarche", async () => {
-      expect(getByDescriptionTerm('Statut')).toHaveTextContent(
-        propsStatutsDemarches[demarche.statut].label
-      )
+      expect(
+        screen.getByText(propsStatutsDemarches[demarche.statut].label)
+      ).toBeInTheDocument()
 
       expect(getByDescriptionTerm('Catégorie :')).toHaveTextContent(
         demarche.label

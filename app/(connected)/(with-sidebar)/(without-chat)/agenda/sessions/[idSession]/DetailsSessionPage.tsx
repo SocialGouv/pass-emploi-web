@@ -341,7 +341,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.description ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -353,7 +353,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.partenaire ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -405,7 +405,7 @@ function DetailsSessionPage({
                 toShortDate(session.session.dateMaxInscription)
               ) : (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -417,7 +417,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.session.animateur ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -436,7 +436,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.session.commentaire ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}

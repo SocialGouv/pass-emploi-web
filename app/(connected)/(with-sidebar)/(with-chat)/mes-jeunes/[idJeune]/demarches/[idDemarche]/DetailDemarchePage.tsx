@@ -23,15 +23,11 @@ function DetailDemarchePage({ demarche, lectureSeule }: DetailActionProps) {
   )
   return (
     <>
-      <div className='border-b-2 border-solid border-primary_lighten pt-5'>
-        <dl>
-          <dt>
-            <h2 className='text-m-bold text-grey_800 pb-6'>Statut</h2>
-          </dt>
-          <dd className='text-base-bold mb-4'>
-            {propsStatutsDemarches[demarche.statut].label}
-          </dd>
-        </dl>
+      <div className='border-b-2 border-solid border-primary_lighten mb-5 pb-5'>
+        <h2 className='text-m-bold text-grey_800 mb-6'>Statut</h2>
+        <span className='text-base-bold'>
+          {propsStatutsDemarches[demarche.statut].label}
+        </span>
       </div>
 
       <div className='border-b-2 border-primary_lighten mt-8'>
@@ -39,30 +35,25 @@ function DetailDemarchePage({ demarche, lectureSeule }: DetailActionProps) {
           Informations sur la démarche
         </h2>
 
-        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-          <dt className='text-base-bold pb-6'>
-            <span>Catégorie :</span>
-          </dt>
-          <dd className='text-base-regular pl-6'>{demarche.label}</dd>
-          <dt className='text-base-bold pb-6'>
-            <span>Titre de la démarche :</span>
-          </dt>
-          <dd className='text-base-regular pl-6'>{demarche.titre}</dd>
-          <dt className='text-base-bold pb-6'>
-            <span>Moyen :</span>
-          </dt>
-          <dd className='text-base-regular pl-6'>
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)] gap-6 pb-6'>
+          <dt className='text-base-bold'>Catégorie :</dt>
+          <dd className='text-base-regular'>{demarche.label}</dd>
+
+          <dt className='text-base-bold'>Titre de la démarche :</dt>
+          <dd className='text-base-regular'>{demarche.titre}</dd>
+
+          <dt className='text-base-bold'>Moyen :</dt>
+          <dd className='text-base-regular'>
             {demarche.sousTitre ?? (
               <>
-                --
+                <span aria-hidden={true}>--</span>
                 <span className='sr-only'>information non disponible</span>
               </>
             )}
           </dd>
-          <dt className='text-base-bold pb-6'>
-            <span>Date d’échéance :</span>
-          </dt>
-          <dd className='text-base-regular pl-6'>
+
+          <dt className='text-base-bold'>Date d’échéance :</dt>
+          <dd className='text-base-regular'>
             {toLongMonthDate(demarche.dateFin)}
           </dd>
         </dl>
