@@ -132,7 +132,7 @@ function afficheListeInscritsSession(evenement: Session) {
         <dd className='text-base-bold inline'>
           {evenement.session.animateur ?? (
             <>
-              --
+              <span aria-hidden={true}>--</span>
               <span className='sr-only'>information non disponible</span>
             </>
           )}
@@ -168,7 +168,7 @@ function afficheListeInscritsAC(evenement: Evenement) {
         <dd className='text-base-bold inline'>
           {evenement.organisme ?? (
             <>
-              --
+              <span aria-hidden={true}>--</span>
               <span className='sr-only'>information non disponible</span>
             </>
           )}
@@ -191,7 +191,7 @@ function afficheListeInscritsAC(evenement: Evenement) {
         <dd className='text-base-bold inline'>
           {evenement.adresse ?? (
             <>
-              --
+              <span aria-hidden={true}>--</span>
               <span className='sr-only'>information non disponible</span>
             </>
           )}

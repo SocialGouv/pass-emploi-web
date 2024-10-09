@@ -150,6 +150,7 @@ export type Demarche = {
   dateFin: string
   label: string
   titre: string
+  sousTitre?: string
 }
 
 export function compareBeneficiairesByNom(

@@ -203,7 +203,7 @@ function DetailActionPage({
           <dd className='text-base-regular pl-6'>
             {action.qualification?.libelle ?? (
               <>
-                --
+                <span aria-hidden={true}>--</span>
                 <span className='sr-only'>information non disponible</span>
               </>
             )}
@@ -220,7 +220,7 @@ function DetailActionPage({
               action.comment
             ) : (
               <>
-                --
+                <span aria-hidden={true}>--</span>
                 <span className='sr-only'>information non disponible</span>
               </>
             )}
