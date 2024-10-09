@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
+import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -12,18 +13,25 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DossierBeneficiaireMiloProps {
   dossier: DossierMilo
-  onCreateCompte: (data: BeneficiaireMiloFormData) => Promise<void>
-  erreurMessageHttpPassEmploi?: string
+  onCreateCompte: (
+    data: BeneficiaireMiloFormData,
+    surcharge?: boolean
+  ) => Promise<void>
+  erreurMessageCreationCompte?: string
   onRefresh: () => void
   onRetour: () => void
+  onFermerModale: () => void
+  beneficiaireExisteDejaMilo: boolean
 }
 
 export default function DossierBeneficiaireMilo({
   dossier,
   onCreateCompte,
-  erreurMessageHttpPassEmploi,
+  erreurMessageCreationCompte,
   onRefresh,
   onRetour,
+  onFermerModale,
+  beneficiaireExisteDejaMilo,
 }: DossierBeneficiaireMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -33,9 +41,12 @@ export default function DossierBeneficiaireMilo({
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
   )
 
+  const [afficherModaleErreurCreation, setAfficherModaleErreurCreation] =
+    useState<boolean>(Boolean(beneficiaireExisteDejaMilo))
+
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function addBeneficiaire() {
+  async function addBeneficiaire(surcharge?: boolean) {
     if (!creationEnCours) {
       const newBeneficiaire = {
         idDossier: dossier.id,
@@ -45,7 +56,7 @@ export default function DossierBeneficiaireMilo({
       }
 
       setCreationEnCours(true)
-      onCreateCompte(newBeneficiaire).finally(() => {
+      onCreateCompte(newBeneficiaire, surcharge).finally(() => {
         setCreationEnCours(false)
       })
     }
@@ -54,11 +65,15 @@ export default function DossierBeneficiaireMilo({
   useMatomo(tracking, aDesBeneficiaires)
 
   useEffect(() => {
-    if (erreurMessageHttpPassEmploi)
+    if (erreurMessageCreationCompte)
       setTracking(
         'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
       )
-  }, [erreurMessageHttpPassEmploi])
+  }, [erreurMessageCreationCompte])
+
+  useEffect(() => {
+    setAfficherModaleErreurCreation(beneficiaireExisteDejaMilo)
+  }, [beneficiaireExisteDejaMilo])
 
   return (
     <>
@@ -129,13 +144,13 @@ export default function DossierBeneficiaireMilo({
       )}
 
       <div className='mt-14'>
-        {erreurMessageHttpPassEmploi && (
+        {erreurMessageCreationCompte && (
           <InputError
             className='mb-2'
             id='creation-button--error'
             ref={(e) => e?.focus()}
           >
-            {erreurMessageHttpPassEmploi}
+            {erreurMessageCreationCompte}
           </InputError>
         )}
 
@@ -156,11 +171,14 @@ export default function DossierBeneficiaireMilo({
               <Button
                 id='creation-button'
                 type='button'
-                onClick={addBeneficiaire}
+                onClick={() => addBeneficiaire()}
                 isLoading={creationEnCours}
-                disabled={Boolean(erreurMessageHttpPassEmploi)}
+                disabled={
+                  Boolean(erreurMessageCreationCompte) &&
+                  !beneficiaireExisteDejaMilo
+                }
                 describedBy={
-                  erreurMessageHttpPassEmploi && 'creation-button--error'
+                  erreurMessageCreationCompte && 'creation-button--error'
                 }
               >
                 Créer le compte
@@ -180,6 +198,16 @@ export default function DossierBeneficiaireMilo({
           )}
         </div>
       </div>
+
+      {afficherModaleErreurCreation && (
+        <CreationBeneficiaireErreurModal
+          adresseMailBeneficiaire={dossier.email!}
+          onClose={onFermerModale}
+          onSubmit={() => {
+            addBeneficiaire(true)
+          }}
+        />
+      )}
     </>
   )
 }

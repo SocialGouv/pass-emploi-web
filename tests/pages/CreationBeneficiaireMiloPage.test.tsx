@@ -16,8 +16,10 @@ import {
   getDossierJeune,
 } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/conseiller.service')
+jest.mock('components/Modal')
 
 describe('CreationBeneficiaireMiloPage client side', () => {
   let container: HTMLElement
@@ -69,6 +71,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
   describe('quand on a recherché un dossier', () => {
     let push: Function
+    let refresh: Function
     let setAlerte: () => void
     let setPortefeuille: (updatedBeneficiaires: BaseBeneficiaire[]) => void
     const dossier = unDossierMilo()
@@ -81,9 +84,10 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       )
 
       push = jest.fn(() => Promise.resolve())
+      refresh = jest.fn()
       setAlerte = jest.fn()
       setPortefeuille = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({ push })
+      ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
       ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />, {
         customAlerte: { setter: setAlerte },
         customPortefeuille: { setter: setPortefeuille },
@@ -122,12 +126,15 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       await userEvent.click(createCompteButton)
 
       // Then
-      expect(createCompteJeuneMilo).toHaveBeenCalledWith({
-        email: 'kenji-faux-mail@mail.com',
-        idDossier: '1234',
-        nom: 'GIRAC',
-        prenom: 'Kenji',
-      })
+      expect(createCompteJeuneMilo).toHaveBeenCalledWith(
+        {
+          email: 'kenji-faux-mail@mail.com',
+          idDossier: '1234',
+          nom: 'GIRAC',
+          prenom: 'Kenji',
+        },
+        undefined
+      )
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
@@ -156,6 +163,60 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       // Then
       expect(createCompteJeuneMilo).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
+    })
+
+    describe('quand le bénéficiaire est rattaché à une autre Mission Locale', () => {
+      beforeEach(async () => {
+        // Given
+        ;(createCompteJeuneMilo as jest.Mock).mockRejectedValue(
+          new ApiError(
+            422,
+            'Un compte bénéficiaire existe déjà avec l’adresse mail tchoupi@trotro.fr'
+          )
+        )
+
+        // When
+        const createCompteButton = screen.getByRole('button', {
+          name: 'Créer le compte',
+        })
+
+        await userEvent.click(createCompteButton)
+      })
+      it('devrait afficher une de confirmation de création de compte bénéficiaire', async () => {
+        // Then
+        expect(createCompteJeuneMilo).toHaveBeenCalledTimes(1)
+        expect(
+          screen.getByText(
+            'Un compte bénéficiaire existe déjà avec l’adresse mail tchoupi@trotro.fr'
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', {
+            name: 'Confirmer la création de compte',
+          })
+        ).toBeInTheDocument()
+      })
+
+      describe('au clic sur le bouton de confirmation de la modale', () => {
+        it('appelle l’api avec la surcharge', async () => {
+          const boutonConfirmation = screen.getByRole('button', {
+            name: 'Confirmer la création de compte',
+          })
+
+          await userEvent.click(boutonConfirmation)
+
+          // Then
+          expect(createCompteJeuneMilo).toHaveBeenCalledWith(
+            {
+              email: 'kenji-faux-mail@mail.com',
+              idDossier: '1234',
+              nom: 'GIRAC',
+              prenom: 'Kenji',
+            },
+            true
+          )
+        })
+      })
     })
   })
 })
