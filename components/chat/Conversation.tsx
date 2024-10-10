@@ -65,6 +65,7 @@ export function Conversation({
 
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
+  const isFirstRender = useRef<boolean>(true)
 
   const [userInput, setUserInput] = useState('')
 
@@ -356,9 +357,15 @@ export function Conversation({
   }, [beneficiaireChat.chatId])
 
   useEffect(() => {
+    if (isFirstRender.current) return
+
     if (uploadedFileInfo) deleteFileRef.current!.focus()
     else addFileRef.current!.focus()
   }, [uploadedFileInfo])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   return (
     <>

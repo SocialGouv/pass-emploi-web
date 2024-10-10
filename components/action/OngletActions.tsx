@@ -77,16 +77,9 @@ export default function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActions(
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
-  ) {
-    const nouveauxStatuts = filtres.find(({ colonne }) => colonne === 'statuts')
-    const nouvellesCategories = filtres.find(
-      ({ colonne }) => colonne === 'categories'
-    )
-
-    setFiltresParStatuts(nouveauxStatuts?.values ?? [])
-    setFiltresParCategories(nouvellesCategories?.values ?? [])
+  function filtrerActions(filtres: Record<'categories' | 'statuts', string[]>) {
+    setFiltresParStatuts((filtres['statuts'] as StatutAction[]) ?? [])
+    setFiltresParCategories(filtres['categories'] ?? [])
     setPageCourante(1)
     stateChanged.current = true
   }

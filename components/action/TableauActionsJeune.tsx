@@ -8,10 +8,9 @@ import FiltresCategories, {
 import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
+import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -31,9 +30,7 @@ interface TableauActionsJeuneProps {
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean
-  onFiltres: (
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: string[] }>
-  ) => void
+  onFiltres: (filtres: Record<'categories' | 'statuts', string[]>) => void
   onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
   onQualification: (
@@ -54,10 +51,13 @@ export default function TableauActionsJeune({
   onQualification,
   tri,
 }: TableauActionsJeuneProps) {
+  const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
   const [statutsValides, setStatutsValides] = useState<string[]>([])
   const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
+  const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
+    useState<boolean>(false)
 
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -71,10 +71,10 @@ export default function TableauActionsJeune({
     actionsSelectionnees.length === 0 || actionSansCategorieSelectionnee
 
   function reinitialiserFiltres() {
-    onFiltres([])
+    onFiltres({ categories: [], statuts: [] })
     setStatutsValides([])
     setCategoriesValidees([])
-    filtresStatutRef.current!.focus()
+    setAReinitialiseLesFiltres(true)
   }
 
   function getIsSortedByDateEcheance(): boolean {
@@ -106,25 +106,19 @@ export default function TableauActionsJeune({
   function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
-    onFiltres([
-      {
-        colonne: 'categories',
-        values: categoriesSelectionnees.map(({ code }) => code),
-      },
-      { colonne: 'statuts', values: statutsValides },
-    ])
+    onFiltres({
+      categories: categoriesSelectionnees.map(({ code }) => code),
+      statuts: statutsValides,
+    })
   }
 
   function filtrerActionsParStatuts(statutsSelectionnes: string[]) {
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
-    onFiltres([
-      {
-        colonne: 'categories',
-        values: categoriesValidees.map(({ code }) => code),
-      },
-      { colonne: 'statuts', values: statutsSelectionnes },
-    ])
+    onFiltres({
+      categories: categoriesValidees.map(({ code }) => code),
+      statuts: statutsSelectionnes,
+    })
   }
 
   function selectionnerToutesLesActions() {
@@ -191,20 +185,25 @@ export default function TableauActionsJeune({
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }, [actionsFiltrees.length, actionsSelectionnees.length])
 
+  useEffect(() => {
+    if (aReinitialiseLesFiltres && actionsFiltrees.length) {
+      listeActionsRef.current!.focus()
+      setAReinitialiseLesFiltres(false)
+    }
+  }, [aReinitialiseLesFiltres, actionsFiltrees])
+
   return (
     <>
       {isLoading && <SpinningLoader alert={true} />}
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <IllustrationComponent
-            name={IllustrationName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
+          <EmptyState
+            shouldFocus={true}
+            illustrationName={IllustrationName.Search}
+            titre='Aucun résultat.'
+            sousTitre='Modifiez vos filtres.'
           />
-          <p className='text-base-bold text-center'>Aucun résultat.</p>
-          <p className='text-center'>Modifiez vos filtres.</p>
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}
@@ -243,6 +242,7 @@ export default function TableauActionsJeune({
           </div>
 
           <Table
+            ref={listeActionsRef}
             caption={{
               text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
             }}
