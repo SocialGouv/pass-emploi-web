@@ -7,30 +7,26 @@ import React, { ForwardedRef, forwardRef, useRef, useState } from 'react'
 import DossierBeneficiaireMilo from 'components/jeune/DossierBeneficiaireMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
 import { DossierMilo } from 'interfaces/beneficiaire'
-import { estMilo } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function CreationBeneficiaireMiloPage() {
-  const [conseiller] = useConseiller()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const etapeRef = useRef<HTMLDivElement>(null)
+  const dossierBeneficiaireRef = useRef<{ focusRetour: Function }>(null)
 
   const [dossier, setDossier] = useState<DossierMilo | undefined>()
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()
   const [erreurCreation, setErreurCreation] = useState<string | undefined>()
-  const [
-    afficherModaleCompteBeneficiaireExisteDeja,
-    setAfficherModaleCompteBeneficiaireExisteDeja,
-  ] = useState<boolean>(false)
+  const [compteBeneficiaireExisteDeja, setCompteBeneficiaireExisteDeja] =
+    useState<boolean>(false)
 
   async function rechercherDossier(id: string) {
     clearDossier()
@@ -52,6 +48,7 @@ function CreationBeneficiaireMiloPage() {
     surcharge?: boolean
   ) {
     setErreurCreation(undefined)
+    setCompteBeneficiaireExisteDeja(false)
 
     try {
       const { createCompteJeuneMilo } = await import(
@@ -67,15 +64,12 @@ function CreationBeneficiaireMiloPage() {
       router.push('/mes-jeunes')
       router.refresh()
     } catch (error) {
-      setErreurCreation(
-        (error as Error).message || "Une erreur inconnue s'est produite"
-      )
-      if (
-        error instanceof ApiError &&
-        error.statusCode === 422 &&
-        estMilo(conseiller)
-      ) {
-        setAfficherModaleCompteBeneficiaireExisteDeja(true)
+      if (error instanceof ApiError && error.statusCode === 422) {
+        setCompteBeneficiaireExisteDeja(true)
+      } else {
+        setErreurCreation(
+          (error as Error).message || "Une erreur inconnue s'est produite"
+        )
       }
     }
   }
@@ -84,7 +78,7 @@ function CreationBeneficiaireMiloPage() {
     setErreurDossier(undefined)
     setDossier(undefined)
     setErreurCreation(undefined)
-    setAfficherModaleCompteBeneficiaireExisteDeja(false)
+    setCompteBeneficiaireExisteDeja(false)
   }
 
   useMatomo(
@@ -109,20 +103,19 @@ function CreationBeneficiaireMiloPage() {
 
       {dossier && (
         <DossierBeneficiaireMilo
+          ref={dossierBeneficiaireRef}
           dossier={dossier}
           onCreateCompte={creerCompteJeune}
           erreurMessageCreationCompte={erreurCreation}
-          beneficiaireExisteDejaMilo={
-            afficherModaleCompteBeneficiaireExisteDeja
-          }
+          beneficiaireExisteDejaMilo={compteBeneficiaireExisteDeja}
           onRefresh={() => rechercherDossier(dossier.id)}
           onRetour={() => {
             clearDossier()
             etapeRef.current!.focus()
           }}
-          onFermerModale={() => {
-            setErreurCreation(undefined)
-            setAfficherModaleCompteBeneficiaireExisteDeja(false)
+          onAnnulationCreerCompte={() => {
+            setCompteBeneficiaireExisteDeja(false)
+            dossierBeneficiaireRef.current!.focusRetour()
           }}
         />
       )}

@@ -16,7 +16,6 @@ import {
   jsonToBaseConseiller,
   jsonToConseiller,
 } from 'interfaces/json/conseiller'
-import { ApiError } from 'utils/httpClient'
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,

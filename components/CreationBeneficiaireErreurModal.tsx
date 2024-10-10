@@ -7,12 +7,12 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 interface CreationBeneficiaireErreurModalProps {
   adresseMailBeneficiaire: string
   onClose: () => void
-  onSubmit: () => void
+  onConfirmation: () => void
 }
 export default function CreationBeneficiaireErreurModal({
   adresseMailBeneficiaire,
   onClose,
-  onSubmit,
+  onConfirmation,
 }: CreationBeneficiaireErreurModalProps) {
   const modalRef = useRef<ModalHandles>(null)
 
@@ -34,7 +34,11 @@ export default function CreationBeneficiaireErreurModal({
         >
           Annuler
         </Button>
-        <Button type='button' style={ButtonStyle.PRIMARY} onClick={onSubmit}>
+        <Button
+          type='button'
+          style={ButtonStyle.PRIMARY}
+          onClick={onConfirmation}
+        >
           Confirmer la création de compte
         </Button>
       </div>

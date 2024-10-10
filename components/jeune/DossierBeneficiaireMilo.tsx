@@ -1,4 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
@@ -17,33 +24,38 @@ interface DossierBeneficiaireMiloProps {
     data: BeneficiaireMiloFormData,
     surcharge?: boolean
   ) => Promise<void>
-  erreurMessageCreationCompte?: string
   onRefresh: () => void
   onRetour: () => void
-  onFermerModale: () => void
+  onAnnulationCreerCompte: () => void
+  erreurMessageCreationCompte?: string
   beneficiaireExisteDejaMilo: boolean
 }
 
-export default function DossierBeneficiaireMilo({
-  dossier,
-  onCreateCompte,
-  erreurMessageCreationCompte,
-  onRefresh,
-  onRetour,
-  onFermerModale,
-  beneficiaireExisteDejaMilo,
-}: DossierBeneficiaireMiloProps) {
+function DossierBeneficiaireMilo(
+  {
+    dossier,
+    onCreateCompte,
+    erreurMessageCreationCompte,
+    onRefresh,
+    onRetour,
+    onAnnulationCreerCompte,
+    beneficiaireExisteDejaMilo,
+  }: DossierBeneficiaireMiloProps,
+  ref: ForwardedRef<{ focusRetour: Function }>
+) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+
+  const retourButtonRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => retourButtonRef.current!.focus(),
+  }))
+
   const [tracking, setTracking] = useState<string>(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
   )
-
-  const [afficherModaleErreurCreation, setAfficherModaleErreurCreation] =
-    useState<boolean>(Boolean(beneficiaireExisteDejaMilo))
-
   const aDesBeneficiaires = portefeuille.length > 0
 
   async function addBeneficiaire(surcharge?: boolean) {
@@ -65,15 +77,11 @@ export default function DossierBeneficiaireMilo({
   useMatomo(tracking, aDesBeneficiaires)
 
   useEffect(() => {
-    if (erreurMessageCreationCompte)
+    if (erreurMessageCreationCompte || beneficiaireExisteDejaMilo)
       setTracking(
         'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
       )
-  }, [erreurMessageCreationCompte])
-
-  useEffect(() => {
-    setAfficherModaleErreurCreation(beneficiaireExisteDejaMilo)
-  }, [beneficiaireExisteDejaMilo])
+  }, [erreurMessageCreationCompte, beneficiaireExisteDejaMilo])
 
   return (
     <>
@@ -155,7 +163,11 @@ export default function DossierBeneficiaireMilo({
         )}
 
         <div className='flex items-center gap-4'>
-          <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
+          <Button
+            style={ButtonStyle.TERTIARY}
+            onClick={onRetour}
+            ref={retourButtonRef}
+          >
             <IconComponent
               name={IconName.ArrowBackward}
               className='mr-2.5 w-3 h-3'
@@ -171,12 +183,11 @@ export default function DossierBeneficiaireMilo({
               <Button
                 id='creation-button'
                 type='button'
-                onClick={() => addBeneficiaire()}
+                onClick={(_e) => addBeneficiaire()}
                 isLoading={creationEnCours}
-                disabled={
-                  Boolean(erreurMessageCreationCompte) &&
-                  !beneficiaireExisteDejaMilo
-                }
+                disabled={Boolean(
+                  erreurMessageCreationCompte || beneficiaireExisteDejaMilo
+                )}
                 describedBy={
                   erreurMessageCreationCompte && 'creation-button--error'
                 }
@@ -199,11 +210,11 @@ export default function DossierBeneficiaireMilo({
         </div>
       </div>
 
-      {afficherModaleErreurCreation && (
+      {beneficiaireExisteDejaMilo && (
         <CreationBeneficiaireErreurModal
           adresseMailBeneficiaire={dossier.email!}
-          onClose={onFermerModale}
-          onSubmit={() => {
+          onClose={onAnnulationCreerCompte}
+          onConfirmation={() => {
             addBeneficiaire(true)
           }}
         />
@@ -211,3 +222,5 @@ export default function DossierBeneficiaireMilo({
     </>
   )
 }
+
+export default forwardRef(DossierBeneficiaireMilo)

@@ -1,4 +1,9 @@
-import React, { MouseEventHandler, ReactNode } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  MouseEventHandler,
+  ReactNode,
+} from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Button.module.css'
@@ -26,22 +31,26 @@ export enum ButtonStyle {
   WARNING = 'WARNING',
 }
 
-export default function Button({
-  children,
-  onClick,
-  className,
-  style = ButtonStyle.PRIMARY,
-  form,
-  id,
-  type,
-  controls,
-  describedBy,
-  label,
-  disabled,
-  isLoading = false,
-}: Props) {
+function Button(
+  {
+    children,
+    onClick,
+    className,
+    style = ButtonStyle.PRIMARY,
+    form,
+    id,
+    type,
+    controls,
+    describedBy,
+    label,
+    disabled,
+    isLoading = false,
+  }: Props,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
   return (
     <button
+      ref={ref}
       onClick={onClick}
       className={`${className ? className : ''} relative text-s-bold ${
         styles.button
@@ -80,6 +89,8 @@ export default function Button({
     </button>
   )
 }
+
+export default forwardRef(Button)
 
 function getColorStyleClassName(style: ButtonStyle): string {
   switch (style) {

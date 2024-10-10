@@ -171,7 +171,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         ;(createCompteJeuneMilo as jest.Mock).mockRejectedValue(
           new ApiError(
             422,
-            'Un compte bénéficiaire existe déjà avec l’adresse mail tchoupi@trotro.fr'
+            'Un compte bénéficiaire avec l’adresse kenji-faux-mail@mail.com existe déjà dans i-milo'
           )
         )
 
@@ -187,7 +187,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         expect(createCompteJeuneMilo).toHaveBeenCalledTimes(1)
         expect(
           screen.getByText(
-            'Un compte bénéficiaire existe déjà avec l’adresse mail tchoupi@trotro.fr'
+            'Un compte bénéficiaire avec l’adresse kenji-faux-mail@mail.com existe déjà dans i-milo'
           )
         ).toBeInTheDocument()
         expect(
