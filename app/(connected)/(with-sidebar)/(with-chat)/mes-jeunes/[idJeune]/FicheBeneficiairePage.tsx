@@ -88,7 +88,7 @@ type FicheBeneficiaireProps = {
   metadonneesFavoris?: MetadonneesFavoris
   offresFT?: Offre[]
   recherchesFT?: Recherche[]
-  demarches?: Demarche[]
+  demarches?: { data: Demarche[]; isStale: boolean } | null
 }
 
 function FicheBeneficiairePage({
@@ -138,11 +138,6 @@ function FicheBeneficiairePage({
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
-
-  const [
-    afficheMessageRecuperationDemarches,
-    setAfficheMessageRecuperationDemarches,
-  ] = useState<boolean>(estConseilDepartemental(conseiller))
 
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
@@ -422,12 +417,28 @@ function FicheBeneficiairePage({
         </div>
       )}
 
-      {afficheMessageRecuperationDemarches && (
+      {demarches === null && (
         <div className='mb-6'>
-          <InformationMessage
-            label='Vous pouvez consulter les démarches de votre bénéficiaire si une connexion de sa part a été effectuée dans les 30 derniers jours.'
-            onAcknowledge={() => setAfficheMessageRecuperationDemarches(false)}
+          <FailureAlert
+            label='La récupération des démarches de ce bénéficiaire a échoué.'
+            sub={
+              <p className='pl-8'>
+                Vous pouvez lui demander de se reconnecter à son application
+                puis rafraîchir votre page.
+              </p>
+            }
           />
+        </div>
+      )}
+
+      {demarches?.isStale && (
+        <div className='mb-6'>
+          <InformationMessage label='Les démarches récupérées pour ce bénéficiaire ne sont peut-être pas à jour.'>
+            <p className='pl-8'>
+              Vous pouvez lui demander de se reconnecter à son application puis
+              rafraîchir votre page.
+            </p>
+          </InformationMessage>
         </div>
       )}
 

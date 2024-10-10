@@ -18,7 +18,7 @@ type OngletsFicheBeneficiaireProps = {
   offres: Offre[]
   recherches: Recherche[]
   lectureSeule?: boolean
-  demarches?: Demarche[]
+  demarches?: { data: Demarche[]; isStale: boolean } | null
 }
 
 export enum OngletFavoris {
@@ -65,10 +65,10 @@ export function OngletsFicheBeneficiaire({
         label={`${conseillerEstCD ? 'Démarches ainsi que les offres' : 'Offres'} et recherches mises en favoris par ${beneficiaire.prenom} ${beneficiaire.nom}`}
         className='mt-10'
       >
-        {estConseilDepartemental(conseiller) && demarches && (
+        {estConseilDepartemental(conseiller) && demarches !== undefined && (
           <Tab
             label='Démarches'
-            count={demarches.length}
+            count={demarches?.data.length}
             selected={currentTab === 'DEMARCHES'}
             controls='liste-demarches'
             onSelectTab={() => switchTab(OngletFavoris.DEMARCHES)}
@@ -91,7 +91,7 @@ export function OngletsFicheBeneficiaire({
         />
       </TabList>
 
-      {currentTab === OngletFavoris.DEMARCHES && demarches && (
+      {currentTab === OngletFavoris.DEMARCHES && demarches !== undefined && (
         <div
           role='tabpanel'
           aria-labelledby='liste-offres--tab'

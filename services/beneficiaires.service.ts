@@ -387,14 +387,22 @@ export async function getDemarchesBeneficiaire(
   dateDebut: DateTime,
   idConseiller: string,
   accessToken: string
-): Promise<Demarche[]> {
+): Promise<{ data: Demarche[]; isStale: boolean } | null> {
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const {
-    content: { queryModel: demarchesJson },
-  } = await apiGet<{ queryModel: DemarcheJson[] }>(
-    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
-    accessToken
-  )
+  try {
+    const {
+      content: { queryModel: demarchesJson, dateDuCache },
+    } = await apiGet<{ queryModel: DemarcheJson[]; dateDuCache?: string }>(
+      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
+      accessToken
+    )
 
-  return demarchesJson.map(jsonToDemarche)
+    return {
+      data: demarchesJson.map(jsonToDemarche),
+      isStale: Boolean(dateDuCache),
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
 }

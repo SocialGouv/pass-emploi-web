@@ -29,19 +29,26 @@ export enum TRI {
 }
 
 interface OngletDemarchesProps {
-  demarches: Demarche[]
+  demarches: { data: Demarche[]; isStale: boolean } | null
   jeune: BaseBeneficiaire
-  lectureSeule?: boolean
 }
 
 export default function OngletDemarches({
   demarches,
   jeune,
-  lectureSeule,
 }: OngletDemarchesProps) {
   return (
     <>
-      {demarches.length === 0 && !lectureSeule && (
+      {!demarches && (
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyState
+            illustrationName={IllustrationName.Checklist}
+            titre={`Impossible de récupérer les démarches de ${jeune.prenom} ${jeune.nom}.`}
+          />
+        </div>
+      )}
+
+      {demarches?.data.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             illustrationName={IllustrationName.Checklist}
@@ -50,8 +57,8 @@ export default function OngletDemarches({
         </div>
       )}
 
-      {demarches.length > 0 && (
-        <TableauDemarche demarches={demarches} beneficiaire={jeune} />
+      {demarches?.data && demarches.data.length > 0 && (
+        <TableauDemarche demarches={demarches.data} beneficiaire={jeune} />
       )}
     </>
   )

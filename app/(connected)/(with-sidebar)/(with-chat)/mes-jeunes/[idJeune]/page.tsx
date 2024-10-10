@@ -63,8 +63,6 @@ export default async function FicheBeneficiaire({
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
-  const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
-
   const [
     conseiller,
     jeune,
@@ -83,7 +81,7 @@ export default async function FicheBeneficiaire({
           PeriodeEvenements.FUTURS,
           accessToken
         )
-      : ([] as EvenementListItem[]),
+      : [],
     beneficiaireHasExtraContent
       ? getActionsBeneficiaireServerSide(params.idJeune, page, accessToken)
       : {
@@ -92,15 +90,10 @@ export default async function FicheBeneficiaire({
         },
     beneficiaireHasExtraContent
       ? getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken)
-      : ([] as SituationNonProfessionnelle[]),
-    estUserCD(user)
-      ? getDemarchesBeneficiaire(
-          params.idJeune,
-          trenteJoursAvant,
-          user.id,
-          accessToken
-        )
       : [],
+    estUserCD(user)
+      ? fetchDemarchesBeneficiaire(params.idJeune, user.id, accessToken)
+      : undefined,
   ])
   if (!jeune) notFound()
 
@@ -172,5 +165,19 @@ export default async function FicheBeneficiaire({
         demarches={demarches}
       />
     </>
+  )
+}
+
+function fetchDemarchesBeneficiaire(
+  idBeneficiaire: string,
+  idConseiller: string,
+  accessToken: string
+) {
+  const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+  return getDemarchesBeneficiaire(
+    idBeneficiaire,
+    trenteJoursAvant,
+    idConseiller,
+    accessToken
   )
 }
