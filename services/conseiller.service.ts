@@ -96,12 +96,17 @@ export async function getDossierJeune(
 }
 
 export async function createCompteJeuneMilo(
-  newJeune: BeneficiaireMiloFormData
+  newJeune: BeneficiaireMiloFormData,
+  surcharge?: boolean
 ): Promise<BaseBeneficiaire> {
   const session = await getSession()
   const { content } = await apiPost<BaseBeneficiaire>(
     `/conseillers/milo/jeunes`,
-    { ...newJeune, idConseiller: session!.user.id },
+    {
+      ...newJeune,
+      idConseiller: session!.user.id,
+      surcharge,
+    },
     session!.accessToken
   )
   return content

@@ -11,6 +11,7 @@ import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function CreationBeneficiaireMiloPage() {
@@ -19,10 +20,13 @@ function CreationBeneficiaireMiloPage() {
   const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const etapeRef = useRef<HTMLDivElement>(null)
+  const dossierBeneficiaireRef = useRef<{ focusRetour: Function }>(null)
 
   const [dossier, setDossier] = useState<DossierMilo | undefined>()
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()
   const [erreurCreation, setErreurCreation] = useState<string | undefined>()
+  const [compteBeneficiaireExisteDeja, setCompteBeneficiaireExisteDeja] =
+    useState<boolean>(false)
 
   async function rechercherDossier(id: string) {
     clearDossier()
@@ -39,23 +43,34 @@ function CreationBeneficiaireMiloPage() {
     }
   }
 
-  async function creerCompteJeune(beneficiaireData: BeneficiaireMiloFormData) {
+  async function creerCompteJeune(
+    beneficiaireData: BeneficiaireMiloFormData,
+    surcharge?: boolean
+  ) {
     setErreurCreation(undefined)
+    setCompteBeneficiaireExisteDeja(false)
 
     try {
       const { createCompteJeuneMilo } = await import(
         'services/conseiller.service'
       )
-      const beneficiaireCree = await createCompteJeuneMilo(beneficiaireData)
+      const beneficiaireCree = await createCompteJeuneMilo(
+        beneficiaireData,
+        surcharge
+      )
 
       setPortefeuille(portefeuille.concat(beneficiaireCree))
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
       router.refresh()
     } catch (error) {
-      setErreurCreation(
-        (error as Error).message || "Une erreur inconnue s'est produite"
-      )
+      if (error instanceof ApiError && error.statusCode === 422) {
+        setCompteBeneficiaireExisteDeja(true)
+      } else {
+        setErreurCreation(
+          (error as Error).message || "Une erreur inconnue s'est produite"
+        )
+      }
     }
   }
 
@@ -63,6 +78,7 @@ function CreationBeneficiaireMiloPage() {
     setErreurDossier(undefined)
     setDossier(undefined)
     setErreurCreation(undefined)
+    setCompteBeneficiaireExisteDeja(false)
   }
 
   useMatomo(
@@ -87,13 +103,19 @@ function CreationBeneficiaireMiloPage() {
 
       {dossier && (
         <DossierBeneficiaireMilo
+          ref={dossierBeneficiaireRef}
           dossier={dossier}
           onCreateCompte={creerCompteJeune}
-          erreurMessageHttpPassEmploi={erreurCreation}
+          erreurMessageCreationCompte={erreurCreation}
+          beneficiaireExisteDejaMilo={compteBeneficiaireExisteDeja}
           onRefresh={() => rechercherDossier(dossier.id)}
           onRetour={() => {
             clearDossier()
             etapeRef.current!.focus()
+          }}
+          onAnnulationCreerCompte={() => {
+            setCompteBeneficiaireExisteDeja(false)
+            dossierBeneficiaireRef.current!.focusRetour()
           }}
         />
       )}

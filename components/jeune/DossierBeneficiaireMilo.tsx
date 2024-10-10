@@ -1,6 +1,14 @@
-import { useEffect, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
+import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -12,30 +20,45 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DossierBeneficiaireMiloProps {
   dossier: DossierMilo
-  onCreateCompte: (data: BeneficiaireMiloFormData) => Promise<void>
-  erreurMessageHttpPassEmploi?: string
+  onCreateCompte: (
+    data: BeneficiaireMiloFormData,
+    surcharge?: boolean
+  ) => Promise<void>
   onRefresh: () => void
   onRetour: () => void
+  onAnnulationCreerCompte: () => void
+  erreurMessageCreationCompte?: string
+  beneficiaireExisteDejaMilo: boolean
 }
 
-export default function DossierBeneficiaireMilo({
-  dossier,
-  onCreateCompte,
-  erreurMessageHttpPassEmploi,
-  onRefresh,
-  onRetour,
-}: DossierBeneficiaireMiloProps) {
+function DossierBeneficiaireMilo(
+  {
+    dossier,
+    onCreateCompte,
+    erreurMessageCreationCompte,
+    onRefresh,
+    onRetour,
+    onAnnulationCreerCompte,
+    beneficiaireExisteDejaMilo,
+  }: DossierBeneficiaireMiloProps,
+  ref: ForwardedRef<{ focusRetour: Function }>
+) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+
+  const retourButtonRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => retourButtonRef.current!.focus(),
+  }))
+
   const [tracking, setTracking] = useState<string>(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
   )
-
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function addBeneficiaire() {
+  async function addBeneficiaire(surcharge?: boolean) {
     if (!creationEnCours) {
       const newBeneficiaire = {
         idDossier: dossier.id,
@@ -45,7 +68,7 @@ export default function DossierBeneficiaireMilo({
       }
 
       setCreationEnCours(true)
-      onCreateCompte(newBeneficiaire).finally(() => {
+      onCreateCompte(newBeneficiaire, surcharge).finally(() => {
         setCreationEnCours(false)
       })
     }
@@ -54,11 +77,11 @@ export default function DossierBeneficiaireMilo({
   useMatomo(tracking, aDesBeneficiaires)
 
   useEffect(() => {
-    if (erreurMessageHttpPassEmploi)
+    if (erreurMessageCreationCompte || beneficiaireExisteDejaMilo)
       setTracking(
         'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
       )
-  }, [erreurMessageHttpPassEmploi])
+  }, [erreurMessageCreationCompte, beneficiaireExisteDejaMilo])
 
   return (
     <>
@@ -129,18 +152,22 @@ export default function DossierBeneficiaireMilo({
       )}
 
       <div className='mt-14'>
-        {erreurMessageHttpPassEmploi && (
+        {erreurMessageCreationCompte && (
           <InputError
             className='mb-2'
             id='creation-button--error'
             ref={(e) => e?.focus()}
           >
-            {erreurMessageHttpPassEmploi}
+            {erreurMessageCreationCompte}
           </InputError>
         )}
 
         <div className='flex items-center gap-4'>
-          <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
+          <Button
+            style={ButtonStyle.TERTIARY}
+            onClick={onRetour}
+            ref={retourButtonRef}
+          >
             <IconComponent
               name={IconName.ArrowBackward}
               className='mr-2.5 w-3 h-3'
@@ -156,11 +183,13 @@ export default function DossierBeneficiaireMilo({
               <Button
                 id='creation-button'
                 type='button'
-                onClick={addBeneficiaire}
+                onClick={(_e) => addBeneficiaire()}
                 isLoading={creationEnCours}
-                disabled={Boolean(erreurMessageHttpPassEmploi)}
+                disabled={Boolean(
+                  erreurMessageCreationCompte || beneficiaireExisteDejaMilo
+                )}
                 describedBy={
-                  erreurMessageHttpPassEmploi && 'creation-button--error'
+                  erreurMessageCreationCompte && 'creation-button--error'
                 }
               >
                 Créer le compte
@@ -180,6 +209,18 @@ export default function DossierBeneficiaireMilo({
           )}
         </div>
       </div>
+
+      {beneficiaireExisteDejaMilo && (
+        <CreationBeneficiaireErreurModal
+          adresseMailBeneficiaire={dossier.email!}
+          onClose={onAnnulationCreerCompte}
+          onConfirmation={() => {
+            addBeneficiaire(true)
+          }}
+        />
+      )}
     </>
   )
 }
+
+export default forwardRef(DossierBeneficiaireMilo)
