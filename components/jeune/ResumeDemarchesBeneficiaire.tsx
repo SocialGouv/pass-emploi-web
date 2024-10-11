@@ -30,10 +30,20 @@ export function ResumeDemarchesBeneficiaire({
 
         if (dateCreation >= debutDeLaSemaine) acc.demarchesCrees.push(demarche)
 
-        if (demarche.statut === StatutDemarche.REALISEE)
+        if (
+          dateFin >= debutDeLaSemaine &&
+          demarche.statut === StatutDemarche.REALISEE
+        )
           acc.demarchesTerminees.push(demarche)
 
-        if (dateFin < debutDeLaSemaine) acc.demarchesEnRetard.push(demarche)
+        if (
+          dateFin < DateTime.now().startOf('day') &&
+          Boolean(
+            demarche.statut !== StatutDemarche.REALISEE &&
+              demarche.statut !== StatutDemarche.ANNULEE
+          )
+        )
+          acc.demarchesEnRetard.push(demarche)
 
         return acc
       },

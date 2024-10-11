@@ -63,6 +63,7 @@ describe('DetailDemarchePage server side', () => {
 
     it('récupère les info de la démarche', async () => {
       const demarche = uneDemarche()
+      const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
       ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue(
         uneListeDeDemarches()
       )
@@ -77,7 +78,7 @@ describe('DetailDemarchePage server side', () => {
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
         'beneficiaire-1',
-        DateTime.fromISO('2024-09-01T00:00:00.000+02:00'),
+        trenteJoursAvant,
         'id-conseiller',
         'accessToken'
       )
