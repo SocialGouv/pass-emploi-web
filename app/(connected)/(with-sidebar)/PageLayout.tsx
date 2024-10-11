@@ -36,7 +36,7 @@ export default function PageLayout({
       </main>
 
       <Footer
-        conseiller={conseiller}
+        conseiller={{ structure: conseiller.structure }}
         aDesBeneficiaires={portefeuille.length > 0}
       />
     </div>

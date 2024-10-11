@@ -5,13 +5,14 @@ import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
-import LoginPage from 'app/(connexion)/login/LoginPage'
+import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
+import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
 
-describe('LoginPage client side', () => {
+describe('LoginPassEmploiPage client side', () => {
   let container: HTMLElement
   beforeEach(async () => {
     ;(useSearchParams as jest.Mock).mockReturnValue({
@@ -22,12 +23,13 @@ describe('LoginPage client side', () => {
   describe('render', () => {
     beforeEach(async () => {
       ;({ container } = render(
-        <LoginPage
-          ssoFranceTravailBRSAEstActif={true}
-          ssoFranceTravailAIJEstActif={true}
-          ssoConseillerDeptEstActif={true}
-          isFromEmail={false}
-        />
+        <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
+          <LoginPassEmploiPage
+            ssoFranceTravailBRSAEstActif={true}
+            ssoFranceTravailAIJEstActif={true}
+            ssoConseillerDeptEstActif={true}
+          />
+        </LoginErrorMessageProvider>
       ))
     })
 
@@ -40,11 +42,11 @@ describe('LoginPage client side', () => {
       //GIVEN
       const headingCEJ = screen.getByRole('heading', {
         level: 2,
-        name: 'Contrat d’engagement jeune',
+        name: 'Connexion conseiller RSA',
       })
       const headingBRSA = screen.getByRole('heading', {
         level: 2,
-        name: 'pass emploi',
+        name: 'Connexion conseiller AIJ',
       })
 
       //THEN
@@ -52,13 +54,7 @@ describe('LoginPage client side', () => {
       expect(headingBRSA).toBeInTheDocument()
     })
 
-    it('devrait avoir quatre boutons', () => {
-      const miloButton = screen.getByRole('button', {
-        name: 'Connexion Mission Locale',
-      })
-      const franceTravailCEJButton = screen.getByRole('button', {
-        name: 'Connexion France Travail',
-      })
+    it('devrait avoir trois boutons', () => {
       const franceTravailBRSAButton = screen.getByRole('button', {
         name: 'Connexion BRSA',
       })
@@ -66,35 +62,16 @@ describe('LoginPage client side', () => {
         name: 'Connexion AIJ',
       })
       const conseillerDeptButton = screen.getByRole('button', {
-        name: 'Connexion Conseil départemental',
+        name: 'Connexion conseil départemental',
       })
 
       const buttonsNb = screen.getAllByRole('button')
 
       //THEN
-      expect(miloButton).toBeInTheDocument()
-      expect(franceTravailCEJButton).toBeInTheDocument()
       expect(franceTravailBRSAButton).toBeInTheDocument()
       expect(franceTravailAIJButton).toBeInTheDocument()
       expect(conseillerDeptButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(5)
-    })
-
-    it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
-      // Given
-      const peButton = screen.getByRole('button', {
-        name: 'Connexion France Travail',
-      })
-
-      // When
-      await userEvent.click(peButton)
-
-      // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'pe-conseiller' }
-      )
+      expect(buttonsNb.length).toEqual(3)
     })
 
     it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
@@ -134,7 +111,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller dept", async () => {
       // Given
       const cdButton = screen.getByRole('button', {
-        name: 'Connexion Conseil départemental',
+        name: 'Connexion conseil départemental',
       })
 
       // When
@@ -145,23 +122,6 @@ describe('LoginPage client side', () => {
         'keycloak',
         { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'conseildepartemental-conseiller' }
-      )
-    })
-
-    it("permet de s'identifier en tant que conseiller MiLo", async () => {
-      // Given
-      const miloButton = screen.getByRole('button', {
-        name: 'Connexion Mission Locale',
-      })
-
-      // When
-      await userEvent.click(miloButton)
-
-      // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'similo-conseiller' }
       )
     })
 
@@ -191,7 +151,9 @@ describe('LoginPage client side', () => {
       // When
       await act(async () => {
         ;({ container } = render(
-          <LoginPage ssoFranceTravailBRSAEstActif={true} isFromEmail={false} />
+          <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
+            <LoginPassEmploiPage ssoFranceTravailBRSAEstActif={true} />
+          </LoginErrorMessageProvider>
         ))
       })
     })

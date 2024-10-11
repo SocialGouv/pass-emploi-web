@@ -2,30 +2,31 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
-import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
+import LoginCEJPage from 'app/(connexion)/login/cej/LoginCEJPage'
+import Footer from 'components/layouts/Footer'
 import { getSessionServerSide } from 'utils/auth/auth'
 
-type LoginSearchParams = Partial<{
+type LoginCEJSearchParams = Partial<{
   source: string
   redirectUrl: string
 }>
 
 export const metadata: Metadata = {
-  title: 'Sélection de l’espace de connexion',
+  title: "Connexion dans l'espace conseiller CEJ",
 }
 
-export default async function Login({
+export default async function LoginCEJ({
   searchParams,
 }: {
-  searchParams?: LoginSearchParams
+  searchParams?: LoginCEJSearchParams
 }) {
   await redirectIfAlreadyConnected(searchParams)
 
-  return <LoginHubPage />
+  return <LoginCEJPage />
 }
 
 async function redirectIfAlreadyConnected(
-  searchParams?: LoginSearchParams
+  searchParams?: LoginCEJSearchParams
 ): Promise<void> {
   const session = await getSessionServerSide()
 
