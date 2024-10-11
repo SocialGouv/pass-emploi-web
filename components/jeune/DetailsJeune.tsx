@@ -29,7 +29,7 @@ interface DetailsJeuneProps {
   jeune: DetailBeneficiaire
   conseiller: Conseiller
   demarches?: { data: Demarche[]; isStale: boolean } | null
-  indicateursSemaine: IndicateursSemaine | undefined
+  indicateursSemaine?: IndicateursSemaine
 }
 
 export default function DetailsJeune({

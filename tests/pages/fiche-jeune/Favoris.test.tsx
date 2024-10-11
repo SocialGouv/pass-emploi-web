@@ -77,12 +77,13 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={true}
         beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         metadonneesFavoris={metadonneesFavoris}
-        onglet='AGENDA'
+        ongletInitial='agenda'
         lectureSeule={false}
       />,
       {

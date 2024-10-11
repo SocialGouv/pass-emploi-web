@@ -15,15 +15,11 @@ import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
-  uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { Action, StatutAction } from 'interfaces/action'
-import { Demarche, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import {
   getActionsBeneficiaireClientSide,
   qualifierActions,
@@ -70,22 +66,30 @@ describe('Actions dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ replace })
   })
 
-  describe("quand l'utilisateur est un conseiller France Travail", () => {
-    let offresFT: Offre[],
-      recherchesFT: Recherche[],
-      metadonneesFavoris: MetadonneesFavoris
+  describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
     beforeEach(async () => {
-      metadonneesFavoris = uneMetadonneeFavoris()
-      offresFT = uneListeDOffres()
-      recherchesFT = uneListeDeRecherches()
-      await renderFicheJeuneFT(
-        StructureConseiller.POLE_EMPLOI,
-        [],
-        metadonneesFavoris,
-        offresFT,
-        recherchesFT
-      )
+      await act(async () => {
+        renderWithContexts(
+          <FicheBeneficiairePage
+            estMilo={false}
+            beneficiaire={unDetailBeneficiaire()}
+            actionsInitiales={desActionsInitiales()}
+            metadonneesFavoris={uneMetadonneeFavoris()}
+            favorisOffres={uneListeDOffres()}
+            favorisRecherches={uneListeDeRecherches()}
+            ongletInitial='agenda'
+            lectureSeule={false}
+          />,
+          {
+            customConseiller: {
+              id: 'id-conseiller',
+              structure: StructureConseiller.POLE_EMPLOI,
+            },
+          }
+        )
+      })
     })
+
     it("n'affiche pas de lien vers les actions du jeune", async () => {
       expect(() => screen.getByText(/Actions/)).toThrow()
     })
@@ -96,7 +100,7 @@ describe('Actions dans la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
+  describe("quand l'utilisateur est un conseiller Milo", () => {
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given
@@ -113,7 +117,6 @@ describe('Actions dans la fiche jeune', () => {
     it('affiche les actions du jeune', async () => {
       // Given
       await renderFicheJeuneMILO({
-        structure: StructureConseiller.MILO,
         actionsInitiales: {
           actions,
           page: 1,
@@ -146,7 +149,6 @@ describe('Actions dans la fiche jeune', () => {
     describe('permet la multi qualification', () => {
       beforeEach(async () => {
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: 1,
@@ -301,7 +303,7 @@ describe('Actions dans la fiche jeune', () => {
 
     it('permet la création d’une action', async () => {
       // When
-      await renderFicheJeuneMILO({ structure: StructureConseiller.MILO })
+      await renderFicheJeuneMILO({})
 
       // Then
       expect(
@@ -315,7 +317,7 @@ describe('Actions dans la fiche jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        await renderFicheJeuneMILO({ structure: StructureConseiller.MILO })
+        await renderFicheJeuneMILO({})
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
@@ -331,13 +333,12 @@ describe('Actions dans la fiche jeune', () => {
       it('ouvre l’onglet des actions', async () => {
         // Given
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: 1,
             metadonnees: { nombreTotal: 14, nombrePages: 2 },
           },
-          onglet: 'ACTIONS',
+          onglet: 'actions',
         })
 
         // Then
@@ -360,13 +361,12 @@ describe('Actions dans la fiche jeune', () => {
         pageCourante = 4
 
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: 'ACTIONS',
+          onglet: 'actions',
         })
       })
 
@@ -436,13 +436,12 @@ describe('Actions dans la fiche jeune', () => {
         pageCourante = 1
 
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: 'ACTIONS',
+          onglet: 'actions',
         })
 
         // When
@@ -504,13 +503,12 @@ describe('Actions dans la fiche jeune', () => {
         pageCourante = 1
 
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: 'ACTIONS',
+          onglet: 'actions',
         })
 
         // When
@@ -573,13 +571,12 @@ describe('Actions dans la fiche jeune', () => {
         pageCourante = 1
 
         await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: 'ACTIONS',
+          onglet: 'actions',
         })
 
         headerColonneDate = screen.getByRole('button', {
@@ -640,126 +637,34 @@ describe('Actions dans la fiche jeune', () => {
       })
     })
   })
-
-  describe("quand l'utilisateur est un conseiller départemental", () => {
-    let offresFT: Offre[],
-      recherchesFT: Recherche[],
-      metadonneesFavoris: MetadonneesFavoris,
-      demarches: Demarche[]
-    beforeEach(async () => {
-      metadonneesFavoris = uneMetadonneeFavoris()
-      offresFT = uneListeDOffres()
-      recherchesFT = uneListeDeRecherches()
-      demarches = uneListeDeDemarches()
-      await renderFicheBeneficiaireCD(
-        StructureConseiller.CONSEIL_DEPT,
-        demarches,
-        [],
-        metadonneesFavoris,
-        offresFT,
-        recherchesFT
-      )
-    })
-    it("n'affiche pas de lien vers les actions du jeune", async () => {
-      expect(() => screen.getByText(/Actions/)).toThrow()
-    })
-
-    it('ne permet pas la création d’action', async () => {
-      // Then
-      expect(() => screen.getByText('Créer une nouvelle action')).toThrow()
-    })
-  })
 })
 
-interface FicheJeuneParams {
-  structure: StructureConseiller
+async function renderFicheJeuneMILO({
+  actionsInitiales,
+  onglet,
+}: {
   actionsInitiales?: {
     actions: Action[]
     metadonnees: MetadonneesPagination
     page: number
   }
-  onglet?: 'ACTIONS'
-}
-
-async function renderFicheJeuneMILO({
-  structure,
-  actionsInitiales,
-  onglet,
-}: FicheJeuneParams) {
+  onglet?: 'actions'
+}) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={true}
         beneficiaire={unDetailBeneficiaire()}
         categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
-        onglet={onglet ?? 'AGENDA'}
+        ongletInitial={onglet ?? 'agenda'}
         lectureSeule={false}
-        demarches={[]}
-      />,
-      {
-        customConseiller: { id: 'id-conseiller', structure: structure },
-      }
-    )
-  })
-}
-
-async function renderFicheJeuneFT(
-  structure: StructureConseiller,
-  rdvs: EvenementListItem[] = [],
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[]
-) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        beneficiaire={unDetailBeneficiaire()}
-        categoriesActions={[]}
-        rdvs={rdvs}
-        actionsInitiales={desActionsInitiales()}
-        metadonneesFavoris={metadonnees}
-        offresFT={offresFT}
-        recherchesFT={recherchesFT}
-        onglet='AGENDA'
-        lectureSeule={false}
-        demarches={[]}
       />,
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: structure,
-        },
-      }
-    )
-  })
-}
-
-async function renderFicheBeneficiaireCD(
-  structure: StructureConseiller,
-  demarches: Demarche[],
-  rdvs: EvenementListItem[] = [],
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[]
-) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={rdvs}
-        categoriesActions={[]}
-        actionsInitiales={desActionsInitiales()}
-        metadonneesFavoris={metadonnees}
-        lectureSeule={false}
-        offresFT={offresFT}
-        recherchesFT={recherchesFT}
-        demarches={demarches}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: structure,
+          structure: StructureConseiller.MILO,
         },
       }
     )

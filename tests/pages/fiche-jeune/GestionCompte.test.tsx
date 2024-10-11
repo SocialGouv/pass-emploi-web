@@ -57,10 +57,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
   describe('pour tous les conseillers', () => {
     it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
       // Given
-      await renderFicheJeune(
-        StructureConseiller.POLE_EMPLOI,
-        unDetailBeneficiaire()
-      )
+      await renderFicheJeune(unDetailBeneficiaire())
 
       // Then
       const deleteButton = screen.getByText('Supprimer ce compte')
@@ -71,7 +68,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.POLE_EMPLOI,
           unDetailBeneficiaire({ isActivated: true }),
           portefeuilleSetter,
           alerteSetter
@@ -192,7 +188,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.POLE_EMPLOI,
           unDetailBeneficiaire({ isActivated: false }),
           portefeuilleSetter,
           alerteSetter
@@ -240,7 +235,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
       it("affiche l'information", async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.POLE_EMPLOI,
           unDetailBeneficiaire({ isReaffectationTemporaire: true })
         )
 
@@ -254,10 +248,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     describe("quand le jeune n'a pas activé son compte", () => {
       it('affiche le mode opératoire pour activer le compte', async () => {
         // Given
-        await renderFicheJeune(
-          StructureConseiller.MILO,
-          unDetailBeneficiaire({ isActivated: false })
-        )
+        await renderFicheJeune(unDetailBeneficiaire({ isActivated: false }))
 
         // Then
         expect(
@@ -271,7 +262,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
 })
 
 async function renderFicheJeune(
-  structure: StructureConseiller,
   jeune: DetailBeneficiaire,
   portefeuilleSetter?: (updatedBeneficiaires: BaseBeneficiaire[]) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
@@ -279,16 +269,19 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={true}
         beneficiaire={jeune}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
-        onglet='AGENDA'
+        ongletInitial='agenda'
         lectureSeule={false}
-        demarches={[]}
       />,
       {
-        customConseiller: { id: 'id-conseiller', structure: structure },
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: StructureConseiller.MILO,
+        },
         customPortefeuille: { setter: portefeuilleSetter },
         customAlerte: { setter: alerteSetter },
       }

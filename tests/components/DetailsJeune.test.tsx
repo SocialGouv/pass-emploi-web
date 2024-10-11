@@ -116,7 +116,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            demarches={[]}
           />
         )
 
@@ -143,7 +142,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            demarches={[]}
           />,
           {
             customAlerte: { setter: alerteSetter },
@@ -226,7 +224,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            demarches={[]}
           />,
           {
             customAlerte: { setter: alerteSetter },

@@ -606,7 +606,62 @@ describe('JeunesApiService', () => {
         '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
-      expect(actual).toEqual(uneListeDeDemarches())
+      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: false })
+    })
+
+    it('renvoie les démarches pas fraiches', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          queryModel: [
+            uneDemarcheJson(),
+            uneDemarcheJson({
+              id: 'id-demarche-2',
+              statut: StatutDemarche.A_FAIRE,
+            }),
+          ],
+          dateDuCache: '2024-04-12',
+        },
+      })
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken'
+      )
+      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: true })
+    })
+
+    it('renvoie un échec', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'Erreur lors de la récupération des démarches')
+      )
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken'
+      )
+      expect(actual).toEqual(null)
     })
   })
 })

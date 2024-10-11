@@ -15,10 +15,7 @@ import {
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -48,18 +45,26 @@ describe('Agenda de la fiche jeune', () => {
   describe("quand l'utilisateur est un conseiller France Travail", () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
-      const metadonneesFavoris = uneMetadonneeFavoris()
-      const offresFT = uneListeDOffres()
-      const recherchesFT = uneListeDeRecherches()
-
       // When
-      await renderFicheJeuneFT(
-        StructureConseiller.POLE_EMPLOI,
-        [],
-        metadonneesFavoris,
-        offresFT,
-        recherchesFT
-      )
+      await act(async () => {
+        renderWithContexts(
+          <FicheBeneficiairePage
+            estMilo={false}
+            beneficiaire={unDetailBeneficiaire()}
+            metadonneesFavoris={uneMetadonneeFavoris()}
+            favorisOffres={uneListeDOffres()}
+            favorisRecherches={uneListeDeRecherches()}
+            ongletInitial='offres'
+            lectureSeule={false}
+          />,
+          {
+            customConseiller: {
+              id: 'id-conseiller',
+              structure: StructureConseiller.POLE_EMPLOI,
+            },
+          }
+        )
+      })
 
       // Then
       expect(recupererAgenda).not.toHaveBeenCalled()
@@ -88,7 +93,7 @@ describe('Agenda de la fiche jeune', () => {
       )
 
       // When
-      await renderFicheJeuneMILO(StructureConseiller.MILO)
+      await renderFicheJeuneMILO()
 
       // Then
       expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
@@ -116,7 +121,7 @@ describe('Agenda de la fiche jeune', () => {
         )
 
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO)
+        await renderFicheJeuneMILO()
         const voirActionsEnRetard = screen.getByRole('button', {
           name: 'Voir les actions',
         })
@@ -146,7 +151,7 @@ describe('Agenda de la fiche jeune', () => {
         )
 
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO)
+        await renderFicheJeuneMILO()
 
         // Then
         const semaineEnCours = screen.getByRole('region', {
@@ -184,7 +189,7 @@ describe('Agenda de la fiche jeune', () => {
         )
 
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO)
+        await renderFicheJeuneMILO()
 
         // Then
         const semaineSuivante = screen.getByRole('region', {
@@ -230,7 +235,7 @@ describe('Agenda de la fiche jeune', () => {
           )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO)
+          await renderFicheJeuneMILO()
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -300,7 +305,7 @@ describe('Agenda de la fiche jeune', () => {
           )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO)
+          await renderFicheJeuneMILO()
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -375,7 +380,7 @@ describe('Agenda de la fiche jeune', () => {
           )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO)
+          await renderFicheJeuneMILO()
 
           // Then
           expect(screen.getByText('Non modifiable')).toBeInTheDocument()
@@ -441,7 +446,7 @@ describe('Agenda de la fiche jeune', () => {
           })
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO)
+          await renderFicheJeuneMILO()
 
           // Then
           expect(
@@ -453,49 +458,22 @@ describe('Agenda de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeuneMILO(structure: StructureConseiller) {
+async function renderFicheJeuneMILO() {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={true}
         beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
-        onglet='AGENDA'
+        ongletInitial='agenda'
         lectureSeule={false}
-      />,
-      {
-        customConseiller: { id: 'id-conseiller', structure: structure },
-      }
-    )
-  })
-}
-
-async function renderFicheJeuneFT(
-  structure: StructureConseiller,
-  rdvs: EvenementListItem[] = [],
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[]
-) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={rdvs}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        metadonneesFavoris={metadonnees}
-        offresFT={offresFT}
-        recherchesFT={recherchesFT}
-        onglet='AGENDA'
-        lectureSeule={false}
-        demarches={[]}
       />,
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: structure,
+          structure: StructureConseiller.MILO,
         },
       }
     )

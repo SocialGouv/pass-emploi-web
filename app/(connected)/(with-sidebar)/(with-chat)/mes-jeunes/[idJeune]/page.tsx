@@ -1,22 +1,31 @@
 import { DateTime } from 'luxon'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Session } from 'next-auth'
+import { ReactElement } from 'react'
 
-import FicheBeneficiairePage, {
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import {
   Onglet,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+  OngletMilo,
+  OngletPasMilo,
+  valeursOngletsMilo,
+  valeursOngletsPasMilo,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { SituationNonProfessionnelle } from 'interfaces/action'
+import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import {
+  Conseiller,
+  estConseilDepartemental,
+  estMilo,
   estUserCD,
   estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import {
   getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
@@ -59,53 +68,88 @@ export default async function FicheBeneficiaire({
   searchParams?: FicheBeneficiaireSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaireHasExtraContent = estUserMilo(user)
 
-  const page = searchParams?.page ? parseInt(searchParams.page) : 1
-
-  const [
-    conseiller,
-    jeune,
-    metadonneesFavoris,
-    rdvs,
-    actions,
-    categoriesActions,
-    demarches,
-  ] = await Promise.all([
+  const [conseiller, beneficiaire, metadonneesFavoris] = await Promise.all([
     getConseillerServerSide(user, accessToken),
     getJeuneDetails(params.idJeune, accessToken),
     getMetadonneesFavorisJeune(params.idJeune, accessToken),
-    beneficiaireHasExtraContent
-      ? getRendezVousJeune(
-          params.idJeune,
-          PeriodeEvenements.FUTURS,
-          accessToken
-        )
-      : [],
-    beneficiaireHasExtraContent
-      ? getActionsBeneficiaireServerSide(params.idJeune, page, accessToken)
-      : {
-          actions: [],
-          metadonnees: { nombreTotal: 0, nombrePages: 0 },
-        },
-    beneficiaireHasExtraContent
-      ? getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken)
-      : [],
-    estUserCD(user)
-      ? fetchDemarchesBeneficiaire(params.idJeune, user.id, accessToken)
-      : undefined,
   ])
-  if (!jeune) notFound()
+  if (!beneficiaire) notFound()
+
+  const page = searchParams?.page ? parseInt(searchParams.page) : 1
+  const ongletInitial = getOngletInitial(
+    searchParams?.onglet,
+    user,
+    metadonneesFavoris
+  )
+
+  return (
+    <>
+      <PageFilArianePortal />
+      <PageHeaderPortal header={`${beneficiaire.prenom} ${beneficiaire.nom}`} />
+
+      {estMilo(conseiller) &&
+        (await renderFicheMilo(
+          conseiller,
+          beneficiaire,
+          accessToken,
+          page,
+          ongletInitial,
+          metadonneesFavoris
+        ))}
+
+      {!estMilo(conseiller) &&
+        (await renderFichePasMilo(
+          conseiller,
+          beneficiaire,
+          accessToken,
+          ongletInitial,
+          metadonneesFavoris
+        ))}
+    </>
+  )
+}
+
+function getOngletInitial(
+  searchParam: string | undefined,
+  user: Session.HydratedUser,
+  metadonneesFavoris?: MetadonneesFavoris
+): Onglet {
+  if (
+    searchParam &&
+    [...valeursOngletsMilo, ...valeursOngletsPasMilo].includes(searchParam)
+  )
+    return searchParam
+
+  if (estUserMilo(user)) return 'actions'
+  if (estUserCD(user)) return 'demarches'
+  if (metadonneesFavoris?.autoriseLePartage) return 'offres'
+  return 'favoris'
+}
+
+async function renderFicheMilo(
+  conseiller: Conseiller,
+  beneficiaire: DetailBeneficiaire,
+  accessToken: string,
+  page: number,
+  ongletInitial: OngletMilo,
+  metadonneesFavoris?: MetadonneesFavoris
+): Promise<ReactElement> {
+  const [rdvs, actions, categoriesActions] = await Promise.all([
+    getRendezVousJeune(beneficiaire.id, PeriodeEvenements.FUTURS, accessToken),
+    getActionsBeneficiaireServerSide(beneficiaire.id, page, accessToken),
+    getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+  ])
 
   let sessionsMilo: EvenementListItem[] = []
   let erreurSessions = false
   if (
     peutAccederAuxSessions(conseiller) &&
-    conseiller.structureMilo!.id === jeune.structureMilo?.id
+    conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
   ) {
     try {
       sessionsMilo = await getSessionsMiloBeneficiaire(
-        params.idJeune,
+        beneficiaire.id,
         accessToken,
         DateTime.now().startOf('day')
       )
@@ -114,70 +158,62 @@ export default async function FicheBeneficiaire({
     }
   }
 
-  let offresPE: Offre[] = []
-  let recherchesPE: Recherche[] = []
-  if (metadonneesFavoris?.autoriseLePartage) {
-    ;[offresPE, recherchesPE] = await Promise.all([
-      !beneficiaireHasExtraContent
-        ? getOffres(params.idJeune, accessToken)
-        : [],
-      !beneficiaireHasExtraContent
-        ? getRecherchesSauvegardees(params.idJeune, accessToken)
-        : [],
-    ])
-  }
-
   const rdvsEtSessionsTriesParDate = [...rdvs]
     .concat(sessionsMilo)
     .sort((event1, event2) =>
       compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
     )
 
-  let onglet: Onglet = 'ACTIONS'
-  switch (searchParams?.onglet) {
-    case 'agenda':
-      onglet = 'AGENDA'
-      break
-    case 'rdvs':
-      onglet = 'RDVS'
-      break
-    case 'favoris':
-      onglet = 'FAVORIS'
-      break
-  }
-
   return (
-    <>
-      <PageFilArianePortal />
-      <PageHeaderPortal header={`${jeune.prenom} ${jeune.nom}`} />
-
-      <FicheBeneficiairePage
-        beneficiaire={jeune}
-        metadonneesFavoris={metadonneesFavoris}
-        rdvs={rdvsEtSessionsTriesParDate}
-        actionsInitiales={{ ...actions, page }}
-        categoriesActions={categoriesActions}
-        offresFT={offresPE}
-        recherchesFT={recherchesPE}
-        onglet={onglet}
-        lectureSeule={jeune.idConseiller !== user.id}
-        erreurSessions={erreurSessions}
-        demarches={demarches}
-      />
-    </>
+    <FicheBeneficiairePage
+      beneficiaire={beneficiaire}
+      estMilo={true}
+      metadonneesFavoris={metadonneesFavoris}
+      rdvs={rdvsEtSessionsTriesParDate}
+      actionsInitiales={{ ...actions, page }}
+      categoriesActions={categoriesActions}
+      ongletInitial={ongletInitial}
+      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
+      erreurSessions={erreurSessions}
+    />
   )
 }
 
-function fetchDemarchesBeneficiaire(
-  idBeneficiaire: string,
-  idConseiller: string,
-  accessToken: string
-) {
+async function renderFichePasMilo(
+  conseiller: Conseiller,
+  beneficiaire: DetailBeneficiaire,
+  accessToken: string,
+  ongletInitial: OngletPasMilo,
+  metadonneesFavoris?: MetadonneesFavoris
+): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
-  return getDemarchesBeneficiaire(
-    idBeneficiaire,
-    trenteJoursAvant,
-    idConseiller,
-    accessToken
+  const demarches = estConseilDepartemental(conseiller)
+    ? await getDemarchesBeneficiaire(
+        beneficiaire.id,
+        trenteJoursAvant,
+        conseiller.id,
+        accessToken
+      )
+    : undefined
+
+  let offres, recherches
+  if (metadonneesFavoris?.autoriseLePartage) {
+    ;[offres, recherches] = await Promise.all([
+      getOffres(beneficiaire.id, accessToken),
+      getRecherchesSauvegardees(beneficiaire.id, accessToken),
+    ])
+  }
+
+  return (
+    <FicheBeneficiairePage
+      beneficiaire={beneficiaire}
+      estMilo={false}
+      metadonneesFavoris={metadonneesFavoris}
+      favorisOffres={offres}
+      favorisRecherches={recherches}
+      ongletInitial={ongletInitial}
+      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
+      demarches={demarches}
+    />
   )
 }

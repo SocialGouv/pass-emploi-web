@@ -11,6 +11,7 @@ import {
   unBeneficiaireChat,
   unDetailBeneficiaire,
   uneDemarche,
+  uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
@@ -44,11 +45,12 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
+            estMilo={true}
             beneficiaire={beneficiaire}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
-            onglet='AGENDA'
+            ongletInitial='agenda'
             lectureSeule={false}
           />,
           {
@@ -80,11 +82,12 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
+            estMilo={true}
             beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
-            onglet='AGENDA'
+            ongletInitial='agenda'
             lectureSeule={true}
           />,
           {
@@ -129,18 +132,19 @@ describe('FicheBeneficiairePage client side', () => {
     })
   })
 
-  describe('pour les conseillers non France Travail', () => {
+  describe('pour les conseillers Milo', () => {
     let container: HTMLElement
 
     it('a11y', async () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
+            estMilo={true}
             beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
-            onglet='AGENDA'
+            ongletInitial='agenda'
             lectureSeule={false}
           />,
           {
@@ -158,11 +162,12 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
+            estMilo={true}
             beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
-            onglet='AGENDA'
+            ongletInitial='agenda'
             lectureSeule={false}
           />,
           {
@@ -185,11 +190,12 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
+              estMilo={true}
               beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
-              onglet='AGENDA'
+              ongletInitial='agenda'
               lectureSeule={false}
             />,
             {
@@ -211,25 +217,53 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
       })
     })
+
+    describe('quand la structure du bénéficiaire est différente du conseiller', () => {
+      it('affiche un message', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <FicheBeneficiairePage
+              estMilo={true}
+              beneficiaire={unDetailBeneficiaire({
+                structureMilo: { id: '2' },
+              })}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              categoriesActions={desCategories()}
+              ongletInitial='agenda'
+              lectureSeule={false}
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+                structureMilo: { nom: 'Mission locale', id: '1' },
+              },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre./
+          )
+        ).toBeInTheDocument()
+      })
+    })
   })
 
   describe('pour les conseillers non Milo', () => {
-    let offresFT: Offre[],
-      recherchesFT: Recherche[],
-      metadonneesFavoris: MetadonneesFavoris
-    beforeEach(async () => {
-      //Given
-      metadonneesFavoris = uneMetadonneeFavoris()
-      offresFT = uneListeDOffres()
-      recherchesFT = uneListeDeRecherches()
-    })
+    const favorisOffres = uneListeDOffres()
+    const favorisRecherches = uneListeDeRecherches()
+    const metadonneesFavoris = uneMetadonneeFavoris()
 
     it('a11y', async () => {
       let results: AxeResults
-      const container = await renderFicheJeune({
+      const container = await renderFicheJeuneNonMilo({
         metadonneesFavoris,
-        offresFT,
-        recherchesFT,
+        favorisOffres,
+        favorisRecherches,
       })
 
       await act(async () => {
@@ -241,7 +275,11 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris,
+        favorisOffres,
+        favorisRecherches,
+      })
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -251,7 +289,11 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris,
+        favorisOffres,
+        favorisRecherches,
+      })
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -263,7 +305,12 @@ describe('FicheBeneficiairePage client side', () => {
       metadonneesFavoris.autoriseLePartage = false
 
       //When
-      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris,
+        favorisOffres,
+        favorisRecherches,
+        ongletInitial: 'favoris',
+      })
 
       // Then
       expect(screen.getByText(/Emplois/)).toBeInTheDocument()
@@ -279,11 +326,12 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
+              estMilo={true}
               beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
-              onglet='AGENDA'
+              ongletInitial='agenda'
               lectureSeule={false}
             />
           )
@@ -305,46 +353,15 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers départementaux', () => {
-    it('affiche un message pour la récupération des démarches', async () => {
-      //Given
-      //When
-      await renderFicheJeune({
-        metadonneesFavoris: uneMetadonneeFavoris(),
-        offresFT: uneListeDOffres(),
-        recherchesFT: uneListeDeRecherches(),
-        structure: StructureConseiller.CONSEIL_DEPT,
-      })
-
-      //Then
-      expect(
-        screen.getByText(
-          'Vous pouvez consulter les démarches de votre bénéficiaire si une connexion de sa part a été effectuée dans les 30 derniers jours.'
-        )
-      ).toBeInTheDocument()
-    })
-
-    it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
-      // When
-      await renderFicheJeune({
-        metadonneesFavoris: uneMetadonneeFavoris(),
-        offresFT: uneListeDOffres(),
-        recherchesFT: uneListeDeRecherches(),
-        structure: StructureConseiller.CONSEIL_DEPT,
-      })
-
-      // Then
-      expect(screen.getByText('Offres')).toBeInTheDocument()
-      expect(screen.getByText('Recherches')).toBeInTheDocument()
-    })
-
     it('affiche le tableau des démarches', async () => {
       // When
-      await renderFicheJeune({
-        metadonneesFavoris: uneMetadonneeFavoris(),
-        offresFT: uneListeDOffres(),
-        recherchesFT: uneListeDeRecherches(),
-        demarches: [uneDemarche()],
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris: uneMetadonneeFavoris({ autoriseLePartage: false }),
+        favorisOffres: uneListeDOffres(),
+        favorisRecherches: uneListeDeRecherches(),
+        demarches: { data: [uneDemarche()], isStale: false },
         structure: StructureConseiller.CONSEIL_DEPT,
+        ongletInitial: 'demarches',
       })
 
       // Then
@@ -360,68 +377,83 @@ describe('FicheBeneficiairePage client side', () => {
         })
       ).toBeInTheDocument()
     })
-  })
 
-  describe('quand la structure du bénéficiaire est différente du conseiller', () => {
-    it('affiche un message', async () => {
-      // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            beneficiaire={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            onglet='AGENDA'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: {
-              structure: StructureConseiller.MILO,
-              structureMilo: { nom: 'Mission locale', id: '1' },
-            },
-          }
-        )
+    it('affiche un message pour des démarches pas fraiches', async () => {
+      //When
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        favorisOffres: uneListeDOffres(),
+        favorisRecherches: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+        demarches: { data: uneListeDeDemarches(), isStale: true },
       })
 
-      // Then
+      //Then
       expect(
         screen.getByText(
-          /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre./
+          'Les démarches récupérées pour ce bénéficiaire ne sont peut-être pas à jour.'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          'Vous pouvez lui demander de se reconnecter à son application puis rafraîchir votre page.'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche un message pour des démarches en erreur', async () => {
+      //When
+      await renderFicheJeuneNonMilo({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        favorisOffres: uneListeDOffres(),
+        favorisRecherches: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+        demarches: null,
+      })
+
+      //Then
+      expect(
+        screen.getByText(
+          'La récupération des démarches de ce bénéficiaire a échoué.'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          'Vous pouvez lui demander de se reconnecter à son application puis rafraîchir votre page.'
         )
       ).toBeInTheDocument()
     })
   })
 })
 
-async function renderFicheJeune({
+async function renderFicheJeuneNonMilo({
   lectureSeule,
   metadonneesFavoris,
-  offresFT,
-  recherchesFT,
+  favorisOffres,
+  favorisRecherches,
   structure,
   demarches,
+  ongletInitial,
 }: {
   metadonneesFavoris: MetadonneesFavoris
-  offresFT: Offre[]
-  recherchesFT: Recherche[]
+  favorisOffres: Offre[]
+  favorisRecherches: Recherche[]
   lectureSeule?: boolean
-  demarches?: Demarche[]
+  demarches?: { data: Demarche[]; isStale: boolean } | null
   structure?: StructureConseiller
+  ongletInitial?: string
 }): Promise<HTMLElement> {
   let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={false}
         beneficiaire={unDetailBeneficiaire()}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        onglet='AGENDA'
+        ongletInitial={ongletInitial ?? 'offres'}
         lectureSeule={lectureSeule ?? false}
         metadonneesFavoris={metadonneesFavoris}
-        offresFT={offresFT}
-        recherchesFT={recherchesFT}
+        favorisOffres={favorisOffres}
+        favorisRecherches={favorisRecherches}
         demarches={demarches}
       />,
       {
