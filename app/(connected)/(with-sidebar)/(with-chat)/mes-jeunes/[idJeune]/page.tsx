@@ -63,6 +63,8 @@ export default async function FicheBeneficiaire({
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
+  const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+
   const [
     conseiller,
     jeune,
@@ -94,7 +96,7 @@ export default async function FicheBeneficiaire({
     estUserCD(user)
       ? getDemarchesBeneficiaire(
           params.idJeune,
-          DateTime.now().startOf('week'),
+          trenteJoursAvant,
           user.id,
           accessToken
         )

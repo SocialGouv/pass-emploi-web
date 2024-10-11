@@ -53,11 +53,11 @@ async function getDemarcheProps({ idJeune, idDemarche }: DetailDemarcheParams) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserCD(user)) notFound()
 
-  const aujourdhui = DateTime.now().startOf('day')
+  const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
 
   const demarches = await getDemarchesBeneficiaire(
     idJeune,
-    aujourdhui,
+    trenteJoursAvant,
     user.id,
     accessToken
   )
