@@ -79,8 +79,8 @@
     "elastic-apm-node": false
   },
   "resolutions": {
-    "elastic-apm-node/cookie": "0.7.0",
-    "next-auth/cookie": "0.7.0"
+    "elastic-apm-node/cookie": "1.0.1",
+    "next-auth/cookie": "1.0.1"
   },
   "packageManager": "yarn@4.4.1"
 }
