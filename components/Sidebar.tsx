@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import { ID_MENU } from 'components/ids'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IllustrationComponent, {
   IllustrationName,
@@ -39,6 +40,8 @@ export default function Sidebar() {
       )}
 
       <nav
+        id={ID_MENU}
+        tabIndex={-1}
         role='navigation'
         aria-label='Menu principal'
         className='grow flex flex-col justify-between'

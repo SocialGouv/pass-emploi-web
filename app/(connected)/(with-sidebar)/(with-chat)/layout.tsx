@@ -7,6 +7,7 @@ import PageLayout from 'app/(connected)/(with-sidebar)/PageLayout'
 import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
 import ChatContainer from 'components/chat/ChatContainer'
 import ChatNav from 'components/chat/ChatNav'
+import { ID_CHAT } from 'components/ids'
 import Sidebar from 'components/Sidebar'
 import { utiliseChat } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -24,7 +25,7 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
       <PageLayout fullWidth={true}>{children}</PageLayout>
 
       {utiliseChat(conseiller) && (
-        <aside className={layout.chatRoom}>
+        <aside id={ID_CHAT} tabIndex={-1} className={layout.chatRoom}>
           <ChatContainer menuState={[showChatNav, setShowChatNav]} />
         </aside>
       )}

@@ -28,11 +28,7 @@ function ListeConversations(
 ) {
   useEffect(() => {
     if (conversations?.length && idConversationToFocus) {
-      document
-        .querySelector<HTMLButtonElement>(
-          'button#chat-' + idConversationToFocus
-        )
-        ?.focus()
+      document.getElementById(`chat-${idConversationToFocus}`)?.focus()
     }
   }, [conversations, idConversationToFocus])
 

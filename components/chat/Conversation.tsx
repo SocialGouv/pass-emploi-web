@@ -245,8 +245,8 @@ export function Conversation({
     setMessageAModifier(undefined)
     resetTextbox()
 
-    const messageToFocus = document.querySelector<HTMLLIElement>(
-      `li#message-${messageAModifier.id}`
+    const messageToFocus = document.getElementById(
+      `message-${messageAModifier.id}`
     )!
     messageToFocus.setAttribute('tabIndex', '-1')
     messageToFocus.focus()
@@ -264,15 +264,13 @@ export function Conversation({
     )
 
     if (idMessageToFocus) {
-      const messageToFocus = document.querySelector<HTMLLIElement>(
-        `li#message-${idMessageToFocus}`
+      const messageToFocus = document.getElementById(
+        `message-${idMessageToFocus}`
       )!
       messageToFocus.setAttribute('tabIndex', '-1')
       messageToFocus.focus()
     } else {
-      document
-        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')!
-        .focus()
+      document.getElementById('chat-bouton-retour')!.focus()
     }
 
     trackEvent({
@@ -338,10 +336,8 @@ export function Conversation({
         messagesByDay
       )
       const toFocus = idMessageToFocus
-        ? document.querySelector<HTMLLIElement>(
-            `li#message-${idMessageToFocus}`
-          )!
-        : document.querySelector<HTMLParagraphElement>(`p#${idNoMoreMessage}`)!
+        ? document.getElementById(`message-${idMessageToFocus}`)!
+        : document.getElementById(idNoMoreMessage)!
       toFocus.setAttribute('tabIndex', '-1')
       toFocus.focus()
     }
