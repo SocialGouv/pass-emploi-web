@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default async function Agenda({
   searchParams?: AgendaSearchParams
 }) {
   const { user } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) notFound()
+  if (!estUserMilo(user)) notFound()
 
   const periodeIndex = searchParams?.periodeIndex
     ? parseInt(searchParams.periodeIndex)

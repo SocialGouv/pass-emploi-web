@@ -9,11 +9,11 @@ import {
   BeneficiaireFromListe,
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { CurrentConversationProvider } from 'utils/chat/currentConversationContext'
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -22,17 +22,17 @@ import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 export default function AppContextProviders({
   conseiller,
   portefeuille,
-  theme,
   children,
 }: {
   conseiller: Conseiller
   portefeuille: BeneficiaireFromListe[]
-  theme: 'cej' | 'pass-emploi'
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
     .map(extractBaseBeneficiaire)
     .sort(compareBeneficiairesByNom)
+
+  const theme = estPassEmploi(conseiller) ? 'darker' : 'neutral'
 
   apm.setUserContext({
     id: conseiller.id,
@@ -45,13 +45,13 @@ export default function AppContextProviders({
       <PortefeuilleProvider portefeuille={portefeuilleTrie}>
         <ChatCredentialsProvider>
           <ChatsProvider>
-            <CurrentJeuneProvider>
+            <CurrentConversationProvider>
               <ShowRubriqueListeDeDiffusionProvider>
                 <ListeDeDiffusionSelectionneeProvider>
                   <AlerteProvider>
                     <ThemeProvider
-                      defaultTheme={'cej'}
-                      themes={['cej', 'pass-emploi']}
+                      defaultTheme={'neutral'}
+                      themes={['neutral', 'darker']}
                       forcedTheme={theme}
                     >
                       {children}
@@ -59,7 +59,7 @@ export default function AppContextProviders({
                   </AlerteProvider>
                 </ListeDeDiffusionSelectionneeProvider>
               </ShowRubriqueListeDeDiffusionProvider>
-            </CurrentJeuneProvider>
+            </CurrentConversationProvider>
           </ChatsProvider>
         </ChatCredentialsProvider>
       </PortefeuilleProvider>

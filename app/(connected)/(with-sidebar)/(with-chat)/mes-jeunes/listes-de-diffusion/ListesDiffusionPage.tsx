@@ -168,7 +168,7 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
           focusable={false}
           aria-label={informationLabel}
           title={informationLabel}
-          className='w-6 h-6 mr-2 fill-[currentColor]'
+          className='w-6 h-6 mr-2 fill-current'
         />
         {liste.titre}
       </div>

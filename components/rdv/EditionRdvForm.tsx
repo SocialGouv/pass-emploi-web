@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import {
   BeneficiaireIndicationPortefeuille,
@@ -10,7 +10,7 @@ import BeneficiairesMultiselectAutocomplete, {
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -77,6 +77,10 @@ export function EditionRdvForm({
   evenementTypeAC,
   lectureSeule,
 }: EditionRdvFormProps) {
+  const MAX_INPUT_LENGTH = 250
+
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+
   const defaultBeneficiaires = initBeneficiairesFromRdvOrIdBeneficiaire()
   const [beneficiairesEtablissement, setBeneficiairesEtablissement] = useState<
     BaseBeneficiaire[]
@@ -456,7 +460,7 @@ export function EditionRdvForm({
 
   function validateDescription() {
     const descriptionEstValide =
-      !description.value || description.value.length < 250
+      !description.value || description.value.length < MAX_INPUT_LENGTH
 
     if (!descriptionEstValide) {
       setDescription({
@@ -529,12 +533,10 @@ export function EditionRdvForm({
     e.preventDefault()
 
     if (!formIsValid()) {
-      document
-        .getElementById('edition-rdv-form')!
-        .scrollIntoView({ behavior: 'smooth' })
-      return Promise.resolve()
+      formErrorsRef.current!.focus()
+      return
     }
-    if (!formHasChanges()) return Promise.resolve()
+    if (!formHasChanges()) return
 
     setIsLoading(true)
 
@@ -664,13 +666,12 @@ export function EditionRdvForm({
   // @ts-ignore
   return (
     <>
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
-      <form
-        id='edition-rdv-form'
-        onSubmit={handleSoumettreRdv}
-        noValidate={true}
-      >
+      <form onSubmit={handleSoumettreRdv} noValidate={true}>
         <p className='text-s-bold my-6'>
           Tous les champs avec * sont obligatoires
         </p>
@@ -757,7 +758,7 @@ export function EditionRdvForm({
           <Label htmlFor='description' withBulleMessageSensible={true}>
             {{
               main: 'Description',
-              helpText: '500 caractères maximum',
+              helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
             }}
           </Label>
           {description.error && (
@@ -768,7 +769,7 @@ export function EditionRdvForm({
           <Textarea
             id='description'
             defaultValue={description.value}
-            maxLength={500}
+            maxLength={MAX_INPUT_LENGTH}
             onChange={(value: string) => setDescription({ value })}
             invalid={Boolean(description.error)}
             onBlur={validateDescription}

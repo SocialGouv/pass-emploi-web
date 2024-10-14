@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
+import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/beneficiaire'
@@ -12,30 +20,45 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DossierBeneficiaireMiloProps {
   dossier: DossierMilo
-  onCreateCompte: (data: BeneficiaireMiloFormData) => Promise<void>
-  erreurMessageHttpPassEmploi?: string
+  onCreateCompte: (
+    data: BeneficiaireMiloFormData,
+    surcharge?: boolean
+  ) => Promise<void>
   onRefresh: () => void
   onRetour: () => void
+  onAnnulationCreerCompte: () => void
+  erreurMessageCreationCompte?: string
+  beneficiaireExisteDejaMilo: boolean
 }
 
-export default function DossierBeneficiaireMilo({
-  dossier,
-  onCreateCompte,
-  erreurMessageHttpPassEmploi,
-  onRefresh,
-  onRetour,
-}: DossierBeneficiaireMiloProps) {
+function DossierBeneficiaireMilo(
+  {
+    dossier,
+    onCreateCompte,
+    erreurMessageCreationCompte,
+    onRefresh,
+    onRetour,
+    onAnnulationCreerCompte,
+    beneficiaireExisteDejaMilo,
+  }: DossierBeneficiaireMiloProps,
+  ref: ForwardedRef<{ focusRetour: Function }>
+) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+
+  const retourButtonRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => retourButtonRef.current!.focus(),
+  }))
+
   const [tracking, setTracking] = useState<string>(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
   )
-
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function addBeneficiaire() {
+  async function addBeneficiaire(surcharge?: boolean) {
     if (!creationEnCours) {
       const newBeneficiaire = {
         idDossier: dossier.id,
@@ -45,7 +68,7 @@ export default function DossierBeneficiaireMilo({
       }
 
       setCreationEnCours(true)
-      onCreateCompte(newBeneficiaire).finally(() => {
+      onCreateCompte(newBeneficiaire, surcharge).finally(() => {
         setCreationEnCours(false)
       })
     }
@@ -54,11 +77,11 @@ export default function DossierBeneficiaireMilo({
   useMatomo(tracking, aDesBeneficiaires)
 
   useEffect(() => {
-    if (erreurMessageHttpPassEmploi)
+    if (erreurMessageCreationCompte || beneficiaireExisteDejaMilo)
       setTracking(
         'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
       )
-  }, [erreurMessageHttpPassEmploi])
+  }, [erreurMessageCreationCompte, beneficiaireExisteDejaMilo])
 
   return (
     <>
@@ -128,60 +151,76 @@ export default function DossierBeneficiaireMilo({
         </div>
       )}
 
-      {erreurMessageHttpPassEmploi && (
-        <DeprecatedErrorMessage className='mt-8'>
-          {erreurMessageHttpPassEmploi}
-        </DeprecatedErrorMessage>
-      )}
-
-      <div className='flex items-center mt-14 gap-4'>
-        <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
-          <IconComponent
-            name={IconName.ArrowBackward}
-            className='mr-2.5 w-3 h-3'
-            role='img'
-            focusable={false}
-            aria-label="Retour Création d'un compte bénéficiaire étape 1"
-          />
-          Retour
-        </Button>
-
-        {!erreurMessageHttpPassEmploi && (
-          <ActionButtons
-            dossier={dossier}
-            addBeneficiaire={addBeneficiaire}
-            creationEnCours={creationEnCours}
-            onRefresh={onRefresh}
-          />
+      <div className='mt-14'>
+        {erreurMessageCreationCompte && (
+          <InputError
+            className='mb-2'
+            id='creation-button--error'
+            ref={(e) => e?.focus()}
+          >
+            {erreurMessageCreationCompte}
+          </InputError>
         )}
+
+        <div className='flex items-center gap-4'>
+          <Button
+            style={ButtonStyle.TERTIARY}
+            onClick={onRetour}
+            ref={retourButtonRef}
+          >
+            <IconComponent
+              name={IconName.ArrowBackward}
+              className='mr-2.5 w-3 h-3'
+              role='img'
+              focusable={false}
+              aria-label="Retour Création d'un compte bénéficiaire étape 1"
+            />
+            Retour
+          </Button>
+
+          {dossier.email && (
+            <>
+              <Button
+                id='creation-button'
+                type='button'
+                onClick={(_e) => addBeneficiaire()}
+                isLoading={creationEnCours}
+                disabled={Boolean(
+                  erreurMessageCreationCompte || beneficiaireExisteDejaMilo
+                )}
+                describedBy={
+                  erreurMessageCreationCompte && 'creation-button--error'
+                }
+              >
+                Créer le compte
+              </Button>
+            </>
+          )}
+
+          {!dossier.email && (
+            <Button type='button' onClick={onRefresh}>
+              <RefreshIcon
+                className='w-4 h-4 mr-2.5'
+                aria-hidden={true}
+                focusable={false}
+              />
+              Rafraîchir le compte
+            </Button>
+          )}
+        </div>
       </div>
+
+      {beneficiaireExisteDejaMilo && (
+        <CreationBeneficiaireErreurModal
+          adresseMailBeneficiaire={dossier.email!}
+          onClose={onAnnulationCreerCompte}
+          onConfirmation={() => {
+            addBeneficiaire(true)
+          }}
+        />
+      )}
     </>
   )
 }
 
-function ActionButtons({
-  dossier,
-  addBeneficiaire,
-  creationEnCours,
-  onRefresh,
-}: {
-  dossier: DossierMilo
-  addBeneficiaire: () => Promise<void>
-  creationEnCours: boolean
-  onRefresh: () => void
-}) {
-  return dossier.email ? (
-    <Button type='button' onClick={addBeneficiaire} disabled={creationEnCours}>
-      {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
-    </Button>
-  ) : (
-    <Button type='button' onClick={onRefresh}>
-      <RefreshIcon
-        className='w-4 h-4 mr-2.5'
-        aria-hidden={true}
-        focusable={false}
-      />
-      Rafraîchir le compte
-    </Button>
-  )
-}
+export default forwardRef(DossierBeneficiaireMilo)

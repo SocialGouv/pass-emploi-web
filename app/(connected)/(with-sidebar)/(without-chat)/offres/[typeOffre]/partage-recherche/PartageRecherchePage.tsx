@@ -10,7 +10,7 @@ import BeneficiairesMultiselectAutocomplete, {
 import SuggestionCard from 'components/offres/suggestions/SuggestionCard'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'

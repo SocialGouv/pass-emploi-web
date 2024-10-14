@@ -3,9 +3,9 @@ import React, { ReactNode } from 'react'
 
 import { MODAL_ROOT_ID } from 'components/ids'
 import LienEvitement from 'components/LienEvitement'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estConseilDepartemental, estPassEmploi } from 'interfaces/conseiller'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -27,19 +27,14 @@ export default async function LayoutWhenConnected({
 
   const [conseiller, portefeuille] = await Promise.all([
     getConseillerServerSide(user, accessToken),
-    getJeunesDuConseillerServerSide(user.id, accessToken),
+    getBeneficiairesDuConseillerServerSide(user.id, accessToken),
   ])
-  const theme = estPassEmploi(conseiller) ? 'pass-emploi' : 'cej'
 
   return (
     <>
       <LienEvitement />
 
-      <AppContextProviders
-        conseiller={conseiller}
-        portefeuille={portefeuille}
-        theme={theme}
-      >
+      <AppContextProviders conseiller={conseiller} portefeuille={portefeuille}>
         {children}
       </AppContextProviders>
 

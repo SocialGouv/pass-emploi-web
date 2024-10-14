@@ -45,7 +45,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       ;({ container } = renderWithContexts(
         <EditionListeDiffusionPage returnTo='/mes-jeunes/listes-de-diffusion' />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
         }
       ))
     })
@@ -233,7 +233,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           liste={listeDeDiffusion}
         />,
         {
-          customAlerte: { alerteSetter },
+          customAlerte: { setter: alerteSetter },
         }
       ))
     })

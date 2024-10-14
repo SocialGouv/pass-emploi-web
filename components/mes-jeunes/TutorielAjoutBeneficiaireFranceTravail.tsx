@@ -4,7 +4,11 @@ import EtapesTutoAjoutBeneficiaire from 'components/mes-jeunes/EtapesTutoAjoutBe
 import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
-export default function TutorielAjoutBeneficiaireFranceTravail() {
+export default function TutorielAjoutBeneficiaireFranceTravail({
+  aAccesMap,
+}: {
+  aAccesMap: boolean
+}) {
   const etapes = [
     {
       icon: IconName.NumberCircleOne,
@@ -33,7 +37,13 @@ export default function TutorielAjoutBeneficiaireFranceTravail() {
   return (
     <>
       <EtapesTutoAjoutBeneficiaire etapes={etapes} />
-      <InformationMessage label='Attention à bien renseigner l’e-mail qui se trouve sous le dossier MAP du bénéficiaire.' />
+      <InformationMessage
+        label={
+          aAccesMap
+            ? 'Attention à bien renseigner l’e-mail qui se trouve sous le dossier MAP du bénéficiaire.'
+            : 'Attention à bien renseigner l’adresse e-mail que votre bénéficiaire utilise pour se connecter à son espace France Travail.'
+        }
+      />
     </>
   )
 }

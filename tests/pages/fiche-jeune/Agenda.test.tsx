@@ -7,23 +7,23 @@ import React from 'react'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
 describe('Agenda de la fiche jeune', () => {
@@ -126,10 +126,9 @@ describe('Agenda de la fiche jeune', () => {
         expect(voirActionsEnRetard).toBeInTheDocument()
 
         await userEvent.click(voirActionsEnRetard)
-        expect(screen.getByRole('tab', { name: 'Actions 0' })).toHaveAttribute(
-          'aria-selected',
-          'true'
-        )
+        expect(
+          screen.getByRole('tab', { name: 'Actions 0 éléments' })
+        ).toHaveAttribute('aria-selected', 'true')
       })
       it('avec un message si le bénéficiaire n’a rien sur la semaine en cours', async () => {
         // Given
@@ -458,7 +457,7 @@ async function renderFicheJeuneMILO(structure: StructureConseiller) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -482,7 +481,7 @@ async function renderFicheJeuneFT(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -491,6 +490,7 @@ async function renderFicheJeuneFT(
         recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
+        demarches={[]}
       />,
       {
         customConseiller: {

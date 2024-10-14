@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { ID_CONTENU } from 'components/ids'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -18,11 +19,11 @@ describe('AlerteDisplayer', () => {
       // When
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.creationRDV,
             target: 'id-rdv',
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
     })
@@ -52,10 +53,10 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.modificationRDV,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -71,10 +72,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.suppressionRDV,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -90,11 +91,11 @@ describe('AlerteDisplayer', () => {
       // When
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.creationAnimationCollective,
             target: 'id-ac',
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
     })
@@ -124,10 +125,10 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.modificationAnimationCollective,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -143,10 +144,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.suppressionAnimationCollective,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -162,10 +163,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.recuperationBeneficiaires,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -181,11 +182,11 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.creationBeneficiaire,
             target: 'id-beneficiaire',
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
     })
@@ -217,10 +218,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.suppressionBeneficiaire,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -236,10 +237,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.modificationIdentifiantPartenaire,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -255,10 +256,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.envoiMessage,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
       })
 
@@ -274,10 +275,10 @@ describe('AlerteDisplayer', () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.choixAgence,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
         customConseiller: unConseiller({
           structure: StructureConseiller.MILO,
@@ -293,10 +294,10 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.choixAgence,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI,
@@ -312,10 +313,10 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.creationListeDiffusion,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI,
@@ -334,10 +335,10 @@ describe('AlerteDisplayer', () => {
       // Given - When
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.modificationListeDiffusion,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI,
@@ -356,10 +357,10 @@ describe('AlerteDisplayer', () => {
       // Given - When
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
-          alerte: {
+          value: {
             key: AlerteParam.suppressionListeDiffusion,
           },
-          alerteSetter,
+          setter: alerteSetter,
         },
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI,
@@ -375,17 +376,23 @@ describe('AlerteDisplayer', () => {
 
   it("permet de fermer l'alerte du succès", async () => {
     // Given
-    renderWithContexts(<AlerteDisplayer />, {
-      customAlerte: {
-        alerte: {
-          key: AlerteParam.creationRDV,
+    renderWithContexts(
+      <>
+        <div id={ID_CONTENU}></div>
+        <AlerteDisplayer />
+      </>,
+      {
+        customAlerte: {
+          value: {
+            key: AlerteParam.creationRDV,
+          },
+          setter: alerteSetter,
         },
-        alerteSetter,
-      },
-      customConseiller: unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI,
-      }),
-    })
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
+      }
+    )
 
     // When
     await userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))

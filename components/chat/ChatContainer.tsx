@@ -1,35 +1,44 @@
 'use client'
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
-import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  ConseillerHistorique,
+} from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useChats } from 'utils/chat/chatsContext'
+import { useCurrentConversation } from 'utils/chat/currentConversationContext'
 import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 
 type ChatContainerProps = {
-  beneficiairesChats: BeneficiaireChat[] | undefined
   menuState: [boolean, Dispatch<SetStateAction<boolean>>]
   messagerieFullScreen?: boolean
 }
 
 export default function ChatContainer({
-  beneficiairesChats,
   menuState: [showMenu, setShowMenu],
   messagerieFullScreen,
 }: ChatContainerProps) {
-  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
-  const [currentChat, setCurrentChat] = useState<BeneficiaireChat | undefined>(
-    undefined
-  )
+  const conversationIdRef = useRef<string | undefined>(undefined)
+
+  const chats = useChats()
+  const [currentConversation, setCurrentConversation] = useCurrentConversation()
+
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
@@ -39,6 +48,13 @@ export default function ChatContainer({
   const [listesDeDiffusion, setListesDeDiffusion] =
     useState<ListeDeDiffusion[]>()
 
+  function afficherConversation(conversation: BeneficiaireEtChat | undefined) {
+    if (conversation) conversationIdRef.current = conversation.id
+    setCurrentConversation(
+      conversation && { conversation, shouldFocusOnRender: true }
+    )
+  }
+
   useEffect(() => {
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
       getListesDeDiffusionClientSide().then(setListesDeDiffusion)
@@ -46,25 +62,16 @@ export default function ChatContainer({
   }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
 
   useEffect(() => {
-    if (idCurrentJeune) {
-      getConseillersDuJeuneClientSide(idCurrentJeune).then(
+    if (
+      currentConversation &&
+      !listeSelectionnee &&
+      !showRubriqueListesDeDiffusion
+    ) {
+      getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
-
-      if (
-        beneficiairesChats &&
-        !listeSelectionnee &&
-        !showRubriqueListesDeDiffusion
-      )
-        setCurrentChat(
-          beneficiairesChats.find(
-            (beneficiaireChat) => beneficiaireChat.id === idCurrentJeune
-          )
-        )
-    } else {
-      setCurrentChat(undefined)
     }
-  }, [idCurrentJeune, beneficiairesChats])
+  }, [currentConversation, chats])
 
   return (
     <>
@@ -88,13 +95,16 @@ export default function ChatContainer({
 
           {!showRubriqueListesDeDiffusion && (
             <ChatRoom
-              beneficiairesChats={beneficiairesChats}
+              shouldFocusAccesListesDiffusion={
+                showRubriqueListesDeDiffusion === false
+              }
+              beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }
-              onAccesConversation={setIdCurrentJeune}
+              onAccesConversation={afficherConversation}
             />
           )}
         </>
@@ -102,10 +112,11 @@ export default function ChatContainer({
 
       {!messagerieFullScreen && (
         <>
-          {currentChat && (
+          {currentConversation && (
             <ConversationBeneficiaire
-              onBack={() => setIdCurrentJeune(undefined)}
-              beneficiaireChat={currentChat}
+              onBack={() => afficherConversation(undefined)}
+              beneficiaireChat={currentConversation.conversation}
+              shouldFocusOnFirstRender={currentConversation.shouldFocusOnRender}
               conseillers={conseillers}
             />
           )}
@@ -113,20 +124,24 @@ export default function ChatContainer({
           {showRubriqueListesDeDiffusion && (
             <RubriqueListesDeDiffusion
               listesDeDiffusion={listesDeDiffusion}
-              chats={beneficiairesChats}
+              chats={chats}
               onBack={() => setShowRubriqueListesDeDiffusion(false)}
             />
           )}
 
-          {!currentChat && !showRubriqueListesDeDiffusion && (
+          {!currentConversation && !showRubriqueListesDeDiffusion && (
             <ChatRoom
-              beneficiairesChats={beneficiairesChats}
+              shouldFocusAccesListesDiffusion={
+                showRubriqueListesDeDiffusion === false
+              }
+              beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }
-              onAccesConversation={setIdCurrentJeune}
+              onAccesConversation={afficherConversation}
+              idConversationToFocus={conversationIdRef.current}
             />
           )}
         </>

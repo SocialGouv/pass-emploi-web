@@ -9,12 +9,10 @@ import ChatContainer from 'components/chat/ChatContainer'
 import ChatNav from 'components/chat/ChatNav'
 import Sidebar from 'components/Sidebar'
 import { utiliseChat } from 'interfaces/conseiller'
-import { useChats } from 'utils/chat/chatsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function LayoutWithChat({ children }: { children: ReactNode }) {
   const [conseiller] = useConseiller()
-  const chats = useChats()
   const [showChatNav, setShowChatNav] = useState<boolean>(false)
 
   return (
@@ -27,10 +25,7 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
 
       {utiliseChat(conseiller) && (
         <aside className={layout.chatRoom}>
-          <ChatContainer
-            beneficiairesChats={chats}
-            menuState={[showChatNav, setShowChatNav]}
-          />
+          <ChatContainer menuState={[showChatNav, setShowChatNav]} />
         </aside>
       )}
 

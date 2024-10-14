@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
-import { unConseiller } from 'fixtures/conseiller'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
+import { modifierIdentifiantPartenaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {
@@ -101,26 +101,27 @@ describe('<DetailsJeune>', () => {
         ).toBeInTheDocument()
         expect(screen.queryByText('10/10/2022')).toBeInTheDocument()
       })
-      describe('Conseiller non MILO', () => {
-        it("n'affiche pas la date de fin du CEJ", () => {
-          // Given
-          const jeune = unDetailBeneficiaire({
-            dateFinCEJ: '2022-10-10T10:10:10Z',
-          })
-
-          // When
-          renderWithContexts(
-            <DetailsJeune
-              jeune={jeune}
-              conseiller={unConseiller({
-                structure: StructureConseiller.POLE_EMPLOI,
-              })}
-            />
-          )
-
-          // Then
-          expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
+    })
+    describe('Conseiller non MILO', () => {
+      it("n'affiche pas la date de fin du CEJ", () => {
+        // Given
+        const jeune = unDetailBeneficiaire({
+          dateFinCEJ: '2022-10-10T10:10:10Z',
         })
+
+        // When
+        renderWithContexts(
+          <DetailsJeune
+            jeune={jeune}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
+            demarches={[]}
+          />
+        )
+
+        // Then
+        expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
       })
     })
   })
@@ -142,9 +143,10 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
+            demarches={[]}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })
@@ -224,9 +226,10 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
+            demarches={[]}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })

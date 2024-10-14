@@ -12,35 +12,41 @@ import {
   unDetailBeneficiaireJson,
   uneBaseBeneficiaire,
   uneBaseBeneficiaireJson,
+  uneDemarcheJson,
+  uneListeDeDemarches,
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { CategorieSituation } from 'interfaces/beneficiaire'
-import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
+import {
+  StatutDemarche,
+  SuppressionBeneficiaireFormData,
+} from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import {
   archiverJeune,
+  getBeneficiairesDeLaStructureMilo,
+  getBeneficiairesDeLEtablissementClientSide,
+  getBeneficiairesDuConseillerClientSide,
+  getBeneficiairesDuConseillerServerSide,
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
-  getIdJeuneMilo,
+  getDemarchesBeneficiaire,
   getIdentitesBeneficiairesClientSide,
+  getIdJeuneMilo,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
-  getBeneficiairesDeLEtablissementClientSide,
-  getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParId,
-  getJeunesDuConseillerServerSide,
   getMetadonneesFavorisJeune,
   getMotifsSuppression,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
-  getBeneficiairesDeLaStructureMilo,
   supprimerJeuneInactif,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -53,7 +59,7 @@ describe('JeunesApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await getJeunesDuConseillerClientSide()
+      const actual = await getBeneficiairesDuConseillerClientSide()
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
@@ -92,7 +98,7 @@ describe('JeunesApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await getJeunesDuConseillerServerSide(
+      const actual = await getBeneficiairesDuConseillerServerSide(
         idConseiller,
         accessToken
       )
@@ -565,6 +571,39 @@ describe('JeunesApiService', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('.getDemarchesBeneficiaire', () => {
+    it('renvoie les démarches du bénéficiaire à partir d’une date', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          queryModel: [
+            uneDemarcheJson(),
+            uneDemarcheJson({
+              id: 'id-demarche-2',
+              statut: StatutDemarche.A_FAIRE,
+            }),
+          ],
+        },
+      })
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken'
+      )
+      expect(actual).toEqual(uneListeDeDemarches())
     })
   })
 })

@@ -2,12 +2,12 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -70,9 +70,9 @@ function QualificationPage({
 
   const [showHelperCategories, setShowHelperCategories] =
     useState<boolean>(false)
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
+
+  const formErrorsRef = useRef<HTMLDivElement>(null)
 
   const [labelMatomo, setLabelMatomo] = useState<string>(
     'Création Situation Non Professionnelle'
@@ -138,7 +138,10 @@ function QualificationPage({
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
-    if (!isFormValid()) return
+    if (!isFormValid()) {
+      formErrorsRef.current!.focus()
+      return
+    }
 
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
@@ -196,7 +199,10 @@ function QualificationPage({
     <>
       {!successQualification && (
         <>
-          <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+          <RecapitulatifErreursFormulaire
+            erreurs={getErreurs()}
+            ref={formErrorsRef}
+          />
 
           <form onSubmit={qualifierAction}>
             {erreurQualification && (
@@ -244,7 +250,7 @@ function QualificationPage({
                 À quoi servent les catégories ?
                 <IconComponent
                   name={IconName.Help}
-                  className='fill-[currentColor] w-4 h-4'
+                  className='fill-current w-4 h-4'
                   aria-hidden={true}
                   focusable={false}
                 />

@@ -24,17 +24,11 @@ describe('Tab & TabList', () => {
         )
       })
 
-      it('renders a tab', () => {
+      it('renders a tab with title and count', () => {
         // Then
         expect(
-          screen.getByRole('tab', { name: 'Titre tab 7' })
+          screen.getByRole('tab', { name: 'Titre tab 7 éléments' })
         ).toBeInTheDocument()
-      })
-
-      it('shows title and count', () => {
-        // Then
-        expect(screen.getByText('Titre tab')).toBeInTheDocument()
-        expect(screen.getByText('7')).toBeInTheDocument()
       })
 
       it('links with controlled component', () => {
@@ -94,9 +88,11 @@ describe('Tab & TabList', () => {
     beforeEach(() => {
       onSelectTab = jest.fn()
       render(
-        <TabList>
+        <TabList label='Liste d’onglets'>
           <Tab
             label='Tab 1'
+            ariaLabel='a11y tab 1'
+            count={12}
             controls='controlled-1'
             selected={true}
             onSelectTab={() => onSelectTab('controlled-1')}
@@ -124,36 +120,36 @@ describe('Tab & TabList', () => {
 
     it('navigates between tabs with arrows', async () => {
       // Given
-      screen.getByText('Tab 1').focus()
+      screen.getByRole('tab', { name: 'a11y tab 1 12 éléments' }).focus()
       expect(onSelectTab).toHaveBeenCalledTimes(0)
 
       // Next
       await userEvent.keyboard('{ArrowRight}')
-      expect(screen.getByText('Tab 2')).toHaveFocus()
+      expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(1)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-2')
 
       // Next
       await userEvent.keyboard('{ArrowRight}')
-      expect(screen.getByText('Tab 3')).toHaveFocus()
+      expect(screen.getByRole('tab', { name: 'Tab 3' })).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(2)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-3')
 
       // Next when last
       await userEvent.keyboard('{ArrowRight}')
-      expect(screen.getByText('Tab 1')).toHaveFocus()
+      expect(screen.getByRole('tab', { name: 'a11y tab 1 12 éléments' })).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(3)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-1')
 
       // Previous when first
       await userEvent.keyboard('{ArrowLeft}')
-      expect(screen.getByText('Tab 3')).toHaveFocus()
+      expect(screen.getByRole('tab', { name: 'Tab 3' })).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(4)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-3')
 
       // Previous
       await userEvent.keyboard('{ArrowLeft}')
-      expect(screen.getByText('Tab 2')).toHaveFocus()
+      expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(5)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-2')
     })

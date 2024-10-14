@@ -10,7 +10,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import {
   estClos,
   estCreeParSiMILO,
@@ -21,11 +21,11 @@ import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import {
   getDetailsEvenement,
   getTypesRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -109,13 +109,13 @@ async function buildProps(
   searchParams: EditionRdvSearchParams | undefined
 ): Promise<Omit<EditionRdvProps, 'returnTo'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) redirect('/mes-jeunes')
+  if (!estUserMilo(user)) redirect('/mes-jeunes')
 
   if (searchParams?.idRdv) {
     const evenement = await getDetailsEvenement(searchParams.idRdv, accessToken)
     if (!evenement) notFound()
 
-    const beneficiaires = await getJeunesDuConseillerServerSide(
+    const beneficiaires = await getBeneficiairesDuConseillerServerSide(
       user.id,
       accessToken
     )

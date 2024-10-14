@@ -15,8 +15,8 @@ import {
   DetailOffreEmploi,
   DetailServiceCivique,
 } from 'interfaces/offre'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getImmersionServerSide } from 'services/immersions.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -30,7 +30,7 @@ jest.mock(
 jest.mock('services/offres-emploi.service')
 jest.mock('services/services-civiques.service')
 jest.mock('services/immersions.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('Page Partage Offre', () => {
   let offreEmploi: DetailOffreEmploi
@@ -51,7 +51,7 @@ describe('Page Partage Offre', () => {
       serviceCivique
     )
     ;(getImmersionServerSide as jest.Mock).mockResolvedValue(immersion)
-    ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+    ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
       desItemsBeneficiaires()
     )
     ;(headers as jest.Mock).mockReturnValue(

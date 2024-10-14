@@ -1,7 +1,6 @@
 import { MouseEvent, useRef } from 'react'
 
-import Modal from './Modal'
-
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
@@ -18,9 +17,7 @@ export default function ConfirmationMultiQualificationModalNonSNP({
   onCancel,
   onConfirmation,
 }: ConfirmationMultiQualificationModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   const titreModale = `Enregistrer ${
     actions.length > 1 ? `les ${actions.length} actions` : 'l’action'

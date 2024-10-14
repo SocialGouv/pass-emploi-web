@@ -4,14 +4,14 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -78,7 +78,11 @@ function EnvoiMessageGroupePage({
       value: getNomBeneficiaireComplet(jeune),
     }))
   }
-  const fileInputRef = useRef<HTMLLabelElement>(null)
+
+  const isFirstRender = useRef<boolean>(true)
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileSelectionRef = useRef<HTMLButtonElement>(null)
 
   function formIsValid(): boolean {
     const selectionEstValide = isSelectedJeunesIdsValid()
@@ -142,7 +146,10 @@ function EnvoiMessageGroupePage({
     e.preventDefault()
     e.stopPropagation()
 
-    if (!formIsValid()) return
+    if (!formIsValid()) {
+      formErrorsRef.current!.focus()
+      return
+    }
 
     setConfirmBeforeLeaving(false)
     setIsSending(true)
@@ -213,7 +220,6 @@ function EnvoiMessageGroupePage({
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
-    fileInputRef.current?.focus()
   }
 
   function updateDestinataires(selectedIds: {
@@ -243,13 +249,27 @@ function EnvoiMessageGroupePage({
     return erreurs
   }
 
+  useEffect(() => {
+    if (isFirstRender.current) return
+
+    if (pieceJointe) fileSelectionRef.current!.focus()
+    else fileInputRef.current!.focus()
+  }, [pieceJointe])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
+
   return (
     <>
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <p className='text-s-bold text-content_color mb-8'>
@@ -274,7 +294,7 @@ function EnvoiMessageGroupePage({
               name={IconName.ChevronRight}
               aria-hidden={true}
               focusable={false}
-              className='w-6 h-6 fill-[currentColor]'
+              className='w-6 h-6 fill-current'
             />
           </Link>
         </Etape>
@@ -331,6 +351,7 @@ function EnvoiMessageGroupePage({
             {pieceJointe && (
               <div className='mb-4'>
                 <Multiselection
+                  ref={fileSelectionRef}
                   selection={[
                     {
                       id: pieceJointe.name,
@@ -341,6 +362,7 @@ function EnvoiMessageGroupePage({
                   ]}
                   typeSelection='fichier'
                   unselect={enleverFichier}
+                  onYieldFocus={() => {}}
                 />
               </div>
             )}

@@ -3,18 +3,17 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
-import React, { MouseEvent, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
@@ -65,9 +64,7 @@ function DetailActionPage({
     action.status !== StatutAction.Qualifiee &&
     !Boolean(commentaires.length > 0)
 
-  const suppressionModalRef = useRef<{
-    closeModal: (e: MouseEvent) => void
-  }>(null)
+  const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')
@@ -204,7 +201,12 @@ function DetailActionPage({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            {action.qualification?.libelle ?? <TagCategorieAction />}
+            {action.qualification?.libelle ?? (
+              <>
+                <span aria-hidden={true}>--</span>
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
           </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>
@@ -218,7 +220,7 @@ function DetailActionPage({
               action.comment
             ) : (
               <>
-                --
+                <span aria-hidden={true}>--</span>
                 <span className='sr-only'>information non disponible</span>
               </>
             )}

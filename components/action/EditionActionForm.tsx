@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -91,10 +91,8 @@ export function EditionActionForm({
   const [showHelperCategories, setShowHelperCategories] =
     useState<boolean>(false)
 
-  const formRef = useRef<HTMLFormElement>(null)
-  const modalRef = useRef<{
-    closeModal: (e: MouseEvent) => void
-  }>(null)
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   function permuterAffichageHelperCategories() {
     setShowHelperCategories(!showHelperCategories)
@@ -270,7 +268,7 @@ export function EditionActionForm({
     e.preventDefault()
 
     if (!formulaireEstValide()) {
-      formRef.current!.scrollIntoView({ behavior: 'smooth' })
+      formErrorsRef.current!.focus()
       return Promise.resolve()
     }
 
@@ -291,14 +289,12 @@ export function EditionActionForm({
 
   return (
     <>
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
-      <form
-        id='edition-action-form'
-        onSubmit={handleSoumettreAction}
-        noValidate={true}
-        ref={formRef}
-      >
+      <form onSubmit={handleSoumettreAction} noValidate={true}>
         <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>
@@ -332,7 +328,7 @@ export function EditionActionForm({
             À quoi servent les catégories ?
             <IconComponent
               name={IconName.Help}
-              className='fill-[currentColor] w-4 h-4'
+              className='fill-current w-4 h-4'
               aria-hidden={true}
               focusable={false}
             />

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import EmptyState from 'components/EmptyState'
-import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -13,14 +12,12 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { Conseiller, estFranceTravail } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsProps {
-  conseiller: Conseiller
   jeune: BaseBeneficiaire
   categories: SituationNonProfessionnelle[]
 
@@ -50,7 +47,6 @@ export default function OngletActions({
   actionsInitiales,
   getActions,
   jeune,
-  conseiller,
   onLienExterne,
   lectureSeule,
 }: OngletActionsProps) {
@@ -81,16 +77,9 @@ export default function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActions(
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
-  ) {
-    const nouveauxStatuts = filtres.find(({ colonne }) => colonne === 'statuts')
-    const nouvellesCategories = filtres.find(
-      ({ colonne }) => colonne === 'categories'
-    )
-
-    setFiltresParStatuts(nouveauxStatuts?.values ?? [])
-    setFiltresParCategories(nouvellesCategories?.values ?? [])
+  function filtrerActions(filtres: Record<'categories' | 'statuts', string[]>) {
+    setFiltresParStatuts((filtres['statuts'] as StatutAction[]) ?? [])
+    setFiltresParCategories(filtres['categories'] ?? [])
     setPageCourante(1)
     stateChanged.current = true
   }
@@ -186,64 +175,56 @@ export default function OngletActions({
 
   return (
     <>
-      {estFranceTravail(conseiller) && (
-        <IntegrationFranceTravail label='actions et démarches' />
+      {actionsInitiales.metadonnees.nombreTotal === 0 && !lectureSeule && (
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyState
+            illustrationName={IllustrationName.Checklist}
+            titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+            lien={{
+              href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
+              label: 'Créer une action',
+              iconName: IconName.Add,
+            }}
+          />
+        </div>
       )}
 
-      {!estFranceTravail(conseiller) && (
+      {actionsInitiales.metadonnees.nombreTotal === 0 && lectureSeule && (
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+        />
+      )}
+
+      {actionsEnErreur && (
+        <FailureAlert
+          label='Certaines actions n’ont pas pu être qualifiées.'
+          onAcknowledge={() => setActionsEnErreur(false)}
+        />
+      )}
+
+      {actionsInitiales.metadonnees.nombreTotal > 0 && (
         <>
-          {actionsInitiales.metadonnees.nombreTotal === 0 && !lectureSeule && (
-            <div className='flex flex-col justify-center items-center'>
-              <EmptyState
-                illustrationName={IllustrationName.Checklist}
-                titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
-                lien={{
-                  href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
-                  label: 'Créer une action',
-                  iconName: IconName.Add,
-                }}
+          <TableauActionsJeune
+            jeune={jeune}
+            categories={categories}
+            actionsFiltrees={actionsAffichees}
+            isLoading={isLoading}
+            onFiltres={filtrerActions}
+            onLienExterne={onLienExterne}
+            onTri={trierActions}
+            onQualification={qualifierActions}
+            tri={tri}
+          />
+          {nombrePages > 1 && (
+            <div className='mt-6'>
+              <Pagination
+                nomListe='actions'
+                nombreDePages={nombrePages}
+                pageCourante={pageCourante}
+                allerALaPage={changerPage}
               />
             </div>
-          )}
-
-          {actionsInitiales.metadonnees.nombreTotal === 0 && lectureSeule && (
-            <EmptyState
-              illustrationName={IllustrationName.Checklist}
-              titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
-            />
-          )}
-
-          {actionsEnErreur && (
-            <FailureAlert
-              label='Certaines actions n’ont pas pu être qualifiées.'
-              onAcknowledge={() => setActionsEnErreur(false)}
-            />
-          )}
-
-          {actionsInitiales.metadonnees.nombreTotal > 0 && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                categories={categories}
-                actionsFiltrees={actionsAffichees}
-                isLoading={isLoading}
-                onFiltres={filtrerActions}
-                onLienExterne={onLienExterne}
-                onTri={trierActions}
-                onQualification={qualifierActions}
-                tri={tri}
-              />
-              {nombrePages > 1 && (
-                <div className='mt-6'>
-                  <Pagination
-                    nomListe='actions'
-                    nombreDePages={nombrePages}
-                    pageCourante={pageCourante}
-                    allerALaPage={changerPage}
-                  />
-                </div>
-              )}
-            </>
           )}
         </>
       )}

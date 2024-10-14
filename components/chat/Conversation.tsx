@@ -20,10 +20,16 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import SpinningLoader from 'components/ui/SpinningLoader'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { ByDay, fromConseiller, Message } from 'interfaces/message'
+import {
+  ByDay,
+  countItems,
+  fromConseiller,
+  getPreviousItemId,
+  Message,
+} from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
   modifierMessage as _modifierMessage,
@@ -41,7 +47,8 @@ type ConversationProps = {
   beneficiaireNomComplet: string
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
-  beneficiaireChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireEtChat
+  shouldFocusOnFirstRender: boolean
   toggleAfficherRecherche: () => void
 }
 
@@ -50,10 +57,15 @@ export function Conversation({
   onBack,
   getConseillerNomComplet,
   beneficiaireChat,
+  shouldFocusOnFirstRender,
   toggleAfficherRecherche,
 }: ConversationProps) {
+  const NB_MESSAGES_PAR_PAGE = 10
+  const idNoMoreMessage = 'no-more-message'
+
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
+  const isFirstRender = useRef<boolean>(true)
 
   const [userInput, setUserInput] = useState('')
 
@@ -79,16 +91,20 @@ export function Conversation({
     undefined
   )
 
-  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>()
   const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
   const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
+  const idPrecedentPremierMessage = useRef<string | undefined>(undefined)
 
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
+  const headerChatRef = useRef<HTMLDivElement>(null)
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const addFileRef = useRef<HTMLInputElement | null>(null)
+  const deleteFileRef = useRef<HTMLButtonElement | null>(null)
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -97,20 +113,22 @@ export function Conversation({
       return observeDerniersMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
-        nombreDePages,
+        { pages: nombreDePages, taillePage: NB_MESSAGES_PAR_PAGE },
         (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay((previousValue) => {
             if (
               !messagesGroupesParJour.length ||
+              countItems(messagesGroupesParJour) < NB_MESSAGES_PAR_PAGE ||
               (previousValue?.length &&
-                previousValue[0].messages[0].id ===
-                  messagesGroupesParJour[0].messages[0].id)
+                countItems(messagesGroupesParJour) - countItems(previousValue) <
+                  NB_MESSAGES_PAR_PAGE)
             ) {
               setHasNoMoreMessages(true)
             }
 
             return messagesGroupesParJour
           })
+          setNombrePagesChargees(nombreDePages)
 
           setLoadingMoreMessages(false)
 
@@ -160,25 +178,15 @@ export function Conversation({
   }
 
   function chargerPlusDeMessages() {
-    const pageSuivante = nombrePagesChargees + 1
+    const pageSuivante = nombrePagesChargees! + 1
     setLoadingMoreMessages(true)
-    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
+    idPrecedentPremierMessage.current = messagesByDay![0].messages[0].id
 
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
       beneficiaireChat.chatId,
       pageSuivante
     )
-
-    setNombrePagesChargees(pageSuivante)
-    const previousFirstDisplayedMessage =
-      conteneurMessagesRef.current!.querySelector(
-        '#message-' + idFirstDisplayedMessage
-      )
-    previousFirstDisplayedMessage!.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    })
   }
 
   async function uploadFichier(fichierSelectionne: File) {
@@ -210,7 +218,7 @@ export function Conversation({
     inputRef.current!.focus()
   }
 
-  function annulerModificationmessage() {
+  function annulerModificationMessage() {
     setMessageAModifier(undefined)
     resetTextbox()
   }
@@ -235,14 +243,36 @@ export function Conversation({
     })
     setMessageAModifier(undefined)
     resetTextbox()
+
+    const messageToFocus = document.querySelector<HTMLLIElement>(
+      `li#message-${messageAModifier.id}`
+    )!
+    messageToFocus.setAttribute('tabIndex', '-1')
+    messageToFocus.focus()
   }
 
   async function supprimerMessage(message: Message) {
+    const idMessageToFocus = getPreviousItemId(message.id, messagesByDay!, {
+      orNext: true,
+    })
+
     await _supprimerMessage(
       beneficiaireChat.chatId,
       message,
       chatCredentials!.cleChiffrement
     )
+
+    if (idMessageToFocus) {
+      const messageToFocus = document.querySelector<HTMLLIElement>(
+        `li#message-${idMessageToFocus}`
+      )!
+      messageToFocus.setAttribute('tabIndex', '-1')
+      messageToFocus.focus()
+    } else {
+      document
+        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')!
+        .focus()
+    }
 
     trackEvent({
       structure: conseiller.structure,
@@ -286,15 +316,39 @@ export function Conversation({
   }, [beneficiaireChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (messagesByDay?.length && nombrePagesChargees === 1) {
-      const dernierJour = conteneurMessagesRef.current!.lastElementChild
-      const lastMessage = dernierJour!.querySelector('li:last-child')
+    if (!messagesByDay?.length) {
+      headerChatRef.current!.querySelector<HTMLButtonElement>('button')!.focus()
+      return
+    }
 
-      lastMessage!.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    if (nombrePagesChargees === 1 && shouldFocusOnFirstRender) {
+      const dernierJour = conteneurMessagesRef.current!.lastElementChild
+      const lastMessage =
+        dernierJour!.querySelector<HTMLLIElement>('li:last-child')
+
+      lastMessage!.setAttribute('tabIndex', '-1')
+      lastMessage!.focus()
+      return
+    }
+
+    if (nombrePagesChargees! > 1 && idPrecedentPremierMessage.current) {
+      const idMessageToFocus = getPreviousItemId(
+        idPrecedentPremierMessage.current,
+        messagesByDay
+      )
+      const toFocus = idMessageToFocus
+        ? document.querySelector<HTMLLIElement>(
+            `li#message-${idMessageToFocus}`
+          )!
+        : document.querySelector<HTMLParagraphElement>(`p#${idNoMoreMessage}`)!
+      toFocus.setAttribute('tabIndex', '-1')
+      toFocus.focus()
     }
   }, [messagesByDay, nombrePagesChargees])
 
   useEffect(() => {
+    if (uploadedFileInfo) deleteFile()
+    resetTextbox()
     const unsubscribe = observeJeuneReadingDate(
       beneficiaireChat.chatId,
       setLastSeenByJeune
@@ -303,15 +357,20 @@ export function Conversation({
   }, [beneficiaireChat.chatId])
 
   useEffect(() => {
-    if (uploadedFileInfo) {
-      deleteFile()
-    }
-    resetTextbox()
-  }, [beneficiaireChat.chatId])
+    if (isFirstRender.current) return
+
+    if (uploadedFileInfo) deleteFileRef.current!.focus()
+    else addFileRef.current!.focus()
+  }, [uploadedFileInfo])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   return (
     <>
       <HeaderChat
+        ref={headerChatRef}
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
         titre={
@@ -347,7 +406,10 @@ export function Conversation({
                 {messagesByDay.length !== 0 && (
                   <>
                     {hasNoMoreMessages && (
-                      <p className='text-xs-regular text-center block mb-3'>
+                      <p
+                        id={idNoMoreMessage}
+                        className='text-xs-regular text-center block mb-3'
+                      >
                         Aucun message plus ancien
                       </p>
                     )}
@@ -364,7 +426,7 @@ export function Conversation({
                           name={IconName.ChevronUp}
                           aria-hidden={true}
                           focusable={false}
-                          className='w-4 h-4 fill-[currentColor] mr-2'
+                          className='w-4 h-4 fill-current mr-2'
                         />
                         Voir messages plus anciens
                       </Button>
@@ -387,7 +449,7 @@ export function Conversation({
                           name={IconName.Info}
                           focusable={false}
                           aria-hidden={true}
-                          className='inline h-6 w-6 fill-[currentColor]'
+                          className='inline h-6 w-6 fill-current'
                         />
                         <strong>Attention à nos propos</strong>
                       </p>
@@ -463,7 +525,7 @@ export function Conversation({
             className='p-3'
           >
             {uploadedFileError && (
-              <InputError id='piece-jointe--error'>
+              <InputError id='piece-jointe--error' ref={(e) => e?.focus()}>
                 {uploadedFileError}
               </InputError>
             )}
@@ -479,6 +541,7 @@ export function Conversation({
                   </p>
 
                   <FileInput
+                    ref={addFileRef}
                     id='piece-jointe'
                     ariaDescribedby='piece-jointe--desc'
                     onChange={uploadFichier}
@@ -497,7 +560,7 @@ export function Conversation({
                   </p>
                   <button
                     type='button'
-                    onClick={annulerModificationmessage}
+                    onClick={annulerModificationMessage}
                     title='Annuler la modification du message'
                     className='w-12 h-12'
                   >
@@ -526,6 +589,7 @@ export function Conversation({
                       {uploadedFileInfo.nom}
                     </p>
                     <button
+                      ref={deleteFileRef}
                       type='button'
                       aria-label={
                         'Supprimer la pièce jointe ' + uploadedFileInfo.nom

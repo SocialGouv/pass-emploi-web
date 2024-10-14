@@ -2,16 +2,18 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
-import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
+import FiltresCategories, {
+  Categorie,
+} from 'components/action/FiltresCategories'
+import FiltresStatuts from 'components/action/FiltresStatuts'
 import { TRI } from 'components/action/OngletActions'
+import propsStatutsActions from 'components/action/propsStatutsActions'
+import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
@@ -28,9 +30,7 @@ interface TableauActionsJeuneProps {
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean
-  onFiltres: (
-    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
-  ) => void
+  onFiltres: (filtres: Record<'categories' | 'statuts', string[]>) => void
   onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
   onQualification: (
@@ -51,10 +51,13 @@ export default function TableauActionsJeune({
   onQualification,
   tri,
 }: TableauActionsJeuneProps) {
+  const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
-  const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
-  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+  const [statutsValides, setStatutsValides] = useState<string[]>([])
+  const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
+  const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
+    useState<boolean>(false)
 
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -68,10 +71,10 @@ export default function TableauActionsJeune({
     actionsSelectionnees.length === 0 || actionSansCategorieSelectionnee
 
   function reinitialiserFiltres() {
-    onFiltres([])
+    onFiltres({ categories: [], statuts: [] })
     setStatutsValides([])
     setCategoriesValidees([])
-    filtresStatutRef.current!.focus()
+    setAReinitialiseLesFiltres(true)
   }
 
   function getIsSortedByDateEcheance(): boolean {
@@ -95,27 +98,27 @@ export default function TableauActionsJeune({
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function getOrdreTriParDate() {
-    return `Trier les actions ordre ${
+    return `Trier les actions dans l’ordre ${
       getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
     }`
   }
 
-  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+  function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
-    onFiltres([
-      { colonne: 'categories', values: categoriesSelectionnees },
-      { colonne: 'statuts', values: statutsValides },
-    ])
+    onFiltres({
+      categories: categoriesSelectionnees.map(({ code }) => code),
+      statuts: statutsValides,
+    })
   }
 
-  function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
+  function filtrerActionsParStatuts(statutsSelectionnes: string[]) {
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
-    onFiltres([
-      { colonne: 'categories', values: categoriesValidees },
-      { colonne: 'statuts', values: statutsSelectionnes },
-    ])
+    onFiltres({
+      categories: categoriesValidees.map(({ code }) => code),
+      statuts: statutsSelectionnes,
+    })
   }
 
   function selectionnerToutesLesActions() {
@@ -182,20 +185,25 @@ export default function TableauActionsJeune({
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }, [actionsFiltrees.length, actionsSelectionnees.length])
 
+  useEffect(() => {
+    if (aReinitialiseLesFiltres && actionsFiltrees.length) {
+      listeActionsRef.current!.focus()
+      setAReinitialiseLesFiltres(false)
+    }
+  }, [aReinitialiseLesFiltres, actionsFiltrees])
+
   return (
     <>
       {isLoading && <SpinningLoader alert={true} />}
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <IllustrationComponent
-            name={IllustrationName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
+          <EmptyState
+            shouldFocus={true}
+            illustrationName={IllustrationName.Search}
+            titre='Aucun résultat.'
+            sousTitre='Modifiez vos filtres.'
           />
-          <p className='text-base-bold text-center'>Aucun résultat.</p>
-          <p className='text-center'>Modifiez vos filtres.</p>
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}
@@ -234,6 +242,7 @@ export default function TableauActionsJeune({
           </div>
 
           <Table
+            ref={listeActionsRef}
             caption={{
               text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
             }}
@@ -269,18 +278,22 @@ export default function TableauActionsJeune({
                   </button>
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresCategoriesActions
+                  <FiltresCategories
                     ref={filtresCategoriesRef}
                     categories={categories}
                     defaultValue={categoriesValidees}
+                    entites='actions'
                     onFiltres={filtrerActionsParCategorie}
                   />
                 </TH>
                 <TH estCliquable={true}>
-                  <FiltresStatutsActions
+                  <FiltresStatuts
                     ref={filtresStatutRef}
                     defaultValue={statutsValides}
                     onFiltres={filtrerActionsParStatuts}
+                    statuts={Object.keys(StatutAction)}
+                    entites='actions'
+                    propsStatuts={propsStatutsActions}
                   />
                 </TH>
                 <TH>Voir le détail</TH>

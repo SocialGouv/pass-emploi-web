@@ -13,8 +13,8 @@ import {
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  CategorieSituation,
   BeneficiaireAvecCompteursActionsRdvs,
+  CategorieSituation,
 } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -70,9 +70,7 @@ describe('PortefeuillePage client side', () => {
       //THEN
       expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
       jeunes.forEach((jeune) => {
-        expect(
-          screen.getByText(jeune.nbActionsNonTerminees)
-        ).toBeInTheDocument()
+        expect(screen.getByText(jeune.actionsCreees)).toBeInTheDocument()
       })
 
       expect(() =>
@@ -165,7 +163,7 @@ describe('PortefeuillePage client side', () => {
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
           {
             customConseiller: conseiller,
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         )
       })
@@ -327,6 +325,55 @@ describe('PortefeuillePage client side', () => {
       expect(() =>
         screen.getByRole('columnheader', { name: 'Situation' })
       ).toThrow()
+    })
+  })
+
+  describe('quand le conseiller est un conseiller département', () => {
+    beforeEach(async () => {
+      //GIVEN
+      const jeune = unBeneficiaireAvecActionsNonTerminees()
+
+      await act(async () => {
+        ;({ container } = renderWithContexts(
+          <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
+          {
+            customConseiller: { structure: StructureConseiller.CONSEIL_DEPT },
+          }
+        ))
+      })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
+    })
+
+    it('permer de créer un jeune FT', async () => {
+      //THEN
+      expect(
+        screen.getByRole('link', {
+          name: 'Ajouter un bénéficiaire',
+        })
+      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
+    })
+
+    it('n’affiche pas le nombre de démarche créés dans la semaine par les bénéficiaires', () => {
+      // Then
+      expect(() =>
+        screen.getByRole('columnheader', { name: 'Démarches créées' })
+      ).toThrow()
+    })
+
+    it('affiche le nombre de messages non lus', () => {
+      // Then
+      expect(
+        screen.getByRole('columnheader', { name: 'Messages non lus' })
+      ).toBeInTheDocument()
     })
   })
 

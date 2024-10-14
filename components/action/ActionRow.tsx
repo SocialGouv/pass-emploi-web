@@ -2,15 +2,16 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import propsStatutsActions from 'components/action/propsStatutsActions'
 import TagStatutAction from 'components/action/TagStatutAction'
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
+import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
 
-interface ActionRowProps {
+type ActionRowProps = {
   action: Action
   jeuneId: string
   isChecked: boolean
@@ -35,6 +36,11 @@ export default function ActionRow({
 
   const dateEcheance = toLongMonthDate(action.dateEcheance)
 
+  function statutAction(): string {
+    if (actionEstEnRetard) return 'en retard'
+    return `${propsStatutsActions[action.status].label}`
+  }
+
   return (
     <TR isSelected={isChecked}>
       <TD className='relative'>
@@ -56,7 +62,7 @@ export default function ActionRow({
       </TD>
       <TD className='rounded-l-base max-w-[400px]'>
         <span
-          className={`flex items-center items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
+          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
         >
           {action.content}
         </span>
@@ -66,7 +72,7 @@ export default function ActionRow({
       </TD>
       <TD>
         <p className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
-          <TagCategorieAction categorie={action.qualification?.libelle} />
+          <TagCategorie categorie={action.qualification?.libelle} />
         </p>
       </TD>
       <TD>
@@ -79,7 +85,7 @@ export default function ActionRow({
       </TD>
       <TDLink
         href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-        label={`Voir le détail de l'action ${action.content}`}
+        label={`Voir le détail de l'action ${statutAction()} du ${dateEcheance} : ${action.content}`}
       />
     </TR>
   )

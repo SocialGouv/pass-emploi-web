@@ -11,7 +11,8 @@ import {
 } from 'components/PageNavigationPortals'
 import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
-  estUserFranceTravail,
+  estUserCD,
+  estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
@@ -20,13 +21,14 @@ import {
   getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
+import {
+  getDemarchesBeneficiaire,
+  getJeuneDetails,
+  getMetadonneesFavorisJeune,
+} from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import {
-  getJeuneDetails,
-  getMetadonneesFavorisJeune,
-} from 'services/jeunes.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
@@ -57,9 +59,11 @@ export default async function FicheBeneficiaire({
   searchParams?: FicheBeneficiaireSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const userIsFranceTravail = estUserFranceTravail(user)
+  const beneficiaireHasExtraContent = estUserMilo(user)
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
+
+  const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
 
   const [
     conseiller,
@@ -68,23 +72,35 @@ export default async function FicheBeneficiaire({
     rdvs,
     actions,
     categoriesActions,
+    demarches,
   ] = await Promise.all([
     getConseillerServerSide(user, accessToken),
     getJeuneDetails(params.idJeune, accessToken),
     getMetadonneesFavorisJeune(params.idJeune, accessToken),
-    userIsFranceTravail
-      ? ([] as EvenementListItem[])
-      : getRendezVousJeune(
+    beneficiaireHasExtraContent
+      ? getRendezVousJeune(
           params.idJeune,
           PeriodeEvenements.FUTURS,
           accessToken
-        ),
-    userIsFranceTravail
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : getActionsBeneficiaireServerSide(params.idJeune, page, accessToken),
-    userIsFranceTravail
-      ? ([] as SituationNonProfessionnelle[])
-      : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+        )
+      : ([] as EvenementListItem[]),
+    beneficiaireHasExtraContent
+      ? getActionsBeneficiaireServerSide(params.idJeune, page, accessToken)
+      : {
+          actions: [],
+          metadonnees: { nombreTotal: 0, nombrePages: 0 },
+        },
+    beneficiaireHasExtraContent
+      ? getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken)
+      : ([] as SituationNonProfessionnelle[]),
+    estUserCD(user)
+      ? getDemarchesBeneficiaire(
+          params.idJeune,
+          trenteJoursAvant,
+          user.id,
+          accessToken
+        )
+      : [],
   ])
   if (!jeune) notFound()
 
@@ -109,8 +125,10 @@ export default async function FicheBeneficiaire({
   let recherchesPE: Recherche[] = []
   if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
-      userIsFranceTravail ? getOffres(params.idJeune, accessToken) : [],
-      userIsFranceTravail
+      !beneficiaireHasExtraContent
+        ? getOffres(params.idJeune, accessToken)
+        : [],
+      !beneficiaireHasExtraContent
         ? getRecherchesSauvegardees(params.idJeune, accessToken)
         : [],
     ])
@@ -141,7 +159,7 @@ export default async function FicheBeneficiaire({
       <PageHeaderPortal header={`${jeune.prenom} ${jeune.nom}`} />
 
       <FicheBeneficiairePage
-        jeune={jeune}
+        beneficiaire={jeune}
         metadonneesFavoris={metadonneesFavoris}
         rdvs={rdvsEtSessionsTriesParDate}
         actionsInitiales={{ ...actions, page }}
@@ -151,6 +169,7 @@ export default async function FicheBeneficiaire({
         onglet={onglet}
         lectureSeule={jeune.idConseiller !== user.id}
         erreurSessions={erreurSessions}
+        demarches={demarches}
       />
     </>
   )

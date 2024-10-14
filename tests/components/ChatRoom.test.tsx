@@ -13,7 +13,7 @@ import {
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   getMessageImportant,
@@ -30,7 +30,7 @@ describe('<ChatRoom />', () => {
   const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
-  let beneficiairesChats: BeneficiaireChat[]
+  let beneficiairesChats: BeneficiaireEtChat[]
 
   beforeEach(async () => {
     beneficiairesChats = [
@@ -53,7 +53,7 @@ describe('<ChatRoom />', () => {
   })
 
   describe('quand le conseiller veut configurer un message important', () => {
-    let accederConversation: (idJeune: string) => void
+    let accederConversation: (conversation: BeneficiaireEtChat) => void
     beforeEach(async () => {
       accederConversation = jest.fn()
     })
@@ -369,7 +369,7 @@ describe('<ChatRoom />', () => {
   })
 
   describe('quand le conseiller a des beneficiaires', () => {
-    let accederConversation: (idJeune: string) => void
+    let accederConversation: (conversation: BeneficiaireEtChat) => void
     let container: HTMLElement
     beforeEach(async () => {
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
@@ -424,7 +424,7 @@ describe('<ChatRoom />', () => {
 
     describe('quand on sélectionne un beneficiaire', () => {
       it('affiche la conversation du beneficiaire', async () => {
-        const [beneficiaireSelectionne] = beneficiaires
+        const beneficiaireSelectionne = beneficiaires[0]
         // Given
         const goToConversation = screen
           .getByText(
@@ -437,9 +437,7 @@ describe('<ChatRoom />', () => {
 
         // Then
         expect(accederConversation).toHaveBeenCalledTimes(1)
-        expect(accederConversation).toHaveBeenCalledWith(
-          beneficiaireSelectionne.id
-        )
+        expect(accederConversation).toHaveBeenCalledWith(beneficiairesChats[0])
       })
     })
 

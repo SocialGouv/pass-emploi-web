@@ -8,7 +8,7 @@ import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   isDeleted,
   isEdited,
@@ -118,6 +118,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
     message,
     conseillerNomComplet,
     isConseillerCourant,
+    highlight,
     isEnCoursDeModification,
   } = props
 
@@ -133,9 +134,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
 
       <TexteAvecLien
         texte={message.content}
-        highlight={
-          props.highlight?.key === 'content' ? props.highlight : undefined
-        }
+        highlight={highlight?.key === 'content' ? highlight : undefined}
       />
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
@@ -168,9 +167,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
             nom={nom}
             className='fill-primary'
             highlight={
-              props.highlight?.key === 'piecesJointes.nom'
-                ? props.highlight
-                : undefined
+              highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }
           />
         ))}
@@ -282,10 +279,13 @@ function FooterMessage({
             <IconComponent
               focusable={false}
               aria-hidden={true}
-              className='inline w-4 h-4 fill-[currentColor]'
+              className='inline w-4 h-4 fill-current'
               name={IconName.Edit}
             />
-            Modifier le message
+            Modifier le message{' '}
+            <span className='sr-only'>
+              du {toFrenchDateTime(creationDate, { a11y: true })}
+            </span>
           </button>
           <button
             type='button'
@@ -295,10 +295,13 @@ function FooterMessage({
             <IconComponent
               focusable={false}
               aria-hidden={true}
-              className='inline w-4 h-4 fill-[currentColor]'
+              className='inline w-4 h-4 fill-current'
               name={IconName.Delete}
             />
-            Supprimer le message
+            Supprimer le message{' '}
+            <span className='sr-only'>
+              du {toFrenchDateTime(creationDate, { a11y: true })}
+            </span>
           </button>
         </div>
       )}

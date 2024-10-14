@@ -5,15 +5,18 @@ import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
 import FormulaireBeneficiaireFranceTravail from 'components/jeune/FormulaireBeneficiaireFranceTravail'
+import { estConseilDepartemental } from 'interfaces/conseiller'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function CreationBeneficiaireFranceTravailPage(): ReactElement {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
   const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const [creationError, setCreationError] = useState<string>()
@@ -27,7 +30,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
 
     try {
       const { createCompteJeuneFranceTravail } = await import(
-        'services/jeunes.service'
+        'services/beneficiaires.service'
       )
       const beneficiaireCree = await createCompteJeuneFranceTravail({
         firstName: nouveauBeneficiaire.prenom,
@@ -54,6 +57,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
 
   return (
     <FormulaireBeneficiaireFranceTravail
+      aAccesMap={!estConseilDepartemental(conseiller)}
       creerBeneficiaireFranceTravail={creerBeneficiaireFranceTravail}
       creationError={creationError}
       creationEnCours={creationEnCours}

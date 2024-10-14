@@ -1,16 +1,19 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-export function SpinningLoader({
-  className,
-  alert = false,
-}: {
-  className?: string
-  alert?: boolean
-}) {
+function SpinningLoader(
+  {
+    className,
+    alert = false,
+  }: {
+    className?: string
+    alert?: boolean
+  },
+  ref: ForwardedRef<HTMLDivElement>
+) {
   return (
-    <>
+    <div ref={ref} tabIndex={ref ? -1 : undefined}>
       <IconComponent
         name={IconName.Spinner}
         aria-hidden={true}
@@ -21,6 +24,8 @@ export function SpinningLoader({
       <span className='sr-only' role={alert ? 'alert' : 'none'}>
         Chargement en cours
       </span>
-    </>
+    </div>
   )
 }
+
+export default forwardRef(SpinningLoader)

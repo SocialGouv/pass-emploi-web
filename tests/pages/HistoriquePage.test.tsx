@@ -1,4 +1,4 @@
-import { act, RenderResult, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -22,11 +22,11 @@ import {
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneComplets } from 'services/jeunes.service'
+import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
 describe('HistoriquePage client side', () => {
@@ -390,7 +390,7 @@ async function renderHistorique(
         situations={situations}
         conseillers={conseillers}
         lectureSeule={false}
-        jeune={beneficiaire}
+        beneficiaire={beneficiaire}
         metadonneesFavoris={uneMetadonneeFavoris()}
         onglet={'INFORMATIONS'}
       />,

@@ -3,12 +3,18 @@ import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
+import { ResumeDemarchesBeneficiaire } from 'components/jeune/ResumeDemarchesBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
-import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
+import {
+  Demarche,
+  DetailBeneficiaire,
+  IndicateursSemaine,
+} from 'interfaces/beneficiaire'
 import {
   Conseiller,
-  estFranceTravail,
   StructureConseiller,
+  estMilo,
+  estConseilDepartemental,
 } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -22,12 +28,14 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 interface DetailsJeuneProps {
   jeune: DetailBeneficiaire
   conseiller: Conseiller
+  demarches: Demarche[] | undefined
   indicateursSemaine: IndicateursSemaine | undefined
 }
 
 export default function DetailsJeune({
   jeune,
   conseiller,
+  demarches,
   indicateursSemaine,
 }: DetailsJeuneProps) {
   const [_, setAlerte] = useAlerte()
@@ -54,7 +62,7 @@ export default function DetailsJeune({
     nouvelleValeur: string
   ): Promise<void> {
     const { modifierIdentifiantPartenaire } = await import(
-      'services/jeunes.service'
+      'services/beneficiaires.service'
     )
     modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
       .then(() => {
@@ -80,12 +88,20 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {!estFranceTravail(conseiller) && (
+        {estMilo(conseiller) && (
           <ResumeIndicateursJeune
             idBeneficiaire={jeune.id}
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
             indicateursSemaine={indicateursSemaine}
+          />
+        )}
+
+        {estConseilDepartemental(conseiller) && demarches && (
+          <ResumeDemarchesBeneficiaire
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            demarches={demarches}
           />
         )}
 

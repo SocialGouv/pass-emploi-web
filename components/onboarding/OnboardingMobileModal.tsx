@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import { TutorielRaccourci } from 'components/TutorielRaccourci'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -12,6 +12,8 @@ interface OnboardingMobileModalProps {
 export default function OnboardingMobileModal({
   onClose,
 }: OnboardingMobileModalProps) {
+  const modalRef = useRef<ModalHandles>(null)
+
   const [etape, setEtape] = useState<number>(1)
 
   function accueil(): JSX.Element {
@@ -40,13 +42,17 @@ export default function OnboardingMobileModal({
 
   return (
     <Modal
+      ref={modalRef}
       title='Bienvenue sur l’espace mobile du conseiller'
       onClose={onClose}
     >
       {etape === 1 && accueil()}
       {etape === 2 && <TutorielRaccourci />}
       <div className='mt-8'>
-        <Button onClick={onClose} className='w-full'>
+        <Button
+          onClick={(e) => modalRef.current!.closeModal(e)}
+          className='w-full'
+        >
           Terminer
         </Button>
         {etape === 1 && (

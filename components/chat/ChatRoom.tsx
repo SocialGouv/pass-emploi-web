@@ -1,15 +1,14 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
+import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import {
-  desactiverMessageImportant,
   FormNouveauMessageImportant,
   getMessageImportant,
   MessageImportantPreRempli,
@@ -25,11 +24,13 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  beneficiairesChats: BeneficiaireChat[] | undefined
+  beneficiairesChats: BeneficiaireEtChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
-  onAccesConversation: (idJeune: string) => void
+  onAccesConversation: (conversation: BeneficiaireEtChat) => void
+  idConversationToFocus?: string
+  shouldFocusAccesListesDiffusion: boolean
 }
 
 export default function ChatRoom({
@@ -38,12 +39,16 @@ export default function ChatRoom({
   onOuvertureMenu,
   onAccesListesDiffusion,
   onAccesConversation,
+  idConversationToFocus,
+  shouldFocusAccesListesDiffusion,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
-  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
+  const listeConversationsRef = useRef<HTMLUListElement>(null)
+
+  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
@@ -143,7 +148,6 @@ export default function ChatRoom({
   }
 
   async function ouvrirModaleMessageImportant() {
-    setAfficherMenuActionsMessagerie(false)
     setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
     setSuccesDesactivationMessageImportant(undefined)
@@ -162,6 +166,7 @@ export default function ChatRoom({
     })
 
     setChatsFiltres(chatsFiltresResult)
+    listeConversationsRef.current?.focus()
   }
 
   useEffect(() => {
@@ -301,6 +306,11 @@ export default function ChatRoom({
 
           {chatsFiltres && (
             <button
+              ref={
+                shouldFocusAccesListesDiffusion && !idConversationToFocus
+                  ? (e) => e?.focus()
+                  : undefined
+              }
               className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
               type='button'
@@ -316,7 +326,7 @@ export default function ChatRoom({
               </span>
               <IconComponent
                 name={IconName.ChevronRight}
-                className='mr-2 h-6 w-6 fill-[currentColor]'
+                className='mr-2 h-6 w-6 fill-current'
                 aria-hidden={true}
                 focusable={false}
               />
@@ -324,9 +334,11 @@ export default function ChatRoom({
           )}
 
           <ListeConversations
+            ref={listeConversationsRef}
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}
+            idConversationToFocus={idConversationToFocus}
           />
         </>
       )}
@@ -345,7 +357,7 @@ export default function ChatRoom({
             succesDesactivationMessageImportant
           }
           messageImportantIsLoading={messageImportantIsLoading}
-          onConfirmation={envoyerMessageImportant}
+          onModificationMessageImportant={envoyerMessageImportant}
           onCancel={() => {
             setAfficherModaleMessageImportant(false)
           }}

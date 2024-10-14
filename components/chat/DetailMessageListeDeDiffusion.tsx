@@ -5,10 +5,10 @@ import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
+import SpinningLoader from 'components/ui/SpinningLoader'
+import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getIdentitesBeneficiairesClientSide } from 'services/jeunes.service'
+import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { toShortDate } from 'utils/date'
 
 export function DetailMessageListeDeDiffusion({
@@ -18,11 +18,11 @@ export function DetailMessageListeDeDiffusion({
   messagerieFullScreen,
 }: {
   message: MessageListeDiffusion
-  chats: BeneficiaireChat[] | undefined
+  chats: BeneficiaireEtChat[] | undefined
   onBack: () => void
   messagerieFullScreen?: boolean
 }) {
-  const [destinataires, setDestinataires] = useState<BeneficiaireChat[]>()
+  const [destinataires, setDestinataires] = useState<BeneficiaireEtChat[]>()
 
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
@@ -31,7 +31,7 @@ export function DetailMessageListeDeDiffusion({
     setMessagerieEstVisible(!messagerieEstVisible)
   }
 
-  function aLuLeMessage(destinataire: BeneficiaireChat) {
+  function aLuLeMessage(destinataire: BeneficiaireEtChat) {
     return (
       destinataire.lastJeuneReading &&
       destinataire.lastJeuneReading > message.creationDate
@@ -41,7 +41,7 @@ export function DetailMessageListeDeDiffusion({
   useEffect(() => {
     function getChatsDestinataires(
       beneficiaires: BaseBeneficiaire[]
-    ): BeneficiaireChat[] {
+    ): BeneficiaireEtChat[] {
       return chats!.filter((beneficiaireChat) =>
         beneficiaires.some(
           (beneficiaire) => beneficiaire.id === beneficiaireChat.id

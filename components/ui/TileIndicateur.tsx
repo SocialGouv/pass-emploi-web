@@ -29,7 +29,7 @@ export default function TileIndicateur({
             name={iconName}
             focusable={false}
             aria-hidden={true}
-            className='inline w-3 h-3 fill-[currentColor]'
+            className='inline w-3 h-3 fill-current'
           />
         )}
         {label}

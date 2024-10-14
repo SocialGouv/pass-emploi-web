@@ -10,24 +10,31 @@ import React, {
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { SituationNonProfessionnelle } from 'interfaces/action'
+
+export type Categorie = { code: string; label: string }
 
 type FiltresCategoriesActionsProps = {
-  categories: SituationNonProfessionnelle[]
-  defaultValue: string[]
-  onFiltres: (categoriesSelectionnees: string[]) => void
+  categories: Categorie[]
+  defaultValue: Categorie[]
+  entites: string
+  onFiltres: (categoriesSelectionnees: Categorie[]) => void
 }
 
-function FiltresCategoriesActions(
-  { categories, defaultValue, onFiltres }: FiltresCategoriesActionsProps,
+function FiltresCategories(
+  {
+    categories,
+    defaultValue,
+    entites,
+    onFiltres,
+  }: FiltresCategoriesActionsProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
   const [categoriesSelectionnees, setCategoriesSelectionnees] = useState<
-    string[]
+    Categorie[]
   >([])
 
-  function renderFiltres(categorie: SituationNonProfessionnelle) {
+  function renderFiltres(categorie: Categorie) {
     const id = `categorie-${categorie.code}`
     return (
       <label key={id} htmlFor={id} className='flex items-center pb-4'>
@@ -36,7 +43,9 @@ function FiltresCategoriesActions(
           value={categorie.code}
           id={id}
           className='h-5 w-5 shrink-0'
-          checked={categoriesSelectionnees.includes(categorie.code)}
+          checked={categoriesSelectionnees.some(
+            ({ code }) => code === categorie.code
+          )}
           onChange={actionnerCategorie}
         />
         <span className='pl-5'>{categorie.label}</span>
@@ -47,11 +56,15 @@ function FiltresCategoriesActions(
   function actionnerCategorie(e: ChangeEvent<HTMLInputElement>) {
     const codeCategorie = e.target.value
     const index = categoriesSelectionnees.findIndex(
-      (code) => code === codeCategorie
+      ({ code }) => code === codeCategorie
     )
     const nouvellesCategoriesSelectionnees = [...categoriesSelectionnees]
+
     if (index > -1) nouvellesCategoriesSelectionnees.splice(index, 1)
-    else nouvellesCategoriesSelectionnees.push(codeCategorie)
+    else
+      nouvellesCategoriesSelectionnees.push(
+        categories.find(({ code }) => code === codeCategorie)!
+      )
     setCategoriesSelectionnees(nouvellesCategoriesSelectionnees)
   }
 
@@ -72,7 +85,7 @@ function FiltresCategoriesActions(
         aria-controls='filtres-categories'
         aria-expanded={afficherFiltres}
         onClick={() => setAfficherFiltres(!afficherFiltres)}
-        title='Filtrer les actions par catégorie'
+        title={`Filtrer les ${entites} par catégorie`}
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
       >
@@ -80,7 +93,7 @@ function FiltresCategoriesActions(
         <IconComponent
           name={IconName.Filter}
           role='img'
-          aria-label='Filtrer les actions'
+          aria-label={`Filtrer les ${entites}`}
           className='h-6 w-6 fill-primary'
         />
         {categoriesSelectionnees.length > 0 && (
@@ -118,4 +131,4 @@ function FiltresCategoriesActions(
   )
 }
 
-export default forwardRef(FiltresCategoriesActions)
+export default forwardRef(FiltresCategories)

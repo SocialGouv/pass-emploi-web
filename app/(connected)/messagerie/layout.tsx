@@ -8,7 +8,6 @@ import ChatContainer from 'components/chat/ChatContainer'
 import { ID_CONTENU } from 'components/ids'
 import Footer from 'components/layouts/Footer'
 import Sidebar from 'components/Sidebar'
-import { useChats } from 'utils/chat/chatsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -19,7 +18,6 @@ export default function LayoutPageMessagerie({
 }) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const chats = useChats()
 
   return (
     <div className='flex h-screen supports-[height:100dvh]:h-dvh w-screen'>
@@ -27,9 +25,8 @@ export default function LayoutPageMessagerie({
         <Sidebar />
       </div>
 
-      <div id={ID_CONTENU} className={layout.chatRoom}>
+      <div id={ID_CONTENU} className={layout.chatRoom} tabIndex={-1}>
         <ChatContainer
-          beneficiairesChats={chats}
           menuState={[false, () => {}]}
           messagerieFullScreen={true}
         />

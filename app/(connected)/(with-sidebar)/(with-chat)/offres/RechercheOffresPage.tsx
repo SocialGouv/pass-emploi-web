@@ -311,6 +311,7 @@ function RechercheOffresPage() {
               name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}
               title={`${collapsed ? 'Voir' : 'Cacher'} les critères`}
               className='h-6 w-6 fill-primary'
+              aria-hidden={true}
               focusable={false}
             />
             <span className='sr-only'>

@@ -18,7 +18,7 @@ describe('<DossierMilo', () => {
           <DossierBeneficiaireMilo
             dossier={dossier}
             onCreateCompte={jest.fn()}
-            erreurMessageHttpPassEmploi=''
+            erreurMessageCreationCompte=''
             onRefresh={jest.fn()}
             onRetour={jest.fn()}
           />
@@ -58,7 +58,7 @@ describe('<DossierMilo', () => {
           <DossierBeneficiaireMilo
             dossier={dossier}
             onCreateCompte={jest.fn()}
-            erreurMessageHttpPassEmploi=''
+            erreurMessageCreationCompte=''
             onRefresh={jest.fn()}
             onRetour={jest.fn()}
           />

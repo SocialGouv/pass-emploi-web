@@ -8,7 +8,7 @@ import RechercheOffresEmploiSecondaire from 'components/offres/RechercheOffresEm
 import RechercheServicesCiviquesPrincipale from 'components/offres/RechercheServicesCiviquesPrincipale'
 import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServicesCiviquesSecondaire'
 import Button from 'components/ui/Button/Button'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { estBRSA } from 'interfaces/conseiller'
 import { TypeOffre } from 'interfaces/offre'

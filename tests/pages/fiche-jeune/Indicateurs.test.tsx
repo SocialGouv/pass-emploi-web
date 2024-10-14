@@ -11,11 +11,11 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
@@ -33,7 +33,7 @@ describe('Indicateurs dans la fiche jeune', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}

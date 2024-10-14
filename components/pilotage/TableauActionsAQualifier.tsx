@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ActionRowPilotage from 'components/action/ActionRowPilotage'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
-import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
+import FiltresCategories, {
+  Categorie,
+} from 'components/action/FiltresCategories'
+import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
@@ -42,8 +45,11 @@ export default function TableauActionsAQualifier({
   onLienExterne,
   onQualification,
 }: TableauActionsConseillerProps) {
+  const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresRef = useRef<HTMLButtonElement>(null)
-  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+  const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
+  const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
+    useState<boolean>(false)
 
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
@@ -70,16 +76,16 @@ export default function TableauActionsAQualifier({
     setActionsSelectionnees([])
   }
 
-  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+  function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresRef.current!.focus()
-    onFiltres(categoriesSelectionnees)
+    onFiltres(categoriesSelectionnees.map(({ code }) => code))
   }
 
   function reinitialiserFiltres() {
     onFiltres([])
     setCategoriesValidees([])
-    filtresRef.current!.focus()
+    setAReinitialiseLesFiltres(true)
   }
 
   function selectionnerAction({ id, categorie }: ActionPilotage) {
@@ -155,6 +161,13 @@ export default function TableauActionsAQualifier({
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }, [actionsFiltrees.length, actionsSelectionnees.length])
 
+  useEffect(() => {
+    if (aReinitialiseLesFiltres && actionsFiltrees.length) {
+      listeActionsRef.current!.focus()
+      setAReinitialiseLesFiltres(false)
+    }
+  }, [aReinitialiseLesFiltres, actionsFiltrees])
+
   return (
     <>
       <EncartQualificationActions
@@ -195,14 +208,12 @@ export default function TableauActionsAQualifier({
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <IllustrationComponent
-            name={IllustrationName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='m-auto w-48 h-48 [--secondary-fill:theme(colors.grey\_100)]'
+          <EmptyState
+            shouldFocus={true}
+            illustrationName={IllustrationName.Search}
+            titre='Aucun résultat.'
+            sousTitre='Modifiez vos filtres.'
           />
-          <p className='text-base-bold text-center'>Aucun résultat.</p>
-          <p className='text-center'>Modifiez vos filtres.</p>
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}
@@ -215,7 +226,10 @@ export default function TableauActionsAQualifier({
       )}
 
       {actionsFiltrees.length > 0 && (
-        <Table caption={{ text: 'Liste des actions à qualifier' }}>
+        <Table
+          caption={{ text: 'Liste des actions à qualifier' }}
+          ref={listeActionsRef}
+        >
           <thead>
             <TR isHeader={true}>
               <TH estCliquable={true}>
@@ -251,10 +265,11 @@ export default function TableauActionsAQualifier({
               </TH>
               <TH>Titre de l’action</TH>
               <TH estCliquable={true}>
-                <FiltresCategoriesActions
+                <FiltresCategories
                   ref={filtresRef}
                   categories={categories}
                   defaultValue={categoriesValidees}
+                  entites='actions'
                   onFiltres={filtrerActionsParCategorie}
                 />
               </TH>

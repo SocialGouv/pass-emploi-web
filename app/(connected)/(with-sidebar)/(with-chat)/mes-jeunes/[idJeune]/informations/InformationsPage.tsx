@@ -12,7 +12,7 @@ import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   CategorieSituation,
   ConseillerHistorique,
@@ -21,15 +21,15 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estFranceTravail, estMilo } from 'interfaces/conseiller'
-import { getIndicateursJeuneComplets } from 'services/jeunes.service'
+import { estMilo } from 'interfaces/conseiller'
+import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type InformationsPageProps = {
   idBeneficiaire: string
-  jeune: DetailBeneficiaire
+  beneficiaire: DetailBeneficiaire
   situations: Array<{
     categorie: CategorieSituation
     etat?: EtatSituation
@@ -48,7 +48,7 @@ function InformationsPage({
   situations,
   conseillers,
   lectureSeule,
-  jeune,
+  beneficiaire,
   onglet,
   metadonneesFavoris,
 }: InformationsPageProps) {
@@ -79,7 +79,7 @@ function InformationsPage({
     if (
       currentTab === 'INDICATEURS' &&
       !indicateursSemaine &&
-      !estFranceTravail(conseiller)
+      estMilo(conseiller)
     ) {
       getIndicateursJeuneComplets(
         conseiller.id,
@@ -103,7 +103,10 @@ function InformationsPage({
 
   return (
     <>
-      <TabList className='mt-10'>
+      <TabList
+        label={`Informations complémentaires de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+        className='mt-10'
+      >
         <Tab
           label='Informations'
           selected={currentTab === 'INFORMATIONS'}
@@ -111,7 +114,7 @@ function InformationsPage({
           onSelectTab={() => setCurrentTab('INFORMATIONS')}
           iconName={IconName.Description}
         />
-        {!estFranceTravail(conseiller) && (
+        {estMilo(conseiller) && (
           <Tab
             label='Indicateurs'
             selected={currentTab === 'INDICATEURS'}
@@ -138,10 +141,10 @@ function InformationsPage({
           className='mt-8 pb-8'
         >
           <BlocInformationJeune
-            creationDate={jeune.creationDate}
-            dateFinCEJ={jeune.dateFinCEJ}
-            email={jeune.email}
-            urlDossier={jeune.urlDossier}
+            creationDate={beneficiaire.creationDate}
+            dateFinCEJ={beneficiaire.dateFinCEJ}
+            email={beneficiaire.email}
+            urlDossier={beneficiaire.urlDossier}
             onDossierMiloClick={() => {}}
             conseiller={conseiller}
           />

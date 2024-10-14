@@ -12,11 +12,11 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 export default function Sidebar() {
   const [conseiller] = useConseiller()
 
-  const estConseillerPassEmploi = estPassEmploi(conseiller)
+  const aThemePassEmploi = estPassEmploi(conseiller)
 
   return (
     <>
-      {estConseillerPassEmploi && (
+      {aThemePassEmploi && (
         <IllustrationComponent
           name={IllustrationName.LogoPassemploi}
           role='img'
@@ -27,7 +27,7 @@ export default function Sidebar() {
         />
       )}
 
-      {!estConseillerPassEmploi && (
+      {!aThemePassEmploi && (
         <IllustrationComponent
           name={IllustrationName.LogoCEJ}
           role='img'

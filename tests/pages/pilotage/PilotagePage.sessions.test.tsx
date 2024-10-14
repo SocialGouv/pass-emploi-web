@@ -80,7 +80,7 @@ describe('PilotagePage client side - Sessions', () => {
         '3 À clore'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Sessions i-milo 3'
+        'Sessions i-milo 3 éléments'
       )
     })
 

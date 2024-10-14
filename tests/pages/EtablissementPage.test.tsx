@@ -7,18 +7,18 @@ import React from 'react'
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
-  CategorieSituation,
   BeneficiaireEtablissement,
+  CategorieSituation,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { rechercheBeneficiairesDeLEtablissement } from 'services/beneficiaires.service'
 import { modifierAgence } from 'services/conseiller.service'
-import { rechercheBeneficiairesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toRelativeDateTime } from 'utils/date'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
@@ -141,7 +141,7 @@ describe('EtablissementPage client side', () => {
         it('affiche le resultat de la recherche dans un tableau', async () => {
           // Then
           const tableauDeBeneficiaires = screen.getByRole('table', {
-            name: 'Résultat de recherche (1)',
+            name: 'Résultat de recherche (1 éléments)',
           })
           expect(tableauDeBeneficiaires).toBeInTheDocument()
           expect(
@@ -273,9 +273,7 @@ describe('EtablissementPage client side', () => {
 
         // Then
         expect(
-          screen.getByText(
-            'Aucun bénéficiaire ne correspond à votre recherche.'
-          )
+          screen.getByText('Aucun bénéficiaire trouvé.')
         ).toBeInTheDocument()
       })
 

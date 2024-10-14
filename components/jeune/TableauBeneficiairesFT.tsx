@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import SortIcon from 'components/ui/SortIcon'
-import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
@@ -152,13 +151,7 @@ export default function TableauBeneficiairesFT({
   }
 
   return (
-    <Table
-      caption={{
-        text: 'Liste des bénéficiaires',
-        count: total === beneficiairesFiltres.length ? total : undefined,
-        visible: true,
-      }}
-    >
+    <>
       <thead>
         <TR isHeader={true}>
           <TH estCliquable={true}>
@@ -225,41 +218,21 @@ export default function TableauBeneficiairesFT({
             <TR key={jeune.id}>
               <TD isBold className='rounded-l-base'>
                 <span className='flex items-baseline'>
-                  {jeune.structureMilo?.id === conseiller.structureMilo?.id &&
-                    jeune.isReaffectationTemporaire && (
-                      <span className='self-center mr-2'>
-                        <IconComponent
-                          name={IconName.Schedule}
-                          focusable={false}
-                          className='w-4 h-4'
-                          role='img'
-                          aria-labelledby={`label-beneficiaire-temporaire-${jeune.id}`}
-                          title='bénéficiaire temporaire'
-                        />
-                        <span
-                          id={`label-beneficiaire-temporaire-${jeune.id}`}
-                          className='sr-only'
-                        >
-                          bénéficiaire temporaire
-                        </span>
-                      </span>
-                    )}
-                  {jeune.structureMilo?.id !== conseiller.structureMilo?.id && (
+                  {jeune.isReaffectationTemporaire && (
                     <span className='self-center mr-2'>
                       <IconComponent
-                        name={IconName.Error}
+                        name={IconName.Schedule}
                         focusable={false}
+                        className='w-4 h-4'
                         role='img'
-                        aria-labelledby={`label-ml-differente-${jeune.id}`}
-                        className='w-4 h-4 fill-warning'
-                        title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
+                        aria-labelledby={`label-beneficiaire-temporaire-${jeune.id}`}
+                        title='bénéficiaire temporaire'
                       />
                       <span
-                        id={`label-ml-differente-${jeune.id}`}
+                        id={`label-beneficiaire-temporaire-${jeune.id}`}
                         className='sr-only'
                       >
-                        Ce bénéficiaire est rattaché à une Mission Locale
-                        différente de la vôtre.
+                        bénéficiaire temporaire
                       </span>
                     </span>
                   )}
@@ -305,6 +278,6 @@ export default function TableauBeneficiairesFT({
           )
         )}
       </tbody>
-    </Table>
+    </>
   )
 }

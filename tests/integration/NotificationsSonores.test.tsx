@@ -11,16 +11,16 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import {
   BaseBeneficiaire,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
-import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
 import { observeConseillerChats, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 
 jest.mock('services/messages.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
@@ -32,7 +32,7 @@ global.Audio = class FakeAudio {
 }
 
 describe('Intégration notifications sonores', () => {
-  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   const jeunes: BeneficiaireFromListe[] = desItemsBeneficiaires()
 
   beforeEach(async () => {
@@ -55,7 +55,9 @@ describe('Intégration notifications sonores', () => {
         return Promise.resolve(() => {})
       }
     )
-    ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(jeunes)
+    ;(getBeneficiairesDuConseillerClientSide as jest.Mock).mockResolvedValue(
+      jeunes
+    )
   })
 
   describe('quand le conseiller active ses notification', () => {
@@ -115,7 +117,7 @@ async function toggleNotifications() {
 }
 
 async function unNouveauMessageArrive(
-  updateChatsRef: (chat: BeneficiaireChat[]) => void,
+  updateChatsRef: (chat: BeneficiaireEtChat[]) => void,
   jeunes: BeneficiaireFromListe[]
 ) {
   await act(async () => {

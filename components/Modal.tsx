@@ -1,6 +1,7 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 import Image from 'next/image'
 import {
+  ForwardedRef,
   forwardRef,
   MouseEvent,
   ReactNode,
@@ -19,7 +20,11 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import styles from 'styles/components/Modal.module.css'
 
-interface ModalProps {
+export type ModalHandles = {
+  focus: () => void
+  closeModal: (e: KeyboardEvent | MouseEvent) => void
+}
+type ModalProps = {
   title: string
   onClose: () => void
   children: ReactNode
@@ -28,7 +33,7 @@ interface ModalProps {
   titleImageSrc?: string | StaticImport
 }
 
-const Modal = forwardRef((props: ModalProps, ref) => {
+function Modal(props: ModalProps, ref: ForwardedRef<ModalHandles>) {
   const {
     children: modalContent,
     onClose,
@@ -38,12 +43,15 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     titleImageSrc,
   } = props
 
+  const modalRef = useRef<HTMLDivElement>(null)
   useImperativeHandle(ref, () => ({
+    focus: () =>
+      modalRef
+        .current!.querySelector<HTMLButtonElement>('button:first-child')!
+        .focus(),
     closeModal: handleClose,
   }))
-
   const [isBrowser, setIsBrowser] = useState(false)
-  const modalRef = useRef<HTMLDivElement>(null)
   const previousFocusedElement = useRef<HTMLElement | null>(null)
   const keyListeners = useRef(
     new Map([
@@ -189,7 +197,6 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   } else {
     return null
   }
-})
+}
 
-Modal.displayName = 'Modal'
-export default Modal
+export default forwardRef(Modal)

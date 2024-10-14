@@ -5,14 +5,17 @@ import React from 'react'
 
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  getJeunesDuConseillerParId,
+  reaffecter,
+} from 'services/beneficiaires.service'
 import { getConseillers } from 'services/conseiller.service'
-import { getJeunesDuConseillerParId, reaffecter } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('Reaffectation', () => {
   let container: HTMLElement
@@ -135,6 +138,7 @@ describe('Reaffectation', () => {
         await userEvent.click(
           screen.getByRole('radio', { name: 'Nils Tavernier' })
         )
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
 
         etape = screen.getByRole('group', {
           name: 'Étape 5: Saisissez le conseiller à qui affecter les bénéficiaires',
@@ -294,6 +298,7 @@ describe('Reaffectation', () => {
           await userEvent.click(
             within(etape).getByRole('radio', { name: 'Nils Tavernier' })
           )
+          await act(() => new Promise((r) => setTimeout(r, 1000)))
         })
 
         it('a11y', async () => {
@@ -324,6 +329,7 @@ describe('Reaffectation', () => {
         await userEvent.click(
           screen.getByRole('radio', { name: 'Nils Tavernier' })
         )
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
 
         etape = screen.getByRole('group', {
           name: 'Étape 3: Sélectionnez les bénéficiaires à réaffecter',
@@ -410,6 +416,7 @@ describe('Reaffectation', () => {
         await userEvent.click(
           screen.getByRole('radio', { name: 'Nils Tavernier' })
         )
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
 
         checkboxBeneficiaire = screen.getByRole('checkbox', {
           name: new RegExp(jeunes[1].nom),

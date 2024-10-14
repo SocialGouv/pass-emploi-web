@@ -17,7 +17,7 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
-  estFranceTravail,
+  estMilo,
   estPassEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
@@ -56,8 +56,9 @@ export default function AidePage() {
         return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK as string
       case StructureConseiller.POLE_EMPLOI_BRSA:
       case StructureConseiller.POLE_EMPLOI_AIJ:
-      case StructureConseiller.CONSEIL_DEPT:
         return process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string
+      case StructureConseiller.CONSEIL_DEPT:
+        return process.env.NEXT_PUBLIC_FAQ_CD_BRSA_EXTERNAL_LINK as string
     }
   })()
 
@@ -135,7 +136,7 @@ export default function AidePage() {
               <li>Répondre à vos questions</li>
               <li>Collecter vos retours utilisateurs</li>
 
-              {estFranceTravail(conseiller) && (
+              {!estMilo(conseiller) && (
                 <li>Vous aider dans la réaffectation de vos bénéficiaires</li>
               )}
             </ul>
@@ -207,7 +208,8 @@ export default function AidePage() {
                     ? avecNosRessourcesImagePassEmploi
                     : avecNosRessourcesImage
                 }
-                alt={`Flyer ”Se lancer sur ${conseillerEstPassEmploi ? 'pass emploi' : 'le CEJ'}” à retrouver sur le site ressources.`}
+                alt=''
+                aria-hidden={true}
                 className='w-1/3 object-contain'
               />
             </div>
@@ -253,7 +255,7 @@ export default function AidePage() {
                   App Store
                   <IconComponent
                     name={IconName.OpenInNew}
-                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    className='ml-1.5 w-4 h-4 fill-current'
                     focusable={false}
                     aria-hidden={true}
                   />
@@ -274,7 +276,7 @@ export default function AidePage() {
                   Play Store
                   <IconComponent
                     name={IconName.OpenInNew}
-                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    className='ml-1.5 w-4 h-4 fill-current'
                     focusable={false}
                     aria-hidden={true}
                   />

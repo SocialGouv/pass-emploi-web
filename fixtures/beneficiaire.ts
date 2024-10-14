@@ -2,22 +2,25 @@ import { DateTime } from 'luxon'
 
 import {
   BaseBeneficiaire,
+  BeneficiaireAvecCompteursActionsRdvs,
+  BeneficiaireEtChat,
+  BeneficiaireFromListe,
   CategorieSituation,
   Chat,
   ConseillerHistorique,
+  Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireAvecCompteursActionsRdvs,
-  BeneficiaireChat,
-  BeneficiaireFromListe,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
+  DemarcheJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
   MetadonneesFavorisJson,
+  StatutDemarche,
 } from 'interfaces/json/beneficiaire'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 
@@ -193,7 +196,7 @@ export const unBeneficiaireAvecActionsNonTerminees = (
 ): BeneficiaireAvecCompteursActionsRdvs => {
   const defaults: BeneficiaireAvecCompteursActionsRdvs = {
     ...unItemBeneficiaire(),
-    nbActionsNonTerminees: 5,
+    actionsCreees: 5,
     rdvs: 2,
   }
   return { ...defaults, ...overrides }
@@ -208,7 +211,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       nom: 'Sanfamiye',
       isActivated: false,
       lastActivity: '2022-01-30T17:30:07.756Z',
-      nbActionsNonTerminees: 0,
+      actionsCreees: 0,
     }),
     unBeneficiaireAvecActionsNonTerminees({
       id: 'beneficiaire-3',
@@ -216,7 +219,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       nom: "D'Aböville-Muñoz François",
       lastActivity: '2022-02-07T17:30:07.756Z',
       isReaffectationTemporaire: true,
-      nbActionsNonTerminees: 8,
+      actionsCreees: 8,
       dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
     }),
   ]
@@ -238,9 +241,9 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
 }
 
 export const unBeneficiaireChat = (
-  overrides: Partial<BeneficiaireChat> = {}
-): BeneficiaireChat => {
-  const defaults: BeneficiaireChat = {
+  overrides: Partial<BeneficiaireEtChat> = {}
+): BeneficiaireEtChat => {
+  const defaults: BeneficiaireEtChat = {
     id: 'beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
@@ -356,6 +359,41 @@ export const desIndicateursSemaine = (
       offresSauvegardees: 6,
       recherchesSauvegardees: 7,
     },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneDemarche = (overrides: Partial<Demarche> = {}): Demarche => {
+  const defaults: Demarche = {
+    id: 'id-demarche',
+    label: 'Mes candidatures',
+    statut: StatutDemarche.EN_COURS,
+    dateCreation: '2024-09-23T17:30:07.756Z',
+    dateFin: '2024-09-30T17:30:07.756Z',
+    titre: 'Réalisation d’entretiens d’embauche',
+    sousTitre: 'Par internet',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneListeDeDemarches = (): Demarche[] => {
+  return [
+    uneDemarche(),
+    uneDemarche({ id: 'id-demarche-2', statut: StatutDemarche.A_FAIRE }),
+  ]
+}
+
+export const uneDemarcheJson = (
+  overrides: Partial<DemarcheJson> = {}
+): DemarcheJson => {
+  const defaults: DemarcheJson = {
+    id: 'id-demarche',
+    label: 'Mes candidatures',
+    statut: StatutDemarche.EN_COURS,
+    dateCreation: '2024-09-23T17:30:07.756Z',
+    dateFin: '2024-09-30T17:30:07.756Z',
+    titre: 'Réalisation d’entretiens d’embauche',
+    sousTitre: 'Par internet',
   }
   return { ...defaults, ...overrides }
 }

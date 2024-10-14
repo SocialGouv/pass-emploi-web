@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
+import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
@@ -43,14 +43,14 @@ export default function ActionRowPilotage({
       </TD>
       <TD isBold>{action.titre}</TD>
       <TD>
-        <TagCategorieAction categorie={action.categorie?.libelle} />
+        <TagCategorie categorie={action.categorie?.libelle} />
       </TD>
       <TD>
         <span className='flex flex-row'>{dateFinReelle}</span>
       </TD>
       <TDLink
         href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-        label={`Accéder au détail de l’action : ${action.titre}`}
+        label={`Accéder au détail de l’action terminée le ${dateFinReelle} : ${action.titre}`}
       />
     </TR>
   )

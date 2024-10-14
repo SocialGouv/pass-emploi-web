@@ -37,7 +37,7 @@ import {
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import {
   Chat,
-  BeneficiaireChat,
+  BeneficiaireEtChat,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
@@ -220,10 +220,10 @@ describe('MessagesFirebaseAndApiService', () => {
       onMessagesAntechronologiques = jest.fn()
 
       // When
-      await observeDerniersMessages(
+      observeDerniersMessages(
         idChat,
         cleChiffrement,
-        2,
+        { pages: 2, taillePage: 10 },
         onMessagesAntechronologiques
       )
     })
@@ -321,7 +321,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessage', () => {
-    let beneficiaireChat: BeneficiaireChat
+    let beneficiaireChat: BeneficiaireEtChat
     let newMessage: string
     const now = DateTime.now()
     beforeEach(async () => {
@@ -806,7 +806,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.rechercherMessagesConversation', () => {
-    let beneficiaireChat: BeneficiaireChat
+    let beneficiaireChat: BeneficiaireEtChat
     let recherche: string
     const now = DateTime.fromISO('2024-04-24')
 

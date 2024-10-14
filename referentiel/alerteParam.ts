@@ -12,6 +12,7 @@ export enum AlerteParam {
   recuperationBeneficiaires = 'recuperationBeneficiaires',
   suppressionBeneficiaire = 'suppressionBeneficiaire',
   creationBeneficiaire = 'creationBeneficiaire',
+  reaffectation = 'reaffectation',
   // Actions
   suppressionAction = 'suppressionAction',
   qualificationSNP = 'qualificationSNP',

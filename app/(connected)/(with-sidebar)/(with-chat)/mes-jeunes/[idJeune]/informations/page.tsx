@@ -10,12 +10,12 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type InformationsParams = { idJeune: string }
@@ -63,12 +63,9 @@ export default async function Informations({
         idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
-        jeune={beneficiaire}
+        beneficiaire={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
-        onglet={searchParamToOnglet(
-          searchParams?.onglet,
-          estUserFranceTravail(user)
-        )}
+        onglet={searchParamToOnglet(searchParams?.onglet, !estUserMilo(user))}
       />
     </>
   )
@@ -76,11 +73,11 @@ export default async function Informations({
 
 function searchParamToOnglet(
   onglet: string | undefined,
-  estFranceTravail: boolean
+  estMilo: boolean
 ): Onglet {
   switch (onglet) {
     case 'indicateurs':
-      return estFranceTravail ? 'INFORMATIONS' : 'INDICATEURS'
+      return estMilo ? 'INDICATEURS' : 'INFORMATIONS'
     case 'conseillers':
       return 'CONSEILLERS'
     case 'informations':

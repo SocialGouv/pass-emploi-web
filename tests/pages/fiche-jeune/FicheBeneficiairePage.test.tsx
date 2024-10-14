@@ -1,25 +1,28 @@
 import { act, screen } from '@testing-library/react'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
+  unBeneficiaireChat,
   unDetailBeneficiaire,
+  uneDemarche,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { Demarche, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { CurrentConversation } from 'utils/chat/currentConversationContext'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
 describe('FicheBeneficiairePage client side', () => {
@@ -33,14 +36,15 @@ describe('FicheBeneficiairePage client side', () => {
   describe('pour tous les conseillers', () => {
     it('modifie le currentJeune', async () => {
       // Given
-      const setIdJeune = jest.fn()
-      const jeune = unDetailBeneficiaire()
+      const setCurrentConversation = jest.fn()
+      const beneficiaire = unDetailBeneficiaire()
+      const conversation = unBeneficiaireChat({ ...beneficiaire })
 
       // When
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={jeune}
+            beneficiaire={beneficiaire}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -48,29 +52,35 @@ describe('FicheBeneficiairePage client side', () => {
             lectureSeule={false}
           />,
           {
-            customCurrentJeune: { idSetter: setIdJeune },
-            customConseiller: { id: jeune.idConseiller },
+            customChats: [conversation],
+            customCurrentConversation: { setter: setCurrentConversation },
+            customConseiller: { id: beneficiaire.idConseiller },
           }
         )
       })
 
       // Then
-      expect(setIdJeune).toHaveBeenCalledWith('beneficiaire-1')
+      expect(setCurrentConversation).toHaveBeenCalledWith({
+        conversation,
+        shouldFocusOnRender: false,
+      })
     })
   })
 
   describe('pour les conseillers non référent', () => {
     let container: HTMLElement
-    let setIdJeune: (id: string | undefined) => void
+    let setCurrentConversation: Dispatch<
+      SetStateAction<CurrentConversation | undefined>
+    >
     beforeEach(async () => {
       // Given
-      setIdJeune = jest.fn()
+      setCurrentConversation = jest.fn()
 
       // When
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -79,7 +89,7 @@ describe('FicheBeneficiairePage client side', () => {
           />,
           {
             customConseiller: { id: 'fake-id' },
-            customCurrentJeune: { idSetter: setIdJeune },
+            customCurrentConversation: { setter: setCurrentConversation },
           }
         ))
       })
@@ -92,7 +102,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('ne modifie pas le currentJeune', async () => {
       //Then
-      expect(setIdJeune).not.toHaveBeenCalled()
+      expect(setCurrentConversation).not.toHaveBeenCalled()
     })
 
     it('restreint l‘accès aux boutons', async () => {
@@ -126,7 +136,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -148,7 +158,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -175,7 +185,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailBeneficiaire({ isActivated: false })}
+              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -196,7 +206,7 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 24h/
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du bénéficiaire n’est valable que 24h/
           )
         ).toBeInTheDocument()
       })
@@ -216,11 +226,11 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('a11y', async () => {
       let results: AxeResults
-      const container = await renderFicheJeune(
+      const container = await renderFicheJeune({
         metadonneesFavoris,
         offresFT,
-        recherchesFT
-      )
+        recherchesFT,
+      })
 
       await act(async () => {
         results = await axe(container)
@@ -231,7 +241,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -241,7 +251,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -253,7 +263,7 @@ describe('FicheBeneficiairePage client side', () => {
       metadonneesFavoris.autoriseLePartage = false
 
       //When
-      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
+      await renderFicheJeune({ metadonneesFavoris, offresFT, recherchesFT })
 
       // Then
       expect(screen.getByText(/Emplois/)).toBeInTheDocument()
@@ -269,7 +279,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailBeneficiaire({ isActivated: false })}
+              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -294,13 +304,71 @@ describe('FicheBeneficiairePage client side', () => {
     })
   })
 
+  describe('pour les conseillers départementaux', () => {
+    it('affiche un message pour la récupération des démarches', async () => {
+      //Given
+      //When
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
+
+      //Then
+      expect(
+        screen.getByText(
+          'Vous pouvez consulter les démarches de votre bénéficiaire si une connexion de sa part a été effectuée dans les 30 derniers jours.'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
+      // When
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
+
+      // Then
+      expect(screen.getByText('Offres')).toBeInTheDocument()
+      expect(screen.getByText('Recherches')).toBeInTheDocument()
+    })
+
+    it('affiche le tableau des démarches', async () => {
+      // When
+      await renderFicheJeune({
+        metadonneesFavoris: uneMetadonneeFavoris(),
+        offresFT: uneListeDOffres(),
+        recherchesFT: uneListeDeRecherches(),
+        demarches: [uneDemarche()],
+        structure: StructureConseiller.CONSEIL_DEPT,
+      })
+
+      // Then
+      expect(screen.getByRole('tab', { name: /Démarches/ })).toBeInTheDocument()
+      expect(
+        screen.getByRole('table', {
+          name: 'Liste des démarches de Kenji Jirac',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('row', {
+          name: /Réalisation d’entretiens d’embauche 30 septembre 2024 Mes candidatures En cours Voir le détail/,
+        })
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('quand la structure du bénéficiaire est différente du conseiller', () => {
     it('affiche un message', async () => {
       // When
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
+            beneficiaire={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -326,28 +394,40 @@ describe('FicheBeneficiairePage client side', () => {
   })
 })
 
-async function renderFicheJeune(
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[],
+async function renderFicheJeune({
+  lectureSeule,
+  metadonneesFavoris,
+  offresFT,
+  recherchesFT,
+  structure,
+  demarches,
+}: {
+  metadonneesFavoris: MetadonneesFavoris
+  offresFT: Offre[]
+  recherchesFT: Recherche[]
   lectureSeule?: boolean
-): Promise<HTMLElement> {
+  demarches?: Demarche[]
+  structure?: StructureConseiller
+}): Promise<HTMLElement> {
   let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={lectureSeule ?? false}
-        metadonneesFavoris={metadonnees}
+        metadonneesFavoris={metadonneesFavoris}
         offresFT={offresFT}
         recherchesFT={recherchesFT}
+        demarches={demarches}
       />,
       {
-        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customConseiller: {
+          structure: structure ?? StructureConseiller.POLE_EMPLOI,
+        },
       }
     ))
   })

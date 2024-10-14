@@ -1,8 +1,8 @@
-import { MouseEvent, useRef } from 'react'
+import { useRef } from 'react'
 
-import Modal from './Modal'
 import IconComponent, { IconName } from './ui/IconComponent'
 
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
 interface ConfirmationUpdateRdvModalProps {
@@ -14,9 +14,7 @@ export default function ConfirmationUpdateRdvModal({
   onCancel,
   onConfirmation,
 }: ConfirmationUpdateRdvModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal

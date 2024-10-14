@@ -6,19 +6,19 @@ import EditionRdvPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-je
 import EditionRdv, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/page'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   typesAnimationCollective,
   typesEvenement,
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import {
   getDetailsEvenement,
   getTypesRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
@@ -28,14 +28,14 @@ jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/EditionRdvPage'
 )
 jest.mock('services/evenements.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 
 describe('EditionRdvPage server side', () => {
   beforeEach(() => {
     // Given
     ;(headers as jest.Mock).mockReturnValue(new Map())
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller', structure: 'MILO' },
       accessToken: 'accessToken',
     })
     ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())
@@ -114,7 +114,7 @@ describe('EditionRdvPage server side', () => {
       // Given
       const evenement = unEvenement()
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(evenement)
-      ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+      ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
         desItemsBeneficiaires()
       )
 
@@ -152,10 +152,10 @@ describe('EditionRdvPage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller' },
+        user: { id: 'id-conseiller', structure: 'MILO' },
         accessToken: 'accessToken',
       })
-      ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+      ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
         desItemsBeneficiaires()
       )
       ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())

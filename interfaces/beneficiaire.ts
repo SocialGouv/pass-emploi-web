@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { compareDates, compareDatesDesc } from 'utils/date'
 
 export enum EtatSituation {
@@ -77,7 +78,7 @@ export interface MetadonneesFavoris {
 }
 
 export type BeneficiaireAvecCompteursActionsRdvs = BeneficiaireFromListe & {
-  nbActionsNonTerminees: number
+  actionsCreees: number
   rdvs: number
 }
 
@@ -106,7 +107,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export type BeneficiaireChat = BaseBeneficiaire & Chat
+export type BeneficiaireEtChat = BaseBeneficiaire & Chat
 
 export interface DossierMilo {
   id: string
@@ -142,6 +143,16 @@ export type IndicateursSemaine = {
   }
 }
 
+export type Demarche = {
+  id: string
+  statut: StatutDemarche
+  dateCreation: string
+  dateFin: string
+  label: string
+  titre: string
+  sousTitre?: string
+}
+
 export function compareBeneficiairesByNom(
   beneficiaire1: BaseBeneficiaire,
   beneficiaire2: BaseBeneficiaire
@@ -175,8 +186,8 @@ export function compareBeneficiairesBySituationDesc(
 }
 
 export function compareBeneficiaireChat(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ) {
   return (
     comparerParMessageNonLu(a, b) ||
@@ -224,8 +235,8 @@ export function compareParId(idA: string, idB: string): number {
 }
 
 function comparerParMessageNonLu(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ): number {
   if (a.seenByConseiller && !b.seenByConseiller) return 1
   if (!a.seenByConseiller && b.seenByConseiller) return -1
@@ -233,15 +244,15 @@ function comparerParMessageNonLu(
 }
 
 function comparerParConversationSuivie(
-  a: BeneficiaireChat,
-  b: BeneficiaireChat
+  a: BeneficiaireEtChat,
+  b: BeneficiaireEtChat
 ): number {
   if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
   if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
   return 0
 }
 
-function comparerParDate(a: BeneficiaireChat, b: BeneficiaireChat): number {
+function comparerParDate(a: BeneficiaireEtChat, b: BeneficiaireEtChat): number {
   if (a.lastMessageSentAt && b.lastMessageSentAt) {
     return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
   }

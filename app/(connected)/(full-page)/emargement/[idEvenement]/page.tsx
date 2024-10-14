@@ -3,13 +3,14 @@ import { notFound, redirect } from 'next/navigation'
 
 import EmargementRdvPage from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { Conseiller, estUserFranceTravail } from 'interfaces/conseiller'
+import { Conseiller, estUserMilo } from 'interfaces/conseiller'
 import { Evenement } from 'interfaces/evenement'
 import { Session } from 'interfaces/session'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
+
 type EmargementRdvParams = { idEvenement: string }
 type EmargementRdvSearchParams = { type: string }
 
@@ -70,7 +71,7 @@ async function buildProps(
   conseiller: Conseiller
 }> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserFranceTravail(user)) redirect('/mes-jeunes')
+  if (!estUserMilo(user)) redirect('/mes-jeunes')
 
   const conseiller = await getConseillerServerSide(user, accessToken)
 

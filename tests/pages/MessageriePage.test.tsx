@@ -12,12 +12,12 @@ import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import {
   BaseBeneficiaire,
+  BeneficiaireEtChat,
   ConseillerHistorique,
-  BeneficiaireChat,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -25,7 +25,7 @@ import {
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 
@@ -34,10 +34,10 @@ describe('MessageriePage client side', () => {
   const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
-  let beneficiairesChats: BeneficiaireChat[]
+  let beneficiairesChats: BeneficiaireEtChat[]
 
   let conseillers: ConseillerHistorique[]
-  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   let messages: ByDay<MessageListeDiffusion>[]
 
   beforeEach(async () => {

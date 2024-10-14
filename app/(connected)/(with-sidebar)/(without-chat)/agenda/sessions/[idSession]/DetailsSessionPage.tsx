@@ -10,7 +10,7 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { Etape } from 'components/ui/Form/Etape'
+import Etape from 'components/ui/Form/Etape'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
@@ -341,7 +341,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.description ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -353,7 +353,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.partenaire ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -405,7 +405,7 @@ function DetailsSessionPage({
                 toShortDate(session.session.dateMaxInscription)
               ) : (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -417,7 +417,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.session.animateur ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}
@@ -436,7 +436,7 @@ function DetailsSessionPage({
             <dd className='ml-2 inline text-base-medium'>
               {session.session.commentaire ?? (
                 <>
-                  --
+                  <span aria-hidden={true}>--</span>
                   <span className='sr-only'>information non disponible</span>
                 </>
               )}

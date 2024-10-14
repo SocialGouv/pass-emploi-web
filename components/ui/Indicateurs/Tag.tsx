@@ -13,7 +13,7 @@ interface TagProps {
   isSmallTag?: boolean
 }
 
-interface TagCategorieActionProps {
+interface TagCategorieProps {
   categorie?: string
 }
 
@@ -43,7 +43,7 @@ function Tag({
         <IconComponent
           name={iconName}
           aria-hidden={!iconLabel}
-          className='h-5 w-5 mr-1 fill-[currentColor]'
+          className='h-5 w-5 mr-1 fill-current'
           aria-label={iconLabel ? iconLabel : undefined}
           title={iconLabel ? iconLabel : undefined}
           role='img'
@@ -121,7 +121,7 @@ export function TagType({
   )
 }
 
-export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
+export function TagCategorie({ categorie }: TagCategorieProps) {
   if (categorie)
     return (
       <Tag

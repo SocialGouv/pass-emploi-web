@@ -7,8 +7,8 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { ApiError } from 'utils/httpClient'
 
@@ -49,6 +49,7 @@ export default async function Favoris({ params }: { params: FavorisParams }) {
         <PageHeaderPortal header='Favoris' />
 
         <FavorisPage
+          beneficiaire={beneficiaire}
           offres={offres}
           recherches={recherches}
           lectureSeule={lectureSeule}

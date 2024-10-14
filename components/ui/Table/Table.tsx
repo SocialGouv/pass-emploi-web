@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ForwardedRef, forwardRef, ReactNode } from 'react'
 
 import { Badge } from 'components/ui/Indicateurs/Badge'
 
@@ -7,38 +7,47 @@ interface TableProps {
   caption: { text: string; count?: number; visible?: boolean }
 }
 
-export default function Table({ children, caption }: TableProps) {
-  const style = 'w-full border-spacing-y-2 border-separate'
-  const captionStyle = 'text-m-bold text-grey_800'
-  const captionLabel = caption.count
-    ? `${caption.text} (${caption.count})`
-    : caption.text
-
-  function Caption() {
-    return (
-      <>
-        {caption.text}{' '}
-        {caption.count !== undefined && (
-          <Badge
-            count={caption.count}
-            textColor='primary'
-            bgColor='primary_lighten'
-            size={6}
-          />
-        )}
-      </>
-    )
-  }
-
+function Table(
+  { children, caption }: TableProps,
+  ref: ForwardedRef<HTMLTableElement>
+) {
   return (
-    <table className={style}>
-      <caption
-        className={captionStyle + (caption.visible ? ' text-left' : ' sr-only')}
-        aria-label={captionLabel}
-      >
-        <Caption />
-      </caption>
+    <table
+      tabIndex={ref ? -1 : undefined}
+      ref={ref}
+      className='w-full border-spacing-y-2 border-separate'
+    >
+      <Caption {...caption} />
       {children}
     </table>
   )
 }
+
+function Caption({
+  text,
+  count,
+  visible,
+}: {
+  text: string
+  count?: number
+  visible?: boolean
+}) {
+  return (
+    <caption
+      className={`text-m-bold text-grey_800 ${visible ? 'text-left' : 'sr-only'}`}
+      aria-label={count ? `${text} (${count} éléments)` : text}
+    >
+      {text}{' '}
+      {count !== undefined && (
+        <Badge
+          count={count}
+          textColor='primary'
+          bgColor='primary_lighten'
+          size={6}
+        />
+      )}
+    </caption>
+  )
+}
+
+export default forwardRef(Table)

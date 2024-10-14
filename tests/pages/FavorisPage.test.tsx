@@ -5,6 +5,7 @@ import { axe } from 'jest-axe'
 import React from 'react'
 
 import FavorisPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/FavorisPage'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -17,6 +18,7 @@ describe('FavorisPage client side', () => {
   beforeEach(async () => {
     ;({ container } = renderWithContexts(
       <FavorisPage
+        beneficiaire={uneBaseBeneficiaire()}
         offres={offres}
         recherches={recherches}
         lectureSeule={false}
@@ -37,7 +39,7 @@ describe('FavorisPage client side', () => {
   it('affiche la liste des offres du jeune', () => {
     // Then
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-      'Offres 4'
+      'Offres 4 éléments'
     )
     offres.forEach((offre) => {
       expect(screen.getByText(offre.titre)).toBeInTheDocument()
@@ -82,12 +84,14 @@ describe('FavorisPage client side', () => {
 
   it('affiche la liste de ses recherches', async () => {
     // When
-    const tabActions = screen.getByRole('tab', { name: 'Recherches 2' })
+    const tabActions = screen.getByRole('tab', {
+      name: 'Recherches 2 éléments',
+    })
     await userEvent.click(tabActions)
 
     // Then
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-      'Recherches 2'
+      'Recherches 2 éléments'
     )
     recherches.forEach((recherche) => {
       expect(screen.getByText(recherche.titre)).toBeInTheDocument()

@@ -18,25 +18,25 @@ import {
 } from 'fixtures/evenement'
 import {
   BaseBeneficiaire,
-  getNomBeneficiaireComplet,
   BeneficiaireFromListe,
+  getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
+import { getBeneficiairesDeLEtablissementClientSide } from 'services/beneficiaires.service'
 import {
   creerEvenement,
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
-import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
@@ -99,7 +99,7 @@ describe('EditionRdvPage client side', () => {
           />,
           {
             customConseiller: { email: 'fake@email.com' },
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })
@@ -860,7 +860,7 @@ describe('EditionRdvPage client side', () => {
             conseillerEstObservateur={false}
           />,
           {
-            customAlerte: { alerteSetter },
+            customAlerte: { setter: alerteSetter },
           }
         ))
       })

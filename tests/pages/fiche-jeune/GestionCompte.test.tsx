@@ -13,8 +13,8 @@ import {
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
@@ -23,10 +23,10 @@ import {
   getIndicateursJeuneAlleges,
   getMotifsSuppression,
   supprimerJeuneInactif,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
@@ -262,7 +262,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Then
         expect(
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 24h/
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du bénéficiaire n’est valable que 24h/
           )
         ).toBeInTheDocument()
       })
@@ -279,17 +279,18 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={jeune}
+        beneficiaire={jeune}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={false}
+        demarches={[]}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
         customPortefeuille: { setter: portefeuilleSetter },
-        customAlerte: { alerteSetter },
+        customAlerte: { setter: alerteSetter },
       }
     )
   })

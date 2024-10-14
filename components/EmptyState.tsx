@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -17,6 +17,7 @@ type EmptyStateButtonProps = {
 type EmptyStateProps = {
   illustrationName: IllustrationName
   titre: string
+  shouldFocus?: boolean
   sousTitre?: string
   children?: ReactNode
 }
@@ -39,18 +40,19 @@ export function hasBouton(
   return Object.prototype.hasOwnProperty.call(props, 'bouton')
 }
 
-function EmptyState(
-  {
-    illustrationName,
-    titre,
-    sousTitre,
-    children,
-    ...props
-  }: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps,
-  ref: ForwardedRef<HTMLParagraphElement>
-) {
+export default function EmptyState({
+  illustrationName,
+  titre,
+  sousTitre,
+  children,
+  shouldFocus,
+  ...props
+}: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps) {
   return (
-    <>
+    <div
+      tabIndex={shouldFocus ? -1 : undefined}
+      ref={shouldFocus ? (e) => e?.focus() : undefined}
+    >
       <IllustrationComponent
         name={illustrationName}
         focusable={false}
@@ -58,10 +60,7 @@ function EmptyState(
         className='w-48 h-48 m-auto mt-12 [--secondary-fill:theme(colors.grey\_100)]'
       />
 
-      <p
-        className='text-base-bold text-center text-content_color mt-8'
-        ref={ref}
-      >
+      <p className='text-base-bold text-center text-content_color mt-8'>
         {titre}
       </p>
 
@@ -104,8 +103,6 @@ function EmptyState(
       )}
 
       {children && <>{children}</>}
-    </>
+    </div>
   )
 }
-
-export default forwardRef(EmptyState)

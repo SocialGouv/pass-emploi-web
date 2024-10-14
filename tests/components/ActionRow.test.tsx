@@ -3,31 +3,26 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 
 describe('<ActionRow/>', () => {
-  let container: HTMLElement
   beforeEach(async () => {
     ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
-    const table = document.createElement('table')
-    const tbody = document.createElement('tbody')
-    container = document.body.appendChild(table.appendChild(tbody))
   })
 
   it("devrait afficher les informations des actions d'un jeune", () => {
     const action = uneAction()
-    render(
+    renderInTable(
       <ActionRow
         action={action}
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />,
-      { container }
+      />
     )
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
@@ -41,42 +36,39 @@ describe('<ActionRow/>', () => {
       status: StatutAction.AFaire,
       dateEcheance: DateTime.now().plus({ day: 1 }).toISO(),
     })
-    render(
+    renderInTable(
       <ActionRow
         action={actionCommencee}
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />,
-      { container }
+      />
     )
     expect(screen.getByText('À faire')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
     const actionTerminee = uneAction({ status: StatutAction.Terminee })
-    render(
+    renderInTable(
       <ActionRow
         action={actionTerminee}
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />,
-      { container }
+      />
     )
     expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'En retard' quand la date d’échéance de l’action est dépassée", () => {
     const action = uneAction()
-    render(
+    renderInTable(
       <ActionRow
         action={action}
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />,
-      { container }
+      />
     )
     expect(screen.getByText('En retard')).toBeInTheDocument()
   })
@@ -84,14 +76,13 @@ describe('<ActionRow/>', () => {
   describe('selection', () => {
     it('affiche une checkbox non cochée', async () => {
       // When
-      render(
+      renderInTable(
         <ActionRow
           action={uneAction()}
           jeuneId='1'
           isChecked={false}
           onSelection={() => {}}
-        />,
-        { container }
+        />
       )
 
       // Then
@@ -104,14 +95,13 @@ describe('<ActionRow/>', () => {
 
     it('affiche une checkbox cochée', async () => {
       // When
-      render(
+      renderInTable(
         <ActionRow
           action={uneAction()}
           jeuneId='1'
           isChecked={true}
           onSelection={() => {}}
-        />,
-        { container }
+        />
       )
 
       // Then
@@ -126,14 +116,13 @@ describe('<ActionRow/>', () => {
       // Given
       const onSelection = jest.fn()
       const actionTerminee = uneAction({ status: StatutAction.Terminee })
-      render(
+      renderInTable(
         <ActionRow
           action={actionTerminee}
           jeuneId='1'
           isChecked={false}
           onSelection={onSelection}
-        />,
-        { container }
+        />
       )
 
       // When
@@ -144,3 +133,11 @@ describe('<ActionRow/>', () => {
     })
   })
 })
+
+function renderInTable(row: ReactElement) {
+  return render(
+    <table>
+      <tbody>{row}</tbody>
+    </table>
+  )
+}

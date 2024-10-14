@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import ImmersionCard from 'components/offres/ImmersionCard'
@@ -30,10 +30,14 @@ export default function ResultatsRechercheOffre({
   const [conseiller] = useConseiller()
   const peutPartagerOffre = utiliseChat(conseiller)
 
-  function scrollToRef(element: HTMLElement | null) {
-    if (element)
-      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }
+  const ulRef = useRef<HTMLUListElement>(null)
+
+  useEffect(() => {
+    if (offres?.length) {
+      ulRef.current!.focus({ preventScroll: true })
+      ulRef.current!.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [offres])
 
   return (
     <div className={isSearching ? 'animate-pulse' : ''}>
@@ -42,7 +46,12 @@ export default function ResultatsRechercheOffre({
       {offres && offres.length > 0 && (
         <>
           <ResultTitle total={nbTotal} />
-          <ul aria-describedby='result-title' ref={scrollToRef}>
+          <ul
+            aria-describedby='result-title'
+            ref={ulRef}
+            tabIndex={-1}
+            className='focus:outline-warning focus:outline-double focus:outline-8'
+          >
             {offres.map((offre) => (
               <li key={`${offre.type}-${offre.id}`} className='mb-4'>
                 {(offre.type === TypeOffre.EMPLOI ||
@@ -74,7 +83,7 @@ export default function ResultatsRechercheOffre({
         <>
           <ResultTitle total={nbTotal} />
           <EmptyState
-            ref={scrollToRef}
+            shouldFocus={true}
             illustrationName={IllustrationName.Search}
             titre='Pour le moment, aucune offre ne correspond à vos critères.'
             sousTitre='Modifiez vos critères de recherche ou partagez ces critères tels quels aux bénéficiaires.'

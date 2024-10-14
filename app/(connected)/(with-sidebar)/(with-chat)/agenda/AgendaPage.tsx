@@ -184,7 +184,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
         )}
       </PageActionsPortal>
 
-      <TabList className='mb-6'>
+      <TabList label='Vos agendas' className='mb-6'>
         <Tab
           label={
             'Agenda ' +

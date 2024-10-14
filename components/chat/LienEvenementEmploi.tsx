@@ -32,7 +32,7 @@ export default function LienEvenementEmploi({
           </span>
           <IconComponent
             name={IconName.OpenInNew}
-            className='w-4 h-4 ml-1 fill-[currentColor]'
+            className='w-4 h-4 ml-1 fill-current'
             focusable={false}
             aria-hidden={true}
           />

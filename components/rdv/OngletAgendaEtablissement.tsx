@@ -1,20 +1,23 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useRef, useState } from 'react'
 
+import ResettableTextInput from '../ui/Form/ResettableTextInput'
+
 import EmptyState from 'components/EmptyState'
 import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import Table from 'components/ui/Table/Table'
 import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
+import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
@@ -41,13 +44,16 @@ export default function OngletAgendaEtablissement({
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
 
   const filtresRef = useRef<HTMLButtonElement>(null)
+  const tableRef = useRef<HTMLTableElement>(null)
+
   const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
-  const [evenementsFiltres, setEvenementsFiltres] =
+  const [recherche, setRecherche] = useState<string>('')
+  const [evenementsAffiches, setEvenementsAffiches] =
     useState<AnimationCollective[]>()
 
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
-  const [failed, setFailed] = useState<boolean>(false)
+  const [periodeFailed, setPeriodeFailed] = useState<boolean>(false)
 
   async function modifierFiltres(nouveauxFiltres: StatutAnimationCollective[]) {
     setFiltres(nouveauxFiltres)
@@ -69,8 +75,8 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    setFailed(false)
-    setEvenementsFiltres(undefined)
+    setPeriodeFailed(false)
+    setEvenementsAffiches(undefined)
 
     try {
       const animationsCollectives = await recupererAnimationsCollectives(
@@ -90,29 +96,41 @@ export default function OngletAgendaEtablissement({
         )
       )
     } catch (e) {
-      setFailed(true)
+      setPeriodeFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })
     }
   }
 
-  function filtrerEvenements(aFiltrer: AnimationCollective[]) {
-    setEvenementsFiltres(undefined)
-    if (!filtres.length) setEvenementsFiltres(aFiltrer)
-    else {
-      const acFiltrees = aFiltrer.filter(
+  useEffect(() => {
+    if (!evenements) return
+    setEvenementsAffiches(undefined)
+    let evenementsFiltres = evenements
+
+    if (filtres.length)
+      evenementsFiltres = evenementsFiltres.filter(
         (ac) => ac.statut && filtres.includes(ac.statut)
       )
-      setEvenementsFiltres(acFiltrees)
+
+    if (recherche) {
+      const querySplit = recherche.toLowerCase().split(/-|\s/)
+      evenementsFiltres = evenementsFiltres.filter((evenement) => {
+        const titre = evenement.titre.replace(/’/i, "'").toLowerCase()
+        return querySplit.some((item) => titre.includes(item))
+      })
     }
-  }
+
+    setEvenementsAffiches(evenementsFiltres)
+  }, [evenements, filtres, recherche])
 
   useEffect(() => {
-    if (evenements) filtrerEvenements(evenements)
-  }, [evenements, filtres])
+    tableRef.current?.focus()
+  }, [recherche])
 
   return (
     <>
+      <RechercheAgendaForm onSearch={setRecherche} />
+
       <nav className='flex justify-between items-end'>
         <SelecteurPeriode
           onNouvellePeriode={modifierPeriode}
@@ -127,7 +145,7 @@ export default function OngletAgendaEtablissement({
         />
       </nav>
 
-      {!evenementsFiltres && !failed && (
+      {!evenementsAffiches && !periodeFailed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
           titre={`
@@ -139,7 +157,7 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {!evenementsFiltres && failed && (
+      {!evenementsAffiches && periodeFailed && (
         <EmptyState
           illustrationName={IllustrationName.Maintenance}
           titre={`
@@ -156,9 +174,10 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {evenementsFiltres?.length === 0 && (
+      {evenementsAffiches?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
+            shouldFocus={filtres.length > 0}
             illustrationName={IllustrationName.Checklist}
             titre={
               filtres.length === 0
@@ -185,34 +204,101 @@ export default function OngletAgendaEtablissement({
         </div>
       )}
 
-      {evenementsFiltres && evenementsFiltres.length > 0 && (
-        <Table
-          caption={{
-            text:
-              'Liste des animations collectives de mon établissement ' +
-              labelPeriode,
-          }}
-        >
+      {evenementsAffiches && evenementsAffiches.length > 0 && (
+        <table className='w-full mt-6' tabIndex={-1} ref={tableRef}>
+          <caption className='mb-6 text-left text-m-bold text-primary'>
+            {evenementsAffiches.length}{' '}
+            {evenementsAffiches.length === 1 &&
+              (recherche ? 'résultat' : 'atelier ou information collective')}
+            {evenementsAffiches.length > 1 &&
+              (recherche
+                ? 'résultats'
+                : 'ateliers ou informations collectives')}
+            <span className='sr-only'> {labelPeriode}</span>
+          </caption>
+
           <thead className='sr-only'>
             <tr>
               <th scope='col'>Horaires et durée</th>
               <th scope='col'>Titre, type et visibilité</th>
               <th scope='col'>Inscrits</th>
-              <th scope='col'>Statut </th>
+              <th scope='col'>Statut</th>
               <th scope='col'>Voir le détail</th>
             </tr>
           </thead>
 
           <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout_base:grid-cols-[repeat(5,auto)] gap-y-2'>
-            {evenementsFiltres.map((evenement) => (
+            {evenementsAffiches.map((evenement) => (
               <AnimationCollectiveRow
                 key={evenement.id}
                 animationCollective={evenement}
               />
             ))}
           </tbody>
-        </Table>
+        </table>
       )}
     </>
+  )
+}
+
+function RechercheAgendaForm({
+  onSearch,
+}: {
+  onSearch: (query: string) => void
+}) {
+  const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+  const [recherche, setRecherche] = useState<string>('')
+
+  function rechercherDansAgenda(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    onSearch(recherche)
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Agenda',
+      action: 'Recheche',
+      nom: '',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
+  function onReset() {
+    setRecherche('')
+    onSearch('')
+  }
+
+  return (
+    <form role='search' onSubmit={rechercherDansAgenda} className='mb-6'>
+      <label
+        htmlFor='rechercher-agenda'
+        className='text-base-medium text-content_color'
+      >
+        Rechercher un atelier ou une information collective
+      </label>
+      <div className='flex mt-3'>
+        <ResettableTextInput
+          id='rechercher-agenda'
+          className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+          onChange={setRecherche}
+          onReset={onReset}
+          value={recherche}
+        />
+
+        <button
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+          type='submit'
+        >
+          <IconComponent
+            name={IconName.Search}
+            focusable={false}
+            aria-hidden={true}
+            className='w-6 h-6 fill-current'
+          />
+          <span className='ml-1 sr-only'>Rechercher</span>
+        </button>
+      </div>
+    </form>
   )
 }

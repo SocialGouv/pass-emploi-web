@@ -4,25 +4,25 @@ import { DateTime } from 'luxon'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
 import { uneAction } from 'fixtures/action'
-import { unConseiller } from 'fixtures/conseiller'
-import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
-import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDOffres } from 'fixtures/favoris'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
+import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
+import { unEvenementListItem } from 'fixtures/evenement'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getActionsBeneficiaireServerSide } from 'services/actions.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
-import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres } from 'services/favoris.service'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
-} from 'services/jeunes.service'
+} from 'services/beneficiaires.service'
+import { getConseillerServerSide } from 'services/conseiller.service'
+import { getRendezVousJeune } from 'services/evenements.service'
+import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -32,7 +32,7 @@ jest.mock('utils/auth/auth', () => ({
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 )
-jest.mock('services/jeunes.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/sessions.service')
 jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
@@ -106,9 +106,12 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
-          jeune: unDetailBeneficiaire({ structureMilo: { id: 'id-test' } }),
+          beneficiaire: unDetailBeneficiaire({
+            structureMilo: { id: 'id-test' },
+          }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
+          demarches: expect.objectContaining([]),
           metadonneesFavoris: expect.objectContaining({}),
           offresFT: expect.arrayContaining([]),
           recherchesFT: expect.arrayContaining([]),

@@ -3,32 +3,42 @@ import React, {
   FormEvent,
   ForwardedRef,
   forwardRef,
+  ReactElement,
   useEffect,
   useState,
 } from 'react'
 
-import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { StatutAction } from 'interfaces/action'
 
-type FiltresStatutsActionsProps = {
-  onFiltres: (statutsSelectionnes: StatutAction[]) => void
-  defaultValue: StatutAction[]
+type FiltresStatutsProps = {
+  defaultValue: string[]
+  entites: string
+  propsStatuts: {
+    [key: string]: {
+      label: string
+    }
+  }
+  statuts: string[]
+  onFiltres: (statutsSelectionnes: string[]) => void
 }
 
-function FiltresStatutsActions(
-  { onFiltres, defaultValue = [] }: FiltresStatutsActionsProps,
+function FiltresStatuts(
+  {
+    defaultValue = [],
+    propsStatuts,
+    statuts,
+    entites,
+    onFiltres,
+  }: FiltresStatutsProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const [afficherFiltresStatuts, setAfficherFiltresStatuts] =
     useState<boolean>(false)
-  const [statutsSelectionnes, setStatutsSelectionnes] = useState<
-    StatutAction[]
-  >([])
+  const [statutsSelectionnes, setStatutsSelectionnes] = useState<string[]>([])
 
-  function renderFiltresStatuts(statut: StatutAction): JSX.Element {
+  function renderFiltresStatuts(statut: string): ReactElement {
     const id = `statut-${statut.toLowerCase()}`
     return (
       <label key={id} htmlFor={id} className='flex items-center pb-4'>
@@ -36,12 +46,12 @@ function FiltresStatutsActions(
           type='radio'
           value={statut}
           id={id}
-          name={propsStatutsActions[statut].label}
+          name={propsStatuts[statut].label}
           className='h-5 w-5 shrink-0'
           checked={statutsSelectionnes.includes(statut)}
           onChange={actionnerStatut}
         />
-        <span className='pl-5'>{propsStatutsActions[statut].label}</span>
+        <span className='pl-5'>{propsStatuts[statut].label}</span>
       </label>
     )
   }
@@ -49,13 +59,12 @@ function FiltresStatutsActions(
   function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
     const statut = e.target.value
     if (statut === 'Tout sélectionner') setStatutsSelectionnes([])
-    else setStatutsSelectionnes([statut as StatutAction])
+    else setStatutsSelectionnes([statut])
   }
 
-  function filtrerActions(e: FormEvent) {
+  function filtrer(e: FormEvent) {
     e.preventDefault()
     onFiltres(statutsSelectionnes)
-
     setAfficherFiltresStatuts(false)
   }
 
@@ -70,7 +79,7 @@ function FiltresStatutsActions(
         aria-controls='filtres-statut'
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
-        title='Filtrer les actions par statut'
+        title={`Filter les ${entites} par statut`}
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
       >
@@ -78,7 +87,7 @@ function FiltresStatutsActions(
         <IconComponent
           name={IconName.Filter}
           role='img'
-          aria-label='Filtrer les actions'
+          aria-label={`Filtrer les ${entites}`}
           className='h-6 w-6 fill-primary'
         />
         {statutsSelectionnes.length > 0 && (
@@ -98,7 +107,7 @@ function FiltresStatutsActions(
         <form
           className='absolute w-max left-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
-          onSubmit={filtrerActions}
+          onSubmit={filtrer}
         >
           <fieldset className='flex flex-col p-2'>
             <legend className='sr-only'>
@@ -120,9 +129,7 @@ function FiltresStatutsActions(
               />
               <span className='pl-5'>Tout sélectionner</span>
             </label>
-            {Object.keys(StatutAction).map((statut) =>
-              renderFiltresStatuts(statut as StatutAction)
-            )}
+            {statuts.map(renderFiltresStatuts)}
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider
@@ -134,4 +141,4 @@ function FiltresStatutsActions(
   )
 }
 
-export default forwardRef(FiltresStatutsActions)
+export default forwardRef(FiltresStatuts)
