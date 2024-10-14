@@ -105,6 +105,7 @@ export function Conversation({
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const addFileRef = useRef<HTMLInputElement | null>(null)
   const deleteFileRef = useRef<HTMLButtonElement | null>(null)
+  const pjErrorRef = useRef<HTMLDivElement | null>(null)
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -367,6 +368,10 @@ export function Conversation({
     isFirstRender.current = false
   }, [])
 
+  useEffect(() => {
+    if (uploadedFileError) pjErrorRef.current!.focus()
+  }, [uploadedFileError])
+
   return (
     <>
       <HeaderChat
@@ -525,7 +530,7 @@ export function Conversation({
             className='p-3'
           >
             {uploadedFileError && (
-              <InputError id='piece-jointe--error' ref={(e) => e?.focus()}>
+              <InputError id='piece-jointe--error' ref={pjErrorRef}>
                 {uploadedFileError}
               </InputError>
             )}
