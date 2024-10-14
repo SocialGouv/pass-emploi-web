@@ -80,6 +80,7 @@ export default function ChatContainer({
           {showRubriqueListesDeDiffusion && (
             <>
               <HeaderListeListesDeDiffusion
+                ref={!listeSelectionnee ? (e) => e?.focusRetour() : undefined}
                 onBack={() => {
                   setShowRubriqueListesDeDiffusion(false)
                   setListeSelectionnee(undefined)

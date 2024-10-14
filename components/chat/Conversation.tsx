@@ -100,7 +100,7 @@ export function Conversation({
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
-  const headerChatRef = useRef<HTMLDivElement>(null)
+  const headerChatRef = useRef<{ focusRetour: Function }>(null)
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const addFileRef = useRef<HTMLInputElement | null>(null)
@@ -318,7 +318,7 @@ export function Conversation({
 
   useEffect(() => {
     if (!messagesByDay?.length) {
-      headerChatRef.current!.querySelector<HTMLButtonElement>('button')!.focus()
+      headerChatRef.current!.focusRetour()
       return
     }
 

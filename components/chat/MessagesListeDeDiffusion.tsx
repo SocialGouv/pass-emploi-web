@@ -1,5 +1,11 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-send-grey.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
@@ -21,13 +27,19 @@ type MessagesListeDeDiffusionProps = {
   onBack: () => void
   messagerieFullScreen?: boolean
 }
-export default function MessagesListeDeDiffusion({
-  liste,
-  onAfficherDetailMessage,
-  onBack,
-  messagerieFullScreen,
-}: MessagesListeDeDiffusionProps) {
+function MessagesListeDeDiffusion(
+  {
+    liste,
+    onAfficherDetailMessage,
+    onBack,
+    messagerieFullScreen,
+  }: MessagesListeDeDiffusionProps,
+  ref: ForwardedRef<{ focusMessage: (id: string) => void }>
+) {
   const chatCredentials = useChatCredentials()
+
+  useImperativeHandle(ref, () => ({ focusMessage: setIdMessageAFocus }))
+  const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
 
   const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
   const [messagerieEstVisible, setMessagerieEstVisible] =
@@ -55,6 +67,7 @@ export default function MessagesListeDeDiffusion({
       {!messagerieFullScreen && (
         <>
           <HeaderChat
+            ref={(e) => e?.focusRetour()}
             titre={liste.titre}
             labelRetour={'Retour à mes listes de diffusion'}
             onBack={onBack}
@@ -138,6 +151,11 @@ export default function MessagesListeDeDiffusion({
                             }
                           >
                             <DisplayMessageListeDeDiffusion
+                              ref={
+                                message.id === idMessageAFocus
+                                  ? (e) => e?.focus()
+                                  : undefined
+                              }
                               message={message}
                               onAfficherDetailMessage={() =>
                                 onAfficherDetailMessage(message)
@@ -164,3 +182,4 @@ export default function MessagesListeDeDiffusion({
     </>
   )
 }
+export default forwardRef(MessagesListeDeDiffusion)

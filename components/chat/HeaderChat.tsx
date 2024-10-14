@@ -1,4 +1,11 @@
-import React, { ForwardedRef, forwardRef, ReactElement, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  ReactElement,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -23,8 +30,13 @@ function HeaderChat(
     onPermuterBookMark?: () => void
     onLancerRecherche?: () => void
   },
-  ref: ForwardedRef<HTMLDivElement>
+  ref: ForwardedRef<{ focusRetour: Function }>
 ) {
+  const retourRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => retourRef.current!.focus(),
+  }))
+
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
 
@@ -54,9 +66,10 @@ function HeaderChat(
       : { label: 'Suivre la conversation', icon: IconName.BookmarkOutline })
 
   return (
-    <div className='items-center mx-4 my-6 short:hidden' ref={ref}>
+    <div className='items-center mx-4 my-6 short:hidden'>
       <div className='pb-3 flex items-center justify-between'>
         <button
+          ref={retourRef}
           id='chat-bouton-retour'
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
           aria-label={labelRetour}

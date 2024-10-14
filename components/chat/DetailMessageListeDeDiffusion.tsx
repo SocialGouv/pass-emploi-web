@@ -61,6 +61,7 @@ export function DetailMessageListeDeDiffusion({
     <>
       {!messagerieFullScreen && (
         <HeaderChat
+          ref={(e) => e?.focusRetour()}
           titre='Détail du message'
           labelRetour={'Retour aux messages de ma liste'}
           onBack={onBack}
