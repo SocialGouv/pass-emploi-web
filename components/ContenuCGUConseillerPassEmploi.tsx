@@ -34,10 +34,12 @@ export default function ContenuCGUConseillerPassEmploi() {
         Article 3 – Définitions
       </h2>
       <p className='mb-4'>
-        « Le Conseiller » est tout agent de France Travail utilisant le back
-        office « pass emploi », accompagnant les bénéficiaires de l’AIJ ou du
-        RSA dans leur recherche professionnelle, ou dans la création de leur
-        projet.
+        « Le Conseiller » est tout agent de France Travail ou d’un conseil
+        départemental utilisant le back office « pass emploi », accompagnant les
+        bénéficiaires du RSA dans leur recherche professionnelle, ou dans la
+        création de leur projet. Il peut également s’agir de tout agent de
+        France travail utilisant le back office « pass emploi », accompagnant
+        les bénéficiaires de l’AIJ.
       </p>
       <p className='mb-4'>
         « Le bénéficiaire de l’AIJ » est toute personne bénéficiant d’un AIJ
@@ -49,7 +51,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         des familles.
       </p>
       <p className='mb-4'>
-        « L’usager » est toute personne bénéficiaire de l’AIJ ou bénéficiaire du
+        « L’Usager » est toute personne bénéficiaire de l’AIJ ou bénéficiaire du
         RSA s’étant créé un compte, accompagnée dans sa recherche par un
         Conseiller, souhaitant trouver des ressources ou être accompagné dans
         son projet professionnel en général.
@@ -73,32 +75,48 @@ export default function ContenuCGUConseillerPassEmploi() {
         « Superviseur » permet aux agents habilités d’organiser et de modifier
         l’affectation d’un Usager à un Conseiller déterminé.
       </p>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>A- Conseiller</h3>
+
+      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+        4.1 L’authentification
+      </h3>
       <p className='mb-4'>
-        L’authentification se fait via les identifiants métier France Travail
-        (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
-        Conseillers pourront ajouter le numéro France Travail des Usagers
-        suivis.
+        Pour les conseillers de France Travail l’authentification se fait via
+        les identifiants métier France Travail (système « PEAMA ») : le DGASI et
+        un mot de passe. Par ailleurs ces Conseillers pourront ajouter le numéro
+        France Travail des Usagers suivis.
+      </p>
+      <p className='mb-4'>
+        Pour les conseillers des conseils départementaux, l’authentification se
+        fait suite à la création d’un compte sur le back office de l’application
+        pass emploi. La création d’un compte conseiller nécessite de communiquer
+        une adresse de courriel valide à l’équipe de l’application pass emploi.
+        Le compte conseiller sera créé sur la base de cette adresse mail. Le
+        conseiller devra ensuite activer son compte en modifiant le mot de passe
+        temporaire pour en créer un nouveau.
       </p>
 
       <h3 className='text-base-bold text-content_color mb-2'>
         4.2 Création et gestion des démarches possibles
       </h3>
       <p className='mb-4'>
-        Ces démarches se font : via l’outil mis à disposition par « France
-        Travail » sur MAP.
+        Pour les conseillers France travail uniquement, la création des
+        démarches via se fait via l’outil mis à disposition par « France Travail
+        » sur MAP. L’ensemble des démarches créées sont visibles par le
+        bénéficiaire via son application mobile.
       </p>
 
       <h3 className='text-base-bold text-content_color mb-2'>
         4.3 Prise et organisation de rendez-vous
       </h3>
       <p className='mb-4'>
-        Les Conseillers peuvent prendre des rendez-vous avec des Usagers et en
-        choisir les modalités (nom de l’Usager, date du rendez-vous, modalités
-        de contact, notes spécifiques à communiquer). Le rendez-vous mentionne
-        toujours la date, l’horaire, le lieu et le moyen de contact. Ils peuvent
-        rechercher un Usager avec lequel ils ont un rendez-vous et supprimer des
-        rendez-vous directement. Cette action sera notifiée à l’Usager.
+        Les Conseillers de France Travail peuvent prendre des rendez-vous avec
+        des Usagers et en choisir les modalités (nom de l’Usager, date du
+        rendez-vous, modalités de contact, notes spécifiques à communiquer) via
+        leurs outils métier. Ces rendez-vous seront visibles sur l’application
+        de l’Usager. Le rendez-vous mentionne toujours la date, l’horaire, le
+        lieu et le moyen de contact. Ils peuvent rechercher un Usager avec
+        lequel ils ont un rendez-vous et supprimer des rendez-vous directement.
+        Cette action sera notifiée à l’Usager.
       </p>
 
       <h3 className='text-base-bold text-content_color mb-2'>
@@ -106,8 +124,7 @@ export default function ContenuCGUConseillerPassEmploi() {
       </h3>
       <p className='mb-4'>
         Les Conseillers peuvent recevoir des notifications dès lors qu’un Usager
-        a interagi avec eux, notamment pour annuler ou confirmer un rendez-vous,
-        ou lorsqu’ils reçoivent un message via le chat.
+        a interagi avec eux, en leur envoyant un message via le chat.
       </p>
 
       <h3 className='text-base-bold text-content_color mb-2'>
@@ -144,11 +161,12 @@ export default function ContenuCGUConseillerPassEmploi() {
           les offres et recherches sauvegardées ;
         </li>
         <li>
-          Tous les conseillers ont accès à un bouton « Actualités » leur
+          Tous les Conseillers ont accès à un bouton « Actualités » leur
           présentant les nouveautés de l’application ;
         </li>
         <li>Envoyer des pièces jointes ouvrables par les Usagers.</li>
       </ul>
+
       <h3 className='text-base-bold text-content_color mb-2'>
         4.8 Suppressions du compte
       </h3>
@@ -157,8 +175,12 @@ export default function ContenuCGUConseillerPassEmploi() {
       </h4>
       <p className='mb-4'>
         Les Usagers peuvent supprimer leur compte sur l’application à tout
-        moment en cliquant sur le bouton « Supprimer ». Ses démarches et ses
-        rendez-vous seront toutefois conservées dans l’outil France Travail.
+        moment en cliquant sur le bouton « Supprimer ».
+      </p>
+      <p className='mb-4'>
+        Ses démarches et ses rendez-vous (uniquement s’il est suivi par un
+        conseiller de France Travail) seront toutefois conservés dans l’outil
+        France Travail.
       </p>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
         B – Suppression par le Conseiller
@@ -176,7 +198,7 @@ export default function ContenuCGUConseillerPassEmploi() {
       <p className='mb-4'>
         Un message est envoyé à l’Usager pour le prévenir de la suppression du
         compte et des modalités pour avoir accès à ses informations et données à
-        caractère personnel relatives à l’application. Pour ce faire chaque
+        caractère personnel relatives à l’application. Pour ce faire, chaque
         Usager devra envoyer un mail à l’adresse indiquée dans le mail en
         précisant son nom, son prénom et l’adresse e-mail utilisée pour la
         réception du mail de suppression.
@@ -235,7 +257,7 @@ export default function ContenuCGUConseillerPassEmploi() {
       </p>
       <p className='mb-4'>
         Il doit également supprimer le compte d’un Usager pour l’un des trois
-        motifs suivants :{' '}
+        motifs suivants :
       </p>
       <ul className='list-disc mb-8 ml-8'>
         <li>L’usager est sorti du dispositif « pass emploi » ;</li>
@@ -282,13 +304,109 @@ export default function ContenuCGUConseillerPassEmploi() {
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 6 – Mise à jour des conditions d’utilisation
+        Article 6 – Suspension de compte
+      </h2>
+      <p className='mb-4'>
+        Toute suspicion de fraude, ou de violation des présentes conditions
+        générales d’utilisation, notamment l’article 5 peut entraîner la
+        suspension du compte, pour un temps de 8 mois maximum, après
+        communication de la décision dans les conditions du présent article et
+        des normes en vigueur relatives aux décisions administratives.
+      </p>
+      <p className='mb-4'>
+        Le Conseiller s’engage à ne pas usurper l’identité d’un tiers, par
+        quelques moyens que ce soit, mais particulièrement en utilisant ses
+        accès, ses données ou des informations qu’il aurait en sa possession.
+      </p>
+      <p className='mb-4'>
+        Toute suspicion d’usurpation d’identité peut entraîner une décision de
+        suspension du compte et de toutes les actions associées.
+      </p>
+      <p className='mb-4'>
+        L’éditeur transmet à la hiérarchie du conseiller et à celui-ci le
+        contenu litigieux ayant conduit à la suspension du compte ou le cas
+        échéant l’ouverture de la procédure de sanction et lui précise les
+        motifs de la décision prévue. Le conseiller mis en cause dispose d’un
+        délai de 15 jours pour apporter le contradictoire via le téléservice.
+        Dans le cas où le contenu est transmis sans ouverture de procédure de
+        sanction, il revient à l’organisme du conseiller de prendre les mesures
+        disciplinaires correspondantes.
+      </p>
+      <p className='mb-4'>
+        A l’issue de ce délai, l’éditeur communique sa décision ou la poursuite
+        de la procédure par la hiérarchie du conseiller via le téléservice dans
+        un délai raisonnable. La décision comprend les motifs de la décision et
+        précise les faits reprochés. Il informe, conformément aux dispositions
+        en vigueur, les délais et voies de recours. Il désactive tout accès au
+        compte immédiatement à la suite de la décision.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+        Article 7 – Propriété intellectuelle
+      </h2>
+      <p className='mb-4'>
+        La Plateforme et tous les éléments qui le composent notamment les
+        programmes, données, textes, images, sons, dessins, graphismes etc. sont
+        la propriété de la DGEFP ou font l’objet d’une concession accordée à son
+        profit. Toute copie, reproduction, représentation, adaptation,
+        diffusion, intégrale ou partielle de la Plateforme, par quelque procédé
+        que ce soit et sur quelque support que ce soit est soumise à l’accord
+        préalable écrit de la DGEFP, sous réserve des exceptions prévues par le
+        Code de propriété intellectuelle.
+      </p>
+      <p className='mb-4'>
+        Toute utilisation non autorisée des contenus ou informations de la
+        Plateforme “pass emploi”, notamment à des fins d’exploitation
+        commerciale, pourra faire l’objet de poursuites sur la base d’une action
+        en contrefaçon et/ou d’une action en concurrence déloyale et/ou
+        parasitisme de la part de la DGEFP.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+        Article 8 – Protection des données personnelles
+      </h2>
+      <p className='mb-4'>
+        Les données à caractère personnel sont traitées par la DGEFP et les
+        utilisateurs dans le respect des dispositions de la Loi n° 78-17 du 6
+        janvier 1978 relative à l’informatique, aux fichiers et aux libertés,
+        dans sa version en vigueur, ainsi qu’au Règlement Général sur les
+        Données Personnelles (RGPD).
+      </p>
+      <p className='mb-4'>
+        Conformément à l’article L322-2 du code entre le public et
+        l’administration, la réutilisation éventuelle d’informations publiques
+        comportant des données à caractère personnel est subordonnée au respect
+        des dispositions de la loi n° 78-17 du 6 janvier 1978 relative à
+        l’informatique, aux fichiers et aux libertés.
+      </p>
+      <p className='mb-4'>
+        L’Utilisateur s’engage à ne faire figurer aucune donnée sensible ou
+        perçue comme sensible au sens de l’article 9 et 10 du RGPD qui ne
+        seraient pas nécessaires au traitement.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+        Article 9 – Droit applicable et attribution de compétence
+      </h2>
+      <p className='mb-4'>
+        Les Conditions Générales d’Utilisation sont régies par le droit
+        français. Toute difficulté relative à la validité, l’application ou
+        l’interprétation des Conditions Générales d’Utilisation seront soumises,
+        à défaut d’accord amiable, à la compétence du Tribunal Administratif de
+        Paris, auquel les parties attribuent compétence territoriale, quel que
+        soit le lieu d’exécution de la Plateforme ou le domicile du défendeur.
+        Cette attribution de compétence s’applique également en cas de procédure
+        en référé, de pluralité de défendeurs ou d’appel en garantie.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+        Article 10 – Mise à jour des conditions d’utilisation
       </h2>
       <p className='mb-4'>
         Les termes des CGU doivent être acceptés au moment de la connexion.
         Toute modification des CGU réalisée en fonction des modifications
-        apportées au site, de l’évolution de la législation ou pour tout autre
-        motif jugé nécessaire, nécessite votre consentement.
+        apportées à l’application, de l’évolution de la législation ou pour tout
+        autre motif jugé nécessaire, nécessite votre consentement.
       </p>
     </>
   )
