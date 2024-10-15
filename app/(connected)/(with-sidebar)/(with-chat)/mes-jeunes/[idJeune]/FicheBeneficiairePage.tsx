@@ -284,7 +284,7 @@ function FicheBeneficiairePage({
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
-    if (!lectureSeule && chats) {
+    if (!lectureSeule && chats && !currentConversation) {
       const conversation = chats.find(({ id }) => id === beneficiaire.id)
       if (conversation)
         setCurrentConversation({ conversation, shouldFocusOnRender: false })
