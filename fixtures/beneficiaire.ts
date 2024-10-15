@@ -379,7 +379,11 @@ export const uneDemarche = (overrides: Partial<Demarche> = {}): Demarche => {
 export const uneListeDeDemarches = (): Demarche[] => {
   return [
     uneDemarche(),
-    uneDemarche({ id: 'id-demarche-2', statut: StatutDemarche.A_FAIRE }),
+    uneDemarche({
+      id: 'id-demarche-2',
+      titre: 'Démarche personnalisée',
+      statut: StatutDemarche.A_FAIRE,
+    }),
   ]
 }
 
@@ -394,6 +398,7 @@ export const uneDemarcheJson = (
     dateFin: '2024-09-30T17:30:07.756Z',
     titre: 'Réalisation d’entretiens d’embauche',
     sousTitre: 'Par internet',
+    attributs: [{ cle: 'metier', valeur: 'Boulanger' }],
   }
   return { ...defaults, ...overrides }
 }

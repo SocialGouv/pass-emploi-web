@@ -107,18 +107,23 @@ export type DemarcheJson = {
   dateCreation: string
   label: string
   titre: string
+  attributs: Array<{ cle: string; valeur: string }>
   sousTitre?: string
 }
 
-export function jsonToDemarche(demarche: DemarcheJson): Demarche {
+export function jsonToDemarche(json: DemarcheJson): Demarche {
+  const description = json.attributs.find(
+    ({ cle }) => cle === 'description'
+  )?.valeur
+
   return {
-    id: demarche.id,
-    statut: demarche.statut,
-    dateCreation: demarche.dateCreation,
-    dateFin: demarche.dateFin,
-    label: demarche.label,
-    titre: demarche.titre,
-    sousTitre: demarche.sousTitre,
+    id: json.id,
+    statut: json.statut,
+    dateCreation: json.dateCreation,
+    dateFin: json.dateFin,
+    label: json.label,
+    titre: description ?? json.titre,
+    sousTitre: json.sousTitre,
   }
 }
 

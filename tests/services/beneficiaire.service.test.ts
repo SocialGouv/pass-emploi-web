@@ -584,6 +584,9 @@ describe('JeunesApiService', () => {
             uneDemarcheJson({
               id: 'id-demarche-2',
               statut: StatutDemarche.A_FAIRE,
+              attributs: [
+                { cle: 'description', valeur: 'Démarche personnalisée' },
+              ],
             }),
           ],
         },
