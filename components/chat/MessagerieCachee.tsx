@@ -9,7 +9,11 @@ export function MessagerieCachee({
   permuterVisibiliteMessagerie: () => void
 }) {
   return (
-    <div className='flex flex-col gap-4 justify-center p-2'>
+    <div
+      ref={(e) => e?.focus()}
+      tabIndex={-1}
+      className='flex flex-col gap-4 justify-center p-2'
+    >
       <p className='text-center'>
         Vous avez désactivé l’affichage de la messagerie
       </p>
