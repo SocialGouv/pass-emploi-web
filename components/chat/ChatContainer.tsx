@@ -12,7 +12,6 @@ import ChatRoom from 'components/chat/ChatRoom'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
-import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
 import {
   BeneficiaireEtChat,
   ConseillerHistorique,
@@ -34,37 +33,46 @@ export default function ChatContainer({
   menuState: [showMenu, setShowMenu],
   messagerieFullScreen,
 }: ChatContainerProps) {
-  const conversationIdRef = useRef<string | undefined>(undefined)
+  const chatRoomRef = useRef<{
+    focusAccesListesDiffusion: () => void
+    focusConversation: (id: string) => void
+  }>(null)
+  const listeListesDifffusion = useRef<{
+    focusRetour: () => void
+    focusListe: (id: string) => void
+  }>(null)
 
   const chats = useChats()
-  const [currentConversation, setCurrentConversation] = useCurrentConversation()
 
+  const [currentConversation, setCurrentConversation] = useCurrentConversation()
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
-  const [listeSelectionnee, setListeSelectionnee] =
-    useListeDeDiffusionSelectionnee()
+  const conversationAFocus = useRef<string | undefined>(undefined)
 
   const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
     useShowRubriqueListeDeDiffusion()
   const [listesDeDiffusion, setListesDeDiffusion] =
     useState<ListeDeDiffusion[]>()
+  const [listeSelectionnee, setListeSelectionnee] =
+    useListeDeDiffusionSelectionnee()
 
   function afficherConversation(conversation: BeneficiaireEtChat | undefined) {
-    if (conversation) conversationIdRef.current = conversation.id
+    if (conversation) conversationAFocus.current = conversation.id
     setCurrentConversation(
       conversation && { conversation, shouldFocusOnRender: true }
     )
   }
 
   useEffect(() => {
-    if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
+    if (showRubriqueListesDeDiffusion && !listesDeDiffusion)
       getListesDeDiffusionClientSide().then(setListesDeDiffusion)
-    }
+    if (showRubriqueListesDeDiffusion === false)
+      chatRoomRef.current!.focusAccesListesDiffusion()
   }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
 
   useEffect(() => {
     if (
       currentConversation &&
-      !listeSelectionnee &&
+      !listeSelectionnee.liste &&
       !showRubriqueListesDeDiffusion
     ) {
       getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
@@ -73,32 +81,46 @@ export default function ChatContainer({
     }
   }, [currentConversation, chats])
 
+  useEffect(() => {
+    if (!currentConversation && conversationAFocus.current) {
+      chatRoomRef.current!.focusConversation(conversationAFocus.current)
+      conversationAFocus.current = undefined
+    }
+  }, [currentConversation])
+
+  useEffect(() => {
+    if (!messagerieFullScreen) return
+    if (showRubriqueListesDeDiffusion && !listeSelectionnee.idAFocus)
+      listeListesDifffusion.current!.focusRetour()
+  }, [showRubriqueListesDeDiffusion])
+
+  useEffect(() => {
+    if (!messagerieFullScreen || !showRubriqueListesDeDiffusion) return
+    if (!listeSelectionnee.liste && listeSelectionnee.idAFocus) {
+      listeListesDifffusion.current!.focusListe(listeSelectionnee.idAFocus)
+      setListeSelectionnee({})
+    }
+  }, [listeSelectionnee.liste])
+
   return (
     <>
       {messagerieFullScreen && (
         <>
           {showRubriqueListesDeDiffusion && (
-            <>
-              <HeaderListeListesDeDiffusion
-                ref={!listeSelectionnee ? (e) => e?.focusRetour() : undefined}
-                onBack={() => {
-                  setShowRubriqueListesDeDiffusion(false)
-                  setListeSelectionnee(undefined)
-                }}
-              />
-              <ListeListesDeDiffusion
-                listesDeDiffusion={listesDeDiffusion}
-                onAfficherListe={setListeSelectionnee}
-                messagerieFullScreen={true}
-              />
-            </>
+            <ListeListesDeDiffusion
+              ref={listeListesDifffusion}
+              listesDeDiffusion={listesDeDiffusion}
+              onAfficherListe={(liste) => setListeSelectionnee({ liste })}
+              onBack={() => {
+                setShowRubriqueListesDeDiffusion(false)
+                setListeSelectionnee({})
+              }}
+            />
           )}
 
           {!showRubriqueListesDeDiffusion && (
             <ChatRoom
-              shouldFocusAccesListesDiffusion={
-                showRubriqueListesDeDiffusion === false
-              }
+              ref={chatRoomRef}
               beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
@@ -132,9 +154,7 @@ export default function ChatContainer({
 
           {!currentConversation && !showRubriqueListesDeDiffusion && (
             <ChatRoom
-              shouldFocusAccesListesDiffusion={
-                showRubriqueListesDeDiffusion === false
-              }
+              ref={chatRoomRef}
               beneficiairesChats={chats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
@@ -142,7 +162,6 @@ export default function ChatContainer({
                 setShowRubriqueListesDeDiffusion(true)
               }
               onAccesConversation={afficherConversation}
-              idConversationToFocus={conversationIdRef.current}
             />
           )}
         </>

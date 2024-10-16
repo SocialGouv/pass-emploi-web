@@ -2,9 +2,13 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
+export type ListeSelectionnee = Partial<{
+  liste: ListeDeDiffusion
+  idAFocus: string
+}>
 type ListeDeDiffusionSelectionneeState = [
-  ListeDeDiffusion | undefined,
-  (listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined) => void
+  ListeSelectionnee,
+  (listeDeDiffusionSelectionnee: ListeSelectionnee) => void,
 ]
 
 const ListeDeDiffusionSelectionnee = createContext<
@@ -17,16 +21,14 @@ export function ListeDeDiffusionSelectionneeProvider({
   setterForTests,
 }: {
   children: ReactNode
-  valueForTests?: ListeDeDiffusion | undefined
-  setterForTests?: (
-    listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined
-  ) => void
+  valueForTests?: ListeSelectionnee
+  setterForTests?: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
 }) {
   const [
     listeDeDiffusionSelectionnee,
     setListeDeDiffusionSelectionnee,
-  ]: ListeDeDiffusionSelectionneeState = useState<ListeDeDiffusion | undefined>(
-    valueForTests
+  ]: ListeDeDiffusionSelectionneeState = useState<ListeSelectionnee>(
+    valueForTests ?? {}
   )
   const setter = setterForTests ?? setListeDeDiffusionSelectionnee
 
@@ -43,7 +45,7 @@ export function useListeDeDiffusionSelectionnee(): ListeDeDiffusionSelectionneeS
   const listeDeDiffusionSelectionnee = useContext(ListeDeDiffusionSelectionnee)
   if (!listeDeDiffusionSelectionnee) {
     throw new Error(
-      'listeDeDiffusionSelectionnee must be used within ShowListeDeDiffusionProvider'
+      'useListeDeDiffusionSelectionnee must be used within ListeDeDiffusionSelectionneeProvider'
     )
   }
   return listeDeDiffusionSelectionnee

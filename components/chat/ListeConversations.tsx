@@ -1,4 +1,9 @@
-import React, { ForwardedRef, forwardRef, useEffect } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
@@ -14,7 +19,6 @@ interface ListeConversationsProps {
   conversations: BeneficiaireEtChat[] | undefined
   onToggleFlag: (idChat: string, flagged: boolean) => void
   onSelectConversation: (conversation: BeneficiaireEtChat) => void
-  idConversationToFocus?: string
 }
 
 function ListeConversations(
@@ -22,15 +26,18 @@ function ListeConversations(
     conversations,
     onSelectConversation,
     onToggleFlag,
-    idConversationToFocus,
   }: ListeConversationsProps,
-  ref: ForwardedRef<HTMLUListElement>
+  ref: ForwardedRef<{
+    focus: () => void
+    focusConversation: (id: string) => void
+  }>
 ) {
-  useEffect(() => {
-    if (conversations?.length && idConversationToFocus) {
-      document.getElementById(`chat-${idConversationToFocus}`)?.focus()
-    }
-  }, [conversations, idConversationToFocus])
+  const listeRef = useRef<HTMLUListElement>(null)
+  useImperativeHandle(ref, () => ({
+    focus: () => listeRef.current!.focus(),
+    focusConversation: (id: string) =>
+      document.getElementById(`chat-${id}`)?.focus(),
+  }))
 
   return (
     <>
@@ -65,7 +72,7 @@ function ListeConversations(
         )}
 
         {conversations && conversations.length > 0 && (
-          <ul tabIndex={-1} ref={ref} className='px-4 pb-24'>
+          <ul tabIndex={-1} ref={listeRef} className='px-4 pb-24'>
             {conversations.map((beneficiaireChat: BeneficiaireEtChat) => (
               <li key={`chat-${beneficiaireChat.id}`} className='mb-2'>
                 <ConversationTile

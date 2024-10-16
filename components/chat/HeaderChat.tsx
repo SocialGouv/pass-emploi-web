@@ -18,19 +18,21 @@ function HeaderChat(
     onLancerRecherche,
     titre,
     onPermuterVisibiliteMessagerie,
+    messagerieFullScreen,
     messagerieEstVisible,
   }: {
     onBack: () => void
     labelRetour: string
     messagerieEstVisible: boolean
-    afficherBlurBtn?: boolean
     titre: string | ReactElement
-    isFlaggedByConseiller?: boolean
     onPermuterVisibiliteMessagerie: () => void
+    messagerieFullScreen?: boolean
+    afficherBlurBtn?: boolean
+    isFlaggedByConseiller?: boolean
     onPermuterBookMark?: () => void
     onLancerRecherche?: () => void
   },
-  ref: ForwardedRef<{ focusRetour: Function }>
+  ref: ForwardedRef<{ focusRetour: () => void }>
 ) {
   const retourRef = useRef<HTMLButtonElement>(null)
   useImperativeHandle(ref, () => ({
@@ -71,7 +73,7 @@ function HeaderChat(
         <button
           ref={retourRef}
           id='chat-bouton-retour'
-          className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
+          className={`border-none rounded-full mr-2 ${messagerieFullScreen ? '' : 'bg-primary_lighten'} flex items-center hover:text-primary focus:pr-2`}
           aria-label={labelRetour}
           onClick={onBack}
           type='button'

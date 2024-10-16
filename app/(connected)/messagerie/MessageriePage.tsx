@@ -1,15 +1,12 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ConversationImage from 'assets/images/conversation.svg'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
-import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
+import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
-import { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
@@ -25,6 +22,14 @@ function MessageriePage() {
   const chats = useChats()
   const [currentConversation, setCurrentConversation] = useCurrentConversation()
 
+  const messagesListeRef = useRef<{
+    focusRetour: () => void
+    focusMessage: (id: string) => void
+  }>(null)
+  const detailMessageRef = useRef<{
+    focusRetour: () => void
+  }>(null)
+
   const [showRubriqueListesDeDiffusion] = useShowRubriqueListeDeDiffusion()
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
@@ -33,11 +38,12 @@ function MessageriePage() {
   const [messageSelectionne, setMessageSelectionne] = useState<
     MessageListeDiffusion | undefined
   >()
+  const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
 
   useEffect(() => {
     if (
       currentConversation &&
-      !listeSelectionnee &&
+      !listeSelectionnee.liste &&
       !showRubriqueListesDeDiffusion
     ) {
       getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
@@ -45,6 +51,18 @@ function MessageriePage() {
       )
     }
   }, [currentConversation, chats])
+
+  useEffect(() => {
+    if (listeSelectionnee.liste) messagesListeRef.current!.focusRetour()
+  }, [listeSelectionnee.liste])
+
+  useEffect(() => {
+    if (messageSelectionne) detailMessageRef.current!.focusRetour()
+    if (!messageSelectionne && idMessageAFocus) {
+      messagesListeRef.current!.focusMessage(idMessageAFocus)
+      setIdMessageAFocus(undefined)
+    }
+  }, [messageSelectionne])
 
   useMatomo('Messagerie', portefeuille.length > 0)
 
@@ -83,7 +101,7 @@ function MessageriePage() {
 
       {showRubriqueListesDeDiffusion && (
         <>
-          {!listeSelectionnee && (
+          {!listeSelectionnee.liste && (
             <div className='flex flex-col justify-center items-center h-full'>
               <ConversationImage focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
@@ -92,81 +110,34 @@ function MessageriePage() {
             </div>
           )}
 
-          {listeSelectionnee && (
+          {listeSelectionnee.liste && (
             <div className='h-full min-h-0 px-6 flex flex-col overflow-y-auto'>
               {!messageSelectionne && (
-                <>
-                  <div className='items-center px-4 py-6 short:hidden pb-3 flex justify-between'>
-                    <div>
-                      <h2 className='text-l-bold text-primary text-center my-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
-                        {listeSelectionnee.titre}
-                      </h2>
-                    </div>
-
-                    <div className='hidden layout_s:block w-fit'>
-                      <ButtonLink
-                        href={
-                          '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' +
-                          listeSelectionnee.id
-                        }
-                        style={ButtonStyle.TERTIARY}
-                        className='mr-auto'
-                      >
-                        <IconComponent
-                          name={IconName.Edit}
-                          focusable={false}
-                          aria-hidden={true}
-                          className='w-4 h-4 fill-primary mr-3'
-                        />
-                        Modifier ma liste
-                      </ButtonLink>
-                    </div>
-                  </div>
-
-                  <div className='flex flex-col justify-center h-full min-h-0'>
-                    <MessagesListeDeDiffusion
-                      liste={listeSelectionnee}
-                      onAfficherDetailMessage={setMessageSelectionne}
-                      onBack={() => setListeSelectionnee(undefined)}
-                      messagerieFullScreen={true}
-                    />
-                  </div>
-                </>
+                <MessagesListeDeDiffusion
+                  ref={messagesListeRef}
+                  liste={listeSelectionnee.liste}
+                  onAfficherDetailMessage={setMessageSelectionne}
+                  onBack={() =>
+                    setListeSelectionnee({
+                      liste: undefined,
+                      idAFocus: listeSelectionnee.liste!.id,
+                    })
+                  }
+                  messagerieFullScreen={true}
+                />
               )}
 
               {messageSelectionne && (
-                <>
-                  <div className='items-center mx-4 py-6 mb-6 short:hidden'>
-                    <div className='pb-3 flex items-center justify-between'>
-                      <button
-                        className='border-none rounded-full mr-2 flex items-center hover:text-primary'
-                        aria-label={'Retour sur ma liste de diffusion'}
-                        onClick={() => setMessageSelectionne(undefined)}
-                      >
-                        <IconComponent
-                          name={IconName.ArrowBackward}
-                          aria-hidden={true}
-                          focusable={false}
-                          className='w-5 h-5 fill-primary mr-3'
-                        />
-                        <span className='text-s-regular'>Retour</span>
-                      </button>
-                    </div>
-
-                    <div className='flex'>
-                      <h2 className='w-full text-left text-primary text-l-bold'>
-                        Détail du message
-                      </h2>
-                    </div>
-                  </div>
-
-                  <DetailMessageListeDeDiffusion
-                    message={messageSelectionne}
-                    onBack={() => setMessageSelectionne(undefined)}
-                    chats={chats}
-                    messagerieFullScreen={true}
-                  />
-                </>
+                <DetailMessageListeDeDiffusion
+                  ref={detailMessageRef}
+                  message={messageSelectionne}
+                  onBack={() => {
+                    setIdMessageAFocus(messageSelectionne!.id)
+                    setMessageSelectionne(undefined)
+                  }}
+                  chats={chats}
+                  messagerieFullScreen={true}
+                />
               )}
             </div>
           )}

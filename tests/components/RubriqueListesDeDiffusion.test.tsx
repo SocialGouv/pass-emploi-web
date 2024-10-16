@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -97,7 +97,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
   describe('quand le conseiller n‘a pas de liste de diffusion', () => {
     it('prévient le conseiller qu’il n’a pas de liste', async () => {
       // When
-      render(
+      renderWithContexts(
         <RubriqueListesDeDiffusion
           listesDeDiffusion={[]}
           onBack={() => {}}

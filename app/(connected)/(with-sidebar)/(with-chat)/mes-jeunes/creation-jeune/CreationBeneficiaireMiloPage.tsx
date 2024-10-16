@@ -20,7 +20,7 @@ function CreationBeneficiaireMiloPage() {
   const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const etapeRef = useRef<HTMLDivElement>(null)
-  const dossierBeneficiaireRef = useRef<{ focusRetour: Function }>(null)
+  const dossierBeneficiaireRef = useRef<{ focusRetour: () => void }>(null)
 
   const [dossier, setDossier] = useState<DossierMilo | undefined>()
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()

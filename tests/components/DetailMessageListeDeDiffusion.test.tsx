@@ -1,7 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 
-import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
+import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 import { unMessageListeDiffusion } from 'fixtures/message'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
@@ -59,11 +59,6 @@ describe('DetailMessageListeDeDiffusion', () => {
     })
   })
 
-  it('affiche la date du message', async () => {
-    // Then
-    expect(screen.getByText('Le 01/09/2022')).toBeInTheDocument()
-  })
-
   it('affiche le contenu du message', async () => {
     // Then
     expect(screen.getByText(message.content)).toBeInTheDocument()
@@ -91,5 +86,10 @@ describe('DetailMessageListeDeDiffusion', () => {
     expect(
       getByTextContent('Non lu par Ada Lovelace', destinataires)
     ).toBeInTheDocument()
+  })
+
+  it('affiche la date du message', async () => {
+    // Then
+    expect(screen.getByText('Le 01/09/2022')).toBeInTheDocument()
   })
 })
