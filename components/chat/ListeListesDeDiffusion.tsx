@@ -1,8 +1,9 @@
 import React, {
   ForwardedRef,
   forwardRef,
-  ReactElement,
+  useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react'
 
@@ -31,6 +32,9 @@ function ListeListesDeDiffusion(
   }: ListeListesDeDiffusionProps,
   ref: ForwardedRef<{ focusListe: (id: string) => void }>
 ) {
+  const isFirstRender = useRef<boolean>(true)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
   useImperativeHandle(ref, () => ({ focusListe: setIdListeAFocus }))
   const [idListeAFocus, setIdListeAFocus] = useState<string | undefined>()
 
@@ -40,6 +44,18 @@ function ListeListesDeDiffusion(
   function permuterVisibiliteMessagerie() {
     setMessagerieEstVisible(!messagerieEstVisible)
   }
+
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (messagerieEstVisible) {
+      containerRef.current!.setAttribute('tabIndex', '-1')
+      containerRef.current!.focus()
+    }
+  }, [messagerieEstVisible])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   return (
     <>
@@ -75,7 +91,7 @@ function ListeListesDeDiffusion(
       )}
 
       {messagerieEstVisible && (
-        <>
+        <div ref={containerRef}>
           {!listesDeDiffusion && <SpinningLoader alert={true} />}
 
           {listesDeDiffusion && listesDeDiffusion.length === 0 && (
@@ -143,7 +159,7 @@ function ListeListesDeDiffusion(
                 </ButtonLink>
               </div>
             )}
-        </>
+        </div>
       )}
 
       {!messagerieEstVisible && (

@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react'
 
@@ -38,6 +39,9 @@ function MessagesListeDeDiffusion(
 ) {
   const chatCredentials = useChatCredentials()
 
+  const isFirstRender = useRef<boolean>(true)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
   useImperativeHandle(ref, () => ({ focusMessage: setIdMessageAFocus }))
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
 
@@ -61,6 +65,18 @@ function MessagesListeDeDiffusion(
       ).then(setMessages)
     }
   }, [chatCredentials, liste.id])
+
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (messagerieEstVisible) {
+      containerRef.current!.setAttribute('tabIndex', '-1')
+      containerRef.current!.focus()
+    }
+  }, [messagerieEstVisible])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   return (
     <>
@@ -96,7 +112,7 @@ function MessagesListeDeDiffusion(
       )}
 
       {messagerieEstVisible && (
-        <>
+        <div ref={containerRef}>
           {!messages && <SpinningLoader />}
 
           {messages && messages.length === 0 && (
@@ -171,7 +187,7 @@ function MessagesListeDeDiffusion(
               </ul>
             </>
           )}
-        </>
+        </div>
       )}
 
       {!messagerieEstVisible && (

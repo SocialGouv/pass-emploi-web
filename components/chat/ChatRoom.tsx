@@ -46,8 +46,13 @@ export default function ChatRoom({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
+  const isFirstRender = useRef<boolean>(true)
+  const chatroomRef = useRef<HTMLDivElement>(null)
   const listeConversationsRef = useRef<HTMLUListElement>(null)
 
+  const [focusConversationId, setFocusConversationId] = useState<
+    string | undefined
+  >(idConversationToFocus)
   const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
@@ -191,6 +196,19 @@ export default function ChatRoom({
     setChatsFiltres(beneficiairesChats)
   }, [beneficiairesChats])
 
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (messagerieEstVisible) {
+      setFocusConversationId(undefined)
+      chatroomRef.current!.setAttribute('tabIndex', '-1')
+      chatroomRef.current!.focus()
+    }
+  }, [messagerieEstVisible])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
+
   return (
     <>
       <div className='relative py-6 gap-4 px-4 bg-white flex flex-wrap justify-between shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_base:my-3'>
@@ -292,7 +310,7 @@ export default function ChatRoom({
       </div>
 
       {messagerieEstVisible && (
-        <>
+        <div ref={chatroomRef}>
           <div className='mx-3'>
             <AlerteDisplayer hideOnLargeScreen={true} />
           </div>
@@ -307,7 +325,7 @@ export default function ChatRoom({
           {chatsFiltres && (
             <button
               ref={
-                shouldFocusAccesListesDiffusion && !idConversationToFocus
+                shouldFocusAccesListesDiffusion && !focusConversationId
                   ? (e) => e?.focus()
                   : undefined
               }
@@ -338,9 +356,9 @@ export default function ChatRoom({
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}
-            idConversationToFocus={idConversationToFocus}
+            idConversationToFocus={focusConversationId}
           />
-        </>
+        </div>
       )}
 
       {!messagerieEstVisible && (

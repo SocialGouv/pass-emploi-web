@@ -304,6 +304,15 @@ export function Conversation({
     setFlaggedByConseiller(flagged)
   }
 
+  function focusDernierMessage() {
+    const dernierJour = conteneurMessagesRef.current!.lastElementChild
+    const lastMessage =
+      dernierJour!.querySelector<HTMLLIElement>('li:last-child')
+
+    lastMessage!.setAttribute('tabIndex', '-1')
+    lastMessage!.focus()
+  }
+
   useEffect(() => {
     unsubscribeFromMessages.current = observerMessages(
       beneficiaireChat.chatId,
@@ -321,12 +330,7 @@ export function Conversation({
     }
 
     if (nombrePagesChargees === 1 && shouldFocusOnFirstRender) {
-      const dernierJour = conteneurMessagesRef.current!.lastElementChild
-      const lastMessage =
-        dernierJour!.querySelector<HTMLLIElement>('li:last-child')
-
-      lastMessage!.setAttribute('tabIndex', '-1')
-      lastMessage!.focus()
+      focusDernierMessage()
       return
     }
 
@@ -359,6 +363,11 @@ export function Conversation({
     if (uploadedFileInfo) deleteFileRef.current!.focus()
     else addFileRef.current!.focus()
   }, [uploadedFileInfo])
+
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (messagerieEstVisible) focusDernierMessage()
+  }, [messagerieEstVisible])
 
   useEffect(() => {
     isFirstRender.current = false

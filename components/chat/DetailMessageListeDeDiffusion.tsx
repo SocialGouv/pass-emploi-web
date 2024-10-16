@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
@@ -22,6 +22,9 @@ export function DetailMessageListeDeDiffusion({
   onBack: () => void
   messagerieFullScreen?: boolean
 }) {
+  const isFirstRender = useRef<boolean>(true)
+  const messageRef = useRef<HTMLDivElement | null>(null)
+
   const [destinataires, setDestinataires] = useState<BeneficiaireEtChat[]>()
 
   const [messagerieEstVisible, setMessagerieEstVisible] =
@@ -57,6 +60,18 @@ export function DetailMessageListeDeDiffusion({
     }
   }, [chats, message.idsDestinataires])
 
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (messagerieEstVisible) {
+      messageRef.current!.setAttribute('tabIndex', '-1')
+      messageRef.current!.focus()
+    }
+  }, [messagerieEstVisible])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
+
   return (
     <>
       {!messagerieFullScreen && (
@@ -71,7 +86,7 @@ export function DetailMessageListeDeDiffusion({
       )}
 
       {messagerieEstVisible && (
-        <div className='px-4'>
+        <div ref={messageRef} className='px-4'>
           <div className='text-center mb-3'>
             Le {toShortDate(message.creationDate)}
           </div>
