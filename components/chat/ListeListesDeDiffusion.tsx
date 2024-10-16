@@ -20,24 +20,26 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 type ListeListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
   onAfficherListe: (liste: ListeDeDiffusion) => void
-  onBack?: () => void
-  messagerieFullScreen?: boolean
+  onBack: () => void
 }
 function ListeListesDeDiffusion(
-  {
-    listesDeDiffusion,
-    onAfficherListe,
-    onBack,
-    messagerieFullScreen,
-  }: ListeListesDeDiffusionProps,
-  ref: ForwardedRef<{ focusListe: (id: string) => void }>
+  { listesDeDiffusion, onAfficherListe, onBack }: ListeListesDeDiffusionProps,
+  ref: ForwardedRef<{
+    focusRetour: () => void
+    focusListe: (id: string) => void
+  }>
 ) {
   const isFirstRender = useRef<boolean>(true)
+  const headerRef = useRef<{ focusRetour: () => void }>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => headerRef.current!.focusRetour(),
+    focusListe: setIdListeAFocus,
+  }))
 
-  useImperativeHandle(ref, () => ({ focusListe: setIdListeAFocus }))
   const [idListeAFocus, setIdListeAFocus] = useState<string | undefined>()
 
+  // FIXME useContext pour visibilité messagerie partout (mega context MessagerieStatesContext ?)
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
@@ -59,107 +61,87 @@ function ListeListesDeDiffusion(
 
   return (
     <>
-      {!messagerieFullScreen && (
-        <>
-          <HeaderChat
-            ref={(e) => e?.focusRetour()}
-            titre={'Mes listes de diffusion'}
-            labelRetour={'Retour sur ma messagerie'}
-            onBack={onBack!}
-            onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
-            messagerieEstVisible={messagerieEstVisible}
-          />
-
-          {messagerieEstVisible && (
-            <div className='hidden layout_s:block w-fit ml-4 mb-8'>
-              <ButtonLink
-                href='/mes-jeunes/listes-de-diffusion'
-                style={ButtonStyle.TERTIARY}
-                className='mr-auto'
-              >
-                <IconComponent
-                  name={IconName.Edit}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-4 h-4 fill-primary mr-3'
-                />
-                Gérer mes listes de diffusion
-              </ButtonLink>
-            </div>
-          )}
-        </>
-      )}
+      <HeaderChat
+        ref={headerRef}
+        titre='Mes listes de diffusion'
+        labelRetour='Retour sur ma messagerie'
+        onBack={onBack!}
+        onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        messagerieEstVisible={messagerieEstVisible}
+      />
 
       {messagerieEstVisible && (
-        <div ref={containerRef}>
-          {!listesDeDiffusion && <SpinningLoader alert={true} />}
-
-          {listesDeDiffusion && listesDeDiffusion.length === 0 && (
-            <div className='bg-grey_100 flex flex-col justify-center items-center'>
-              <EmptyState
-                illustrationName={IllustrationName.SendWhite}
-                titre='Vous n’avez pas encore créé de liste de diffusion.'
-                sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
-                lien={{
-                  href: '/mes-jeunes/listes-de-diffusion/edition-liste',
-                  label: 'Créer une liste',
-                  iconName: IconName.Add,
-                }}
+        <>
+          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+            <ButtonLink
+              href='/mes-jeunes/listes-de-diffusion'
+              style={ButtonStyle.TERTIARY}
+              className='mr-auto'
+            >
+              <IconComponent
+                name={IconName.Edit}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary mr-3'
               />
-            </div>
-          )}
+              Gérer mes listes de diffusion
+            </ButtonLink>
+          </div>
 
-          {listesDeDiffusion && listesDeDiffusion.length > 0 && (
-            <div className='flex flex-col m-4 overflow-y-auto'>
-              <h3
-                id='listes-de-diffusion'
-                className='text-m-medium text-primary mb-4'
-              >
-                Listes ({listesDeDiffusion.length})
-              </h3>
-              <ul
-                aria-describedby='listes-de-diffusion'
-                className='overflow-y-auto'
-              >
-                {listesDeDiffusion.map((liste) => (
-                  <li
-                    key={liste.id}
-                    className='bg-white rounded-base mb-2 last:mb-0'
-                  >
-                    <ListeDeDiffusionTile
-                      ref={
-                        liste.id === idListeAFocus
-                          ? (e) => e?.focus()
-                          : undefined
-                      }
-                      liste={liste}
-                      onAfficherListe={onAfficherListe}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <>
+            {!listesDeDiffusion && <SpinningLoader alert={true} />}
 
-          {listesDeDiffusion &&
-            listesDeDiffusion.length > 0 &&
-            messagerieFullScreen && (
-              <div className='hidden layout_s:block w-fit mx-auto'>
-                <ButtonLink
-                  href='/mes-jeunes/listes-de-diffusion'
-                  style={ButtonStyle.TERTIARY}
-                >
-                  <IconComponent
-                    name={IconName.Edit}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='w-4 h-4 fill-primary mr-3'
-                  />
-                  Gérer mes listes de diffusion
-                </ButtonLink>
+            {listesDeDiffusion && listesDeDiffusion.length === 0 && (
+              <div className='bg-grey_100 flex flex-col justify-center items-center'>
+                <EmptyState
+                  illustrationName={IllustrationName.SendWhite}
+                  titre='Vous n’avez pas encore créé de liste de diffusion.'
+                  sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+                  lien={{
+                    href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+                    label: 'Créer une liste',
+                    iconName: IconName.Add,
+                  }}
+                />
               </div>
             )}
-        </div>
+
+            {listesDeDiffusion && listesDeDiffusion.length > 0 && (
+              <div
+                ref={containerRef}
+                className='flex flex-col m-4 overflow-y-auto'
+              >
+                <h3
+                  id='listes-de-diffusion'
+                  className='text-m-medium text-primary mb-4'
+                >
+                  Listes ({listesDeDiffusion.length})
+                </h3>
+                <ul
+                  aria-describedby='listes-de-diffusion'
+                  className='overflow-y-auto'
+                >
+                  {listesDeDiffusion.map((liste) => (
+                    <li
+                      key={liste.id}
+                      className='bg-white rounded-base mb-2 last:mb-0'
+                    >
+                      <ListeDeDiffusionTile
+                        ref={
+                          liste.id === idListeAFocus
+                            ? (e) => e?.focus()
+                            : undefined
+                        }
+                        liste={liste}
+                        onAfficherListe={onAfficherListe}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        </>
       )}
 
       {!messagerieEstVisible && (
@@ -170,6 +152,7 @@ function ListeListesDeDiffusion(
     </>
   )
 }
+
 export default forwardRef(ListeListesDeDiffusion)
 
 type ListeDeDiffusionTileProps = {

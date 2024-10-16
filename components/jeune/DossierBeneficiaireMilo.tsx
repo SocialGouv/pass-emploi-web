@@ -41,7 +41,7 @@ function DossierBeneficiaireMilo(
     onAnnulationCreerCompte,
     beneficiaireExisteDejaMilo,
   }: DossierBeneficiaireMiloProps,
-  ref: ForwardedRef<{ focusRetour: Function }>
+  ref: ForwardedRef<{ focusRetour: () => void }>
 ) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)

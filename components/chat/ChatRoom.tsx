@@ -1,6 +1,13 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
@@ -29,31 +36,41 @@ interface ChatRoomProps {
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
-  idConversationToFocus?: string
-  shouldFocusAccesListesDiffusion: boolean
 }
 
-export default function ChatRoom({
-  beneficiairesChats,
-  showMenu,
-  onOuvertureMenu,
-  onAccesListesDiffusion,
-  onAccesConversation,
-  idConversationToFocus,
-  shouldFocusAccesListesDiffusion,
-}: ChatRoomProps) {
+function ChatRoom(
+  {
+    beneficiairesChats,
+    showMenu,
+    onOuvertureMenu,
+    onAccesListesDiffusion,
+    onAccesConversation,
+  }: ChatRoomProps,
+  ref: ForwardedRef<{
+    focusAccesListesDiffusion: () => void
+    focusConversation: (id: string) => void
+  }>
+) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
   const isFirstRender = useRef<boolean>(true)
-  const chatroomRef = useRef<HTMLDivElement>(null)
-  const listeConversationsRef = useRef<HTMLUListElement>(null)
+  const chatroomChildRef = useRef<HTMLDivElement>(null)
+  const listeConversationsRef = useRef<{
+    focus: () => void
+    focusConversation: (id: string) => void
+  }>(null)
+  const accesListesDiffusionRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusAccesListesDiffusion: () => accesListesDiffusionRef.current!.focus(),
+    focusConversation: (id: string) =>
+      listeConversationsRef.current!.focusConversation(id),
+  }))
 
-  const [focusConversationId, setFocusConversationId] = useState<
-    string | undefined
-  >(idConversationToFocus)
-  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireEtChat[]>()
+  const [chatsFiltres, setChatsFiltres] = useState<
+    BeneficiaireEtChat[] | undefined
+  >(beneficiairesChats)
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
@@ -171,7 +188,7 @@ export default function ChatRoom({
     })
 
     setChatsFiltres(chatsFiltresResult)
-    listeConversationsRef.current?.focus()
+    listeConversationsRef.current!.focus()
   }
 
   useEffect(() => {
@@ -199,9 +216,9 @@ export default function ChatRoom({
   useEffect(() => {
     if (isFirstRender.current) return
     if (messagerieEstVisible) {
-      setFocusConversationId(undefined)
-      chatroomRef.current!.setAttribute('tabIndex', '-1')
-      chatroomRef.current!.focus()
+      const parentContainer = chatroomChildRef.current!.parentElement!
+      parentContainer.setAttribute('tabIndex', '-1')
+      parentContainer.focus()
     }
   }, [messagerieEstVisible])
 
@@ -310,8 +327,8 @@ export default function ChatRoom({
       </div>
 
       {messagerieEstVisible && (
-        <div ref={chatroomRef}>
-          <div className='mx-3'>
+        <>
+          <div ref={chatroomChildRef} className='mx-3'>
             <AlerteDisplayer hideOnLargeScreen={true} />
           </div>
 
@@ -322,43 +339,34 @@ export default function ChatRoom({
             <RechercheBeneficiaire onSearchFilterBy={filtrerConversations} />
           </div>
 
-          {chatsFiltres && (
-            <button
-              ref={
-                shouldFocusAccesListesDiffusion && !focusConversationId
-                  ? (e) => e?.focus()
-                  : undefined
-              }
-              className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
-              onClick={onAccesListesDiffusion}
-              type='button'
-            >
-              <IconComponent
-                name={IconName.PeopleFill}
-                className='mr-2 h-6 w-6 fill-primary'
-                aria-hidden={true}
-                focusable={false}
-              />
-              <span className='grow text-left'>
-                Voir mes listes de diffusion
-              </span>
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='mr-2 h-6 w-6 fill-current'
-                aria-hidden={true}
-                focusable={false}
-              />
-            </button>
-          )}
+          <button
+            ref={accesListesDiffusionRef}
+            className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
+            onClick={onAccesListesDiffusion}
+            type='button'
+          >
+            <IconComponent
+              name={IconName.PeopleFill}
+              className='mr-2 h-6 w-6 fill-primary'
+              aria-hidden={true}
+              focusable={false}
+            />
+            <span className='grow text-left'>Voir mes listes de diffusion</span>
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='mr-2 h-6 w-6 fill-current'
+              aria-hidden={true}
+              focusable={false}
+            />
+          </button>
 
           <ListeConversations
             ref={listeConversationsRef}
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}
-            idConversationToFocus={focusConversationId}
           />
-        </div>
+        </>
       )}
 
       {!messagerieEstVisible && (
@@ -385,3 +393,4 @@ export default function ChatRoom({
     </>
   )
 }
+export default forwardRef(ChatRoom)

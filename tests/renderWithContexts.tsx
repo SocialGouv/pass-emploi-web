@@ -8,7 +8,6 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -17,7 +16,10 @@ import {
   CurrentConversation,
   CurrentConversationProvider,
 } from 'utils/chat/currentConversationContext'
-import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import {
+  ListeDeDiffusionSelectionneeProvider,
+  ListeSelectionnee,
+} from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
@@ -44,10 +46,8 @@ export default function renderWithContexts(
       setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
     }>
     customListeDeDiffusionSelectionnee?: Partial<{
-      value: ListeDeDiffusion | undefined
-      setter: (
-        listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined
-      ) => void
+      value: ListeSelectionnee
+      setter: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
     }>
   } = {}
 ): RenderResult {
@@ -117,8 +117,8 @@ function provideContexts(
     setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
   }>,
   listeDeDiffusionSelectionnee: Partial<{
-    value: ListeDeDiffusion | undefined
-    setter: (listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined) => void
+    value: ListeSelectionnee
+    setter: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
   }>
 ) {
   return (

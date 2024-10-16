@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
@@ -11,18 +18,29 @@ import { MessageListeDiffusion } from 'interfaces/message'
 import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { toShortDate } from 'utils/date'
 
-export function DetailMessageListeDeDiffusion({
-  message,
-  chats,
-  onBack,
-  messagerieFullScreen,
-}: {
-  message: MessageListeDiffusion
-  chats: BeneficiaireEtChat[] | undefined
-  onBack: () => void
-  messagerieFullScreen?: boolean
-}) {
+function DetailMessageListeDeDiffusion(
+  {
+    message,
+    chats,
+    onBack,
+    messagerieFullScreen,
+  }: {
+    message: MessageListeDiffusion
+    chats: BeneficiaireEtChat[] | undefined
+    onBack: () => void
+    messagerieFullScreen?: boolean
+  },
+  ref: ForwardedRef<{ focusRetour: () => void }>
+) {
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => {
+      console.log('>>>', 'DETAIL FOCUS RETOUR')
+      headerRef.current!.focusRetour()
+    },
+  }))
+
   const isFirstRender = useRef<boolean>(true)
+  const headerRef = useRef<{ focusRetour: () => void }>(null)
   const messageRef = useRef<HTMLDivElement | null>(null)
 
   const [destinataires, setDestinataires] = useState<BeneficiaireEtChat[]>()
@@ -74,16 +92,15 @@ export function DetailMessageListeDeDiffusion({
 
   return (
     <>
-      {!messagerieFullScreen && (
-        <HeaderChat
-          ref={(e) => e?.focusRetour()}
-          titre='Détail du message'
-          labelRetour={'Retour aux messages de ma liste'}
-          onBack={onBack}
-          onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
-          messagerieEstVisible={messagerieEstVisible}
-        />
-      )}
+      <HeaderChat
+        ref={headerRef}
+        titre='Détail du message'
+        labelRetour='Retour aux messages de ma liste'
+        onBack={onBack}
+        onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        messagerieFullScreen={messagerieFullScreen}
+        messagerieEstVisible={messagerieEstVisible}
+      />
 
       {messagerieEstVisible && (
         <div ref={messageRef} className='px-4'>
@@ -92,6 +109,7 @@ export function DetailMessageListeDeDiffusion({
           </div>
 
           <DisplayMessageListeDeDiffusion
+            id={`message-${message.id}`}
             message={message}
             messagerieFullScreen={messagerieFullScreen}
           />
@@ -144,3 +162,4 @@ export function DetailMessageListeDeDiffusion({
     </>
   )
 }
+export default forwardRef(DetailMessageListeDeDiffusion)

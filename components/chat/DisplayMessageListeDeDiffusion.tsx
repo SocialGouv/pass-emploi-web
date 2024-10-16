@@ -1,9 +1,4 @@
-import React, {
-  ForwardedRef,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-} from 'react'
+import React from 'react'
 
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
@@ -12,35 +7,25 @@ import { MessageListeDiffusion, TypeMessage } from 'interfaces/message'
 import { toFrenchTime, toShortDate } from 'utils/date'
 
 interface DisplayMessageListeDeDiffusionProps {
+  id: string
   message: MessageListeDiffusion
   onAfficherDetailMessage?: () => void
   messagerieFullScreen?: boolean
 }
 
-function DisplayMessageListeDeDiffusion(
-  {
-    message,
-    onAfficherDetailMessage,
-    messagerieFullScreen,
-  }: DisplayMessageListeDeDiffusionProps,
-  ref: ForwardedRef<{ focus: () => void }>
-) {
-  const divRef = useRef<HTMLDivElement>(null)
-
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      divRef.current!.setAttribute('tabIndex', '-1')
-      divRef.current!.focus()
-    },
-  }))
-
+export default function DisplayMessageListeDeDiffusion({
+  id,
+  message,
+  onAfficherDetailMessage,
+  messagerieFullScreen,
+}: DisplayMessageListeDeDiffusionProps) {
   const creationTime = toFrenchTime(message.creationDate)
   const a11yTime = toFrenchTime(message.creationDate, { a11y: true })
 
   return (
     <>
       <div
-        ref={divRef}
+        id={id}
         className={`text-base-regular break-words p-4 rounded-base text-content_color ${
           messagerieFullScreen ? 'bg-grey_100' : 'bg-white'
         } mb-1`}
@@ -83,4 +68,3 @@ function DisplayMessageListeDeDiffusion(
     </>
   )
 }
-export default forwardRef(DisplayMessageListeDeDiffusion)

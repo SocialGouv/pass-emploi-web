@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
+import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { MessageListeDiffusion } from 'interfaces/message'
+import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 
 type RubriqueListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
@@ -18,26 +19,22 @@ export default function RubriqueListesDeDiffusion({
   chats,
   onBack,
 }: RubriqueListesDeDiffusionProps) {
-  const [listeSelectionnee, setListeSelectionnee] = useState<
-    ListeDeDiffusion | undefined
-  >()
-  const [idListeAFocus, setIdListeAFocus] = useState<string | undefined>()
-  const listesDiffusionRef = useRef<{
+  const listeListesDiffusionRef = useRef<{
+    focusRetour: () => void
     focusListe: (id: string) => void
-  } | null>(null)
+  }>(null)
+  const messagesListeRef = useRef<{
+    focusRetour: () => void
+    focusMessage: (id: string) => void
+  }>(null)
+  const messageRef = useRef<{ focusRetour: () => void }>(null)
 
+  const [listeSelectionnee, setListeSelectionnee] =
+    useListeDeDiffusionSelectionnee()
   const [messageSelectionne, setMessageSelectionne] = useState<
     MessageListeDiffusion | undefined
   >()
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
-  const messagesListeRef = useRef<{
-    focusMessage: (id: string) => void
-  } | null>(null)
-
-  function fermerListe() {
-    setIdListeAFocus(listeSelectionnee!.id)
-    setListeSelectionnee(undefined)
-  }
 
   function fermerMessage() {
     setIdMessageAFocus(messageSelectionne!.id)
@@ -45,41 +42,51 @@ export default function RubriqueListesDeDiffusion({
   }
 
   useEffect(() => {
-    if (idListeAFocus) {
-      listesDiffusionRef.current!.focusListe(idListeAFocus)
-      setIdListeAFocus(undefined)
+    if (listeSelectionnee.liste) messagesListeRef.current!.focusRetour()
+    if (!listeSelectionnee.liste && listeSelectionnee.idAFocus) {
+      listeListesDiffusionRef.current!.focusListe(listeSelectionnee.idAFocus)
+      setListeSelectionnee({})
     }
-  }, [idListeAFocus])
+    if (!listeSelectionnee.liste && !listeSelectionnee.idAFocus)
+      listeListesDiffusionRef.current!.focusRetour()
+  }, [listeSelectionnee.liste])
 
   useEffect(() => {
-    if (idMessageAFocus) {
+    if (messageSelectionne) messageRef.current!.focusRetour()
+    if (!messageSelectionne && idMessageAFocus) {
       messagesListeRef.current!.focusMessage(idMessageAFocus)
       setIdMessageAFocus(undefined)
     }
-  }, [idMessageAFocus])
+  }, [messageSelectionne])
 
   return (
     <div className='h-full flex flex-col'>
-      {!listeSelectionnee && (
+      {!listeSelectionnee.liste && (
         <ListeListesDeDiffusion
-          ref={listesDiffusionRef}
+          ref={listeListesDiffusionRef}
           listesDeDiffusion={listesDeDiffusion}
-          onAfficherListe={setListeSelectionnee}
+          onAfficherListe={(liste) => setListeSelectionnee({ liste })}
           onBack={onBack}
         />
       )}
 
-      {listeSelectionnee && !messageSelectionne && (
+      {listeSelectionnee.liste && !messageSelectionne && (
         <MessagesListeDeDiffusion
           ref={messagesListeRef}
-          liste={listeSelectionnee}
+          liste={listeSelectionnee.liste}
           onAfficherDetailMessage={setMessageSelectionne}
-          onBack={fermerListe}
+          onBack={() => {
+            setListeSelectionnee({
+              liste: undefined,
+              idAFocus: listeSelectionnee.liste!.id,
+            })
+          }}
         />
       )}
 
-      {listeSelectionnee && messageSelectionne && (
+      {listeSelectionnee.liste && messageSelectionne && (
         <DetailMessageListeDeDiffusion
+          ref={messageRef}
           message={messageSelectionne}
           onBack={fermerMessage}
           chats={chats}

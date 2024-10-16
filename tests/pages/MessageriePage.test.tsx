@@ -137,7 +137,7 @@ describe('MessageriePage client side', () => {
             },
             customShowRubriqueListeDeDiffusion: { value: true },
             customListeDeDiffusionSelectionnee: {
-              value: listeSelectionnee,
+              value: { liste: listeSelectionnee },
             },
           }))
         })

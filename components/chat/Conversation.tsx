@@ -100,7 +100,7 @@ export function Conversation({
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
-  const headerChatRef = useRef<{ focusRetour: Function }>(null)
+  const headerChatRef = useRef<{ focusRetour: () => void }>(null)
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const addFileRef = useRef<HTMLInputElement | null>(null)
@@ -382,7 +382,8 @@ export function Conversation({
       <HeaderChat
         ref={headerChatRef}
         onBack={onBack}
-        labelRetour='Retour sur ma messagerie'
+        labelRetour='
+        Retour sur ma messagerie'
         titre={
           <p>
             Discuter avec{' '}
