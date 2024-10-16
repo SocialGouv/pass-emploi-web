@@ -34,7 +34,7 @@ export function SelecteurPeriode({
   }>(() => {
     const debut = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
     const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
-    return { debut, fin, longLabel: labelPeriode(debut, fin) }
+    return { debut, fin, longLabel: labelPeriode(debut, fin, 'long') }
   })
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
@@ -50,7 +50,7 @@ export function SelecteurPeriode({
   function labelPeriode(
     debut: DateTime,
     fin: DateTime,
-    format?: string
+    format: string
   ): string {
     const toFormat = format === 'short' ? toShortDate : toLongMonthDate
     return `du ${toFormat(debut)} au ${toFormat(fin)}`
@@ -74,7 +74,7 @@ export function SelecteurPeriode({
   useEffect(() => {
     const debut = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
     const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
-    const label = labelPeriode(debut, fin)
+    const label = labelPeriode(debut, fin, 'long')
     onNouvellePeriode(indexPeriodeAffichee, debut, fin, label)
     setPeriodeAffiche({ debut, fin, longLabel: label })
   }, [indexPeriodeAffichee])
@@ -87,7 +87,14 @@ export function SelecteurPeriode({
         aria-atomic={true}
       >
         Période :{' '}
-        <span className='text-m-bold text-primary self-center'>
+        <span
+          className='text-m-bold text-primary self-center'
+          aria-label={labelPeriode(
+            periodeAffiche.debut,
+            periodeAffiche.fin,
+            'long'
+          )}
+        >
           {labelPeriode(periodeAffiche.debut, periodeAffiche.fin, 'short')}
         </span>
       </p>
@@ -98,7 +105,8 @@ export function SelecteurPeriode({
             `Aller à la période précédente ` +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
-              jourDeFinDeLaPeriode(indexPeriodeAffichee - 1)
+              jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
+              'long'
             )
           }
           onClick={allerPeriodePrecedente}
@@ -125,7 +133,8 @@ export function SelecteurPeriode({
             `Aller à la période suivante ` +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
-              jourDeFinDeLaPeriode(indexPeriodeAffichee + 1)
+              jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
+              'long'
             )
           }
           onClick={allerPeriodeSuivante}
