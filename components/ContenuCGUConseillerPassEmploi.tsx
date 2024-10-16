@@ -76,7 +76,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         l’affectation d’un Usager à un Conseiller déterminé.
       </p>
 
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='text-base-bold text-content_color mb-2'>
         4.1 L’authentification
       </h3>
       <p className='mb-4'>
