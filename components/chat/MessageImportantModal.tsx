@@ -39,6 +39,8 @@ export default function MessageImportantModal({
   onCancel,
   onDeleteMessageImportant,
 }: MessageImportantModalProps) {
+  const MAX_INPUT_LENGTH = 150
+
   const modalRef = useRef<ModalHandles>(null)
 
   const [dateDebut, setDateDebut] = useState<
@@ -98,7 +100,7 @@ export default function MessageImportantModal({
       })
       return false
     }
-    if (message.value && message.value.length > 150) {
+    if (message.value && message.value.length > MAX_INPUT_LENGTH) {
       setMessage({
         value: message.value,
         error:
@@ -202,7 +204,7 @@ export default function MessageImportantModal({
               <Label htmlFor='message-important'>
                 {{
                   main: 'Message',
-                  helpText: '150 caractères maximum',
+                  helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
                 }}
               </Label>
               {message.error && (
@@ -212,7 +214,7 @@ export default function MessageImportantModal({
               )}
               <Textarea
                 id='message-important'
-                maxLength={150}
+                maxLength={MAX_INPUT_LENGTH}
                 allowOverMax={true}
                 onChange={(value: string) => setMessage({ value: value })}
                 onBlur={validerTexte}

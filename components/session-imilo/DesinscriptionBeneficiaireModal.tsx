@@ -28,6 +28,8 @@ export default function DesinscriptionBeneficiaireModal({
   beneficiaireADesinscrire,
   sessionName,
 }: DesinscriptionBeneficiaireModalProps) {
+  const MAX_INPUT_LENGTH = 250
+
   const modalRef = useRef<ModalHandles>(null)
   const textCommentaire = useRef<HTMLTextAreaElement>(null)
 
@@ -40,7 +42,7 @@ export default function DesinscriptionBeneficiaireModal({
   >({ value: undefined })
 
   function validateCommentaire() {
-    if (commentaire.value && commentaire.value.length > 250) {
+    if (commentaire.value && commentaire.value.length > MAX_INPUT_LENGTH) {
       setCommentaire({
         value: commentaire.value,
         error:
@@ -62,7 +64,7 @@ export default function DesinscriptionBeneficiaireModal({
     const formulaireEstValide =
       typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE ||
       commentaire.value === undefined ||
-      commentaire.value.length <= 250
+      commentaire.value.length <= MAX_INPUT_LENGTH
 
     if (formulaireEstValide) {
       const beneficiaireDesinscrit = {
@@ -132,12 +134,12 @@ export default function DesinscriptionBeneficiaireModal({
             <Label htmlFor='refus-commentaire'>
               {{
                 main: 'Veuillez préciser le motif de désinscription du bénéficiaire',
-                helpText: '250 caractères maximum',
+                helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
               }}
             </Label>
             <Textarea
               id='refus-commentaire'
-              maxLength={250}
+              maxLength={MAX_INPUT_LENGTH}
               onChange={(value: string) => setCommentaire({ value: value })}
               onBlur={validateCommentaire}
               disabled={typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE}
