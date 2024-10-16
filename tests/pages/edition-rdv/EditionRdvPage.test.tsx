@@ -673,23 +673,23 @@ describe('EditionRdvPage client side', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche une erreur quand la description dépasse 500 caractères', async () => {
+        it('ne permet pas d’avoir une description de plus de 250 caractères', async () => {
           // When
           await userEvent.clear(inputDescription)
           await userEvent.type(
             inputDescription,
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' +
-              'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' +
-              'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+            '1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950' +
+              '51525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100' +
+              '101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149150'
           )
           await userEvent.tab()
 
           // Then
-          expect(
-            screen.getByText(
-              'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.'
-            )
-          ).toBeInTheDocument()
+          expect(inputDescription).toHaveValue(
+            '1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950' +
+              '51525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100' +
+              '1011021031041051061071081091101111121131141151161171181191'
+          )
         })
 
         // FIXME trouver comment tester

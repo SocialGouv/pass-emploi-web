@@ -18,6 +18,8 @@ export default function UpdateIdentifiantPartenaireModal({
   updateIdentifiantPartenaire,
   onClose,
 }: UpdateIdentifiantPartenaireModalProps) {
+  const MAX_INPUT_LENGTH = 10
+
   const [portefeuille] = usePortefeuille()
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
@@ -54,14 +56,15 @@ export default function UpdateIdentifiantPartenaireModal({
     <Modal ref={modalRef} title={titre} onClose={onClose}>
       <div className='mt-8 mb-14'>
         <Label htmlFor='identifiantPartenaire'>
-          Identifiant France Travail (10 caractères maximum)
+          Identifiant France Travail ({MAX_INPUT_LENGTH.toString()} caractères
+          maximum)
         </Label>
         <Input
           type='text'
           id='identifiantPartenaire'
           defaultValue={identifiantPartenaire}
           onChange={setIdentifiantPartenaire}
-          maxLength={10}
+          maxLength={MAX_INPUT_LENGTH}
         />
       </div>
 

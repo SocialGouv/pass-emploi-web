@@ -43,6 +43,8 @@ function QualificationPage({
   returnTo,
   returnToListe,
 }: QualificationProps) {
+  const MAX_INPUT_LENGTH = 250
+
   const [portefeuille] = usePortefeuille()
 
   const [commentaire, setCommentaire] = useState<ValueWithError>({
@@ -80,7 +82,9 @@ function QualificationPage({
   const estSNP = codeCategorie.value !== CODE_QUALIFICATION_NON_SNP
 
   function isCommentaireValid(): boolean {
-    return Boolean(commentaire.value) && commentaire.value.length <= 255
+    return (
+      Boolean(commentaire.value) && commentaire.value.length <= MAX_INPUT_LENGTH
+    )
   }
 
   function validateCategorie() {
@@ -100,7 +104,7 @@ function QualificationPage({
           'Le champ Titre et description n’est pas renseigné. Veuillez renseigner un titre ou une description.',
       })
 
-    if (commentaire.value.length > 255)
+    if (commentaire.value.length > MAX_INPUT_LENGTH)
       setCommentaire({
         ...commentaire,
         error:
@@ -267,7 +271,7 @@ function QualificationPage({
                       main: "Titre et description de l'action",
                       helpText:
                         'Vous retrouverez ce résumé dans les détails de la situation non professionnelle sur i-milo, dans le champ « Commentaire ».',
-                      precision: '255 caractères maximum',
+                      precision: `${MAX_INPUT_LENGTH} caractères maximum`,
                     }}
                   </Label>
                   {commentaire.error && (
@@ -277,7 +281,7 @@ function QualificationPage({
                   )}
                   <Textarea
                     id='commentaire'
-                    maxLength={255}
+                    maxLength={MAX_INPUT_LENGTH}
                     allowOverMax={true}
                     defaultValue={commentaire.value}
                     onChange={(value) => setCommentaire({ value })}

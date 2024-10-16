@@ -460,7 +460,7 @@ export function EditionRdvForm({
 
   function validateDescription() {
     const descriptionEstValide =
-      !description.value || description.value.length < MAX_INPUT_LENGTH
+      !description.value || description.value.length <= MAX_INPUT_LENGTH
 
     if (!descriptionEstValide) {
       setDescription({
