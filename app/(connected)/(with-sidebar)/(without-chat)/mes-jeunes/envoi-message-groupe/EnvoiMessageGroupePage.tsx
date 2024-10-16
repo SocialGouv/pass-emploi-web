@@ -368,7 +368,11 @@ function EnvoiMessageGroupePage({
             )}
 
             {erreurUploadPieceJointe && (
-              <InputError id='piece-jointe-multi--error' className='mb-4'>
+              <InputError
+                ref={(e) => e?.focus()}
+                id='piece-jointe-multi--error'
+                className='mb-4'
+              >
                 {erreurUploadPieceJointe}
               </InputError>
             )}
