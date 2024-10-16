@@ -620,13 +620,13 @@ export function EditionRdvForm({
       })
     if (heureDeDebut.error)
       erreurs.push({
-        ancre: '#horaire',
-        label: 'Le champ Horaire est vide.',
+        ancre: '#heure-debut',
+        label: 'Le champ Heure de début est vide.',
         titreChamp: 'Horaire',
       })
     if (heureDeFin.error)
       erreurs.push({
-        ancre: '#HeureDeFin',
+        ancre: '#heure-fin',
         label: 'Le champ heure de fin est vide.',
         titreChamp: 'Heure De Fin',
       })
@@ -894,44 +894,42 @@ export function EditionRdvForm({
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='heureDeDebut' inputRequired={true}>
+          <Label htmlFor='heure-debut' inputRequired={true}>
             {{
               main: 'Heure de début',
               helpText: 'format : hh:mm',
             }}
           </Label>
           {heureDeDebut.error && (
-            <InputError id='horaire--error' className='mb-2'>
+            <InputError id='heure-debut--error' className='mb-2'>
               {heureDeDebut.error}
             </InputError>
           )}
           <Input
             type='time'
-            id='heureDeDebut'
+            id='heure-debut'
             defaultValue={heureDeDebut.value}
             required={true}
             onChange={(value: string) => setHeureDeDebut({ value })}
             onBlur={validateHeureDeDebut}
             invalid={Boolean(heureDeDebut.error)}
-            aria-invalid={heureDeDebut.error ? true : undefined}
-            aria-describedby={heureDeDebut.error ? 'horaire--error' : undefined}
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='heureDeFin' inputRequired={true}>
+          <Label htmlFor='heure-fin' inputRequired={true}>
             {{
               main: 'Heure de fin',
               helpText: 'format : hh:mm',
             }}
           </Label>
           {heureDeFin.error && (
-            <InputError id='heureDeFin--error' className='mb-2'>
+            <InputError id='heure-fin--error' className='mb-2'>
               {heureDeFin.error}
             </InputError>
           )}
           <Input
             type='time'
-            id='heureDeFin'
+            id='heure-fin'
             required={true}
             defaultValue={heureDeFin.value}
             onChange={(value: string) => setHeureDeFin({ value })}
