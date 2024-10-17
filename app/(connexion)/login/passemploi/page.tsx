@@ -1,13 +1,23 @@
 import { Metadata } from 'next'
 import React from 'react'
 
+import {
+  LoginSearchParams,
+  redirectIfAlreadyConnected,
+} from 'app/(connexion)/login/layout'
 import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
 
 export const metadata: Metadata = {
   title: "Connexion dans l'espace conseiller Pass Emploi",
 }
 
-export default async function LoginPassEmploi() {
+export default async function LoginPassEmploi({
+  searchParams,
+}: {
+  searchParams?: LoginSearchParams
+}) {
+  await redirectIfAlreadyConnected(searchParams)
+
   return (
     <LoginPassEmploiPage
       ssoFranceTravailBRSAEstActif={

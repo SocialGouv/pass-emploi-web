@@ -1,15 +1,16 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
+import { signin } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
+jest.mock('utils/auth/auth', () => ({
+  signin: jest.fn(),
 }))
 
 describe('LoginPassEmploiPage client side', () => {
@@ -21,9 +22,10 @@ describe('LoginPassEmploiPage client side', () => {
   })
 
   describe('render', () => {
+    const setErrorMsg = jest.fn()
     beforeEach(async () => {
       ;({ container } = render(
-        <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
+        <LoginErrorMessageProvider state={[undefined, setErrorMsg]}>
           <LoginPassEmploiPage
             ssoFranceTravailBRSAEstActif={true}
             ssoFranceTravailAIJEstActif={true}
@@ -34,7 +36,12 @@ describe('LoginPassEmploiPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -84,10 +91,10 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(peBRSAButton)
 
       // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'pe-brsa-conseiller' }
+      expect(signin).toHaveBeenCalledWith(
+        'pe-brsa-conseiller',
+        setErrorMsg,
+        'redirectUrl'
       )
     })
 
@@ -101,10 +108,10 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(peAIJButton)
 
       // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'pe-aij-conseiller' }
+      expect(signin).toHaveBeenCalledWith(
+        'pe-aij-conseiller',
+        setErrorMsg,
+        'redirectUrl'
       )
     })
 
@@ -118,76 +125,11 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(cdButton)
 
       // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'conseildepartemental-conseiller' }
+      expect(signin).toHaveBeenCalledWith(
+        'conseildepartemental-conseiller',
+        setErrorMsg,
+        'redirectUrl'
       )
-    })
-
-    it("n'affiche pas de modale d'onboarding mobile", () => {
-      // Then
-      expect(() =>
-        screen.getByText('Bienvenue sur l’espace mobile du conseiller')
-      ).toThrow()
-    })
-  })
-
-  describe("quand l'utilisateur est sur mobile", () => {
-    let originalInnerWidth: PropertyDescriptor
-    beforeEach(async () => {
-      originalInnerWidth = Object.getOwnPropertyDescriptor(
-        window,
-        'innerWidth'
-      )!
-
-      // Given
-      Object.defineProperty(window, 'innerWidth', {
-        writable: true,
-        configurable: true,
-        value: 599,
-      })
-
-      // When
-      await act(async () => {
-        ;({ container } = render(
-          <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
-            <LoginPassEmploiPage ssoFranceTravailBRSAEstActif={true} />
-          </LoginErrorMessageProvider>
-        ))
-      })
-    })
-
-    afterEach(() => {
-      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
-    })
-
-    it('a11y', async () => {
-      const results = await axe(container)
-      expect(results).toHaveNoViolations()
-    })
-
-    it("affiche une modale d'onboarding", async () => {
-      // Then
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Bienvenue sur l’espace mobile du conseiller',
-        })
-      ).toBeInTheDocument()
-      expect(screen.getByRole('heading', { level: 3 })).toHaveAccessibleName(
-        'Un accès dedié à vos conversations'
-      )
-      expect(
-        screen.getByText(
-          'Retrouvez l’ensemble de vos conversations avec les bénéficiaires de votre portefeuile.'
-        )
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(
-          'À ce jour, seul l’accès à la messagerie est disponible sur l’espace mobile.'
-        )
-      ).toBeInTheDocument()
     })
   })
 })

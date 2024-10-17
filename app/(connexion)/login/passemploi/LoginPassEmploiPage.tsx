@@ -2,9 +2,8 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useSearchParams } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent } from 'react'
 
-import { signin } from 'app/(connexion)/login/layout'
 import LienRetour from 'components/LienRetour'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import LoginButton from 'components/ui/Button/LoginButton'
@@ -12,6 +11,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
 interface LoginProps {
@@ -28,9 +28,13 @@ function LoginPage({
   const [errorMsg, setErrorMsg] = useLoginErrorMessage()
   const searchParams = useSearchParams()
 
-  async function handleSignin(event: FormEvent, provider?: string) {
+  async function handleSignin(event: FormEvent, provider: string) {
     event.preventDefault()
-    await signin(searchParams, setErrorMsg, provider)
+    await signin(
+      provider,
+      setErrorMsg,
+      searchParams.get('redirectUrl') ?? undefined
+    )
   }
 
   return (

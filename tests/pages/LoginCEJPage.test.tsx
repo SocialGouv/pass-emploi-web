@@ -1,17 +1,17 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginCEJPage from 'app/(connexion)/login/cej/LoginCEJPage'
+import { signin } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
+jest.mock('utils/auth/auth', () => ({
+  signin: jest.fn(),
 }))
-jest.mock('')
 
 describe('LoginCEJPage client side', () => {
   let container: HTMLElement
@@ -22,28 +22,23 @@ describe('LoginCEJPage client side', () => {
   })
 
   describe('render', () => {
+    const setErrorMsg = jest.fn()
     beforeEach(async () => {
       ;({ container } = render(
-        <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
+        <LoginErrorMessageProvider state={[undefined, setErrorMsg]}>
           <LoginCEJPage />
         </LoginErrorMessageProvider>
       ))
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
-      expect(results).toHaveNoViolations()
-    })
+      let results: AxeResults
 
-    it('devrait afficher un titre de niveau 1', () => {
-      //GIVEN
-      const headingCEJ = screen.getByRole('heading', {
-        level: 1,
-        name: 'Connexion conseiller',
+      await act(async () => {
+        results = await axe(container)
       })
 
-      //THEN
-      expect(headingCEJ).toBeInTheDocument()
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait avoir deux boutons', () => {
@@ -72,10 +67,10 @@ describe('LoginCEJPage client side', () => {
       await userEvent.click(peButton)
 
       // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'pe-conseiller' }
+      expect(signin).toHaveBeenCalledWith(
+        'pe-conseiller',
+        setErrorMsg,
+        'redirectUrl'
       )
     })
 
@@ -89,76 +84,11 @@ describe('LoginCEJPage client side', () => {
       await userEvent.click(miloButton)
 
       // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: 'similo-conseiller' }
+      expect(signin).toHaveBeenCalledWith(
+        'similo-conseiller',
+        setErrorMsg,
+        'redirectUrl'
       )
-    })
-
-    it("n'affiche pas de modale d'onboarding mobile", () => {
-      // Then
-      expect(() =>
-        screen.getByText('Bienvenue sur l’espace mobile du conseiller')
-      ).toThrow()
-    })
-  })
-
-  describe("quand l'utilisateur est sur mobile", () => {
-    let originalInnerWidth: PropertyDescriptor
-    beforeEach(async () => {
-      originalInnerWidth = Object.getOwnPropertyDescriptor(
-        window,
-        'innerWidth'
-      )!
-
-      // Given
-      Object.defineProperty(window, 'innerWidth', {
-        writable: true,
-        configurable: true,
-        value: 599,
-      })
-
-      // When
-      await act(async () => {
-        ;({ container } = render(
-          <LoginErrorMessageProvider state={[undefined, jest.fn()]}>
-            <LoginCEJPage />
-          </LoginErrorMessageProvider>
-        ))
-      })
-    })
-
-    afterEach(() => {
-      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
-    })
-
-    it('a11y', async () => {
-      const results = await axe(container)
-      expect(results).toHaveNoViolations()
-    })
-
-    it("affiche une modale d'onboarding", async () => {
-      // Then
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Bienvenue sur l’espace mobile du conseiller',
-        })
-      ).toBeInTheDocument()
-      expect(screen.getByRole('heading', { level: 3 })).toHaveAccessibleName(
-        'Un accès dedié à vos conversations'
-      )
-      expect(
-        screen.getByText(
-          'Retrouvez l’ensemble de vos conversations avec les bénéficiaires de votre portefeuile.'
-        )
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(
-          'À ce jour, seul l’accès à la messagerie est disponible sur l’espace mobile.'
-        )
-      ).toBeInTheDocument()
     })
   })
 })

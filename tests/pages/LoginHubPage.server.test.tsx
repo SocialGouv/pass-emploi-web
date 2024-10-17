@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
 import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
-import Login, { metadata } from 'app/(connexion)/login/page'
+import LoginHub, { metadata } from 'app/(connexion)/login/page'
 
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('app/(connexion)/login/LoginHubPage')
@@ -14,7 +14,7 @@ describe('LoginPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue({})
 
     // When
-    const promise = Login({
+    const promise = LoginHub({
       searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
     })
 
@@ -30,7 +30,7 @@ describe('LoginPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await Login({ searchParams: { source: 'notif-mail' } }))
+    render(await LoginHub({ searchParams: { source: 'notif-mail' } }))
 
     // Then
     expect(metadata).toEqual({
