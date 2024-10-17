@@ -48,7 +48,9 @@ export function estBRSA(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }
 
-export function estPassEmploi(conseiller: Conseiller): boolean {
+export function estPassEmploi(
+  conseiller: Pick<Conseiller, 'structure'>
+): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ ||

@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
 import React from 'react'
 
+import LoginCEJPage from 'app/(connexion)/login/cej/LoginCEJPage'
 import {
   LoginSearchParams,
   redirectIfAlreadyConnected,
 } from 'app/(connexion)/login/layout'
-import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
 
 export const metadata: Metadata = {
-  title: 'Sélection de l’espace de connexion',
+  title: "Connexion dans l'espace conseiller CEJ",
 }
 
-export default async function LoginHub({
+export default async function LoginCEJ({
   searchParams,
 }: {
   searchParams?: LoginSearchParams
 }) {
   await redirectIfAlreadyConnected(searchParams)
 
-  return <LoginHubPage />
+  return <LoginCEJPage />
 }

@@ -16,7 +16,7 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
 
     const route = regExps.find((regex) => regex.test(pathname))
     if (route) {
-      return mapRoutesToLabels.get(route) ?? pathOrUrl
+      return `à ${mapRoutesToLabels.get(route) ?? pathOrUrl}`
     }
   }
 
@@ -32,7 +32,7 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
           focusable={false}
           className='w-4 h-4 fill-current mr-3'
         />
-        Retour à {getLabelLienRetour(returnUrlOrPath)}
+        Retour {getLabelLienRetour(returnUrlOrPath)}
       </Link>
     </nav>
   )

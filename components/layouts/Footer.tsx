@@ -9,7 +9,7 @@ import { trackPage } from 'utils/analytics/matomo'
 import { liensFooterCEJ, liensFooterPassEmploi } from 'utils/liensFooter'
 
 type FooterProps = {
-  conseiller: Conseiller | null
+  conseiller: Pick<Conseiller, 'structure'> | null
   aDesBeneficiaires: boolean | null
 }
 
