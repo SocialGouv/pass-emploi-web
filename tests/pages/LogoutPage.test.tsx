@@ -16,26 +16,58 @@ jest.mock('next-auth/react', () => ({
 describe('LogoutPage client side', () => {
   let container: HTMLElement
 
-  beforeEach(() => {
-    // Given
-    ;({ container } = render(<LogoutPage />))
+  describe('content', () => {
+    beforeEach(() => {
+      // Given
+      ;({ container } = render(<LogoutPage estPassEmploi={undefined} />))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('déconnecte de la messagerie', async () => {
+      // Then
+      expect(chatSignOut).toHaveBeenCalledWith()
+    })
+
+    it('déconnecte de la session', async () => {
+      // Then
+      expect(signOut).toHaveBeenCalledWith({
+        callbackUrl: '/login/',
+        redirect: true,
+      })
+    })
   })
 
-  it('a11y', async () => {
-    const results = await axe(container)
-    expect(results).toHaveNoViolations()
+  describe('quand l’utilisateur est CEJ', () => {
+    beforeEach(() => {
+      // Given
+      ;({ container } = render(<LogoutPage estPassEmploi={false} />))
+    })
+
+    it('redirige vers le login CEJ', () => {
+      //Then
+      expect(signOut).toHaveBeenCalledWith({
+        callbackUrl: '/login/cej',
+        redirect: true,
+      })
+    })
   })
 
-  it('déconnecte de la messagerie', async () => {
-    // Then
-    expect(chatSignOut).toHaveBeenCalledWith()
-  })
+  describe('quand l’utilisateur est Pass Emploi', () => {
+    beforeEach(() => {
+      // Given
+      ;({ container } = render(<LogoutPage estPassEmploi={true} />))
+    })
 
-  it('déconnecte de la session', async () => {
-    // Then
-    expect(signOut).toHaveBeenCalledWith({
-      callbackUrl: '/login',
-      redirect: true,
+    it('redirige vers le login Pass Emploi', () => {
+      //Then
+      expect(signOut).toHaveBeenCalledWith({
+        callbackUrl: '/login/passemploi',
+        redirect: true,
+      })
     })
   })
 })

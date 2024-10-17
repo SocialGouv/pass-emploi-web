@@ -74,6 +74,14 @@ export function estUserCD(user: Session.HydratedUser): boolean {
   return user.structure === StructureConseiller.CONSEIL_DEPT
 }
 
+export function estUserPassEmploi(user: Session.HydratedUser): boolean {
+  return (
+    user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    user.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
+    user.structure === StructureConseiller.CONSEIL_DEPT
+  )
+}
+
 export function aEtablissement(conseiller: Conseiller): boolean {
   return estMilo(conseiller)
     ? Boolean(conseiller.structureMilo)

@@ -6,10 +6,15 @@ import { useEffect } from 'react'
 
 import { signOut as chatSignOut } from 'services/messages.service'
 
-function LogoutPage() {
+function LogoutPage({ estPassEmploi }: { estPassEmploi: boolean | undefined }) {
   useEffect(() => {
     chatSignOut().then(() => {
-      signOut({ redirect: true, callbackUrl: '/login' })
+      const callbackUrl = `/login/${estPassEmploi === undefined ? '' : estPassEmploi ? 'passemploi' : 'cej'}`
+
+      signOut({
+        redirect: true,
+        callbackUrl,
+      })
     })
   }, [])
 
