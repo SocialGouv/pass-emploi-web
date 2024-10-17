@@ -7,10 +7,12 @@ import { getSessionServerSide } from 'utils/auth/auth'
 export const metadata: Metadata = { title: 'Déconnexion' }
 
 export default async function Logout() {
+  let callbackUrl = '/login'
   const session = await getSessionServerSide()
-  const estPassEmploi = Boolean(!session || session.user === undefined)
-    ? undefined
-    : estUserPassEmploi(session!.user)
+  if (session) {
+    callbackUrl +=
+      '/' + (estUserPassEmploi(session.user) ? 'passemploi' : 'cej')
+  }
 
-  return <LogoutPage estPassEmploi={estPassEmploi} />
+  return <LogoutPage callbackUrl={callbackUrl} />
 }
