@@ -2,6 +2,7 @@
 
 import {
   ReadonlyURLSearchParams,
+  redirect,
   usePathname,
   useSearchParams,
 } from 'next/navigation'
@@ -9,10 +10,11 @@ import { signIn } from 'next-auth/react'
 import React, { ReactNode, useEffect, useState } from 'react'
 
 import { MODAL_ROOT_ID } from 'components/ids'
-import Footer from 'components/layouts/Footer'
 import OnboardingMobileModal from 'components/onboarding/OnboardingMobileModal'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { trackPage } from 'utils/analytics/matomo'
+import { getSessionServerSide } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
 export default function LayoutLoginPage({ children }: { children: ReactNode }) {
@@ -27,6 +29,23 @@ export default function LayoutLoginPage({ children }: { children: ReactNode }) {
   const pageEstHubLogin = pathname === '/login'
   const pageEstLoginCEJ = pathname.includes('cej')
 
+  const labelLienAccessibilite = 'Niveau d’accessibilité: non conforme'
+  const hrefLienAccessibilite = `https://doc.pass-emploi.beta.gouv.fr/legal/web_${pageEstLoginCEJ ? '' : 'pass_emploi_'}accessibilite/`
+
+  function trackAccessibilitePage() {
+    trackPage({
+      customTitle: labelLienAccessibilite,
+      structure: pageEstLoginCEJ
+        ? StructureConseiller.MILO
+        : StructureConseiller.POLE_EMPLOI_BRSA,
+      aDesBeneficiaires: null,
+    })
+  }
+
+  useEffect(() => {
+    redirectIfAlreadyConnected(searchParams)
+  }, [])
+
   useEffect(() => {
     const provider = searchParams.get('provider')
     if (provider) signin(searchParams, setErrorMsg, `${provider}-conseiller`)
@@ -34,7 +53,6 @@ export default function LayoutLoginPage({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (window.innerWidth < MIN_DESKTOP_WIDTH) {
-      console.log('>>>> POPOPOPOPO')
       setAfficherOnboarding(true)
     }
 
@@ -52,14 +70,18 @@ export default function LayoutLoginPage({ children }: { children: ReactNode }) {
           {children}
 
           {!pageEstHubLogin && (
-            <Footer
-              conseiller={{
-                structure: pageEstLoginCEJ
-                  ? StructureConseiller.MILO
-                  : StructureConseiller.POLE_EMPLOI_BRSA,
-              }}
-              aDesBeneficiaires={null}
-            />
+            <footer
+              role='contentinfo'
+              className='flex justify-center py-4 px-0 border-solid border-primary_lighten border-t-2'
+            >
+              <span className='text-primary hover:text-primary_darken'>
+                <ExternalLink
+                  href={hrefLienAccessibilite}
+                  label={labelLienAccessibilite}
+                  onClick={trackAccessibilitePage}
+                />
+              </span>
+            </footer>
           )}
         </div>
       </LoginErrorMessageProvider>
@@ -95,4 +117,19 @@ function getIsFromEmail(searchParams: ReadonlyURLSearchParams): boolean {
     searchParams.get('source') ||
       searchParams.get('redirectUrl')?.includes('notif-mail')
   )
+}
+
+async function redirectIfAlreadyConnected(
+  searchParams?: ReadonlyURLSearchParams
+): Promise<void> {
+  const session = await getSessionServerSide()
+
+  const querySource =
+    searchParams?.get('source') && `?source=${searchParams?.get('source')}`
+
+  if (session) {
+    const redirectUrl: string =
+      searchParams?.get('redirectUrl') ?? `/${querySource || ''}`
+    redirect(redirectUrl)
+  }
 }

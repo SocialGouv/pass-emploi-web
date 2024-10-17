@@ -29,10 +29,10 @@ function LoginCEJPage() {
         {errorMsg && <FailureAlert label={errorMsg} />}
 
         <div className='flex flex-col px-6 py-12 bg-white rounded-l shadow-m'>
-          <div className='self-end'>
-            <LienRetour returnUrlOrPath='/login' />
-          </div>
-          <header role='banner'>
+          <header role='banner' className='flex flex-col'>
+            <div className='self-end'>
+              <LienRetour returnUrlOrPath='/login' />
+            </div>
             <IllustrationComponent
               name={IllustrationName.LogoCEJ}
               className='m-auto h-[90px] fill-primary_darken'

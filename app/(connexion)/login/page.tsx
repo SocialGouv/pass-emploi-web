@@ -1,39 +1,12 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import React from 'react'
 
 import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
-import { getSessionServerSide } from 'utils/auth/auth'
-
-type LoginSearchParams = Partial<{
-  source: string
-  redirectUrl: string
-}>
 
 export const metadata: Metadata = {
   title: 'Sélection de l’espace de connexion',
 }
 
-export default async function Login({
-  searchParams,
-}: {
-  searchParams?: LoginSearchParams
-}) {
-  await redirectIfAlreadyConnected(searchParams)
-
+export default async function Login() {
   return <LoginHubPage />
-}
-
-async function redirectIfAlreadyConnected(
-  searchParams?: LoginSearchParams
-): Promise<void> {
-  const session = await getSessionServerSide()
-
-  const querySource = searchParams?.source && `?source=${searchParams.source}`
-
-  if (session) {
-    const redirectUrl: string =
-      searchParams?.redirectUrl ?? `/${querySource || ''}`
-    redirect(redirectUrl)
-  }
 }

@@ -39,10 +39,10 @@ function LoginPage({
         {errorMsg && <FailureAlert label={errorMsg} />}
 
         <div className='flex flex-col px-6 py-12 bg-white rounded-l shadow-m'>
-          <div className='self-end'>
-            <LienRetour returnUrlOrPath='/login' />
-          </div>
-          <header role='banner'>
+          <header role='banner' className='flex flex-col'>
+            <div className='self-end'>
+              <LienRetour returnUrlOrPath='/login' />
+            </div>
             <h1 className='text-center mt-4 mb-6'>
               <IllustrationComponent
                 name={IllustrationName.LogoPassemploi}
