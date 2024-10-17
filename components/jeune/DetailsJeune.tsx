@@ -28,8 +28,8 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 interface DetailsJeuneProps {
   jeune: DetailBeneficiaire
   conseiller: Conseiller
-  demarches: Demarche[] | undefined
-  indicateursSemaine: IndicateursSemaine | undefined
+  demarches?: { data: Demarche[]; isStale: boolean } | null
+  indicateursSemaine?: IndicateursSemaine
 }
 
 export default function DetailsJeune({
@@ -101,7 +101,7 @@ export default function DetailsJeune({
           <ResumeDemarchesBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
-            demarches={demarches}
+            demarches={demarches.data}
           />
         )}
 

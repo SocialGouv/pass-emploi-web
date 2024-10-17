@@ -7,22 +7,24 @@ import { uneAction } from 'fixtures/action'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
+  uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDOffres } from 'fixtures/favoris'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
+  getDemarchesBeneficiaire,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres } from 'services/favoris.service'
+import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -80,6 +82,13 @@ describe('FicheBeneficiairePage server side', () => {
       metadonnees: { nombreTotal: 14, nombrePages: 2 },
     })
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
+    ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(
+      uneListeDeRecherches()
+    )
+    ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
+      data: uneListeDeDemarches(),
+      isStale: false,
+    })
     ;(getConseillerServerSide as jest.Mock).mockReturnValue(
       unConseiller({
         id: 'id-conseiller',
@@ -87,16 +96,14 @@ describe('FicheBeneficiairePage server side', () => {
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
     )
+    ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
+      accessToken: 'accessToken',
+      user: { id: 'id-conseiller', structure: 'MILO' },
+    })
   })
 
   describe('Quand la session est valide', () => {
     beforeEach(async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        accessToken: 'accessToken',
-        user: { id: 'id-conseiller', structure: 'MILO' },
-      })
-
       // When
       render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
     })
@@ -106,16 +113,14 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
+          estMilo: true,
           beneficiaire: unDetailBeneficiaire({
             structureMilo: { id: 'id-test' },
           }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
-          demarches: expect.objectContaining([]),
           metadonneesFavoris: expect.objectContaining({}),
-          offresFT: expect.arrayContaining([]),
-          recherchesFT: expect.arrayContaining([]),
-          onglet: 'ACTIONS',
+          ongletInitial: 'actions',
           lectureSeule: false,
           erreurSessions: false,
         },
@@ -126,12 +131,12 @@ describe('FicheBeneficiairePage server side', () => {
     it('récupère les rendez-vous à venir du jeune', async () => {
       // Then
       expect(getRendezVousJeune).toHaveBeenCalledWith(
-        'id-jeune',
+        'beneficiaire-1',
         'FUTURS',
         'accessToken'
       )
       expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
-        'id-jeune',
+        'beneficiaire-1',
         'accessToken',
         now.startOf('day')
       )
@@ -156,7 +161,7 @@ describe('FicheBeneficiairePage server side', () => {
     it('récupère la première page des actions du jeune', async () => {
       // Then
       expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'id-jeune',
+        'beneficiaire-1',
         1,
         'accessToken'
       )
@@ -180,12 +185,6 @@ describe('FicheBeneficiairePage server side', () => {
 
   describe('Quand on demande une page d’actions spécifique', () => {
     it('récupère la page demandée des actions du jeune', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        accessToken: 'accessToken',
-        user: { id: 'id-conseiller', structure: 'MILO' },
-      })
-
       // When
       render(
         await FicheBeneficiaire({
@@ -196,7 +195,7 @@ describe('FicheBeneficiairePage server side', () => {
 
       // Then
       expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'id-jeune',
+        'beneficiaire-1',
         3,
         'accessToken'
       )
@@ -211,39 +210,35 @@ describe('FicheBeneficiairePage server side', () => {
     })
   })
 
-  describe('Quand on vient du détail d’une action', () => {
+  describe('Quand on veut accéder à un onglet spécifique', () => {
     it('récupère l’onglet sur lequel ouvrir la page', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        accessToken: 'accessToken',
-        user: { structure: 'MILO' },
-      })
-
       // When
       render(
         await FicheBeneficiaire({
           params: { idJeune: 'id-jeune' },
-          searchParams: { onglet: 'actions' },
+          searchParams: { onglet: 'rdvs' },
         })
       )
 
       // Then
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ onglet: 'ACTIONS' }),
+        expect.objectContaining({ ongletInitial: 'rdvs' }),
         {}
       )
     })
   })
 
-  describe('Quand le conseiller est France Travail', () => {
+  describe('Quand le conseiller n’est pas Milo', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
+        accessToken: 'accessToken',
         user: { structure: 'POLE_EMPLOI' },
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
+          structure: StructureConseiller.POLE_EMPLOI,
         })
       )
 
@@ -256,7 +251,7 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getRendezVousJeune).not.toHaveBeenCalled()
       expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ rdvs: [] }),
+        expect.not.objectContaining({ rdvs: expect.arrayContaining([]) }),
         {}
       )
     })
@@ -265,8 +260,69 @@ describe('FicheBeneficiairePage server side', () => {
       // Then
       expect(getActionsBeneficiaireServerSide).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.not.objectContaining({
+          actionsInitiales: expect.objectContaining({
+            actions: expect.arrayContaining([]),
+          }),
+        }),
+        {}
+      )
+    })
+
+    it('récupère les offres favorites', async () => {
+      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({
-          actionsInitiales: expect.objectContaining({ actions: [] }),
+          favorisOffres: uneListeDOffres(),
+        }),
+        {}
+      )
+    })
+
+    it('récupère les recherches favorites', async () => {
+      expect(getRecherchesSauvegardees).toHaveBeenCalledWith(
+        'beneficiaire-1',
+        'accessToken'
+      )
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          favorisRecherches: uneListeDeRecherches(),
+        }),
+        {}
+      )
+    })
+  })
+
+  describe('Quand le conseiller est Conseil Départemental', () => {
+    it('récupère les démarches', async () => {
+      // Given
+      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
+        accessToken: 'accessToken',
+        user: { structure: 'CONSEIL_DEPT' },
+      })
+      ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+        unConseiller({
+          id: 'id-conseiller',
+          structure: StructureConseiller.CONSEIL_DEPT,
+        })
+      )
+
+      // When
+      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
+
+      // Then
+      expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
+        'beneficiaire-1',
+        DateTime.now().minus({ day: 30 }).startOf('day'),
+        'id-conseiller',
+        'accessToken'
+      )
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          demarches: {
+            data: uneListeDeDemarches(),
+            isStale: false,
+          },
         }),
         {}
       )
@@ -276,10 +332,9 @@ describe('FicheBeneficiairePage server side', () => {
   describe('Quand le conseiller est observateur', () => {
     it('prépare la page en lecture seule', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        accessToken: 'accessToken',
-        user: { id: 'id-observateur', structure: 'MILO' },
-      })
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+        unConseiller({ id: 'id-observateur' })
+      )
 
       // When
       render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))

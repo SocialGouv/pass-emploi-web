@@ -4,17 +4,23 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React from 'react'
 
 import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Demarche } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { toLongMonthDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type DetailActionProps = {
+type DetailDemarcheProps = {
   demarche: Demarche
   lectureSeule: boolean
+  isStale: boolean
 }
 
-function DetailDemarchePage({ demarche, lectureSeule }: DetailActionProps) {
+function DetailDemarchePage({
+  demarche,
+  lectureSeule,
+  isStale,
+}: DetailDemarcheProps) {
   const [portefeuille] = usePortefeuille()
 
   useMatomo(
@@ -23,6 +29,17 @@ function DetailDemarchePage({ demarche, lectureSeule }: DetailActionProps) {
   )
   return (
     <>
+      {isStale && (
+        <div className='mb-6'>
+          <InformationMessage label='Cette démarche n’est peut-être pas à jour.'>
+            <p className='pl-8'>
+              Vous pouvez demander au bénéficiaire de se reconnecter à son
+              application puis rafraîchir votre page.
+            </p>
+          </InformationMessage>
+        </div>
+      )}
+
       <div className='border-b-2 border-solid border-primary_lighten mb-5 pb-5'>
         <h2 className='text-m-bold text-grey_800 mb-6'>Statut</h2>
         <span className='text-base-bold'>

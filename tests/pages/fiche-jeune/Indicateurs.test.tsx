@@ -19,7 +19,7 @@ jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
-  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
+  describe("quand l'utilisateur est un conseiller Milo", () => {
     beforeEach(async () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
@@ -33,12 +33,13 @@ describe('Indicateurs dans la fiche jeune', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
+            estMilo={true}
             beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
             metadonneesFavoris={uneMetadonneeFavoris()}
-            onglet='AGENDA'
+            ongletInitial='agenda'
             lectureSeule={false}
           />,
           {}
