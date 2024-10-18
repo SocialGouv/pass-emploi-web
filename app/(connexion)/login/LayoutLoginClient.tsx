@@ -69,6 +69,7 @@ export default function LayoutLoginClient({
                   : StructureConseiller.POLE_EMPLOI_BRSA,
               }}
               aDesBeneficiaires={null}
+              planDuSiteEstCache={true}
             />
           )}
         </div>
