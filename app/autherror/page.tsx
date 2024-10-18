@@ -64,6 +64,11 @@ export default function AuthError({
           }
           erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${contacterConseiller}.`
           searchParams.reason = undefined
+        } else if (
+          searchParams?.reason === 'VerificationConseillerDepartemental'
+        ) {
+          erreur = `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`
+          searchParams.reason = undefined
         } else {
           erreur = `Une erreur est survenue, veuillez recharger cette page.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
           codeErreur = searchParams?.reason
@@ -84,6 +89,7 @@ export default function AuthError({
               )
             case StructureConseiller.POLE_EMPLOI_BRSA:
             case StructureConseiller.POLE_EMPLOI_AIJ:
+            case StructureConseiller.CONSEIL_DEPT:
               return (
                 (process.env
                   .NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string) +
