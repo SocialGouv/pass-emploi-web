@@ -46,12 +46,7 @@ export default function ResultatsRechercheOffre({
       {offres && offres.length > 0 && (
         <>
           <ResultTitle total={nbTotal} />
-          <ul
-            aria-describedby='result-title'
-            ref={ulRef}
-            tabIndex={-1}
-            className='focus:outline-warning focus:outline-double focus:outline-8'
-          >
+          <ul aria-describedby='result-title' ref={ulRef} tabIndex={-1}>
             {offres.map((offre) => (
               <li key={`${offre.type}-${offre.id}`} className='mb-4'>
                 {(offre.type === TypeOffre.EMPLOI ||
