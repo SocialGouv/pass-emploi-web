@@ -87,16 +87,16 @@ export default function RechercheOffresEmploiPrincipale({
 
       {isSearchByIdOffre && (
         <>
-          <Label
-            htmlFor='id-offre'
-            inputRequired={isSearchByIdOffre ? true : false}
-          >
-            Numéro d’offre
+          <Label htmlFor='id-offre' inputRequired={isSearchByIdOffre}>
+            {{
+              main: 'Numéro d’offre',
+              helpText: 'format : 123ABCD ou 12345687',
+            }}
           </Label>
           <Input
             type='text'
             id='id-offre'
-            required={isSearchByIdOffre ? true : false}
+            required={isSearchByIdOffre}
             value={query.idOffre ?? ''}
             onChange={updateIdOffre}
           />
