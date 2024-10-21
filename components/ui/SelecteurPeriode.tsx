@@ -80,9 +80,9 @@ export function SelecteurPeriode({
   }, [indexPeriodeAffichee])
 
   return (
-    <div className='grid grid-rows-[repeat(2,auto)] grid-cols-[repeat(2,auto)] gap-x-6 w-fit'>
+    <div className='flex flex-wrap items-end gap-6 w-fit'>
       <p
-        className='grid grid-rows-subgrid grid-cols-1 row-span-2 text-base-medium'
+        className='flex flex-col text-base-medium'
         aria-live='polite'
         aria-atomic={true}
       >
