@@ -1,8 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
@@ -30,7 +29,12 @@ describe('LoginHubPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
