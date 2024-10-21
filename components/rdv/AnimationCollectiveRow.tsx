@@ -86,7 +86,7 @@ export function AnimationCollectiveRow({
         {animationCollective.sousTitre && (
           <div>{animationCollective.sousTitre}</div>
         )}
-        <div className='mt-1 flex gap-2'>
+        <div className='mt-1 flex gap-2 flex-wrap'>
           <TagType {...animationCollective} isSmallTag={true} />
           <Visiblite
             {...animationCollective}
