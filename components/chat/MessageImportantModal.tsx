@@ -160,7 +160,7 @@ export default function MessageImportantModal({
           <form onSubmit={modifierMessageImportant}>
             <div className='mt-4 flex flex-col justify-center'>
               <div className='flex gap-2 mb-4 items-end'>
-                <div className='w-1/2'>
+                <div className='w-full'>
                   <Label htmlFor='date-debut'>
                     {{ main: 'Date de début', helpText: 'format : jj/mm/aaaa' }}
                   </Label>
@@ -180,7 +180,7 @@ export default function MessageImportantModal({
                   />
                 </div>
 
-                <div className='w-1/2'>
+                <div className='w-full'>
                   <Label htmlFor='date-fin'>
                     {{ main: 'Date de fin', helpText: 'format : jj/mm/aaaa' }}
                   </Label>
