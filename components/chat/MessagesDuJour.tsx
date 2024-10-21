@@ -94,15 +94,13 @@ export default function MessagesDuJour({
       return [...messages]
     })
     if (idMessageToFocus) {
-      const messageToFocus = document.querySelector<HTMLLIElement>(
-        `li#message-${idMessageToFocus}`
+      const messageToFocus = document.getElementById(
+        `message-${idMessageToFocus}`
       )!
       messageToFocus.setAttribute('tabIndex', '-1')
       messageToFocus.focus()
     } else {
-      document
-        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')
-        ?.focus()
+      document.getElementById('chat-bouton-retour')?.focus()
     }
   }
 
@@ -117,8 +115,8 @@ export default function MessagesDuJour({
   }, [chatCredentials])
 
   useEffect(() => {
-    const messageToFocus = document.querySelector<HTMLLIElement>(
-      `li#message-${messageSelectionne.id}`
+    const messageToFocus = document.getElementById(
+      `message-${messageSelectionne.id}`
     )!
     messageToFocus.setAttribute('tabIndex', '-1')
     messageToFocus.focus()

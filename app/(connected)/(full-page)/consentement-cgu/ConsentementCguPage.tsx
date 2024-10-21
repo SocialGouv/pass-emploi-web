@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
-import HeaderCGU from 'components/layouts/HeaderCGU'
 import Checkbox from 'components/offres/Checkbox'
 import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
@@ -16,6 +15,12 @@ import { estPassEmploi } from 'interfaces/conseiller'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
+const HeaderCGUConseillerCEJ = dynamic(
+  () => import('components/HeaderCGUConseillerCEJ')
+)
+const HeaderCGUConseillerPassEmploi = dynamic(
+  () => import('components/HeaderCGUConseillerPassEmploi')
+)
 const ContenuCGUConseillerCEJ = dynamic(
   () => import('components/ContenuCGUConseillerCEJ')
 )
@@ -58,7 +63,8 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
 
   return (
     <>
-      <HeaderCGU conseiller={conseiller} />
+      {estPassEmploi(conseiller) && <HeaderCGUConseillerPassEmploi />}
+      {!estPassEmploi(conseiller) && <HeaderCGUConseillerCEJ />}
 
       <main role='main'>
         {estPassEmploi(conseiller) && <ContenuCGUConseillerPassEmploi />}

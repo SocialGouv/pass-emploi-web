@@ -18,7 +18,7 @@ describe('LogoutPage client side', () => {
 
   beforeEach(() => {
     // Given
-    ;({ container } = render(<LogoutPage />))
+    ;({ container } = render(<LogoutPage callbackUrl={'/login'} />))
   })
 
   it('a11y', async () => {

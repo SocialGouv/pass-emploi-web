@@ -37,14 +37,18 @@ export default async function DetailDemarche({
 }: {
   params: DetailDemarcheParams
 }) {
-  const { demarche, lectureSeule } = await getDemarcheProps(params)
+  const { demarche, lectureSeule, isStale } = await getDemarcheProps(params)
 
   return (
     <>
       <PageFilArianePortal />
       <PageHeaderPortal header='Détails de la démarche' />
 
-      <DetailDemarchePage demarche={demarche} lectureSeule={lectureSeule} />
+      <DetailDemarchePage
+        demarche={demarche}
+        lectureSeule={lectureSeule}
+        isStale={isStale}
+      />
     </>
   )
 }
@@ -61,15 +65,14 @@ async function getDemarcheProps({ idJeune, idDemarche }: DetailDemarcheParams) {
     user.id,
     accessToken
   )
-  if (!demarches) notFound()
-
-  const demarche = demarches.find(({ id }) => id === idDemarche)
+  const demarche = demarches?.data.find(({ id }) => id === idDemarche)
   if (!demarche) notFound()
 
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
+  const isStale = demarches!.isStale
 
-  return { beneficiaire, demarche, lectureSeule }
+  return { beneficiaire, demarche, lectureSeule, isStale }
 }

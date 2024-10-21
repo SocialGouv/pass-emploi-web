@@ -100,11 +100,12 @@ export function Conversation({
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
-  const headerChatRef = useRef<HTMLDivElement>(null)
+  const headerChatRef = useRef<{ focusRetour: Function }>(null)
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const addFileRef = useRef<HTMLInputElement | null>(null)
   const deleteFileRef = useRef<HTMLButtonElement | null>(null)
+  const pjErrorRef = useRef<HTMLDivElement | null>(null)
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -244,8 +245,8 @@ export function Conversation({
     setMessageAModifier(undefined)
     resetTextbox()
 
-    const messageToFocus = document.querySelector<HTMLLIElement>(
-      `li#message-${messageAModifier.id}`
+    const messageToFocus = document.getElementById(
+      `message-${messageAModifier.id}`
     )!
     messageToFocus.setAttribute('tabIndex', '-1')
     messageToFocus.focus()
@@ -263,15 +264,13 @@ export function Conversation({
     )
 
     if (idMessageToFocus) {
-      const messageToFocus = document.querySelector<HTMLLIElement>(
-        `li#message-${idMessageToFocus}`
+      const messageToFocus = document.getElementById(
+        `message-${idMessageToFocus}`
       )!
       messageToFocus.setAttribute('tabIndex', '-1')
       messageToFocus.focus()
     } else {
-      document
-        .querySelector<HTMLButtonElement>('button#chat-bouton-retour')!
-        .focus()
+      document.getElementById('chat-bouton-retour')!.focus()
     }
 
     trackEvent({
@@ -317,7 +316,7 @@ export function Conversation({
 
   useEffect(() => {
     if (!messagesByDay?.length) {
-      headerChatRef.current!.querySelector<HTMLButtonElement>('button')!.focus()
+      headerChatRef.current!.focusRetour()
       return
     }
 
@@ -337,10 +336,8 @@ export function Conversation({
         messagesByDay
       )
       const toFocus = idMessageToFocus
-        ? document.querySelector<HTMLLIElement>(
-            `li#message-${idMessageToFocus}`
-          )!
-        : document.querySelector<HTMLParagraphElement>(`p#${idNoMoreMessage}`)!
+        ? document.getElementById(`message-${idMessageToFocus}`)!
+        : document.getElementById(idNoMoreMessage)!
       toFocus.setAttribute('tabIndex', '-1')
       toFocus.focus()
     }
@@ -366,6 +363,10 @@ export function Conversation({
   useEffect(() => {
     isFirstRender.current = false
   }, [])
+
+  useEffect(() => {
+    if (uploadedFileError) pjErrorRef.current!.focus()
+  }, [uploadedFileError])
 
   return (
     <>
@@ -525,7 +526,7 @@ export function Conversation({
             className='p-3'
           >
             {uploadedFileError && (
-              <InputError id='piece-jointe--error' ref={(e) => e?.focus()}>
+              <InputError id='piece-jointe--error' ref={pjErrorRef}>
                 {uploadedFileError}
               </InputError>
             )}

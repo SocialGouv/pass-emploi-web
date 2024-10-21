@@ -35,7 +35,7 @@ export default function LayoutPageMessagerie({
       <div className='flex flex-col min-h-0 w-[100vw] layout_s:w-[70vw] layout_l:w-[61vw]'>
         {children}
         <Footer
-          conseiller={conseiller}
+          conseiller={{ structure: conseiller.structure }}
           aDesBeneficiaires={portefeuille.length > 0}
         />
       </div>

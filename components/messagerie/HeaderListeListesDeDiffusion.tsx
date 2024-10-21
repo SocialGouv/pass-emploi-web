@@ -1,17 +1,29 @@
-import React from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-type ListeListesDeDiffusionProps = {
+type HeaderListeListesDeDiffusionProps = {
   onBack: () => void
 }
-export default function HeaderListeListesDeDiffusion({
-  onBack,
-}: ListeListesDeDiffusionProps) {
+function HeaderListeListesDeDiffusion(
+  { onBack }: HeaderListeListesDeDiffusionProps,
+  ref: ForwardedRef<{ focusRetour: Function }>
+) {
+  const retourRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focusRetour: () => retourRef.current!.focus(),
+  }))
+
   return (
     <div className=' items-center mx-4 my-6 short:hidden'>
       <div className='pb-3'>
         <button
+          ref={retourRef}
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
           aria-label={'Retour sur ma messagerie'}
           onClick={onBack}
@@ -31,3 +43,4 @@ export default function HeaderListeListesDeDiffusion({
     </div>
   )
 }
+export default forwardRef(HeaderListeListesDeDiffusion)

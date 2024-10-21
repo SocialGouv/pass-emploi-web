@@ -64,9 +64,10 @@ describe('DetailDemarchePage server side', () => {
     it('récupère les info de la démarche', async () => {
       const demarche = uneDemarche()
       const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
-      ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue(
-        uneListeDeDemarches()
-      )
+      ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
+        data: uneListeDeDemarches(),
+        isState: false,
+      })
       const beneficiaire = unDetailBeneficiaire()
       ;(getJeuneDetails as jest.Mock).mockResolvedValue(beneficiaire)
 
@@ -95,10 +96,35 @@ describe('DetailDemarchePage server side', () => {
     })
 
     describe("quand la démarche n'existe pas", () => {
+      // Given
+      ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
+        data: uneListeDeDemarches(),
+        isState: false,
+      })
+
       it('renvoie une 404', async () => {
         // When
         const promise = DetailDemarche({
-          params: { idJeune: 'id-jeune', idDemarche: 'id-demarche-err' },
+          params: {
+            idJeune: 'id-jeune',
+            idDemarche: 'id-demarche-inexistante',
+          },
+        })
+
+        // Then
+        await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
+        expect(notFound).toHaveBeenCalledWith()
+      })
+    })
+
+    describe('quand il est impossible de récupérer les démarches', () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue(null)
+
+        // When
+        const promise = DetailDemarche({
+          params: { idJeune: 'id-jeune', idDemarche: 'id-demarche' },
         })
 
         // Then

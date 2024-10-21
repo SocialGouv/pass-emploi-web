@@ -41,7 +41,7 @@ export default function FailureAlert({
           </button>
         )}
       </div>
-      {sub && <>{sub}</>}
+      {sub}
     </div>
   )
 }

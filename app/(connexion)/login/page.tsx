@@ -1,72 +1,22 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import React from 'react'
 
-import LoginPage from 'app/(connexion)/login/LoginPage'
-import Footer from 'components/layouts/Footer'
-import { getSessionServerSide } from 'utils/auth/auth'
-
-type LoginSearchParams = Partial<{
-  source: string
-  redirectUrl: string
-}>
+import {
+  LoginSearchParams,
+  redirectIfAlreadyConnected,
+} from 'app/(connexion)/login/layout'
+import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
 
 export const metadata: Metadata = {
-  title: "Connexion dans l'espace conseiller CEJ",
+  title: 'Sélection de l’espace de connexion',
 }
 
-export default async function Login({
+export default async function LoginHub({
   searchParams,
 }: {
   searchParams?: LoginSearchParams
 }) {
   await redirectIfAlreadyConnected(searchParams)
-  const isFromEmail = getIsFromEmail(searchParams)
 
-  return (
-    <div className='flex flex-col justify-center h-screen w-screen overflow-y-auto'>
-      <div className='grow flex flex-col justify-center bg-primary_lighten'>
-        <header role='banner'>
-          <h1 className='text-xl-bold text-primary_darken text-center mt-[48px] mb-[24px]'>
-            Connectez-vous à l&apos;espace conseiller
-          </h1>
-        </header>
-
-        <LoginPage
-          ssoFranceTravailBRSAEstActif={
-            process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true'
-          }
-          ssoFranceTravailAIJEstActif={
-            process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true'
-          }
-          ssoConseillerDeptEstActif={
-            process.env.NEXT_PUBLIC_ENABLE_CONSEILLER_DEPT_SSO === 'true'
-          }
-          isFromEmail={isFromEmail}
-        />
-      </div>
-
-      <Footer conseiller={null} aDesBeneficiaires={null} />
-    </div>
-  )
-}
-
-async function redirectIfAlreadyConnected(
-  searchParams?: LoginSearchParams
-): Promise<void> {
-  const session = await getSessionServerSide()
-
-  const querySource = searchParams?.source && `?source=${searchParams.source}`
-
-  if (session) {
-    const redirectUrl: string =
-      searchParams?.redirectUrl ?? `/${querySource || ''}`
-    redirect(redirectUrl)
-  }
-}
-
-function getIsFromEmail(searchParams?: LoginSearchParams): boolean {
-  return Boolean(
-    searchParams?.source || searchParams?.redirectUrl?.includes('notif-mail')
-  )
+  return <LoginHubPage />
 }

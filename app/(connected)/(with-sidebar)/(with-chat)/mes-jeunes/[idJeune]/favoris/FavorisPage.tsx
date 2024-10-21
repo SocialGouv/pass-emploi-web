@@ -3,8 +3,8 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useState } from 'react'
 
-import { OngletOffres } from 'components/favoris/offres/OngletOffres'
-import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
+import TableauOffres from 'components/favoris/offres/TableauOffres'
+import TableauRecherches from 'components/favoris/recherches/TableauRecherches'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
@@ -82,7 +82,7 @@ function FavorisPage({
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <OngletOffres offres={offres} />
+          <TableauOffres offres={offres} />
         </div>
       )}
       {currentTab === OngletFavoris.RECHERCHES && (
@@ -93,7 +93,7 @@ function FavorisPage({
           id='liste-recherches'
           className='mt-8 pb-8'
         >
-          <OngletRecherches recherches={recherches} />
+          <TableauRecherches recherches={recherches} />
         </div>
       )}
     </>

@@ -83,11 +83,12 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
+        estMilo={true}
         beneficiaire={unDetailBeneficiaire({ situations: situations })}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
-        onglet='AGENDA'
+        ongletInitial='agenda'
         lectureSeule={false}
       />,
       {

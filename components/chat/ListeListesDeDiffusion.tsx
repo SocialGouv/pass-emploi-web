@@ -1,4 +1,10 @@
-import React, { useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  ReactElement,
+  useImperativeHandle,
+  useState,
+} from 'react'
 
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
@@ -16,12 +22,18 @@ type ListeListesDeDiffusionProps = {
   onBack?: () => void
   messagerieFullScreen?: boolean
 }
-export default function ListeListesDeDiffusion({
-  listesDeDiffusion,
-  onAfficherListe,
-  onBack,
-  messagerieFullScreen,
-}: ListeListesDeDiffusionProps) {
+function ListeListesDeDiffusion(
+  {
+    listesDeDiffusion,
+    onAfficherListe,
+    onBack,
+    messagerieFullScreen,
+  }: ListeListesDeDiffusionProps,
+  ref: ForwardedRef<{ focusListe: (id: string) => void }>
+) {
+  useImperativeHandle(ref, () => ({ focusListe: setIdListeAFocus }))
+  const [idListeAFocus, setIdListeAFocus] = useState<string | undefined>()
+
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
 
@@ -34,6 +46,7 @@ export default function ListeListesDeDiffusion({
       {!messagerieFullScreen && (
         <>
           <HeaderChat
+            ref={(e) => e?.focusRetour()}
             titre={'Mes listes de diffusion'}
             labelRetour={'Retour sur ma messagerie'}
             onBack={onBack!}
@@ -98,6 +111,11 @@ export default function ListeListesDeDiffusion({
                     className='bg-white rounded-base mb-2 last:mb-0'
                   >
                     <ListeDeDiffusionTile
+                      ref={
+                        liste.id === idListeAFocus
+                          ? (e) => e?.focus()
+                          : undefined
+                      }
                       liste={liste}
                       onAfficherListe={onAfficherListe}
                     />
@@ -136,14 +154,16 @@ export default function ListeListesDeDiffusion({
     </>
   )
 }
+export default forwardRef(ListeListesDeDiffusion)
 
-function ListeDeDiffusionTile({
-  liste,
-  onAfficherListe,
-}: {
+type ListeDeDiffusionTileProps = {
   liste: ListeDeDiffusion
   onAfficherListe: (liste: ListeDeDiffusion) => void
-}): JSX.Element {
+}
+const ListeDeDiffusionTile = forwardRef<
+  HTMLButtonElement,
+  ListeDeDiffusionTileProps
+>(({ liste, onAfficherListe }: ListeDeDiffusionTileProps, ref) => {
   const aBeneficiairesReaffectes = liste.beneficiaires.some(
     ({ estDansLePortefeuille }) => !estDansLePortefeuille
   )
@@ -152,6 +172,7 @@ function ListeDeDiffusionTile({
 
   return (
     <button
+      ref={ref}
       onClick={() => onAfficherListe(liste)}
       className='w-full p-3 flex'
       aria-label={
@@ -192,4 +213,5 @@ function ListeDeDiffusionTile({
       />
     </button>
   )
-}
+})
+ListeDeDiffusionTile.displayName = 'ListeDeDiffusionTile'

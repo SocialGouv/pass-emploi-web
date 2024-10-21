@@ -21,6 +21,9 @@ import IllustrationSend from 'assets/images/illustration-send-grey.svg'
 import IllustrationSendWhite from 'assets/images/illustration-send-white.svg'
 import IllustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
 import IllustrationLogoPassemploi from 'assets/images/logo_pass_emploi.svg'
+import IllustrationLogoCD from 'assets/logo-cd.svg'
+import IllustrationLogoFT from 'assets/logo-ft.svg'
+import IllustrationLogoMilo from 'assets/logo-milo.svg'
 
 export enum IllustrationName {
   ArrowForward = 'ArrowForward',
@@ -36,6 +39,9 @@ export enum IllustrationName {
   Info = 'Info',
   LogoCEJ = 'LogoCEJ',
   LogoPassemploi = 'LogoPassemploi',
+  LogoCD = 'LogoCD',
+  LogoFT = 'LogoFT',
+  LogoMilo = 'LogoMilo',
   Maintenance = 'Maintenance',
   Messagerie = 'Messagerie',
   People = 'People',
@@ -59,6 +65,9 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.Forum]: IllustrationForum,
   [IllustrationName.Info]: IllustrationInfo,
   [IllustrationName.LogoCEJ]: IllustrationLogoCEJ,
+  [IllustrationName.LogoMilo]: IllustrationLogoMilo,
+  [IllustrationName.LogoCD]: IllustrationLogoCD,
+  [IllustrationName.LogoFT]: IllustrationLogoFT,
   [IllustrationName.LogoPassemploi]: IllustrationLogoPassemploi,
   [IllustrationName.Maintenance]: IllustrationMaintenance,
   [IllustrationName.Messagerie]: IllustrationMessagerie,

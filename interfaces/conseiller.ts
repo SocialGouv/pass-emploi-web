@@ -48,7 +48,9 @@ export function estBRSA(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }
 
-export function estPassEmploi(conseiller: Conseiller): boolean {
+export function estPassEmploi(
+  conseiller: Pick<Conseiller, 'structure'>
+): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
@@ -70,6 +72,14 @@ export function estUserMilo(user: Session.HydratedUser): boolean {
 
 export function estUserCD(user: Session.HydratedUser): boolean {
   return user.structure === StructureConseiller.CONSEIL_DEPT
+}
+
+export function estUserPassEmploi(user: Session.HydratedUser): boolean {
+  return (
+    user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    user.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
+    user.structure === StructureConseiller.CONSEIL_DEPT
+  )
 }
 
 export function aEtablissement(conseiller: Conseiller): boolean {

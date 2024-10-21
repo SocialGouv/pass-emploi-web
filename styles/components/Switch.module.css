@@ -9,9 +9,9 @@
   display: inline-block;
   width: 50px;
   height: 30px;
-  background-color: theme('colors.grey_500');
+  background-color: theme('colors.grey_700');
   border-radius: theme('borderRadius.full');
-  border: 1px solid theme('colors.grey_500');
+  border: 1px solid theme('colors.grey_700');
   cursor: pointer;
 }
 
@@ -29,8 +29,8 @@
 }
 
 .checkbox:checked + .toggle {
-  background-color: #34c759;
-  border: 1px solid #34c759;
+  background-color: #397d54;
+  border: 1px solid #397d54;
 }
 
 .checkbox:checked + .toggle::after {
