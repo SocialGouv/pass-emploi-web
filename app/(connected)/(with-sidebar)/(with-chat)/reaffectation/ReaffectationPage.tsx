@@ -6,6 +6,7 @@ import React, {
   FormEvent,
   ForwardedRef,
   forwardRef,
+  Fragment,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -23,10 +24,6 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SpinningLoader from 'components/ui/SpinningLoader'
-import Table from 'components/ui/Table/Table'
-import TD from 'components/ui/Table/TD'
-import { TH } from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   BeneficiaireFromListe,
@@ -664,7 +661,7 @@ const ChoixConseiller = forwardRef(
     const id = 'conseiller-' + name
 
     const inputRef = useRef<HTMLInputElement>(null)
-    const tableRef = useRef<HTMLTableElement>(null)
+    const listeRef = useRef<HTMLFieldSetElement>(null)
 
     const [queryConseiller, setQueryConseiller] = useState<ValueWithError>({
       value: '',
@@ -721,7 +718,10 @@ const ChoixConseiller = forwardRef(
 
     useEffect(() => {
       if (queryConseiller.error) inputRef.current!.focus()
-      else if (choixConseillers?.length) tableRef.current!.focus()
+      else if (choixConseillers?.length) {
+        listeRef.current!.setAttribute('tabIndex', '-1')
+        listeRef.current!.focus()
+      }
     }, [choixConseillers, queryConseiller.error])
 
     return (
@@ -768,42 +768,40 @@ const ChoixConseiller = forwardRef(
         </div>
 
         {choixConseillers && choixConseillers.length > 0 && (
-          <Table
-            ref={tableRef}
-            caption={{ text: 'Choix du conseiller ' + name }}
+          <fieldset
+            ref={listeRef}
+            className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
           >
-            <thead>
-              <TR isHeader={true}>
-                <TH>Conseiller</TH>
-                <TH>E-mail conseiller</TH>
-              </TR>
-            </thead>
-            <tbody>
-              {choixConseillers.map((conseiller) => (
-                <TR key={conseiller.id} className='relative rotate-0'>
-                  <TD isBold>
-                    <label className='before:fixed before:inset-0 before:z-10 cursor-pointer'>
-                      <input
-                        type='radio'
-                        name={'choix-' + name}
-                        checked={idConseillerSelectionne === conseiller.id}
-                        required={true}
-                        className='mr-2'
-                        onChange={() => choisirConseiller(conseiller)}
-                        aria-describedby={error ? id + '--error' : undefined}
-                      />
-                      {conseiller.firstName} {conseiller.lastName}
-                    </label>
-                  </TD>
-                  <TD>
-                    {conseiller.email ?? (
-                      <span aria-label='non renseignée'>-</span>
-                    )}
-                  </TD>
-                </TR>
-              ))}
-            </tbody>
-          </Table>
+            <legend className='sr-only'>Choix du conseiller {name}</legend>
+            {choixConseillers.map((conseiller) => (
+              <label
+                key={conseiller.id}
+                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
+              >
+                <input
+                  type='radio'
+                  name={'choix-' + name}
+                  checked={idConseillerSelectionne === conseiller.id}
+                  required={true}
+                  onChange={() => choisirConseiller(conseiller)}
+                  aria-describedby={error ? id + '--error' : undefined}
+                />
+
+                <span className='text-base-bold'>
+                  {conseiller.firstName} {conseiller.lastName}
+                </span>
+                {conseiller.email && (
+                  <>
+                    <span className='sr-only'>, e-mail : </span>
+                    {conseiller.email}
+                  </>
+                )}
+                {!conseiller.email && (
+                  <span aria-label='e-mail non renseignée'>-</span>
+                )}
+              </label>
+            ))}
+          </fieldset>
         )}
       </>
     )
