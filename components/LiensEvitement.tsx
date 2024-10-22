@@ -9,21 +9,28 @@ export default function LiensEvitement() {
   const pathname = usePathname()
   const refContainer = useRef<HTMLDivElement>(null)
 
+  const [pageTitle, setPageTitle] = useState<string>()
   const [pageHasChatAside, setPageHasChatAside] = useState<boolean>(false)
+
+  useEffect(() => {
+    setPageTitle(document.title)
+  }, [pathname])
 
   useEffect(() => {
     if (refContainer.current) {
       refContainer.current.focus()
     }
-  }, [pathname])
+  }, [pageTitle])
 
   useEffect(() => {
     setPageHasChatAside(Boolean(document.getElementById(ID_CHAT)))
-  }, [pathname])
+  }, [pageTitle])
 
   return (
     <>
-      <div ref={refContainer} tabIndex={-1} className='sr-only' />
+      <div ref={refContainer} tabIndex={-1} className='sr-only'>
+        {pageTitle}
+      </div>
       <ul className='sr-only focus-within:not-sr-only'>
         <li>
           <a
