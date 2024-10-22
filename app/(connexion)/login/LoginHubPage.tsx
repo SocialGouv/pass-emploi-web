@@ -29,7 +29,7 @@ function LoginHubPage() {
           {errorMsg && <FailureAlert label={errorMsg} />}
 
           <Link
-            className='flex items-center justify-center border-2 border-primary p-2 rounded-base hover:bg-primary_lighten hover:shadow-base'
+            className='flex items-center justify-center border-2 border-primary p-2 rounded-base shadow-base hover:bg-primary_lighten'
             href='/login/cej'
           >
             <span className='sr-only'>
@@ -44,7 +44,7 @@ function LoginHubPage() {
           </Link>
 
           <Link
-            className='flex items-center justify-center border-2 border-primary p-2 rounded-base hover:bg-primary_lighten hover:shadow-base'
+            className='flex items-center justify-center border-2 border-primary p-2 rounded-base shadow-base hover:bg-primary_lighten'
             href='/login/passemploi'
           >
             <span className='sr-only'>
