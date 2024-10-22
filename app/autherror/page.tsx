@@ -70,7 +70,7 @@ export default function AuthError({
           erreur = `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`
           searchParams.reason = undefined
         } else {
-          erreur = `Une erreur est survenue, veuillez recharger cette page.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
+          erreur = `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
           codeErreur = searchParams?.reason
         }
       }
