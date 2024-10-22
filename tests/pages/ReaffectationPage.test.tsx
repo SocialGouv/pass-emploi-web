@@ -34,6 +34,7 @@ describe('Reaffectation', () => {
         id: 'id-neil-armstrong',
         firstName: 'Neil',
         lastName: 'Armstrong',
+        email: 'neil.armstrong@nasa.fr',
       },
     ]
     ;(getConseillers as jest.Mock).mockResolvedValue(conseillers)
@@ -106,17 +107,20 @@ describe('Reaffectation', () => {
           'Nils',
           StructureConseiller.POLE_EMPLOI_BRSA
         )
-        const listeConseillers = within(etape).getByRole('table', {
+        const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller initial',
         })
         expect(listeConseillers).toBeInTheDocument()
-        for (const conseiller of conseillers) {
-          expect(
-            within(listeConseillers).getByRole('radio', {
-              name: `${conseiller.firstName} ${conseiller.lastName}`,
-            })
-          ).toBeInTheDocument()
-        }
+        expect(
+          within(listeConseillers).getByRole('radio', {
+            name: 'Nils Tavernier e-mail non renseignée',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(listeConseillers).getByRole('radio', {
+            name: 'Neil Armstrong , e-mail : neil.armstrong@nasa.fr',
+          })
+        ).toBeInTheDocument()
       })
     })
 
@@ -136,7 +140,7 @@ describe('Reaffectation', () => {
           screen.getByRole('button', { name: /conseiller initial/ })
         )
         await userEvent.click(
-          screen.getByRole('radio', { name: 'Nils Tavernier' })
+          screen.getByRole('radio', { name: /Nils Tavernier/ })
         )
         await act(() => new Promise((r) => setTimeout(r, 1000)))
 
@@ -167,17 +171,20 @@ describe('Reaffectation', () => {
           'Nils',
           StructureConseiller.POLE_EMPLOI_BRSA
         )
-        const listeConseillers = within(etape).getByRole('table', {
+        const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller destinataire',
         })
         expect(listeConseillers).toBeInTheDocument()
-        for (const conseiller of conseillers) {
-          expect(
-            within(listeConseillers).getByRole('radio', {
-              name: `${conseiller.firstName} ${conseiller.lastName}`,
-            })
-          ).toBeInTheDocument()
-        }
+        expect(
+          within(listeConseillers).getByRole('radio', {
+            name: 'Nils Tavernier e-mail non renseignée',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(listeConseillers).getByRole('radio', {
+            name: 'Neil Armstrong , e-mail : neil.armstrong@nasa.fr',
+          })
+        ).toBeInTheDocument()
       })
     })
   })
@@ -265,17 +272,20 @@ describe('Reaffectation', () => {
         it('contenu', () => {
           // Then
           expect(getConseillers).toHaveBeenCalledWith('Nils', undefined)
-          const listeConseillers = within(etape).getByRole('table', {
+          const listeConseillers = within(etape).getByRole('group', {
             name: 'Choix du conseiller initial',
           })
           expect(listeConseillers).toBeInTheDocument()
-          for (const conseiller of conseillers) {
-            expect(
-              within(listeConseillers).getByRole('radio', {
-                name: `${conseiller.firstName} ${conseiller.lastName}`,
-              })
-            ).toBeInTheDocument()
-          }
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: 'Nils Tavernier e-mail non renseignée',
+            })
+          ).toBeInTheDocument()
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: 'Neil Armstrong , e-mail : neil.armstrong@nasa.fr',
+            })
+          ).toBeInTheDocument()
         })
       })
 
@@ -296,7 +306,7 @@ describe('Reaffectation', () => {
 
           // When
           await userEvent.click(
-            within(etape).getByRole('radio', { name: 'Nils Tavernier' })
+            within(etape).getByRole('radio', { name: /Nils Tavernier/ })
           )
           await act(() => new Promise((r) => setTimeout(r, 1000)))
         })
@@ -327,7 +337,7 @@ describe('Reaffectation', () => {
           screen.getByRole('button', { name: /conseiller initial/ })
         )
         await userEvent.click(
-          screen.getByRole('radio', { name: 'Nils Tavernier' })
+          screen.getByRole('radio', { name: /Nils Tavernier/ })
         )
         await act(() => new Promise((r) => setTimeout(r, 1000)))
 
@@ -414,7 +424,7 @@ describe('Reaffectation', () => {
           screen.getByRole('button', { name: /conseiller initial/ })
         )
         await userEvent.click(
-          screen.getByRole('radio', { name: 'Nils Tavernier' })
+          screen.getByRole('radio', { name: /Nils Tavernier/ })
         )
         await act(() => new Promise((r) => setTimeout(r, 1000)))
 
@@ -467,17 +477,20 @@ describe('Reaffectation', () => {
         it('contenu', () => {
           // Then
           expect(getConseillers).toHaveBeenCalledWith('Nils', undefined)
-          const listeConseillers = within(etape).getByRole('table', {
+          const listeConseillers = within(etape).getByRole('group', {
             name: 'Choix du conseiller destinataire',
           })
           expect(listeConseillers).toBeInTheDocument()
-          for (const conseiller of conseillers) {
-            expect(
-              within(listeConseillers).getByRole('radio', {
-                name: `${conseiller.firstName} ${conseiller.lastName}`,
-              })
-            ).toBeInTheDocument()
-          }
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: 'Nils Tavernier e-mail non renseignée',
+            })
+          ).toBeInTheDocument()
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: 'Neil Armstrong , e-mail : neil.armstrong@nasa.fr',
+            })
+          ).toBeInTheDocument()
         })
       })
 
@@ -491,7 +504,7 @@ describe('Reaffectation', () => {
             })
           )
           await userEvent.click(
-            within(etape).getByRole('radio', { name: 'Neil Armstrong' })
+            within(etape).getByRole('radio', { name: /Neil Armstrong/ })
           )
           await userEvent.click(checkboxBeneficiaire)
 
@@ -527,7 +540,7 @@ describe('Reaffectation', () => {
             })
           )
           await userEvent.click(
-            within(etape).getByRole('radio', { name: 'Nils Tavernier' })
+            within(etape).getByRole('radio', { name: /Nils Tavernier/ })
           )
           await userEvent.click(checkboxBeneficiaire)
 
