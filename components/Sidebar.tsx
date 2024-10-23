@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 
 import { ID_MENU } from 'components/globals'
@@ -8,6 +6,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { estPassEmploi } from 'interfaces/conseiller'
+import styles from 'styles/components/Sidebar.module.css'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function Sidebar() {
@@ -16,7 +15,7 @@ export default function Sidebar() {
   const aThemePassEmploi = estPassEmploi(conseiller)
 
   return (
-    <>
+    <div className={styles.sidebar}>
       {aThemePassEmploi && (
         <IllustrationComponent
           name={IllustrationName.LogoPassemploi}
@@ -62,6 +61,6 @@ export default function Sidebar() {
           ]}
         />
       </nav>
-    </>
+    </div>
   )
 }

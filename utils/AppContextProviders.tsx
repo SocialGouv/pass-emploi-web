@@ -17,6 +17,7 @@ import { CurrentConversationProvider } from 'utils/chat/currentConversationConte
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { MobileViewportProvider } from 'utils/mobileViewportContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 export default function AppContextProviders({
@@ -49,13 +50,15 @@ export default function AppContextProviders({
               <ShowRubriqueListeDeDiffusionProvider>
                 <ListeDeDiffusionSelectionneeProvider>
                   <AlerteProvider>
-                    <ThemeProvider
-                      defaultTheme={'neutral'}
-                      themes={['neutral', 'darker']}
-                      forcedTheme={theme}
-                    >
-                      {children}
-                    </ThemeProvider>
+                    <MobileViewportProvider>
+                      <ThemeProvider
+                        defaultTheme={'neutral'}
+                        themes={['neutral', 'darker']}
+                        forcedTheme={theme}
+                      >
+                        {children}
+                      </ThemeProvider>
+                    </MobileViewportProvider>
                   </AlerteProvider>
                 </ListeDeDiffusionSelectionneeProvider>
               </ShowRubriqueListeDeDiffusionProvider>
