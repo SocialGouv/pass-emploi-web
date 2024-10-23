@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-import { ID_CONTENU } from 'components/ids'
+import { ID_CONTENU } from 'components/globals'
 
 export default function FullPageLayout({ children }: { children: ReactNode }) {
   return (

@@ -32,7 +32,7 @@ const MessageImportantModal = dynamic(
 
 interface ChatRoomProps {
   beneficiairesChats: BeneficiaireEtChat[] | undefined
-  showMenu: boolean
+  showMenu: boolean // FIXME a virer ?
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void

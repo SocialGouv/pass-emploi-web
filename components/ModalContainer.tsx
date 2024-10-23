@@ -10,12 +10,12 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
-import { MODAL_ROOT_ID } from 'components/ids'
+import { MODAL_ROOT_ID } from 'components/globals'
 import styles from 'styles/components/Modal.module.css'
 
 export type ModalHandles = {
   focusClose: () => void
-  closeModal: (e: KeyboardEvent | MouseEvent) => void
+  closeModal: (e?: KeyboardEvent | MouseEvent) => void
 }
 export type ModalContainerProps = {
   onClose: () => void
@@ -87,8 +87,8 @@ function ModalContainer(
     }
   }
 
-  function handleClose(e: KeyboardEvent | MouseEvent) {
-    e.preventDefault()
+  function handleClose(e?: KeyboardEvent | MouseEvent) {
+    e?.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
     onClose()
   }

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import React, { ReactNode } from 'react'
 
-import { MODAL_ROOT_ID } from 'components/ids'
+import { MODAL_ROOT_ID } from 'components/globals'
 import LiensEvitement from 'components/LiensEvitement'
 import { estPassEmploi } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'

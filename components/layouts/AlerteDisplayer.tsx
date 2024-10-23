@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { ID_CONTENU } from 'components/ids'
+import { ID_CONTENU } from 'components/globals'
 import AlertLink from 'components/ui/Notifications/AlertLink'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { StructureConseiller } from 'interfaces/conseiller'

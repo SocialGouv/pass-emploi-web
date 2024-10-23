@@ -7,7 +7,7 @@ import {
 } from 'next/navigation'
 import React, { ReactNode, useEffect, useState } from 'react'
 
-import { MODAL_ROOT_ID } from 'components/ids'
+import { MIN_DESKTOP_WIDTH, MODAL_ROOT_ID } from 'components/globals'
 import Footer from 'components/layouts/Footer'
 import OnboardingMobileModal from 'components/onboarding/OnboardingMobileModal'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -25,7 +25,6 @@ export default function LayoutLoginClient({
   const [errorMsg, setErrorMsg] = useState<string>()
   const [afficherOnboarding, setAfficherOnboarding] = useState<boolean>(false)
 
-  const MIN_DESKTOP_WIDTH = 600
   const isFromEmail = getIsFromEmail(searchParams)
 
   const pageEstHubLogin = pathname === '/login'

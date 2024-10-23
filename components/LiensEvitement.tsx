@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { ID_CHAT, ID_CONTENU, ID_MENU } from 'components/ids'
+import { ID_CHAT, ID_CONTENU, ID_MENU } from 'components/globals'
 
 export default function LiensEvitement() {
   const pathname = usePathname()

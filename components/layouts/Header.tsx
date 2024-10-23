@@ -1,6 +1,9 @@
 import React from 'react'
 
-import { PAGE_ACTIONS_ROOT_ID, PAGE_NAVIGATION_ROOT_ID } from 'components/ids'
+import {
+  PAGE_ACTIONS_ROOT_ID,
+  PAGE_NAVIGATION_ROOT_ID,
+} from 'components/globals'
 
 export default function Header() {
   return (
