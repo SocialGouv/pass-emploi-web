@@ -1,12 +1,4 @@
-'use client'
-
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
@@ -25,12 +17,12 @@ import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSele
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 
 type ChatContainerProps = {
-  menuState: [boolean, Dispatch<SetStateAction<boolean>>]
+  onShowMenu: () => void
   messagerieFullScreen?: boolean
 }
 
 export default function ChatContainer({
-  menuState: [showMenu, setShowMenu],
+  onShowMenu,
   messagerieFullScreen,
 }: ChatContainerProps) {
   const chatRoomRef = useRef<{
@@ -122,8 +114,7 @@ export default function ChatContainer({
             <ChatRoom
               ref={chatRoomRef}
               beneficiairesChats={chats}
-              showMenu={showMenu}
-              onOuvertureMenu={() => setShowMenu(true)}
+              onOuvertureMenu={onShowMenu}
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }
@@ -156,8 +147,7 @@ export default function ChatContainer({
             <ChatRoom
               ref={chatRoomRef}
               beneficiairesChats={chats}
-              showMenu={showMenu}
-              onOuvertureMenu={() => setShowMenu(true)}
+              onOuvertureMenu={onShowMenu}
               onAccesListesDiffusion={() =>
                 setShowRubriqueListesDeDiffusion(true)
               }

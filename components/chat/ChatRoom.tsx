@@ -30,9 +30,8 @@ const MessageImportantModal = dynamic(
   { ssr: false }
 )
 
-interface ChatRoomProps {
+type ChatRoomProps = {
   beneficiairesChats: BeneficiaireEtChat[] | undefined
-  showMenu: boolean // FIXME a virer ?
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
@@ -41,7 +40,6 @@ interface ChatRoomProps {
 function ChatRoom(
   {
     beneficiairesChats,
-    showMenu,
     onOuvertureMenu,
     onAccesListesDiffusion,
     onAccesConversation,
@@ -237,8 +235,6 @@ function ChatRoom(
           <button
             type='button'
             onClick={onOuvertureMenu}
-            aria-controls='menu-mobile'
-            aria-expanded={showMenu}
             className='absolute left-4 top-[calc(50%-1.25rem)]'
             title='Ouvrir le menu principal'
           >
