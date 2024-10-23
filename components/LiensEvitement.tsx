@@ -4,10 +4,13 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { ID_CHAT, ID_CONTENU, ID_MENU } from 'components/globals'
+import { useMobileViewport } from 'utils/mobileViewportContext'
 
 export default function LiensEvitement() {
   const pathname = usePathname()
   const refContainer = useRef<HTMLDivElement>(null)
+
+  const isMobileViewport = useMobileViewport()
 
   const [pageTitle, setPageTitle] = useState<string>()
   const [pageHasChatAside, setPageHasChatAside] = useState<boolean>(false)
@@ -25,6 +28,8 @@ export default function LiensEvitement() {
   useEffect(() => {
     setPageHasChatAside(Boolean(document.getElementById(ID_CHAT)))
   }, [pageTitle])
+
+  if (isMobileViewport) return null
 
   return (
     <>

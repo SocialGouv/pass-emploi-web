@@ -32,9 +32,9 @@ export default async function LayoutWhenConnected({
 
   return (
     <>
-      <LiensEvitement />
-
       <AppContextProviders conseiller={conseiller} portefeuille={portefeuille}>
+        <LiensEvitement />
+
         {children}
       </AppContextProviders>
 
