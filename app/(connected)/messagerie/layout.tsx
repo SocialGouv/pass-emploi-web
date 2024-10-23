@@ -26,10 +26,7 @@ export default function LayoutPageMessagerie({
       </div>
 
       <div id={ID_CONTENU} className={layout.chatRoom} tabIndex={-1}>
-        <ChatContainer
-          menuState={[false, () => {}]}
-          messagerieFullScreen={true}
-        />
+        <ChatContainer onShowMenu={() => {}} messagerieFullScreen={true} />
       </div>
 
       <div className='flex flex-col min-h-0 w-[100vw] layout_s:w-[70vw] layout_l:w-[61vw]'>

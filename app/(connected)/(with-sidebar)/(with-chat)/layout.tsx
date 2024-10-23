@@ -26,7 +26,7 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
 
       {utiliseChat(conseiller) && (
         <aside id={ID_CHAT} tabIndex={-1} className={layout.chatRoom}>
-          <ChatContainer menuState={[showChatNav, setShowChatNav]} />
+          <ChatContainer onShowMenu={() => setShowChatNav(true)} />
         </aside>
       )}
 
