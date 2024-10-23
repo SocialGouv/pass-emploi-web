@@ -3,135 +3,49 @@ import Image from 'next/image'
 import {
   ForwardedRef,
   forwardRef,
-  MouseEvent,
   ReactNode,
-  useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react'
-import { createPortal } from 'react-dom'
 
-import IconComponent, { IconName } from './ui/IconComponent'
-
-import { MODAL_ROOT_ID } from 'components/ids'
+import ModalContainer, {
+  ModalContainerProps,
+  ModalHandles as _ModalHandles,
+} from 'components/ModalContainer'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import styles from 'styles/components/Modal.module.css'
 
-export type ModalHandles = {
-  focus: () => void
-  closeModal: (e: KeyboardEvent | MouseEvent) => void
-}
-type ModalProps = {
+export type ModalHandles = _ModalHandles
+type ModalProps = Pick<ModalContainerProps, 'onClose'> & {
   title: string
-  onClose: () => void
   children: ReactNode
   titleIcon?: IconName
   titleIllustration?: IllustrationName
   titleImageSrc?: string | StaticImport
 }
 
-function Modal(props: ModalProps, ref: ForwardedRef<ModalHandles>) {
-  const {
+function Modal(
+  {
     children: modalContent,
     onClose,
     title,
     titleIcon,
     titleIllustration,
     titleImageSrc,
-  } = props
-
-  const modalRef = useRef<HTMLDivElement>(null)
-  useImperativeHandle(ref, () => ({
-    focus: () =>
-      modalRef
-        .current!.querySelector<HTMLButtonElement>('button:first-child')!
-        .focus(),
-    closeModal: handleClose,
-  }))
-  const [isBrowser, setIsBrowser] = useState(false)
-  const previousFocusedElement = useRef<HTMLElement | null>(null)
-  const keyListeners = useRef(
-    new Map([
-      ['Tab', handleTabKey],
-      ['Escape', closeIfFocusInside],
-    ])
-  )
-
-  function closeIfFocusInside(e: KeyboardEvent | MouseEvent) {
-    if (!modalRef.current) return
-
-    const focusableModalElements: NodeListOf<HTMLElement> =
-      modalRef.current.querySelectorAll(
-        'a[href], button, textarea, input, select'
-      )
-    if (
-      Array.from(focusableModalElements).some(
-        (element) => element === document.activeElement
-      )
-    ) {
-      handleClose(e)
-    }
-  }
-
-  function focusOnRender(element: HTMLElement | null) {
-    if (element && !previousFocusedElement.current) {
-      previousFocusedElement.current = document.activeElement as HTMLElement
-      element.focus()
-    }
-  }
-
-  function handleTabKey(e: KeyboardEvent) {
-    if (!modalRef.current) return
-
-    const focusableModalElements: NodeListOf<HTMLElement> =
-      modalRef.current.querySelectorAll(
-        'a[href], button, textarea, input, select'
-      )
-    const firstTabElement = focusableModalElements[0]
-    const lastTabElement =
-      focusableModalElements[focusableModalElements.length - 1]
-
-    if (!e.shiftKey && document.activeElement === lastTabElement) {
-      firstTabElement.focus()
-      e.preventDefault()
-    }
-    if (e.shiftKey && document.activeElement === firstTabElement) {
-      lastTabElement.focus()
-      e.preventDefault()
-    }
-  }
-
-  function handleClose(e: KeyboardEvent | MouseEvent) {
-    e.preventDefault()
-    if (previousFocusedElement.current) previousFocusedElement.current.focus()
-    onClose()
-  }
-
-  function keyListener(e: KeyboardEvent) {
-    const listener = keyListeners.current.get(e.key)
-    return listener && listener(e)
-  }
-
-  useEffect(() => {
-    setIsBrowser(true)
-    document.addEventListener('keydown', keyListener)
-
-    return () => document.removeEventListener('keydown', keyListener)
-  }, [])
+  }: ModalProps,
+  ref: ForwardedRef<ModalHandles>
+) {
+  const modalContainerRef = useRef<ModalHandles>(null)
+  useImperativeHandle(ref, () => modalContainerRef.current!)
 
   const modalTemplate = (
-    <div
-      className='rounded-l bg-white max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'
-      ref={modalRef}
-    >
+    <div className='rounded-l bg-white max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'>
       <div className='flex justify-end'>
         <button
           type='button'
-          onClick={handleClose}
-          ref={focusOnRender}
+          onClick={(e) => modalContainerRef.current!.closeModal(e)}
           className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
         >
           <IconComponent
@@ -180,23 +94,15 @@ function Modal(props: ModalProps, ref: ForwardedRef<ModalHandles>) {
     </div>
   )
 
-  const modalContainer = (
-    <div
-      role='dialog'
-      aria-modal={true}
-      aria-labelledby='modal-title'
-      className={styles.modalOverlay}
+  return (
+    <ModalContainer
+      ref={modalContainerRef}
+      onClose={onClose}
+      label={{ id: 'modal-title' }}
     >
       {modalTemplate}
-    </div>
+    </ModalContainer>
   )
-
-  if (isBrowser) {
-    const modalRoot = document.getElementById(MODAL_ROOT_ID)
-    return modalRoot ? createPortal(modalContainer, modalRoot) : null
-  } else {
-    return null
-  }
 }
 
 export default forwardRef(Modal)
