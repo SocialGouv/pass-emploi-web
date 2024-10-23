@@ -131,7 +131,7 @@ export default function MessageImportantModal({
 
   useEffect(() => {
     if (succesEnvoiMessageImportant || succesDesactivationMessageImportant) {
-      modalRef.current!.focus()
+      modalRef.current!.focusClose()
     }
   }, [succesEnvoiMessageImportant, succesDesactivationMessageImportant])
 

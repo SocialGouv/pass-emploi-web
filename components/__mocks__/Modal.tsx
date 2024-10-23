@@ -21,7 +21,7 @@ function FakeModal(
   ref: ForwardedRef<ModalHandles>
 ) {
   useImperativeHandle(ref, () => ({
-    focus: () => {},
+    focusClose: () => {},
     closeModal: onClose,
   }))
 
