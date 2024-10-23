@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import React, { ReactNode, Suspense } from 'react'
 
 import LayoutLoginClient from 'app/(connexion)/login/LayoutLoginClient'
-import { MODAL_ROOT_ID } from 'components/ids'
+import { MODAL_ROOT_ID } from 'components/globals'
 import { getSessionServerSide } from 'utils/auth/auth'
 
 export default function LayoutLogin({ children }: { children: ReactNode }) {

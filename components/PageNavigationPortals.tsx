@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import FilAriane from 'components/FilAriane'
-import { PAGE_NAVIGATION_ROOT_ID } from 'components/ids'
+import { PAGE_NAVIGATION_ROOT_ID } from 'components/globals'
 import LienRetour from 'components/LienRetour'
 
 export function PageRetourPortal({ lien }: { lien: string }) {

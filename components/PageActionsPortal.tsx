@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { PAGE_ACTIONS_ROOT_ID } from 'components/ids'
+import { PAGE_ACTIONS_ROOT_ID } from 'components/globals'
 import { ElementsOnly } from 'types/components'
 
 type PageActionsPortalProps = {

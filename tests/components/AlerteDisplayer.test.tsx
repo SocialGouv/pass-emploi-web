@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { ID_CONTENU } from 'components/ids'
+import { ID_CONTENU } from 'components/globals'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'

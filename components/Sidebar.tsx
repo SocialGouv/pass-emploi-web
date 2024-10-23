@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { ID_MENU } from 'components/ids'
+import { ID_MENU } from 'components/globals'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IllustrationComponent, {
   IllustrationName,
