@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 
 import PageLayout from 'app/(connected)/(with-sidebar)/PageLayout'
-import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
 import Sidebar from 'components/Sidebar'
 
 export default async function LayoutWithoutChatFullScreen({
@@ -9,13 +8,5 @@ export default async function LayoutWithoutChatFullScreen({
 }: {
   children: ReactNode
 }) {
-  return (
-    <div className='flex h-screen supports-[height:100dvh]:h-dvh w-screen'>
-      <div className={sidebarLayout.sidebar}>
-        <Sidebar />
-      </div>
-
-      <PageLayout fullWidth={true}>{children}</PageLayout>
-    </div>
-  )
+  return <PageLayout fullWidth={true}>{children}</PageLayout>
 }

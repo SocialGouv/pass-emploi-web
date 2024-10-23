@@ -1,26 +1,21 @@
 import React, { useEffect, useRef } from 'react'
 
-import { ID_CONTENU, MIN_DESKTOP_WIDTH } from 'components/globals'
+import { ID_CONTENU } from 'components/globals'
 import ModalContainer, { ModalHandles } from 'components/ModalContainer'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { useMobileViewport } from 'utils/mobileViewportContext'
 
 export default function ChatNav({ onClose }: { onClose: () => void }) {
   const modalContainerRef = useRef<ModalHandles>(null)
+  const isMobileViewport = useMobileViewport()
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= MIN_DESKTOP_WIDTH) {
-        onClose()
-        document.getElementById(ID_CONTENU)!.focus()
-      }
+    if (!isMobileViewport) {
+      onClose()
+      document.getElementById(ID_CONTENU)!.focus()
     }
-
-    window.addEventListener('resize', handleResize)
-    handleResize()
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [isMobileViewport])
 
   return (
     <ModalContainer
