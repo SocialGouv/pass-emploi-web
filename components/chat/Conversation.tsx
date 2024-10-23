@@ -324,7 +324,9 @@ export function Conversation({
   }, [beneficiaireChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (!messagesByDay?.length) {
+    if (!nombrePagesChargees) return
+
+    if (!messagesByDay!.length) {
       headerChatRef.current!.focusRetour()
       return
     }
@@ -337,7 +339,7 @@ export function Conversation({
     if (nombrePagesChargees! > 1 && idPrecedentPremierMessage.current) {
       const idMessageToFocus = getPreviousItemId(
         idPrecedentPremierMessage.current,
-        messagesByDay
+        messagesByDay!
       )
       const toFocus = idMessageToFocus
         ? document.getElementById(`message-${idMessageToFocus}`)!
