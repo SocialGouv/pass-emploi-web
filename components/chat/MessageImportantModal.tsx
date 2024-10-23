@@ -157,46 +157,42 @@ export default function MessageImportantModal({
 
           <form onSubmit={modifierMessageImportant}>
             <div className='mt-4 flex flex-col justify-center'>
-              <div className='flex gap-2 mb-4 items-end'>
-                <div className='w-full'>
-                  <Label htmlFor='date-debut'>
-                    {{ main: 'Date de début', helpText: 'format : jj/mm/aaaa' }}
-                  </Label>
-                  {dateDebut.error && (
-                    <InputError id='date-debut--error' className='mb-2'>
-                      {dateDebut.error}
-                    </InputError>
-                  )}
-                  <Input
-                    type='date'
-                    id='date-debut'
-                    required={true}
-                    defaultValue={dateDebut.value}
-                    onChange={(value: string) => setDateDebut({ value })}
-                    onBlur={validerDateDebut}
-                    invalid={Boolean(dateDebut.error)}
-                  />
-                </div>
+              <div className='flex flex-wrap gap-2 mb-4 items-end'>
+                <Label htmlFor='date-debut'>
+                  {{ main: 'Date de début', helpText: 'format : jj/mm/aaaa' }}
+                </Label>
+                {dateDebut.error && (
+                  <InputError id='date-debut--error' className='mb-2'>
+                    {dateDebut.error}
+                  </InputError>
+                )}
+                <Input
+                  type='date'
+                  id='date-debut'
+                  required={true}
+                  defaultValue={dateDebut.value}
+                  onChange={(value: string) => setDateDebut({ value })}
+                  onBlur={validerDateDebut}
+                  invalid={Boolean(dateDebut.error)}
+                />
 
-                <div className='w-full'>
-                  <Label htmlFor='date-fin'>
-                    {{ main: 'Date de fin', helpText: 'format : jj/mm/aaaa' }}
-                  </Label>
-                  {dateFin.error && (
-                    <InputError id={'date-fin--error'} className='mb-2'>
-                      {dateFin.error}
-                    </InputError>
-                  )}
-                  <Input
-                    type='date'
-                    id='date-fin'
-                    required={true}
-                    defaultValue={dateFin.value}
-                    onChange={(value: string) => setDateFin({ value })}
-                    onBlur={validerDateFin}
-                    invalid={Boolean(dateFin.error)}
-                  />
-                </div>
+                <Label htmlFor='date-fin'>
+                  {{ main: 'Date de fin', helpText: 'format : jj/mm/aaaa' }}
+                </Label>
+                {dateFin.error && (
+                  <InputError id={'date-fin--error'} className='mb-2'>
+                    {dateFin.error}
+                  </InputError>
+                )}
+                <Input
+                  type='date'
+                  id='date-fin'
+                  required={true}
+                  defaultValue={dateFin.value}
+                  onChange={(value: string) => setDateFin({ value })}
+                  onBlur={validerDateFin}
+                  invalid={Boolean(dateFin.error)}
+                />
               </div>
 
               <Label htmlFor='message-important'>

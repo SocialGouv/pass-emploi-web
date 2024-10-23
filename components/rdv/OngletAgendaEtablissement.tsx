@@ -131,7 +131,7 @@ export default function OngletAgendaEtablissement({
     <>
       <RechercheAgendaForm onSearch={setRecherche} />
 
-      <nav className='flex flex-wrap justify-between items-end'>
+      <nav className='flex justify-between items-end'>
         <SelecteurPeriode
           onNouvellePeriode={modifierPeriode}
           periodeCourante={periodeIndex}
