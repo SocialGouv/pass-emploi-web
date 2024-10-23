@@ -19,9 +19,11 @@ function HeaderChat(
     titre,
     onPermuterVisibiliteMessagerie,
     messagerieEstVisible,
+    beneficiaire,
   }: {
     onBack: () => void
     labelRetour: string
+    beneficiaire?: string
     messagerieEstVisible: boolean
     afficherBlurBtn?: boolean
     titre: string | ReactElement
@@ -152,7 +154,8 @@ function HeaderChat(
                     focusable={false}
                     aria-hidden={true}
                   />
-                  {flag!.label}
+                  {flag!.label}{' '}
+                  <span className='sr-only'>avec {beneficiaire}</span>
                 </button>
               )}
             </div>
