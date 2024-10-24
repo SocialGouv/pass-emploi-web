@@ -15,7 +15,7 @@ import styles from 'styles/components/Modal.module.css'
 
 export type ModalHandles = {
   focusClose: () => void
-  closeModal: (e?: KeyboardEvent | MouseEvent) => void
+  closeModal: (e: KeyboardEvent | MouseEvent) => void
 }
 export type ModalContainerProps = {
   onClose: () => void
