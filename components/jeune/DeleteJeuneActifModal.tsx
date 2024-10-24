@@ -1,4 +1,10 @@
-import React, { FormEvent, useRef, useState } from 'react'
+import React, {
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -49,8 +55,8 @@ export default function DeleteJeuneActifModal({
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Détail Jeune - Pop-in confirmation suppression'
   )
-  function openModalEtape2() {
-    setShowModalEtape1(false)
+  function openModalEtape2(e: MouseEvent<HTMLButtonElement>) {
+    modalRef.current!.closeModal(e)
     setShowModalEtape2(true)
     setTrackingLabel('Détail Jeune - Pop-in sélection motif')
   }
@@ -117,6 +123,10 @@ export default function DeleteJeuneActifModal({
     ({ motif }) => motif === motifSuppressionJeune?.value
   )?.description
 
+  useEffect(() => {
+    if (!showModalEtape1 && !showModalEtape2) onClose()
+  }, [showModalEtape1, showModalEtape2])
+
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
@@ -125,7 +135,7 @@ export default function DeleteJeuneActifModal({
         <Modal
           ref={modalRef}
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
-          onClose={onClose}
+          onClose={() => setShowModalEtape1(false)}
           titleIllustration={IllustrationName.Delete}
         >
           <p className='mt-6 text-base-regular text-content_color text-center'>
@@ -143,7 +153,7 @@ export default function DeleteJeuneActifModal({
             <Button
               type='button'
               style={ButtonStyle.PRIMARY}
-              onClick={openModalEtape2}
+              onClick={(e) => openModalEtape2(e)}
               className='ml-6'
             >
               Supprimer ce compte
@@ -156,7 +166,7 @@ export default function DeleteJeuneActifModal({
         <Modal
           ref={modalRef}
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
-          onClose={onClose}
+          onClose={() => setShowModalEtape2(false)}
           titleIllustration={IllustrationName.Delete}
         >
           <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte bénéficiaire seront supprimées' />
