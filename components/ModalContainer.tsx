@@ -37,25 +37,9 @@ function ModalContainer(
   const keyListeners = useRef(
     new Map([
       ['Tab', handleTabKey],
-      ['Escape', closeIfFocusInside],
+      ['Escape', handleClose],
     ])
   )
-
-  function closeIfFocusInside(e: KeyboardEvent | MouseEvent) {
-    if (!modalContainerRef.current) return
-
-    const focusableModalElements: NodeListOf<HTMLElement> =
-      modalContainerRef.current.querySelectorAll(
-        'a[href], button, textarea, input, select'
-      )
-    if (
-      Array.from(focusableModalElements).some(
-        (element) => element === document.activeElement
-      )
-    ) {
-      handleClose(e)
-    }
-  }
 
   function focusClose() {
     if (!previousFocusedElement.current)
@@ -71,7 +55,7 @@ function ModalContainer(
 
     const focusableModalElements: NodeListOf<HTMLElement> =
       modalContainerRef.current.querySelectorAll(
-        'a[href], button, textarea, input, select'
+        '[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
       )
     const firstTabElement = focusableModalElements[0]
     const lastTabElement =
@@ -87,8 +71,8 @@ function ModalContainer(
     }
   }
 
-  function handleClose(e?: KeyboardEvent | MouseEvent) {
-    e?.preventDefault()
+  function handleClose(e: KeyboardEvent | MouseEvent) {
+    e.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
     onClose()
   }
