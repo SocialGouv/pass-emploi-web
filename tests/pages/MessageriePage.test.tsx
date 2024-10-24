@@ -2,7 +2,7 @@ import { act, screen } from '@testing-library/react'
 import { axe } from 'jest-axe'
 import React from 'react'
 
-import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
+import MessageriePage from 'app/(connected)/(with-sidebar)/messagerie/MessageriePage'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
