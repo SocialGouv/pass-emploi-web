@@ -28,7 +28,7 @@ export async function generateMetadata({
   const actionContent = await getAction(params.idAction, accessToken)
 
   return {
-    title: `Modifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
+    title: `Modifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
   }
 }
 

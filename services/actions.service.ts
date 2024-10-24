@@ -16,11 +16,11 @@ import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
-  CompteursPortefeuilleJson,
   actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
+  CompteursPortefeuilleJson,
   jsonToAction,
   jsonToActionPilotage,
   jsonToQualification,
@@ -140,7 +140,7 @@ export async function creerAction(
   const payload = {
     content: action.titre,
     dateEcheance: DateTime.fromISO(
-      action.dateFinReelle ?? action.dateEcheance!
+      action.dateFinReelle ?? action.dateEcheance
     ).toISO(),
     codeQualification: action.codeCategorie,
     comment: action.description,

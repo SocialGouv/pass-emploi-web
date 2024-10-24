@@ -336,7 +336,7 @@ export function Conversation({
       return
     }
 
-    if (nombrePagesChargees! > 1 && idPrecedentPremierMessage.current) {
+    if (nombrePagesChargees > 1 && idPrecedentPremierMessage.current) {
       const idMessageToFocus = getPreviousItemId(
         idPrecedentPremierMessage.current,
         messagesByDay!

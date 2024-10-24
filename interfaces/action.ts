@@ -1,6 +1,6 @@
 export interface Action {
   id: string
-  content: string
+  titre: string
   comment: string
   creationDate: string
   lastUpdate: string

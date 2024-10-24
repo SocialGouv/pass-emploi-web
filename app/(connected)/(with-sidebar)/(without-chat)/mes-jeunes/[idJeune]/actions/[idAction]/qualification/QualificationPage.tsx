@@ -48,7 +48,7 @@ function QualificationPage({
   const [portefeuille] = usePortefeuille()
 
   const [commentaire, setCommentaire] = useState<ValueWithError>({
-    value: action.content + (action.comment && ' - ' + action.comment),
+    value: action.titre + (action.comment && ' - ' + action.comment),
   })
 
   const [codeCategorie, setCodeCategorie] = useState<

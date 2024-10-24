@@ -25,7 +25,7 @@ export async function generateMetadata({
   const actionContent = await getAction(params.idAction, accessToken)
 
   return {
-    title: `Qualifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
+    title: `Qualifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
   }
 }
 export default async function Qualification({

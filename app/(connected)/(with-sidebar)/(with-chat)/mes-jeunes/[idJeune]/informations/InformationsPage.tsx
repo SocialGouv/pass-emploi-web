@@ -52,6 +52,9 @@ function InformationsPage({
   onglet,
   metadonneesFavoris,
 }: InformationsPageProps) {
+  const pathPrefix = usePathname().startsWith('etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -63,16 +66,24 @@ function InformationsPage({
     IndicateursSemaine | undefined
   >()
 
-  const situationsTracking = `Détail jeune – Situations${
-    lectureSeule ? ' - hors portefeuille' : ''
-  }`
-  const conseillersTracking = `Détail jeune – Historique conseillers${
-    lectureSeule ? ' - hors portefeuille' : ''
-  }`
   const [tracking, setTracking] = useState<string>(switchTracking(onglet))
 
-  function switchTracking(onglet: Onglet) {
-    return onglet === 'INFORMATIONS' ? situationsTracking : conseillersTracking
+  function switchTracking(ongletActuel: Onglet) {
+    let trackingLabel = 'Détail jeune - '
+    switch (ongletActuel) {
+      case 'INFORMATIONS':
+        trackingLabel += 'Situations'
+        break
+      case 'INDICATEURS':
+        trackingLabel += 'Indicateurs'
+        break
+      case 'CONSEILLERS':
+        trackingLabel += 'Historique conseiller'
+        break
+    }
+    if (lectureSeule) trackingLabel += ' - hors portefeuille'
+
+    return trackingLabel
   }
 
   useEffect(() => {
@@ -97,9 +108,6 @@ function InformationsPage({
   }, [currentTab])
 
   useMatomo(tracking, portefeuille.length > 0)
-  const pathPrefix = usePathname()?.startsWith('etablissement')
-    ? '/etablissement/beneficiaires'
-    : '/mes-jeunes'
 
   return (
     <>

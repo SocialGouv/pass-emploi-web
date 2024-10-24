@@ -211,7 +211,7 @@ function DetailActionPage({
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>
           </dt>
-          <dd className='text-base-regular pl-6'>{action.content}</dd>
+          <dd className='text-base-regular pl-6'>{action.titre}</dd>
           <dt className='text-base-bold pb-6'>
             <span>Description :</span>
           </dt>
@@ -266,14 +266,14 @@ function DetailActionPage({
             <Button
               onClick={(e) => suppressionModalRef.current!.closeModal(e)}
               style={ButtonStyle.SECONDARY}
-              label={`Annuler la suppression de l’action ${action.content}`}
+              label={`Annuler la suppression de l’action ${action.titre}`}
             >
               Annuler
             </Button>
             <Button
               onClick={() => supprimerAction()}
               style={ButtonStyle.PRIMARY}
-              label={`Supprimer l’action ${action.content}`}
+              label={`Supprimer l’action ${action.titre}`}
             >
               Supprimer
             </Button>

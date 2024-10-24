@@ -65,7 +65,7 @@ function ListeListesDeDiffusion(
         ref={headerRef}
         titre='Mes listes de diffusion'
         labelRetour='Retour sur ma messagerie'
-        onBack={onBack!}
+        onBack={onBack}
         onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
         messagerieEstVisible={messagerieEstVisible}
       />

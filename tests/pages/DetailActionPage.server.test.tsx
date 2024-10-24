@@ -74,7 +74,7 @@ describe('ActionPage server side', () => {
       // Then
       expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
       expect(metadata).toEqual({
-        title: `${action.content} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
+        title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
       })
       expect(DetailActionPage).toHaveBeenCalledWith(
         {
@@ -115,7 +115,7 @@ describe('ActionPage server side', () => {
         // Then
         expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
         expect(metadata).toEqual({
-          title: `${action.content} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
+          title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
         })
         expect(DetailActionPage).toHaveBeenCalledWith(
           {

@@ -154,8 +154,10 @@ describe('Agenda - Onglet établissement', () => {
         within(row1).getByRole('cell', {
           name: '29 août 2022 14h00 - durée 2 heure 5',
         })
-      )
-      expect(within(row1).getByRole('cell', { name: '1 inscrit /10' }))
+      ).toBeInTheDocument()
+      expect(
+        within(row1).getByRole('cell', { name: '1 inscrit /10' })
+      ).toBeInTheDocument()
       expect(
         within(row1).getByRole('link', {
           name: 'Consulter Atelier Prise de nouvelles par téléphone du lundi 29 août à 14h00',
@@ -171,8 +173,10 @@ describe('Agenda - Onglet établissement', () => {
         within(row2).getByRole('cell', {
           name: '1 septembre 2022 14h00 - durée 30 minutes',
         })
-      )
-      expect(within(row2).getByRole('cell', { name: 'Complet' }))
+      ).toBeInTheDocument()
+      expect(
+        within(row2).getByRole('cell', { name: 'Complet' })
+      ).toBeInTheDocument()
       expect(
         within(row2).getByRole('link', {
           name: 'Consulter Atelier Préparation de CV du jeudi 1 septembre à 14h00',

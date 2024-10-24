@@ -24,12 +24,12 @@ describe('TableauActionsJeune', () => {
     actions = uneListeDActions()
     actionSansCategorie = uneAction({
       id: 'id-action-sans-categorie',
-      content: 'Regarder Tchoupi faire du tricycle',
+      titre: 'Regarder Tchoupi faire du tricycle',
       qualification: undefined,
     })
     actionAvecCategorie = uneAction({
       id: 'id-action-avec-categorie',
-      content: 'Cueillir des champignons avec Petit Ours',
+      titre: 'Cueillir des champignons avec Petit Ours',
       status: StatutAction.Terminee,
       qualification: {
         code: 'SANTE',
