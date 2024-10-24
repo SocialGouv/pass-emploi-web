@@ -326,7 +326,7 @@ export function Conversation({
   useEffect(() => {
     if (!nombrePagesChargees) return
 
-    if (!messagesByDay!.length) {
+    if (!messagesByDay!.length && shouldFocusOnFirstRender) {
       headerChatRef.current!.focusRetour()
       return
     }
@@ -367,8 +367,9 @@ export function Conversation({
   }, [uploadedFileInfo])
 
   useEffect(() => {
-    if (isFirstRender.current) return
+    if (isFirstRender.current) return () => (isFirstRender.current = true)
     if (messagerieEstVisible) focusDernierMessage()
+    return () => {}
   }, [messagerieEstVisible])
 
   useEffect(() => {
