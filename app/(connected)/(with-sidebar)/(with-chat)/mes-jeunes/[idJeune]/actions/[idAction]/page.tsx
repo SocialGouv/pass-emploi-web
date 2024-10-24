@@ -29,7 +29,7 @@ export async function generateMetadata({
   const lectureSeule = jeune.idConseiller !== user.id
 
   return {
-    title: `${action.content} - Actions de ${jeune.prenom} ${jeune.nom} - ${
+    title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - ${
       lectureSeule ? 'Etablissement' : 'Portefeuille'
     }`,
   }

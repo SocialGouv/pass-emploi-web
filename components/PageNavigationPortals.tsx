@@ -30,7 +30,7 @@ export function PageRetourPortal({ lien }: { lien: string }) {
 export function PageFilArianePortal() {
   const [isBrowser, setIsBrowser] = useState(false)
 
-  const pageFilArianeContainer = <FilAriane path={usePathname()!} />
+  const pageFilArianeContainer = <FilAriane path={usePathname()} />
 
   useEffect(() => {
     setIsBrowser(true)

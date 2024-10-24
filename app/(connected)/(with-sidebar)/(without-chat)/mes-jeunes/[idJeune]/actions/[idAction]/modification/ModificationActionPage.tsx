@@ -166,14 +166,14 @@ function ModificationPage({
             <Button
               onClick={(e) => suppressionModalRef.current!.closeModal(e)}
               style={ButtonStyle.SECONDARY}
-              label={`Annuler la suppression de l’action ${action.content}`}
+              label={`Annuler la suppression de l’action ${action.titre}`}
             >
               Annuler
             </Button>
             <Button
               onClick={() => supprimerAction()}
               style={ButtonStyle.PRIMARY}
-              label={`Supprimer l’action ${action.content}`}
+              label={`Supprimer l’action ${action.titre}`}
             >
               Supprimer
             </Button>

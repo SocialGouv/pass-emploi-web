@@ -1,6 +1,5 @@
 import React from 'react'
 
-import Input from 'components/ui/Form/Input'
 import styles from 'styles/components/Input.module.css'
 
 export function DistanceRange({

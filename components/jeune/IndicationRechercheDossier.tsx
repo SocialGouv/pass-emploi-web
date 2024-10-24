@@ -2,9 +2,7 @@ import Indication1 from '../../assets/images/indication-dossier-milo-1.svg'
 import Indication2 from '../../assets/images/indication-dossier-milo-2.svg'
 import Indication3 from '../../assets/images/indication-dossier-milo-3.svg'
 
-type IndicationRechercheDossierProps = {}
-
-function IndicationRechercheDossier({}: IndicationRechercheDossierProps) {
+function IndicationRechercheDossier() {
   return (
     <ol className='inline-flex flex-wrap justify-between max-w-2xl bg-primary_lighten mb-6 p-3 rounded-base list-decimal list-inside marker:font-bold'>
       <li className='text-s-regular text-center' style={{ flex: '0 0 136px' }}>

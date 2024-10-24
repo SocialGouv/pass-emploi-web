@@ -46,13 +46,13 @@ export default function ActionRow({
       <TD className='relative'>
         <label className='absolute inset-0 z-20 cursor-pointer p-4'>
           <span className='sr-only'>
-            Sélection {action.content} {action.qualification?.libelle}
+            Sélection {action.titre} {action.qualification?.libelle}
           </span>
           <input
             type='checkbox'
             checked={isChecked}
             title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-              action.content
+              action.titre
             }`}
             className='w-4 h-4 cursor-pointer'
             disabled={!actionEstTerminee}
@@ -64,7 +64,7 @@ export default function ActionRow({
         <span
           className={`flex items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
         >
-          {action.content}
+          {action.titre}
         </span>
       </TD>
       <TD>
@@ -85,7 +85,7 @@ export default function ActionRow({
       </TD>
       <TDLink
         href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-        label={`Voir le détail de l'action ${statutAction()} du ${dateEcheance} : ${action.content}`}
+        label={`Voir le détail de l'action ${statutAction()} du ${dateEcheance} : ${action.titre}`}
       />
     </TR>
   )

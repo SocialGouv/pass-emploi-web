@@ -93,7 +93,7 @@ export function jsonToAction(json: ActionJson): Action {
   const legacyFormat = 'EEE, d MMM yyyy HH:mm:ss z'
   const action: Action = {
     id: json.id,
-    content: json.content,
+    titre: json.content,
     comment: json.comment,
     creationDate: DateTime.fromFormat(json.creationDate, legacyFormat).toISO(),
     lastUpdate: DateTime.fromFormat(json.lastUpdate, legacyFormat).toISO(),

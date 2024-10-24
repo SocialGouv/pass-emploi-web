@@ -29,7 +29,7 @@ describe('QualificationPage client side', () => {
     // Given
     action = {
       id: 'id-action-1',
-      content: 'Identifier ses atouts et ses compétences',
+      titre: 'Identifier ses atouts et ses compétences',
       comment: 'Je suis un beau commentaire',
       creationDate: '2022-02-15T15:50:46.000+01:00',
       lastUpdate: '2022-02-16T15:50:46.000+01:00',
@@ -97,7 +97,7 @@ describe('QualificationPage client side', () => {
         within(etape1).getByRole('textbox', {
           name: /Titre et description de l'action/,
         })
-      ).toHaveValue(action.content + ' - ' + action.comment)
+      ).toHaveValue(action.titre + ' - ' + action.comment)
     })
 
     it("affiche la date de fin de l'action", () => {

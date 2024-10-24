@@ -45,8 +45,10 @@ export function EditionActionForm({
     ValueWithError<string | undefined>
   >({ value: action?.qualification?.code })
 
-  function titreEstPersonnalise({ content }: Action) {
-    return !actionsPredefinies.some(({ titre }) => titre === content)
+  function titreEstPersonnalise({ titre: titreAction }: Action) {
+    return !actionsPredefinies.some(
+      (actionPredefini) => actionPredefini.titre === titreAction
+    )
   }
 
   const [titre, setTitre] = useState<ValueWithError<string | undefined>>(
@@ -54,13 +56,13 @@ export function EditionActionForm({
       ? { value: undefined }
       : titreEstPersonnalise(action)
         ? { value: TITRE_AUTRE }
-        : { value: action.content }
+        : { value: action.titre }
   )
   const [titrePersonnalise, setTitrePersonnalise] = useState<
     ValueWithError<string | undefined>
   >(
     action && titreEstPersonnalise(action)
-      ? { value: action.content }
+      ? { value: action.titre }
       : { value: undefined }
   )
   const [description, setDescription] = useState<string | undefined>(

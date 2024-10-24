@@ -132,7 +132,7 @@ function MessageriePage() {
                   ref={detailMessageRef}
                   message={messageSelectionne}
                   onBack={() => {
-                    setIdMessageAFocus(messageSelectionne!.id)
+                    setIdMessageAFocus(messageSelectionne.id)
                     setMessageSelectionne(undefined)
                   }}
                   chats={chats}

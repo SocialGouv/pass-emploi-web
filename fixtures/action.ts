@@ -12,7 +12,7 @@ import { MetadonneesPagination } from 'types/pagination'
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
   const defaults: Action = {
     id: 'id-action-1',
-    content: 'Identifier ses atouts et ses compétences',
+    titre: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
     creationDate: '2022-02-15T15:50:46.000+01:00',
     lastUpdate: '2022-02-16T15:50:46.000+01:00',
@@ -29,7 +29,7 @@ export const uneListeDActions = (): Action[] => [
   uneAction(),
   {
     id: 'id-action-2',
-    content: 'Compléter son cv',
+    titre: 'Compléter son cv',
     comment: 'Je suis un beau commentaire',
     creationDate: '2022-02-17T15:50:46.000+01:00',
     lastUpdate: '2022-02-18T15:50:46.000+01:00',
@@ -40,7 +40,7 @@ export const uneListeDActions = (): Action[] => [
   },
   {
     id: 'id-action-3',
-    content: 'Chercher une formation',
+    titre: 'Chercher une formation',
     comment: 'Je suis un beau commentaire',
     creationDate: '2022-02-19T15:50:46.000+01:00',
     lastUpdate: '2022-02-20T15:50:46.000+01:00',
@@ -52,7 +52,7 @@ export const uneListeDActions = (): Action[] => [
   },
   {
     id: 'id-action-4',
-    content: "Consulter les offres d'emploi",
+    titre: "Consulter les offres d'emploi",
     comment: 'Je suis un beau commentaire',
     creationDate: '2022-02-21T15:50:46.000+01:00',
     lastUpdate: '2022-03-22T15:50:46.000+01:00',

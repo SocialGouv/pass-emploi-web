@@ -40,7 +40,7 @@ describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat([
     uneAction({
       id: 'id-action-5',
-      content: 'Action 5',
+      titre: 'Action 5',
       status: StatutAction.Terminee,
       qualification: {
         libelle: 'Santé',
@@ -50,7 +50,7 @@ describe('Actions dans la fiche jeune', () => {
     }),
     uneAction({
       id: 'id-action-6',
-      content: 'Action 6',
+      titre: 'Action 6',
       status: StatutAction.Qualifiee,
       qualification: {
         libelle: 'Emploi',
@@ -132,7 +132,7 @@ describe('Actions dans la fiche jeune', () => {
 
       // Then
       actions.forEach((action) => {
-        expect(screen.getByText(action.content)).toBeInTheDocument()
+        expect(screen.getByText(action.titre)).toBeInTheDocument()
       })
 
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
@@ -354,7 +354,7 @@ describe('Actions dans la fiche jeune', () => {
         // Given
         ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async (_, { page }) => ({
-            actions: [uneAction({ content: `Action page ${page}` })],
+            actions: [uneAction({ titre: `Action page ${page}` })],
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           })
         )
@@ -429,7 +429,7 @@ describe('Actions dans la fiche jeune', () => {
         // Given
         ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
-            actions: [uneAction({ content: 'Action filtrée' })],
+            actions: [uneAction({ titre: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
           })
         )
@@ -496,7 +496,7 @@ describe('Actions dans la fiche jeune', () => {
         // Given
         ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
-            actions: [uneAction({ content: 'Action filtrée' })],
+            actions: [uneAction({ titre: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
           })
         )
@@ -564,7 +564,7 @@ describe('Actions dans la fiche jeune', () => {
         // Given
         ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
-            actions: [uneAction({ content: 'Action triée' })],
+            actions: [uneAction({ titre: 'Action triée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
           })
         )

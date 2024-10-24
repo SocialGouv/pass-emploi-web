@@ -41,7 +41,7 @@ export default function NavLinks({
     : undefined
 
   function isCurrentRoute(href: string) {
-    return pathname!.startsWith(href)
+    return pathname.startsWith(href)
   }
 
   async function logout() {

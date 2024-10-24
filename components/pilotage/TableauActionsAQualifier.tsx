@@ -7,9 +7,7 @@ import FiltresCategories, {
 } from 'components/action/FiltresCategories'
 import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
