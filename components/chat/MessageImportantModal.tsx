@@ -159,8 +159,8 @@ export default function MessageImportantModal({
 
           <form onSubmit={modifierMessageImportant}>
             <div className='mt-4 flex flex-col justify-center'>
-              <div className='flex gap-2 mb-4 items-end'>
-                <div className='w-1/2'>
+              <div className='flex flex-wrap gap-2 mb-4 items-end'>
+                <div className='flex-1'>
                   <Label htmlFor='date-debut'>
                     {{ main: 'Date de début', helpText: 'format : jj/mm/aaaa' }}
                   </Label>
@@ -179,8 +179,7 @@ export default function MessageImportantModal({
                     invalid={Boolean(dateDebut.error)}
                   />
                 </div>
-
-                <div className='w-1/2'>
+                <div className='flex-1'>
                   <Label htmlFor='date-fin'>
                     {{ main: 'Date de fin', helpText: 'format : jj/mm/aaaa' }}
                   </Label>

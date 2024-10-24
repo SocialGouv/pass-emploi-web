@@ -404,6 +404,7 @@ export function Conversation({
         onLancerRecherche={toggleAfficherRecherche}
         onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
         messagerieEstVisible={messagerieEstVisible}
+        beneficiaire={`${beneficiaireChat.prenom} ${beneficiaireChat.nom}`}
       />
 
       {messagerieEstVisible && (

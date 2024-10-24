@@ -55,7 +55,7 @@ export function ConversationTile({
             Nouveau(x) message(s)
           </span>
         )}
-        <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
+        <span className='text-base-medium text-primary_darken mb-2 max-w-[90%] flex justify-between'>
           {beneficiaireFullname}
         </span>
         <span className='text-s-regular text-grey_800 mb-[8px]'>
