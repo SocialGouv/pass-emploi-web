@@ -8399,9 +8399,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-auth@npm:4.24.9":
-  version: 4.24.9
-  resolution: "next-auth@npm:4.24.9"
+"next-auth@npm:4.24.10":
+  version: 4.24.10
+  resolution: "next-auth@npm:4.24.10"
   dependencies:
     "@babel/runtime": "npm:^7.20.13"
     "@panva/hkdf": "npm:^1.0.2"
@@ -8423,7 +8423,7 @@ __metadata:
       optional: true
     nodemailer:
       optional: true
-  checksum: 10c0/fd38d83dcdf51b545f791b3a39a397392872bab4059ed03182c27527e7cd28271edbc1146ca58555a94e3adb941817fa07f9ff2bb7d2d87ad37299723017b2f3
+  checksum: 10c0/055c953ec4b98389b61e4026d07d6c27ff3942bde5e0ac15b5e0b32f1d58097fb58a32f114624fd7606ee9e1aaec63f335305a472609e78e3fba336eb4ac18ad
   languageName: node
   linkType: hard
 
@@ -8987,7 +8987,7 @@ __metadata:
     luxon: "npm:3.5.0"
     matomo-tracker: "npm:2.2.4"
     next: "npm:14.2.16"
-    next-auth: "npm:4.24.9"
+    next-auth: "npm:4.24.10"
     next-logger: "npm:5.0.1"
     next-themes: "npm:0.3.0"
     nextjs-toploader: "npm:3.7.15"
