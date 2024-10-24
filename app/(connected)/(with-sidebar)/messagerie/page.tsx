@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
+import MessageriePage from 'app/(connected)/(with-sidebar)/messagerie/MessageriePage'
 import { estUserMilo, utiliseChat } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

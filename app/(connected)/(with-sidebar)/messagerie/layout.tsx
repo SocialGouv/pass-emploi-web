@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react'
 
-import layout from 'app/(connected)/messagerie/layout.module.css'
+import layout from 'app/(connected)/(with-sidebar)/messagerie/layout.module.css'
 import ChatContainer from 'components/chat/ChatContainer'
 import { ID_CONTENU } from 'components/globals'
 import Footer from 'components/layouts/Footer'
