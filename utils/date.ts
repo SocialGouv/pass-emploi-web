@@ -1,8 +1,6 @@
 import { DateTime, Duration, Interval } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
-export const AUJOURDHUI_LABEL = 'aujourd’hui'
-
 export function dateIsToday(dateToCheck: DateTime): boolean {
   return DateTime.now().hasSame(dateToCheck, 'day')
 }
@@ -98,20 +96,6 @@ export function minutesEntreDeuxDates(
 ): number {
   const diff = Interval.fromDateTimes(date1, date2)
   return Math.round(diff.length('minutes'))
-}
-
-export function isMatin(heure: number) {
-  return heure <= 12
-}
-
-export function isApresMidi(heure: number) {
-  return heure > 12
-}
-
-export function formatJourIfToday(date: DateTime): string {
-  return dateIsToday(date)
-    ? AUJOURDHUI_LABEL
-    : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
 }
 
 const DURATION_H_SEPARATOR = "h'h'mm"

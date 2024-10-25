@@ -12,9 +12,11 @@ import {
   Onglet,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
 import DetailsJeune from 'components/jeune/DetailsJeune'
+import Modal from 'components/Modal'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
@@ -37,8 +39,8 @@ const FicheBeneficiairePasMilo = dynamic(
   () => import('components/jeune/FicheBeneficiairePasMilo'),
   { ssr: false }
 )
-const DeleteJeuneActifModal = dynamic(
-  () => import('components/jeune/DeleteJeuneActifModal'),
+const DeleteBeneficiaireActifModal = dynamic(
+  () => import('components/jeune/DeleteBeneficiaireActifModal'),
   { ssr: false }
 )
 const DeleteJeuneInactifModal = dynamic(
@@ -59,7 +61,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   const chats = useChats()
   const [currentConversation, setCurrentConversation] = useCurrentConversation()
   const [conseiller] = useConseiller()
-  const [alerte, setAlerte] = useAlerte()
+  const [alerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionBeneficiaire[]
@@ -69,10 +71,16 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
     IndicateursSemaine | undefined
   >()
 
-  const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
-    useState<boolean>(false)
+  const [
+    showModaleDeleteBeneficiaireActif,
+    setShowModaleDeleteBeneficiaireActif,
+  ] = useState<boolean>(false)
   const [showModaleDeleteJeuneInactif, setShowModaleDeleteJeuneInactif] =
     useState<boolean>(false)
+  const [
+    showModaleSuccesDeleteBeneficiaire,
+    setShowModaleSuccesDeleteBeneficiaire,
+  ] = useState<boolean>(false)
 
   const [
     showSuppressionCompteBeneficiaireError,
@@ -118,7 +126,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
     e.stopPropagation()
 
     if (beneficiaire.isActivated) {
-      setShowModaleDeleteJeuneActif(true)
+      setShowModaleDeleteBeneficiaireActif(true)
 
       if (motifsSuppression.length === 0) {
         const { getMotifsSuppression } = await import(
@@ -142,14 +150,12 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       await archiverJeune(beneficiaire.id, payload)
 
       removeBeneficiaireFromPortefeuille(beneficiaire.id)
-      setAlerte(AlerteParam.suppressionBeneficiaire)
-      router.push('/mes-jeunes')
-      router.refresh()
+      setShowModaleSuccesDeleteBeneficiaire(true)
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
     } finally {
-      setShowModaleDeleteJeuneActif(false)
+      setShowModaleDeleteBeneficiaireActif(false)
     }
   }
 
@@ -161,9 +167,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       await _supprimerJeuneInactif(beneficiaire.id)
 
       removeBeneficiaireFromPortefeuille(beneficiaire.id)
-      setAlerte(AlerteParam.suppressionBeneficiaire)
-      router.push('/mes-jeunes')
-      router.refresh()
+      setShowModaleSuccesDeleteBeneficiaire(true)
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -353,10 +357,10 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
         <FicheBeneficiairePasMilo onSwitchTab={switchTab} {...props} />
       )}
 
-      {showModaleDeleteJeuneActif && (
-        <DeleteJeuneActifModal
-          jeune={beneficiaire}
-          onClose={() => setShowModaleDeleteJeuneActif(false)}
+      {showModaleDeleteBeneficiaireActif && (
+        <DeleteBeneficiaireActifModal
+          beneficiaire={beneficiaire}
+          onClose={() => setShowModaleDeleteBeneficiaireActif(false)}
           motifsSuppression={motifsSuppression}
           soumettreSuppression={archiverJeuneActif}
         />
@@ -368,6 +372,23 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
           onClose={() => setShowModaleDeleteJeuneInactif(false)}
           onDelete={supprimerJeuneInactif}
         />
+      )}
+
+      {showModaleSuccesDeleteBeneficiaire && (
+        <Modal
+          title={`Le compte bénéficiaire : ${beneficiaire.prenom} ${beneficiaire.nom} a bien été supprimé.`}
+          onClose={() => router.push('/mes-jeunes')}
+          titleIllustration={IllustrationName.Check}
+        >
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            className='block m-auto'
+            onClick={() => router.push('/mes-jeunes')}
+          >
+            Revenir à mon portefeuille
+          </Button>
+        </Modal>
       )}
     </>
   )

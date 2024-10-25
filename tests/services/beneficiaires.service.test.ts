@@ -235,6 +235,7 @@ describe('JeunesApiService', () => {
       // Given
       const payloadFormData: SuppressionBeneficiaireFormData = {
         motif: 'Radiation du CEJ',
+        dateFinAccompagnement: '2020-04-12T12:00:00.000Z',
         commentaire: undefined,
       }
       const accessToken = 'accessToken'
@@ -245,7 +246,11 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiPost).toHaveBeenCalledWith(
         '/jeunes/id-jeune/archiver',
-        { motif: 'Radiation du CEJ', commentaire: undefined },
+        {
+          motif: 'Radiation du CEJ',
+          dateFinAccompagnement: '2020-04-12T12:00:00.000Z',
+          commentaire: undefined,
+        },
         accessToken
       )
     })
