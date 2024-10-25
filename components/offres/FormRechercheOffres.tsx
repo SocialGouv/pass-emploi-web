@@ -10,7 +10,7 @@ import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServ
 import Button from 'components/ui/Button/Button'
 import Etape from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { estBRSA } from 'interfaces/conseiller'
+import { estBRSA, estConseilDepartemental } from 'interfaces/conseiller'
 import { TypeOffre } from 'interfaces/offre'
 import { Commune, Localite, Metier } from 'interfaces/referentiel'
 import { SearchImmersionsQuery } from 'services/immersions.service'
@@ -71,7 +71,8 @@ export default function FormRechercheOffres({
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offreLieu, setOffreLieu] = useState<string | undefined>()
 
-  const aAccesRechercheAlternanceServiceCivique = !estBRSA(conseiller)
+  const aAccesRechercheAlternanceServiceCivique =
+    !estBRSA(conseiller) && !estConseilDepartemental(conseiller)
 
   function formIsInvalid(): boolean {
     switch (typeOffre) {
