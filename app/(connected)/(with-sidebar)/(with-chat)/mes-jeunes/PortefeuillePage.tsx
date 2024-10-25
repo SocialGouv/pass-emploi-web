@@ -69,8 +69,6 @@ function PortefeuillePage({
   if (isFromEmail) initialTracking += ' - Origine email'
   if (alerte?.key === AlerteParam.creationBeneficiaire)
     initialTracking += ' - Succès creation compte'
-  if (alerte?.key === AlerteParam.suppressionBeneficiaire)
-    initialTracking += ' - Succès suppr. compte'
   if (alerte?.key === AlerteParam.recuperationBeneficiaires)
     initialTracking += ' - Succès récupération'
   if (alerte?.key === AlerteParam.envoiMessage)

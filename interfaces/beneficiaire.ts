@@ -52,6 +52,7 @@ export interface DetailBeneficiaire extends BaseBeneficiaire {
     dateFin?: string
   }>
   estAArchiver: boolean
+  lastActivity?: string
   email?: string
   urlDossier?: string
   dateFinCEJ?: string

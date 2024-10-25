@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -57,7 +58,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
   describe('pour tous les conseillers', () => {
     it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
       // Given
-      await renderFicheJeune(unDetailBeneficiaire())
+      await renderFicheBeneficiaire(unDetailBeneficiaire())
 
       // Then
       const deleteButton = screen.getByText('Supprimer ce compte')
@@ -65,10 +66,11 @@ describe('Gestion du compte dans la fiche jeune', () => {
     })
 
     describe('Supprimer un compte actif', () => {
+      const beneficiaire = unDetailBeneficiaire({ isActivated: true })
       beforeEach(async () => {
         // Given
-        await renderFicheJeune(
-          unDetailBeneficiaire({ isActivated: true }),
+        await renderFicheBeneficiaire(
+          beneficiaire,
           portefeuilleSetter,
           alerteSetter
         )
@@ -99,7 +101,9 @@ describe('Gestion du compte dans la fiche jeune', () => {
         it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
           // Then
           expect(
-            screen.getByText(/Une fois confirmé toutes les informations liées/)
+            screen.getByText(
+              /À la suppression le bénéficiaire n’apparaitra plus dans votre portefeuille./
+            )
           ).toBeInTheDocument()
         })
 
@@ -154,31 +158,112 @@ describe('Gestion du compte dans la fiche jeune', () => {
           ).toBeInTheDocument()
         })
 
+        it('contient un champ pour renseigner la date de fin d’accompagnement', async () => {
+          // Given
+          const dateFinAccompagnement = screen.getByLabelText(
+            /Date de fin d’accompagnement/
+          )
+
+          // Then
+          expect(dateFinAccompagnement).toHaveAttribute('required', '')
+          expect(dateFinAccompagnement).toHaveAttribute('type', 'date')
+        })
+
+        it('vérifie que la date de fin d’accompagnement est renseignée', async () => {
+          // Given
+          const dateFinAccompagnement = screen.getByLabelText(
+            /Date de fin d’accompagnement/
+          )
+
+          // When
+          await userEvent.click(dateFinAccompagnement)
+          await userEvent.tab()
+
+          // Then
+          expect(dateFinAccompagnement).toHaveAttribute('aria-invalid', 'true')
+          expect(dateFinAccompagnement).toHaveAccessibleDescription(
+            'Le champ “Date de fin d’accompagnement” est vide. Renseignez une date de fin d’accompagnement.'
+          )
+        })
+
+        it('vérifie que la date de fin d’accompagnement est postérieure à la création du bénéficiaire', async () => {
+          // Given
+          const dateFinAccompagnement = screen.getByLabelText(
+            /Date de fin d’accompagnement/
+          )
+
+          // When
+          await userEvent.type(
+            dateFinAccompagnement,
+            DateTime.fromISO(beneficiaire.creationDate)
+              .minus({ day: 1 })
+              .toISODate()
+          )
+          await userEvent.tab()
+
+          // Then
+          expect(dateFinAccompagnement).toHaveAttribute('aria-invalid', 'true')
+          expect(dateFinAccompagnement).toHaveAccessibleDescription(
+            'Le champ “Date de fin d’accompagnement” est invalide. Le date attendue est comprise entre la date de création du bénéficiaire et maintenant.'
+          )
+        })
+
+        it('vérifie que la date de fin d’accompagnement n’est pas dans le futur', async () => {
+          // Given
+          const dateFinAccompagnement = screen.getByLabelText(
+            /Date de fin d’accompagnement/
+          )
+
+          // When
+          await userEvent.type(
+            dateFinAccompagnement,
+            DateTime.now().plus({ day: 1 }).toISODate()
+          )
+          await userEvent.tab()
+
+          // Then
+          expect(dateFinAccompagnement).toHaveAttribute('aria-invalid', 'true')
+          expect(dateFinAccompagnement).toHaveAccessibleDescription(
+            'Le champ “Date de fin d’accompagnement” est invalide. Le date attendue est comprise entre la date de création du bénéficiaire et maintenant.'
+          )
+        })
+
         it('lors de la confirmation, supprime le bénéficiaire', async () => {
           // Given
           const selectMotif = screen.getByRole('combobox', {
             name: /Motif de suppression/,
           })
           const supprimerButtonModal = screen.getByText('Supprimer le compte')
+          const inputFinAccompagnement = screen.getByLabelText(
+            /Date de fin d’accompagnement/
+          )
+          const dateFinAccompagnement = DateTime.now()
+            .minus({ day: 1 })
+            .toISODate()
+
           await userEvent.selectOptions(
             selectMotif,
             'Demande du jeune de sortir du dispositif'
           )
+          await userEvent.type(inputFinAccompagnement, dateFinAccompagnement)
 
           // When
           await userEvent.click(supprimerButtonModal)
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Revenir à mon portefeuille' })
+          )
 
           // Then
           expect(archiverJeune).toHaveBeenCalledWith('beneficiaire-1', {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
+            dateFinAccompagnement,
           })
 
           expect(portefeuilleSetter).toHaveBeenCalledWith([
             portefeuille[1],
             portefeuille[2],
           ])
-          expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
           expect(push).toHaveBeenCalledWith('/mes-jeunes')
         })
       })
@@ -187,7 +272,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     describe('Supprimer un compte inactif', () => {
       beforeEach(async () => {
         // Given
-        await renderFicheJeune(
+        await renderFicheBeneficiaire(
           unDetailBeneficiaire({ isActivated: false }),
           portefeuilleSetter,
           alerteSetter
@@ -218,6 +303,9 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
         // When
         await userEvent.click(supprimerButtonModal)
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Revenir à mon portefeuille' })
+        )
 
         // Then
         expect(supprimerJeuneInactif).toHaveBeenCalledWith('beneficiaire-1')
@@ -226,7 +314,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
           portefeuille[1],
           portefeuille[2],
         ])
-        expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
         expect(push).toHaveBeenCalledWith('/mes-jeunes')
       })
     })
@@ -234,7 +321,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     describe('quand le jeune a été réaffecté temporairement', () => {
       it("affiche l'information", async () => {
         // Given
-        await renderFicheJeune(
+        await renderFicheBeneficiaire(
           unDetailBeneficiaire({ isReaffectationTemporaire: true })
         )
 
@@ -248,7 +335,9 @@ describe('Gestion du compte dans la fiche jeune', () => {
     describe("quand le jeune n'a pas activé son compte", () => {
       it('affiche le mode opératoire pour activer le compte', async () => {
         // Given
-        await renderFicheJeune(unDetailBeneficiaire({ isActivated: false }))
+        await renderFicheBeneficiaire(
+          unDetailBeneficiaire({ isActivated: false })
+        )
 
         // Then
         expect(
@@ -261,8 +350,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeune(
-  jeune: DetailBeneficiaire,
+async function renderFicheBeneficiaire(
+  beneficiaire: DetailBeneficiaire,
   portefeuilleSetter?: (updatedBeneficiaires: BaseBeneficiaire[]) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
@@ -270,7 +359,7 @@ async function renderFicheJeune(
     renderWithContexts(
       <FicheBeneficiairePage
         estMilo={true}
-        beneficiaire={jeune}
+        beneficiaire={beneficiaire}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

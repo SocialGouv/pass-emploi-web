@@ -213,25 +213,6 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand on vient de supprimer un jeune', () => {
-    it("affiche l'alerte de succès", () => {
-      // Given
-      renderWithContexts(<AlerteDisplayer />, {
-        customAlerte: {
-          value: {
-            key: AlerteParam.suppressionBeneficiaire,
-          },
-          setter: alerteSetter,
-        },
-      })
-
-      // Then
-      expect(
-        screen.getByText(/compte du bénéficiaire a bien été supprimé/)
-      ).toBeInTheDocument()
-    })
-  })
-
   describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
     it("affiche l'alerte de succès", () => {
       // Given
