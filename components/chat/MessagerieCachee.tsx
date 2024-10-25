@@ -9,11 +9,7 @@ export function MessagerieCachee({
   permuterVisibiliteMessagerie: () => void
 }) {
   return (
-    <div
-      ref={(e) => e?.focus()}
-      tabIndex={-1}
-      className='flex flex-col gap-4 justify-center p-2'
-    >
+    <div ref={(e) => e?.focus()} tabIndex={-1} className='p-2 overflow-y-auto'>
       <p className='text-center'>
         Vous avez désactivé l’affichage de la messagerie
       </p>
@@ -27,7 +23,7 @@ export function MessagerieCachee({
         label='Rendre visible la messagerie'
         onClick={permuterVisibiliteMessagerie}
         style={ButtonStyle.PRIMARY}
-        className='mx-auto'
+        className='block mx-auto'
       >
         <IconComponent
           name={IconName.VisibilityOn}
