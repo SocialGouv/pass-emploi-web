@@ -27,7 +27,7 @@ export default function TableauBeneficiairesCD({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const messagesColumn = 'Messages non lus'
+  const messagesColumn = 'Messages non lus par le béneficiaire'
   const derniereActiviteColumn = 'Dernière activité'
 
   function getRowLabel(beneficiaire: BeneficiaireAvecInfosComplementaires) {
@@ -35,7 +35,7 @@ export default function TableauBeneficiairesCD({
     const labelActivite = beneficiaire.isActivated
       ? `dernière activité ${toRelativeDateTime(beneficiaire.lastActivity!)}`
       : 'non activé'
-    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus`
+    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus par le béneficiaire`
 
     return `${labelFiche}, ${labelActivite}, ${labelMessages}`
   }

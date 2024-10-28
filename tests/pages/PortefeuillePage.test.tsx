@@ -372,7 +372,9 @@ describe('PortefeuillePage client side', () => {
     it('affiche le nombre de messages non lus', () => {
       // Then
       expect(
-        screen.getByRole('columnheader', { name: 'Messages non lus' })
+        screen.getByRole('columnheader', {
+          name: 'Messages non lus par le béneficiaire',
+        })
       ).toBeInTheDocument()
     })
   })
