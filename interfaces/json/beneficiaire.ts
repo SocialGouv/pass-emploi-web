@@ -30,9 +30,9 @@ export interface BaseBeneficiaireJson {
 }
 
 export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
-  lastActivity: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
+  lastActivity?: string
   situationCourante?: Situation
   dateFinCEJ?: string
 }
@@ -42,6 +42,7 @@ export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   conseiller: { id: string }
+  lastActivity?: string
   email?: string
   urlDossier?: string
   dateFinCEJ?: string
@@ -77,6 +78,7 @@ export interface MetadonneesFavorisJson {
 
 export interface SuppressionBeneficiaireFormData {
   motif: string
+  dateFinAccompagnement: string
   commentaire?: string
 }
 

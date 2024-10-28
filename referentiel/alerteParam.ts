@@ -10,13 +10,9 @@ export enum AlerteParam {
   clotureSession = 'clotureSession',
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperationBeneficiaires',
-  suppressionBeneficiaire = 'suppressionBeneficiaire',
   creationBeneficiaire = 'creationBeneficiaire',
   reaffectation = 'reaffectation',
   // Actions
-  suppressionAction = 'suppressionAction',
-  qualificationSNP = 'qualificationSNP',
-  qualificationNonSNP = 'qualificationNonSNP',
   multiQualificationSNP = 'multiQualificationSNP',
   multiQualificationNonSNP = 'multiQualificationNonSNP',
   // Listes de diffusion

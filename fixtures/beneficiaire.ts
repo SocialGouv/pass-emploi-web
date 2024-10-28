@@ -45,6 +45,7 @@ export const unDetailBeneficiaire = (
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
+    lastActivity: '2023-04-12T05:42:07.756Z',
     situations: [],
     idConseiller: 'id-conseiller',
     estAArchiver: false,
@@ -153,6 +154,7 @@ export const unDetailBeneficiaireJson = (
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
+    lastActivity: '2023-04-12T05:42:07.756Z',
     conseiller: { id: 'id-conseiller' },
   }
   return { ...defaults, ...overrides }

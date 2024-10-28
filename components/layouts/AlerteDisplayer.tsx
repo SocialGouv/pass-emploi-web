@@ -91,9 +91,6 @@ const ALERTES: DictAlertes = {
   recuperationBeneficiaires: {
     title: 'Vous avez récupéré vos bénéficiaires avec succès',
   },
-  suppressionBeneficiaire: {
-    title: 'Le compte du bénéficiaire a bien été supprimé',
-  },
   creationBeneficiaire: {
     title: 'Le bénéficiaire a été ajouté à votre portefeuille',
     link: {
@@ -101,7 +98,6 @@ const ALERTES: DictAlertes = {
       buildHref: (target?: string) => '/mes-jeunes/' + target,
     },
   },
-  suppressionAction: { title: 'L’action a bien été supprimée' },
   choixAgence: { title: 'Votre agence a été ajoutée à votre profil' },
   envoiMessage: {
     title:
@@ -109,16 +105,6 @@ const ALERTES: DictAlertes = {
   },
   modificationIdentifiantPartenaire: {
     title: 'L’identifiant France Travail a bien été mis à jour',
-  },
-  qualificationSNP: {
-    title: 'Action qualifiée',
-    sub:
-      'Vous pouvez encore modifier cette action, uniquement dans i-milo.\n' +
-      'Délai d’actualisation entre l’app CEJ et i-milo : environ 24h.',
-  },
-  qualificationNonSNP: {
-    title: 'Action qualifiée en non SNP.',
-    sub: 'C’est enregistré ! Vous pouvez poursuivre votre travail.',
   },
   multiQualificationSNP: {
     title: 'Actions qualifiées en SNP !',
