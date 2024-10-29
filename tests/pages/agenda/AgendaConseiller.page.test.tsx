@@ -167,7 +167,7 @@ describe('Agenda - Onglet conseiller', () => {
         name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const buttonPeriodeCourante = screen.getByRole('button', {
-        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
+        name: 'Aller à la période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodeFutureButton = screen.getByRole('button', {
         name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
