@@ -3,6 +3,7 @@ const labelFavoris = 'Favoris'
 const labelInformations = 'Informations'
 const labelRdvPasses = 'Rendez-vous passés'
 const labelAction = 'Détail action'
+const labelDemarche = 'Détail démarche'
 
 const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Agenda
@@ -21,6 +22,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/mes-jeunes\/[\w-]+\/informations$/, labelInformations],
   [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, labelRdvPasses],
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
+  [/\/mes-jeunes\/[\w-]+\/demarches\/[\w-]+$/, labelDemarche],
 
   // Établissement
   [/\/etablissement$/, 'Bénéficiaires'],
