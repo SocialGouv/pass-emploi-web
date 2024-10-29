@@ -1,19 +1,26 @@
 import { DateTime } from 'luxon'
+import dynamic from 'next/dynamic'
 import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import TableauBeneficiairesCD from 'components/jeune/TableauBeneficiairesCD'
-import TableauBeneficiairesFT from 'components/jeune/TableauBeneficiairesFT'
-import TableauBeneficiairesMilo from 'components/jeune/TableauBeneficiairesMilo'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
-import { estConseilDepartemental, estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
-interface TableauBeneficiairesProps {
+const TableauBeneficiairesMilo = dynamic(
+  () => import('components/jeune/TableauBeneficiairesMilo'),
+  { ssr: false }
+)
+const TableauBeneficiairesPasMilo = dynamic(
+  () => import('components/jeune/TableauBeneficiairesPasMilo'),
+  { ssr: false }
+)
+
+type TableauBeneficiairesProps = {
   beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
   total: number
 }
@@ -47,12 +54,10 @@ function TableauBeneficiaires(
 
       {beneficiairesFiltres.length > 0 && (
         <>
-          {(estMilo(conseiller) || estConseilDepartemental(conseiller)) && (
-            <h2 className='text-m-bold mb-2 text-center text-grey_800'>
-              Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
-              {toShortDate(FIN_PERIODE)}
-            </h2>
-          )}
+          <h2 className='text-m-bold mb-2 text-center text-grey_800'>
+            Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
+            {toShortDate(FIN_PERIODE)}
+          </h2>
 
           <Table
             ref={ref}
@@ -70,16 +75,8 @@ function TableauBeneficiaires(
               />
             )}
 
-            {estConseilDepartemental(conseiller) && (
-              <TableauBeneficiairesCD
-                beneficiairesFiltres={beneficiairesFiltres}
-                page={page}
-                total={total}
-              />
-            )}
-
-            {!estMilo(conseiller) && !estConseilDepartemental(conseiller) && (
-              <TableauBeneficiairesFT
+            {!estMilo(conseiller) && (
+              <TableauBeneficiairesPasMilo
                 beneficiairesFiltres={beneficiairesFiltres}
                 page={page}
                 total={total}

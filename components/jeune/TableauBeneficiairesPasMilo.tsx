@@ -12,17 +12,17 @@ import {
 import useMatomo from 'utils/analytics/useMatomo'
 import { toRelativeDateTime } from 'utils/date'
 
-interface TableauBeneficiairesFTProps {
+interface TableauBeneficiairesPasMiloProps {
   beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
   page: number
   total: number
 }
 
-export default function TableauBeneficiairesCD({
+export default function TableauBeneficiairesPasMilo({
   beneficiairesFiltres,
   page,
   total,
-}: TableauBeneficiairesFTProps) {
+}: TableauBeneficiairesPasMiloProps) {
   const [beneficiairesAffiches, setBeneficiairesAffiches] = useState<
     BeneficiaireAvecInfosComplementaires[]
   >([])
