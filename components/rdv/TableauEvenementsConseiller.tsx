@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
 import { AgendaRow } from 'components/rdv/AgendaRow'
 import Table from 'components/ui/Table/Table'
@@ -9,12 +9,15 @@ type TableauEvenementsConseillerProps = {
   periodeLabel: string
 }
 
-export default function TableauEvenementsConseiller({
-  evenements,
-  periodeLabel,
-}: TableauEvenementsConseillerProps) {
+function TableauEvenementsConseiller(
+  { evenements, periodeLabel }: TableauEvenementsConseillerProps,
+  ref: ForwardedRef<HTMLTableElement>
+) {
   return (
-    <Table caption={{ text: 'Liste de mes événements ' + periodeLabel }}>
+    <Table
+      caption={{ text: 'Liste de mes événements ' + periodeLabel }}
+      ref={ref}
+    >
       <thead className='sr-only'>
         <tr>
           <th scope='col'>Horaires et durée</th>
@@ -33,3 +36,5 @@ export default function TableauEvenementsConseiller({
     </Table>
   )
 }
+
+export default forwardRef(TableauEvenementsConseiller)

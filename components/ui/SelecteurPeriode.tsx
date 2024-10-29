@@ -1,17 +1,16 @@
 import { DateTime } from 'luxon'
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from './Button/Button'
 import IconComponent, { IconName } from './IconComponent'
 
 import { toLongMonthDate, toShortDate } from 'utils/date'
+import { useDebounce } from 'utils/hooks/useDebounce'
 
 type SelecteurPeriodeProps = {
   onNouvellePeriode: (
-    indexPeriode: number,
-    dateDebut: DateTime,
-    dateFin: DateTime,
-    label: string
+    periode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    opts: { label: string; shouldFocus: boolean }
   ) => void
   trackNavigation: (append?: string) => void
   periodeCourante: number
@@ -23,11 +22,12 @@ export function SelecteurPeriode({
   periodeCourante,
 }: SelecteurPeriodeProps): ReactElement {
   const AUJOURDHUI = DateTime.now().startOf('day')
+  const isFirstRender = useRef<boolean>(true)
 
   const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
     periodeCourante ?? 0
   )
-  const [periodeAffiche, setPeriodeAffiche] = useState<{
+  const [periodeAffichee, setPeriodeAffichee] = useState<{
     debut: DateTime
     fin: DateTime
     longLabel: string
@@ -36,6 +36,14 @@ export function SelecteurPeriode({
     const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
     return { debut, fin, longLabel: labelPeriode(debut, fin, 'long') }
   })
+
+  const [periodeInput, setPeriodeInput] = useState<string>(
+    periodeAffichee.debut.toISODate()
+  )
+  const debouncedPeriode = useDebounce(periodeInput, 500)
+
+  const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
+  const [shouldFocusOnChange, setShouldFocusOnChange] = useState<boolean>(false)
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
     return AUJOURDHUI.plus({
@@ -58,96 +66,150 @@ export function SelecteurPeriode({
 
   async function allerPeriodePrecedente() {
     setIndexPeriodeAffichee(indexPeriodeAffichee - 1)
+    setShouldFocusOnChange(false)
     trackNavigation('passés')
   }
 
   async function allerPeriodeSuivante() {
     setIndexPeriodeAffichee(indexPeriodeAffichee + 1)
+    setShouldFocusOnChange(false)
     trackNavigation('futurs')
   }
 
   async function allerPeriodeActuelle() {
     setIndexPeriodeAffichee(0)
+    setShouldFocusOnChange(true)
     trackNavigation()
+  }
+
+  function changerPeriode(debutPeriodeInput: string) {
+    if (!debutPeriodeInput) return
+    if (!regexDate.test(debutPeriodeInput)) return
+
+    const debutPeriode = DateTime.fromISO(debutPeriodeInput).set({
+      weekday: AUJOURDHUI.weekday,
+    })
+    setIndexPeriodeAffichee(debutPeriode.diff(AUJOURDHUI, 'week').weeks)
+    setShouldFocusOnChange(true)
+    trackNavigation('manuel')
   }
 
   useEffect(() => {
     const debut = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
     const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
     const label = labelPeriode(debut, fin, 'long')
-    onNouvellePeriode(indexPeriodeAffichee, debut, fin, label)
-    setPeriodeAffiche({ debut, fin, longLabel: label })
+    onNouvellePeriode(
+      { index: indexPeriodeAffichee, dateDebut: debut, dateFin: fin },
+      { label, shouldFocus: shouldFocusOnChange }
+    )
+    setPeriodeAffichee({ debut, fin, longLabel: label })
   }, [indexPeriodeAffichee])
 
+  useEffect(() => {
+    if (!isFirstRender.current) changerPeriode(debouncedPeriode)
+  }, [debouncedPeriode])
+
+  useEffect(() => {
+    isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
+  }, [])
+
   return (
-    <div className='flex flex-wrap items-end gap-6 w-fit'>
-      <p
-        className='flex flex-col text-base-medium'
-        aria-live='polite'
-        aria-atomic={true}
-      >
-        Période :{' '}
-        <span
-          className='text-m-bold text-primary self-center'
-          aria-label={labelPeriode(
-            periodeAffiche.debut,
-            periodeAffiche.fin,
+    <fieldset className='flex flex-wrap items-center gap-2 w-fit'>
+      <legend className='sr-only' aria-live='polite' aria-atomic={true}>
+        Période : {periodeAffichee.longLabel}
+      </legend>
+
+      <button onClick={allerPeriodePrecedente} type='button'>
+        <span className='sr-only'>
+          Aller à la période précédente{' '}
+          {labelPeriode(
+            jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
+            jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
             'long'
           )}
-        >
-          {labelPeriode(periodeAffiche.debut, periodeAffiche.fin, 'short')}
         </span>
-      </p>
-
-      <div className='flex items-center col-start-2 row-start-2'>
-        <button
-          aria-label={
+        <IconComponent
+          name={IconName.ChevronLeft}
+          className='w-6 h-6 fill-primary hover:fill-primary_darken'
+          focusable={false}
+          aria-hidden={true}
+          title={
             `Aller à la période précédente ` +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
               jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
-              'long'
+              'short'
             )
           }
-          onClick={allerPeriodePrecedente}
-          type='button'
-        >
-          <IconComponent
-            name={IconName.ChevronLeft}
-            className='w-6 h-6 fill-primary mr-2 hover:fill-primary_darken'
-            focusable={false}
-            title='Aller à la période précédente'
-          />
-        </button>
-        <Button
-          type='button'
-          style={ButtonStyle.SECONDARY}
-          onClick={allerPeriodeActuelle}
-          disabled={indexPeriodeAffichee === 0}
-        >
-          <span className='sr-only'>Aller à la </span>Période en cours
-          <span className='sr-only'> {periodeAffiche.longLabel}</span>
-        </Button>
-        <button
-          aria-label={
+        />
+      </button>
+
+      <label htmlFor='debut-periode'>
+        <span className='sr-only'>Début période : </span>
+        Du{' '}
+      </label>
+      <input
+        id='debut-periode'
+        type='date'
+        value={periodeInput}
+        onChange={(e) => setPeriodeInput(e.target.value)}
+        step={7}
+        className='text-base-bold border-b'
+      />
+
+      <label htmlFor='fin-periode'>
+        <span className='sr-only'>Fin période : </span>
+        au{' '}
+      </label>
+      <input
+        id='fin-periode'
+        type='date'
+        value={periodeAffichee.fin.toISODate()}
+        readOnly={true}
+      />
+
+      <button onClick={allerPeriodeSuivante} type='button'>
+        <span className='sr-only'>
+          Aller à la période suivante{' '}
+          {labelPeriode(
+            jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
+            jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
+            'long'
+          )}
+        </span>
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-6 h-6 fill-primary hover:fill-primary_darken'
+          focusable={false}
+          aria-hidden={true}
+          title={
             `Aller à la période suivante ` +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
               jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
-              'long'
+              'short'
             )
           }
-          onClick={allerPeriodeSuivante}
-          type='button'
-        >
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='w-6 h-6 fill-primary ml-2 hover:fill-primary_darken'
-            focusable={false}
-            title='Aller à la période suivante'
-          />
-        </button>
-      </div>
-    </div>
+        />
+      </button>
+
+      <Button
+        type='button'
+        style={ButtonStyle.SECONDARY}
+        onClick={allerPeriodeActuelle}
+        disabled={indexPeriodeAffichee === 0}
+        className='!py-0'
+        label={`Aller à la période en cours ${labelPeriode(
+          jourDeDebutDeLaPeriode(0),
+          jourDeFinDeLaPeriode(0),
+          'long'
+        )}`}
+      >
+        Période en cours
+      </Button>
+    </fieldset>
   )
 }
