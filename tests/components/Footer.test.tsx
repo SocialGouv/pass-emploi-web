@@ -44,7 +44,7 @@ describe('<Footer/>', () => {
       })
     ).toHaveAttribute(
       'href',
-      'https://doc.pass-emploi.beta.gouv.fr/legal/web_politique_de_confidentialite'
+      'https://travail-emploi.gouv.fr/application-contrat-dengagement-jeune-cej-traitement-des-donnees-personnelles'
     )
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
