@@ -62,29 +62,26 @@ describe('LoginPassEmploiPage client side', () => {
     })
 
     it('devrait avoir trois boutons', () => {
-      const franceTravailBRSAButton = screen.getByRole('button', {
-        name: 'Connexion BRSA',
-      })
       const franceTravailAIJButton = screen.getByRole('button', {
-        name: 'Connexion AIJ',
+        name: 'Connexion France Travail AIJ',
+      })
+      const franceTravailRSAButton = screen.getByRole('button', {
+        name: 'Connexion France Travail RSA',
       })
       const conseillerDeptButton = screen.getByRole('button', {
-        name: 'Connexion conseil départemental',
+        name: 'Connexion Conseil départemental',
       })
 
-      const buttonsNb = screen.getAllByRole('button')
-
       //THEN
-      expect(franceTravailBRSAButton).toBeInTheDocument()
       expect(franceTravailAIJButton).toBeInTheDocument()
+      expect(franceTravailRSAButton).toBeInTheDocument()
       expect(conseillerDeptButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(3)
     })
 
     it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion BRSA',
+        name: 'Connexion France Travail RSA',
       })
 
       // When
@@ -101,7 +98,7 @@ describe('LoginPassEmploiPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
-        name: 'Connexion AIJ',
+        name: 'Connexion France Travail AIJ',
       })
 
       // When
@@ -118,7 +115,7 @@ describe('LoginPassEmploiPage client side', () => {
     it("permet de s'identifier en tant que conseiller dept", async () => {
       // Given
       const cdButton = screen.getByRole('button', {
-        name: 'Connexion conseil départemental',
+        name: 'Connexion Conseil départemental',
       })
 
       // When

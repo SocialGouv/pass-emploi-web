@@ -24,9 +24,12 @@ export default function LoginButton({
 }: FormButtonProps) {
   return (
     <form onSubmit={handleSubmit} className={className}>
-      <Button type='submit' className='w-full flex' style={style}>
-        {altText && <span className='sr-only'>{altText}</span>}
-
+      <Button
+        type='submit'
+        className='w-full flex'
+        style={style}
+        label={`Connexion ${altText ?? label}`}
+      >
         <IllustrationComponent
           name={illustrationName}
           className='mr-4 w-[50px] fill-primary_darken'
