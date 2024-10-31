@@ -1,9 +1,8 @@
-import parse, { domToReact } from 'html-react-parser'
+import parse from 'html-react-parser'
 import React, { useRef } from 'react'
 import sanitizeHtml from 'sanitize-html'
 
-import { ModalHandles } from 'components/Modal'
-import ModalContainer from 'components/ModalContainer'
+import ModalContainer, { ModalHandles } from 'components/ModalContainer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { useActualites } from 'utils/actualitesContext'
 
@@ -13,7 +12,7 @@ interface ActualitesModalProps {
 
 export default function ActualitesModal({ onClose }: ActualitesModalProps) {
   const modalRef = useRef<ModalHandles>(null)
-  const [actualites] = useActualites()
+  const actualites = useActualites()
 
   function formaterTexteAvecTag(texteAFormater: string) {
     const texteAssaini = sanitizeHtml(texteAFormater, {
@@ -59,7 +58,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
 
       <div className='p-6'>
         <div className='[&_a]:underline [&_a]:text-primary [&_img]:max-w-[200px] [&_img]:my-4 [&_h3]:font-bold [&_h3]:text-primary [&_h3]:my-4'>
-          {formaterTexteAvecTag(actualites)}
+          {formaterTexteAvecTag(actualites?.contenu ?? '')}
         </div>
       </div>
     </div>

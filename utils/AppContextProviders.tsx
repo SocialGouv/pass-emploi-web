@@ -21,19 +21,13 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { MobileViewportProvider } from 'utils/mobileViewportContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
-export type RenderedWPPageType = {
-  rendered: string
-}
-
 export default function AppContextProviders({
   conseiller,
   portefeuille,
-  actualitesData,
   children,
 }: {
   conseiller: Conseiller
   portefeuille: BeneficiaireFromListe[]
-  actualitesData: string
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
@@ -52,7 +46,7 @@ export default function AppContextProviders({
     <MobileViewportProvider>
       <ConseillerProvider conseiller={conseiller}>
         <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-          <ActualitesProvider actualites={actualitesData}>
+          <ActualitesProvider>
             <ChatCredentialsProvider>
               <ChatsProvider>
                 <CurrentConversationProvider>
