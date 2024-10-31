@@ -7,12 +7,12 @@ import {
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
+import { Actualites } from 'interfaces/actualites'
 import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ActualitesProvider } from 'utils/actualitesContext'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
-import { RenderedWPPageType } from 'utils/AppContextProviders'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 import {
@@ -103,7 +103,7 @@ export default function renderWithContexts(
 }
 
 function provideContexts(
-  actualites: string,
+  actualites: Actualites,
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
@@ -134,7 +134,7 @@ function provideContexts(
         portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
-        <ActualitesProvider actualites={actualites}>
+        <ActualitesProvider actualitesForTests={actualites}>
           <ChatCredentialsProvider
             credentials={{
               token: 'firebaseToken',

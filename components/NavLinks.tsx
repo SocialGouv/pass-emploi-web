@@ -43,7 +43,7 @@ export default function NavLinks({
   const pathname = usePathname()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [actualites] = useActualites()
+  const actualites = useActualites()
 
   const [afficherActualiteModal, setAfficherActualiteModal] =
     useState<boolean>(false)
@@ -209,7 +209,11 @@ export default function NavLinks({
                   onClick={ouvrirActualites}
                   showLabelOnSmallScreen={showLabelsOnSmallScreen}
                   badgeLabel={
-                    aDeNouvellesActualites(conseiller, actualites.modified)
+                    actualites &&
+                    aDeNouvellesActualites(
+                      conseiller,
+                      actualites.dateDerniereModification
+                    )
                       ? '!'
                       : undefined
                   }

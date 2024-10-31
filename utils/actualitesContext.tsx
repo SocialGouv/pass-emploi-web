@@ -1,35 +1,48 @@
 'use client'
 
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
-type ActualitesState = [string, (updatedActualites: string) => void]
+import { Actualites } from 'interfaces/actualites'
+import { getActualites } from 'services/actualites.service'
 
-const ActualitesContext = createContext<ActualitesState | undefined>(undefined)
+const ActualitesContext = createContext<Actualites | null | undefined>(
+  undefined
+)
 
 export function ActualitesProvider({
   children,
-  actualites,
-  setterForTests,
+  actualitesForTests,
 }: {
   children: ReactNode
-  actualites: string
-  setterForTests?: (updatedActualites: string) => void
+  actualitesForTests?: Actualites | null
 }) {
-  const [state, setActualites] = useState<string>(actualites)
-  const setter = setterForTests ?? setActualites
+  const [actualites, setActualites] = useState<Actualites | null | undefined>(
+    actualitesForTests
+  )
+
+  useEffect(() => {
+    if (actualites === undefined) getActualites().then(setActualites)
+    return () => setActualites(undefined)
+  }, [actualites])
 
   return (
-    <ActualitesContext.Provider value={[state, setter]}>
+    <ActualitesContext.Provider value={actualites}>
       {children}
     </ActualitesContext.Provider>
   )
 }
 
-export function useActualites(): ActualitesState {
-  const actualitesContext = useContext(ActualitesContext)
-  if (!actualitesContext) {
+export function useActualites(): Actualites | null {
+  const actualites = useContext(ActualitesContext)
+  if (actualites === undefined) {
     throw new Error('useActualites must be used within ActualitesProvider')
   }
 
-  return actualitesContext
+  return actualites
 }
