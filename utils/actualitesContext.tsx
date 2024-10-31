@@ -11,24 +11,21 @@ import {
 import { Actualites } from 'interfaces/actualites'
 import { getActualites } from 'services/actualites.service'
 
-const ActualitesContext = createContext<Actualites | null | undefined>(
-  undefined
-)
+const ActualitesContext = createContext<Actualites | undefined>(undefined)
 
 export function ActualitesProvider({
   children,
   actualitesForTests,
 }: {
   children: ReactNode
-  actualitesForTests?: Actualites | null
+  actualitesForTests?: Actualites
 }) {
-  const [actualites, setActualites] = useState<Actualites | null | undefined>(
+  const [actualites, setActualites] = useState<Actualites | undefined>(
     actualitesForTests
   )
 
   useEffect(() => {
     if (actualites === undefined) getActualites().then(setActualites)
-    return () => setActualites(undefined)
   }, [actualites])
 
   return (
@@ -38,11 +35,6 @@ export function ActualitesProvider({
   )
 }
 
-export function useActualites(): Actualites | null {
-  const actualites = useContext(ActualitesContext)
-  if (actualites === undefined) {
-    throw new Error('useActualites must be used within ActualitesProvider')
-  }
-
-  return actualites
+export function useActualites(): Actualites | undefined {
+  return useContext(ActualitesContext)
 }
