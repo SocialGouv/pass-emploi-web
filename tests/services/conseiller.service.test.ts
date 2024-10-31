@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { Session } from 'next-auth'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
@@ -24,9 +25,9 @@ describe('ConseillerApiService', () => {
     it('renvoie les informations d’un conseiller', async () => {
       // Given
       const accessToken = 'accessToken'
-      const dateSignature = '2023-10-03T00:00:00.000+02:00'
+      const uneDate = '2023-10-03T00:00:00.000+02:00'
 
-      const user = {
+      const user: Session.HydratedUser = {
         id: 'id-user',
         name: 'Albert Durant',
         structure: StructureConseiller.MILO,
@@ -34,7 +35,6 @@ describe('ConseillerApiService', () => {
         estConseiller: true,
         estSuperviseur: false,
         estSuperviseurResponsable: false,
-        dateSignatureCGU: dateSignature,
       }
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: unConseillerJson({
@@ -42,7 +42,8 @@ describe('ConseillerApiService', () => {
             nom: 'Milo Marseille',
             id: 'id-agence',
           },
-          dateSignatureCGU: dateSignature,
+          dateSignatureCGU: uneDate,
+          dateVisionnageActus: uneDate,
         }),
       })
 
@@ -54,7 +55,8 @@ describe('ConseillerApiService', () => {
       expect(actual).toEqual(
         unConseiller({
           agence: { nom: 'Milo Marseille', id: 'id-agence' },
-          dateSignatureCGU: dateSignature,
+          dateSignatureCGU: uneDate,
+          dateVisionnageActus: uneDate,
         })
       )
     })

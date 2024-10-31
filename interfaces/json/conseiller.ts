@@ -1,11 +1,11 @@
 import { Session } from 'next-auth'
 
+import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import {
   BaseConseiller,
   Conseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { ConseillerHistorique } from 'interfaces/beneficiaire'
 
 export interface ConseillerHistoriqueJson {
   id: string
@@ -48,6 +48,7 @@ export interface ConseillerJson {
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
   dateSignatureCGU?: string
+  dateVisionnageActus?: string
 }
 
 export function jsonToBaseConseiller(json: BaseConseillerJson): BaseConseiller {
@@ -64,7 +65,8 @@ export function jsonToConseiller(
   conseillerJson: ConseillerJson,
   { structure, estSuperviseur, estSuperviseurResponsable }: Session.HydratedUser
 ): Conseiller {
-  const { agence, dateSignatureCGU, ...json } = conseillerJson
+  const { agence, dateSignatureCGU, dateVisionnageActus, ...json } =
+    conseillerJson
   const conseiller: Conseiller = {
     ...json,
     structure: structure as StructureConseiller,
@@ -78,6 +80,10 @@ export function jsonToConseiller(
 
   if (dateSignatureCGU) {
     conseiller.dateSignatureCGU = dateSignatureCGU
+  }
+
+  if (dateVisionnageActus) {
+    conseiller.dateVisionnageActus = dateVisionnageActus
   }
 
   return conseiller

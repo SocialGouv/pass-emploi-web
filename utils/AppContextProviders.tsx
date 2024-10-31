@@ -10,6 +10,7 @@ import {
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
 import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
+import { ActualitesProvider } from 'utils/actualitesContext'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -44,27 +45,29 @@ export default function AppContextProviders({
   return (
     <ConseillerProvider conseiller={conseiller}>
       <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-        <ChatCredentialsProvider>
-          <ChatsProvider>
-            <CurrentConversationProvider>
-              <ShowRubriqueListeDeDiffusionProvider>
-                <ListeDeDiffusionSelectionneeProvider>
-                  <AlerteProvider>
-                    <MobileViewportProvider>
-                      <ThemeProvider
-                        defaultTheme={'neutral'}
-                        themes={['neutral', 'darker']}
-                        forcedTheme={theme}
-                      >
-                        {children}
-                      </ThemeProvider>
-                    </MobileViewportProvider>
-                  </AlerteProvider>
-                </ListeDeDiffusionSelectionneeProvider>
-              </ShowRubriqueListeDeDiffusionProvider>
-            </CurrentConversationProvider>
-          </ChatsProvider>
-        </ChatCredentialsProvider>
+        <ActualitesProvider>
+          <ChatCredentialsProvider>
+            <ChatsProvider>
+              <CurrentConversationProvider>
+                <ShowRubriqueListeDeDiffusionProvider>
+                  <ListeDeDiffusionSelectionneeProvider>
+                    <AlerteProvider>
+                      <MobileViewportProvider>
+                        <ThemeProvider
+                          defaultTheme={'neutral'}
+                          themes={['neutral', 'darker']}
+                          forcedTheme={theme}
+                        >
+                          {children}
+                        </ThemeProvider>
+                      </MobileViewportProvider>
+                    </AlerteProvider>
+                  </ListeDeDiffusionSelectionneeProvider>
+                </ShowRubriqueListeDeDiffusionProvider>
+              </CurrentConversationProvider>
+            </ChatsProvider>
+          </ChatCredentialsProvider>
+        </ActualitesProvider>
       </PortefeuilleProvider>
     </ConseillerProvider>
   )
