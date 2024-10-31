@@ -66,7 +66,8 @@ function LoginPage({
               {ssoFranceTravailBRSAEstActif && (
                 <li>
                   <LoginButton
-                    label='Connexion BRSA'
+                    altText='France Travail RSA'
+                    label='France Travail'
                     illustrationName={IllustrationName.LogoFT}
                     className='whitespace-nowrap'
                     style={ButtonStyle.SECONDARY}
@@ -79,7 +80,7 @@ function LoginPage({
               {ssoConseillerDeptEstActif && (
                 <li>
                   <LoginButton
-                    label='Connexion conseil départemental'
+                    label='Conseil départemental'
                     className='whitespace-nowrap'
                     style={ButtonStyle.SECONDARY}
                     illustrationName={IllustrationName.LogoCD}
@@ -98,7 +99,8 @@ function LoginPage({
               {ssoFranceTravailAIJEstActif && (
                 <li>
                   <LoginButton
-                    label='Connexion AIJ'
+                    altText='France Travail AIJ'
+                    label='France Travail'
                     className='whitespace-nowrap'
                     style={ButtonStyle.SECONDARY}
                     illustrationName={IllustrationName.LogoFT}

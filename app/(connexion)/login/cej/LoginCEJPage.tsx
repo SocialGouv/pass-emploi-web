@@ -52,7 +52,7 @@ function LoginCEJPage() {
             <ul className='px-6 pt-6 flex flex-col gap-4'>
               <li>
                 <LoginButton
-                  label='Connexion Mission Locale'
+                  label='Mission Locale'
                   style={ButtonStyle.SECONDARY}
                   illustrationName={IllustrationName.LogoMilo}
                   className='whitespace-nowrap'
@@ -63,7 +63,7 @@ function LoginCEJPage() {
               </li>
               <li>
                 <LoginButton
-                  label='Connexion France Travail'
+                  label='France Travail'
                   style={ButtonStyle.SECONDARY}
                   illustrationName={IllustrationName.LogoFT}
                   className='whitespace-nowrap'
