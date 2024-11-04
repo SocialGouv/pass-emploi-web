@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import React, { ReactNode } from 'react'
 
+import A11yPageTitle from 'components/A11yPageTitle'
 import { MODAL_ROOT_ID } from 'components/globals'
 import LiensEvitement from 'components/LiensEvitement'
 import { estPassEmploi } from 'interfaces/conseiller'
@@ -33,6 +34,7 @@ export default async function LayoutWhenConnected({
   return (
     <>
       <AppContextProviders conseiller={conseiller} portefeuille={portefeuille}>
+        <A11yPageTitle />
         <LiensEvitement />
 
         {children}

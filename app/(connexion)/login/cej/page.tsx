@@ -8,7 +8,8 @@ import {
 } from 'app/(connexion)/login/layout'
 
 export const metadata: Metadata = {
-  title: "Connexion dans l'espace conseiller CEJ",
+  title:
+    "Connexion dans l'espace conseiller - Outil du Contrat d’Engagement Jeune",
 }
 
 export default async function LoginCEJ({

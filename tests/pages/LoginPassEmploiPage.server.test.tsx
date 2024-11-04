@@ -36,7 +36,7 @@ describe('LoginPassEmploiPage server side', () => {
 
     // Then
     expect(metadata).toEqual({
-      title: "Connexion dans l'espace conseiller Pass Emploi",
+      title: "Connexion dans l'espace conseiller - Outil du pass emploi",
     })
     expect(LoginPassEmploiPage).toHaveBeenCalledWith(
       {

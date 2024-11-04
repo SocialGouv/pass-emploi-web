@@ -43,16 +43,16 @@ export default function AppContextProviders({
   })
 
   return (
-    <ConseillerProvider conseiller={conseiller}>
-      <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-        <ActualitesProvider>
-          <ChatCredentialsProvider>
-            <ChatsProvider>
-              <CurrentConversationProvider>
-                <ShowRubriqueListeDeDiffusionProvider>
-                  <ListeDeDiffusionSelectionneeProvider>
-                    <AlerteProvider>
-                      <MobileViewportProvider>
+    <MobileViewportProvider>
+      <ConseillerProvider conseiller={conseiller}>
+        <PortefeuilleProvider portefeuille={portefeuilleTrie}>
+          <ActualitesProvider>
+            <ChatCredentialsProvider>
+              <ChatsProvider>
+                <CurrentConversationProvider>
+                  <ShowRubriqueListeDeDiffusionProvider>
+                    <ListeDeDiffusionSelectionneeProvider>
+                      <AlerteProvider>
                         <ThemeProvider
                           defaultTheme={'neutral'}
                           themes={['neutral', 'darker']}
@@ -60,15 +60,15 @@ export default function AppContextProviders({
                         >
                           {children}
                         </ThemeProvider>
-                      </MobileViewportProvider>
-                    </AlerteProvider>
-                  </ListeDeDiffusionSelectionneeProvider>
-                </ShowRubriqueListeDeDiffusionProvider>
-              </CurrentConversationProvider>
-            </ChatsProvider>
-          </ChatCredentialsProvider>
-        </ActualitesProvider>
-      </PortefeuilleProvider>
-    </ConseillerProvider>
+                      </AlerteProvider>
+                    </ListeDeDiffusionSelectionneeProvider>
+                  </ShowRubriqueListeDeDiffusionProvider>
+                </CurrentConversationProvider>
+              </ChatsProvider>
+            </ChatCredentialsProvider>
+          </ActualitesProvider>
+        </PortefeuilleProvider>
+      </ConseillerProvider>
+    </MobileViewportProvider>
   )
 }
