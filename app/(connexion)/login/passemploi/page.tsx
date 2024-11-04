@@ -8,7 +8,7 @@ import {
 import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
 
 export const metadata: Metadata = {
-  title: "Connexion dans l'espace conseiller Pass Emploi",
+  title: "Connexion dans l'espace conseiller - Outil du pass emploi",
 }
 
 export default async function LoginPassEmploi({

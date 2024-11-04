@@ -34,7 +34,8 @@ describe('LoginCEJPage server side', () => {
 
     // Then
     expect(metadata).toEqual({
-      title: "Connexion dans l'espace conseiller CEJ",
+      title:
+        "Connexion dans l'espace conseiller - Outil du Contrat d’Engagement Jeune",
     })
     expect(LoginCEJPage).toHaveBeenCalledWith({}, {})
   })
