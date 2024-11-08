@@ -25,10 +25,10 @@ import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
 import {
   ByDay,
-  countItems,
   fromConseiller,
   getPreviousItemId,
   Message,
+  OfDay,
 } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
@@ -82,7 +82,7 @@ export function Conversation({
     Message | undefined
   >()
 
-  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
+  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
   >(undefined)
@@ -115,21 +115,12 @@ export function Conversation({
         idChatToObserve,
         chatCredentials.cleChiffrement,
         { pages: nombreDePages, taillePage: NB_MESSAGES_PAR_PAGE },
-        (messagesGroupesParJour: ByDay<Message>[]) => {
-          setMessagesByDay((previousValue) => {
-            if (
-              !messagesGroupesParJour.length ||
-              countItems(messagesGroupesParJour) < NB_MESSAGES_PAR_PAGE ||
-              (previousValue?.length &&
-                countItems(messagesGroupesParJour) - countItems(previousValue) <
-                  NB_MESSAGES_PAR_PAGE)
-            ) {
-              setHasNoMoreMessages(true)
-            }
-
-            return messagesGroupesParJour
-          })
+        (messagesGroupesParJour: ByDay<Message>) => {
+          setMessagesByDay(messagesGroupesParJour)
           setNombrePagesChargees(nombreDePages)
+          setHasNoMoreMessages(
+            messagesGroupesParJour.length < nombreDePages * NB_MESSAGES_PAR_PAGE
+          )
 
           setLoadingMoreMessages(false)
 
@@ -181,7 +172,7 @@ export function Conversation({
   function chargerPlusDeMessages() {
     const pageSuivante = nombrePagesChargees! + 1
     setLoadingMoreMessages(true)
-    idPrecedentPremierMessage.current = messagesByDay![0].messages[0].id
+    idPrecedentPremierMessage.current = messagesByDay!.days[0].messages[0].id
 
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
@@ -485,50 +476,55 @@ export function Conversation({
 
                 {messagesByDay.length > 0 && (
                   <ul ref={conteneurMessagesRef}>
-                    {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-                      <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                        <div className='text-base-regular text-center mb-3'>
-                          <p>{displayDate(messagesOfADay.date)}</p>
-                        </div>
+                    {messagesByDay.days.map(
+                      (messagesOfADay: OfDay<Message>) => (
+                        <li
+                          key={messagesOfADay.date.toMillis()}
+                          className='mb-5'
+                        >
+                          <div className='text-base-regular text-center mb-3'>
+                            <p>{displayDate(messagesOfADay.date)}</p>
+                          </div>
 
-                        <ul>
-                          {messagesOfADay.messages.map((message: Message) => (
-                            <Fragment key={message.id}>
-                              {!fromConseiller(message) && (
-                                <DisplayMessageBeneficiaire
-                                  message={message}
-                                  beneficiaireNomComplet={
-                                    beneficiaireNomComplet
-                                  }
-                                />
-                              )}
+                          <ul>
+                            {messagesOfADay.messages.map((message: Message) => (
+                              <Fragment key={message.id}>
+                                {!fromConseiller(message) && (
+                                  <DisplayMessageBeneficiaire
+                                    message={message}
+                                    beneficiaireNomComplet={
+                                      beneficiaireNomComplet
+                                    }
+                                  />
+                                )}
 
-                              {fromConseiller(message) && (
-                                <DisplayMessageConseiller
-                                  message={message}
-                                  conseillerNomComplet={getConseillerNomComplet(
-                                    message
-                                  )}
-                                  lastSeenByJeune={lastSeenByJeune}
-                                  isConseillerCourant={
-                                    message.conseillerId === conseiller.id
-                                  }
-                                  onSuppression={() =>
-                                    supprimerMessage(message)
-                                  }
-                                  onModification={() =>
-                                    preparerModificationMessage(message)
-                                  }
-                                  isEnCoursDeModification={
-                                    message.id === messageAModifier?.id
-                                  }
-                                />
-                              )}
-                            </Fragment>
-                          ))}
-                        </ul>
-                      </li>
-                    ))}
+                                {fromConseiller(message) && (
+                                  <DisplayMessageConseiller
+                                    message={message}
+                                    conseillerNomComplet={getConseillerNomComplet(
+                                      message
+                                    )}
+                                    lastSeenByJeune={lastSeenByJeune}
+                                    isConseillerCourant={
+                                      message.conseillerId === conseiller.id
+                                    }
+                                    onSuppression={() =>
+                                      supprimerMessage(message)
+                                    }
+                                    onModification={() =>
+                                      preparerModificationMessage(message)
+                                    }
+                                    isEnCoursDeModification={
+                                      message.id === messageAModifier?.id
+                                    }
+                                  />
+                                )}
+                              </Fragment>
+                            ))}
+                          </ul>
+                        </li>
+                      )
+                    )}
                   </ul>
                 )}
               </>

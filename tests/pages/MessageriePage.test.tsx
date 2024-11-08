@@ -38,7 +38,7 @@ describe('MessageriePage client side', () => {
 
   let conseillers: ConseillerHistorique[]
   let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
-  let messages: ByDay<MessageListeDiffusion>[]
+  let messages: ByDay<MessageListeDiffusion>
 
   beforeEach(async () => {
     ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue(
@@ -156,7 +156,7 @@ describe('MessageriePage client side', () => {
       })
       it('affiche les messages de la liste de diffusion', async () => {
         const messageRandom =
-          await desMessagesListeDeDiffusionParJour()[0].messages[0]
+          desMessagesListeDeDiffusionParJour().days[0].messages[0]
         //Then
         expect(
           screen.getByText('Messages envoyés à la liste de diffusion')

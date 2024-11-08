@@ -13,8 +13,8 @@ import {
   getChatsDuConseiller,
   getIdLastMessage,
   getMessageImportantSnapshot,
-  getMessagesPeriode,
   getMessagesGroupe,
+  getMessagesPeriode,
   observeChat,
   observeDerniersMessagesDuChat,
   rechercherMessages,
@@ -25,8 +25,8 @@ import {
 } from 'clients/firebase.client'
 import {
   BaseBeneficiaire,
-  Chat,
   BeneficiaireEtChat,
+  Chat,
 } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -36,6 +36,7 @@ import {
   Message,
   MessageListeDiffusion,
   MessageRechercheMatch,
+  OfDay,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
@@ -162,13 +163,13 @@ export function observeDerniersMessages(
   idChat: string,
   cleChiffrement: string,
   { pages, taillePage }: { pages: number; taillePage: number },
-  onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
+  onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>) => void
 ): () => void {
   return observeDerniersMessagesDuChat(
     idChat,
     pages * taillePage,
     (messagesAntechronologiques: Message[]) => {
-      const messagesGroupesParJour: ByDay<Message>[] = grouperMessagesParJour(
+      const messagesGroupesParJour: ByDay<Message> = grouperMessagesParJour(
         [...messagesAntechronologiques].reverse(),
         cleChiffrement
       )
@@ -192,7 +193,7 @@ export function observeJeuneReadingDate(
 export async function getMessagesListeDeDiffusion(
   idListeDiffusion: string,
   cleChiffrement: string
-): Promise<ByDay<MessageListeDiffusion>[]> {
+): Promise<ByDay<MessageListeDiffusion>> {
   const session = await getSession()
   const messages = await getMessagesGroupe(session!.user.id, idListeDiffusion)
 
@@ -594,8 +595,8 @@ async function evenementMessage(
 function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
   messages: T[],
   cleChiffrement: string
-): ByDay<T>[] {
-  const messagesByDay: { [day: string]: ByDay<T> } = {}
+): ByDay<T> {
+  const messagesByDay: { [day: string]: OfDay<T> } = {}
 
   messages
     .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
@@ -623,7 +624,7 @@ function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
       messagesByDay[day] = messagesOfDay
     })
 
-  return Object.values(messagesByDay)
+  return { length: messages.length, days: Object.values(messagesByDay) }
 }
 
 function decryptContentAndFilename(

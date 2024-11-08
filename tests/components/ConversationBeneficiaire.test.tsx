@@ -54,13 +54,15 @@ describe('<ConversationBeneficiaire />', () => {
       }
     )
     ;(observeDerniersMessages as jest.Mock).mockImplementation(
-      (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
-        const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
+      (_idChat, _cle, pages, fn: (messages: ByDay<Message>) => void) => {
+        const messagesPagines = messagesParJour.days.map((jour) => ({
+          ...jour,
+        }))
         messagesPagines[0].messages = [
           unMessage({ id: 'message-page-' + Math.min(pages, 2) }),
           ...messagesPagines[0].messages,
         ]
-        fn(messagesPagines)
+        fn({ length: 10, days: messagesPagines })
         return unsubscribe
       }
     )
@@ -169,7 +171,7 @@ describe('<ConversationBeneficiaire />', () => {
     ).toHaveAttribute('disabled')
   })
 
-  const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])
+  const cases = messagesParJour.days.map((messagesDUnJour) => [messagesDUnJour])
   describe.each(cases)('Pour chaque jour avec message', (messagesDUnJour) => {
     it(`affiche la date (${toShortDate(messagesDUnJour.date)})`, () => {
       // Then
@@ -221,7 +223,7 @@ describe('<ConversationBeneficiaire />', () => {
     // Then
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
-      messagesParJour[0].messages[0],
+      messagesParJour.days[0].messages[0],
       'cleChiffrement'
     )
 
@@ -240,14 +242,14 @@ describe('<ConversationBeneficiaire />', () => {
     // Then
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
-      messagesParJour.at(-1)!.messages.at(-1)!,
+      messagesParJour.days.at(-1)!.messages.at(-1)!,
       'cleChiffrement'
     )
   })
 
   describe('modification de message', () => {
     let input: HTMLInputElement
-    const dernierMessage = messagesParJour.at(-1)!.messages.at(-1)!
+    const dernierMessage = messagesParJour.days.at(-1)!.messages.at(-1)!
     beforeEach(async () => {
       // Given
       input = screen.getByRole('textbox')

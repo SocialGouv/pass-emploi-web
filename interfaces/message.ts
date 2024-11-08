@@ -41,6 +41,11 @@ export interface MessageListeDiffusion {
 }
 
 export interface ByDay<T extends { id: string }> {
+  length: number
+  days: OfDay<T>[]
+}
+
+export interface OfDay<T extends { id: string }> {
   date: DateTime
   messages: T[]
 }
@@ -90,16 +95,12 @@ export function fromConseiller(message: Message): boolean {
   return message.sentBy === UserType.CONSEILLER.toLowerCase()
 }
 
-export function countItems(days: ByDay<any>[]): number {
-  return days.reduce((count, { messages }) => count + messages.length, 0)
-}
-
 export function getPreviousItemId<T extends { id: string }>(
   idCible: string,
-  days: ByDay<T>[],
+  { length, days }: ByDay<T>,
   { orNext }: { orNext?: boolean } = {}
 ): string | undefined {
-  if (countItems(days) === 0) return
+  if (length === 0) return
 
   let indexDay = 0,
     indexItem = 0,

@@ -14,7 +14,7 @@ import { toShortDate } from 'utils/date'
 jest.mock('services/messages.service')
 
 describe('<MessagesListeDeDiffusion />', () => {
-  let messages: ByDay<MessageListeDiffusion>[]
+  let messages: ByDay<MessageListeDiffusion>
 
   let listeDeDiffusion: ListeDeDiffusion
   let afficherDetailMessage: (message: MessageListeDiffusion) => void
@@ -51,7 +51,7 @@ describe('<MessagesListeDeDiffusion />', () => {
     const listeJours = screen.getByRole('list', {
       description: 'Messages envoyés à la liste de diffusion',
     })
-    messages.forEach((jour) => {
+    messages.days.forEach((jour) => {
       expect(
         within(listeJours).getByText(`Le ${toShortDate(jour.date)}`)
       ).toBeInTheDocument()
@@ -70,7 +70,7 @@ describe('<MessagesListeDeDiffusion />', () => {
 
   it('permet d’accéder au détail d’un message', async () => {
     // Then
-    messages.forEach((jour) => {
+    messages.days.forEach((jour) => {
       const listeMessages = screen.getByRole('list', {
         description: `Le ${toShortDate(jour.date)}`,
       })
@@ -91,7 +91,7 @@ describe('<MessagesListeDeDiffusion />', () => {
 
   it('affiche le détail d’un message', async () => {
     // Given
-    const message = messages[0].messages[0]
+    const message = messages.days[0].messages[0]
     const creationTime = message.creationDate.toFormat("H 'heure' m")
 
     // When

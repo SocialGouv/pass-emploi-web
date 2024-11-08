@@ -29,9 +29,9 @@ import {
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
+import { Chat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { Chat } from 'interfaces/beneficiaire'
 import {
   InfoOffre,
   Message,
@@ -429,7 +429,7 @@ export function observeDerniersMessagesDuChat(
       ),
       (querySnapshot: QuerySnapshot<FirebaseMessage, FirebaseMessage>) => {
         const messages: Message[] = querySnapshot.docs.map(docSnapshotToMessage)
-        if (messages.length && !messages[messages.length - 1].creationDate) {
+        if (messages.length && !messages.at(-1)!.creationDate) {
           return
         }
 
