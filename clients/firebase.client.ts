@@ -29,9 +29,9 @@ import {
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
+import { Chat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { Chat } from 'interfaces/beneficiaire'
 import {
   InfoOffre,
   Message,
@@ -44,14 +44,12 @@ import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureError } from 'utils/monitoring/elastic'
 
 type TypeMessageFirebase =
-  | 'NOUVEAU_CONSEILLER'
   | 'MESSAGE'
   | 'MESSAGE_PJ'
   | 'MESSAGE_OFFRE'
   | 'MESSAGE_EVENEMENT'
   | 'MESSAGE_EVENEMENT_EMPLOI'
   | 'MESSAGE_SESSION_MILO'
-  | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
 export type FirebaseMessage = {
   creationDate: Timestamp
@@ -424,12 +422,16 @@ export function observeDerniersMessagesDuChat(
           FirebaseMessage,
           FirebaseMessage
         >,
+        where('type', 'not-in', [
+          'NOUVEAU_CONSEILLER',
+          'NOUVEAU_CONSEILLER_TEMPORAIRE',
+        ]),
         orderBy('creationDate', 'desc'),
         limit(nbMessages)
       ),
       (querySnapshot: QuerySnapshot<FirebaseMessage, FirebaseMessage>) => {
         const messages: Message[] = querySnapshot.docs.map(docSnapshotToMessage)
-        if (messages.length && !messages[messages.length - 1].creationDate) {
+        if (messages.length && !messages.at(-1)!.creationDate) {
           return
         }
 
@@ -872,9 +874,6 @@ function firebaseToMessageType(
   type: TypeMessageFirebase | undefined
 ): TypeMessage {
   switch (type) {
-    case 'NOUVEAU_CONSEILLER':
-    case 'NOUVEAU_CONSEILLER_TEMPORAIRE':
-      return TypeMessage.NOUVEAU_CONSEILLER
     case 'MESSAGE_PJ':
       return TypeMessage.MESSAGE_PJ
     case 'MESSAGE_OFFRE':

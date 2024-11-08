@@ -13,8 +13,8 @@ import {
   getChatsDuConseiller,
   getIdLastMessage,
   getMessageImportantSnapshot,
-  getMessagesPeriode,
   getMessagesGroupe,
+  getMessagesPeriode,
   observeChat,
   observeDerniersMessagesDuChat,
   rechercherMessages,
@@ -25,8 +25,8 @@ import {
 } from 'clients/firebase.client'
 import {
   BaseBeneficiaire,
-  Chat,
   BeneficiaireEtChat,
+  Chat,
 } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -36,7 +36,7 @@ import {
   Message,
   MessageListeDiffusion,
   MessageRechercheMatch,
-  TypeMessage,
+  OfDay,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
 import { decrypt, encrypt, encryptWithCustomIv } from 'utils/chat/chatCrypto'
@@ -162,13 +162,13 @@ export function observeDerniersMessages(
   idChat: string,
   cleChiffrement: string,
   { pages, taillePage }: { pages: number; taillePage: number },
-  onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
+  onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>) => void
 ): () => void {
   return observeDerniersMessagesDuChat(
     idChat,
     pages * taillePage,
     (messagesAntechronologiques: Message[]) => {
-      const messagesGroupesParJour: ByDay<Message>[] = grouperMessagesParJour(
+      const messagesGroupesParJour: ByDay<Message> = grouperMessagesParJour(
         [...messagesAntechronologiques].reverse(),
         cleChiffrement
       )
@@ -192,7 +192,7 @@ export function observeJeuneReadingDate(
 export async function getMessagesListeDeDiffusion(
   idListeDiffusion: string,
   cleChiffrement: string
-): Promise<ByDay<MessageListeDiffusion>[]> {
+): Promise<ByDay<MessageListeDiffusion>> {
   const session = await getSession()
   const messages = await getMessagesGroupe(session!.user.id, idListeDiffusion)
 
@@ -594,36 +594,34 @@ async function evenementMessage(
 function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
   messages: T[],
   cleChiffrement: string
-): ByDay<T>[] {
-  const messagesByDay: { [day: string]: ByDay<T> } = {}
+): ByDay<T> {
+  const messagesByDay: { [day: string]: OfDay<T> } = {}
 
-  messages
-    .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
-    .forEach((message) => {
-      if (message.iv) {
-        message = {
-          ...message,
-          ...decryptContentAndFilename(
-            {
-              iv: message.iv,
-              content: message.content,
-              infoPiecesJointes: message.infoPiecesJointes,
-            },
-            cleChiffrement
-          ),
-        }
+  messages.forEach((message) => {
+    if (message.iv) {
+      message = {
+        ...message,
+        ...decryptContentAndFilename(
+          {
+            iv: message.iv,
+            content: message.content,
+            infoPiecesJointes: message.infoPiecesJointes,
+          },
+          cleChiffrement
+        ),
       }
+    }
 
-      const day = toShortDate(message.creationDate)
-      const messagesOfDay = messagesByDay[day] ?? {
-        date: message.creationDate,
-        messages: [],
-      }
-      messagesOfDay.messages.push(message)
-      messagesByDay[day] = messagesOfDay
-    })
+    const day = toShortDate(message.creationDate)
+    const messagesOfDay = messagesByDay[day] ?? {
+      date: message.creationDate,
+      messages: [],
+    }
+    messagesOfDay.messages.push(message)
+    messagesByDay[day] = messagesOfDay
+  })
 
-  return Object.values(messagesByDay)
+  return { length: messages.length, days: Object.values(messagesByDay) }
 }
 
 function decryptContentAndFilename(

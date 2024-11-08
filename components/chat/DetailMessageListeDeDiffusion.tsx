@@ -33,10 +33,7 @@ function DetailMessageListeDeDiffusion(
   ref: ForwardedRef<{ focusRetour: () => void }>
 ) {
   useImperativeHandle(ref, () => ({
-    focusRetour: () => {
-      console.log('>>>', 'DETAIL FOCUS RETOUR')
-      headerRef.current!.focusRetour()
-    },
+    focusRetour: () => headerRef.current!.focusRetour(),
   }))
 
   const isFirstRender = useRef<boolean>(true)

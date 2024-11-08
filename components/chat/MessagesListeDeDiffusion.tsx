@@ -17,7 +17,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { ByDay, MessageListeDiffusion } from 'interfaces/message'
+import { ByDay, MessageListeDiffusion, OfDay } from 'interfaces/message'
 import { getMessagesListeDeDiffusion } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, toShortDate } from 'utils/date'
@@ -51,7 +51,7 @@ function MessagesListeDeDiffusion(
   const headerRef = useRef<{ focusRetour: () => void }>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
+  const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>>()
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
@@ -151,8 +151,8 @@ function MessagesListeDeDiffusion(
                   className='h-full min-h-0 p-4 overflow-y-auto'
                   aria-describedby='description-messages'
                 >
-                  {messages.map(
-                    (messagesOfADay: ByDay<MessageListeDiffusion>, i) => (
+                  {messages.days.map(
+                    (messagesOfADay: OfDay<MessageListeDiffusion>, i) => (
                       <li
                         key={messagesOfADay.date.toMillis() + i}
                         className='mb-5'
