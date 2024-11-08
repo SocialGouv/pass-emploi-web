@@ -116,20 +116,12 @@ export function Conversation({
         chatCredentials.cleChiffrement,
         { pages: nombreDePages, taillePage: NB_MESSAGES_PAR_PAGE },
         (messagesGroupesParJour: ByDay<Message>[]) => {
-          setMessagesByDay((previousValue) => {
-            if (
-              !messagesGroupesParJour.length ||
-              countItems(messagesGroupesParJour) < NB_MESSAGES_PAR_PAGE ||
-              (previousValue?.length &&
-                countItems(messagesGroupesParJour) - countItems(previousValue) <
-                  NB_MESSAGES_PAR_PAGE)
-            ) {
-              setHasNoMoreMessages(true)
-            }
-
-            return messagesGroupesParJour
-          })
+          setMessagesByDay(messagesGroupesParJour)
           setNombrePagesChargees(nombreDePages)
+          setHasNoMoreMessages(
+            countItems(messagesGroupesParJour) <
+              nombreDePages * NB_MESSAGES_PAR_PAGE
+          )
 
           setLoadingMoreMessages(false)
 
