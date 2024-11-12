@@ -14,24 +14,38 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
   const modalRef = useRef<ModalHandles>(null)
   const actualites = useActualites()
 
-  function formaterTexteAvecTag(texteAFormater: string) {
+  function formaterActus(texteAFormater: string) {
     const texteAssaini = sanitizeHtml(texteAFormater, {
       disallowedTagsMode: 'recursiveEscape',
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
     })
 
-    const texteEnrichi = texteAssaini
+    const texteDecoupeParActu = decouperParActu(texteAssaini)
+    const texteAvecCategorie = ajouterTagCategorie(texteDecoupeParActu)
+
+    return parse(texteAvecCategorie)
+  }
+
+  function decouperParActu(str: string) {
+    return str
+      .replace(
+        /<h3/g,
+        "<div className='bg-white px-4 py-2 rounded-base mb-4'><h3"
+      )
+      .replace(/hr/g, '/div')
+  }
+
+  function ajouterTagCategorie(str: string) {
+    return str
       .replace(
         /{/g,
-        "<span className='flex items-center w-fit text-s-medium text-accent_1 px-3 bg-accent_1_lighten whitespace-nowrap rounded-full'>"
+        "<span className='flex items-center w-fit text-s-medium text-additional_3 px-3 bg-additional_3_lighten whitespace-nowrap rounded-full'>"
       )
       .replace(/}/g, '</span>')
-
-    return parse(texteEnrichi)
   }
 
   const modalTemplate = (
-    <div className='rounded-l-l fixed right-0 bg-white h-full max-w-[min(90%,_620px)] min-w-[min(50%)] overflow-auto pb-3 shadow-m'>
+    <div className='rounded-l-l fixed right-0 bg-white h-full max-w-[min(90%,_620px)] min-w-[min(30%)] overflow-auto pb-3 shadow-m'>
       <div className='bg-primary p-3'>
         <div className='flex justify-end'>
           <button
@@ -56,9 +70,9 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
         </h2>
       </div>
 
-      <div className='p-6'>
-        <div className='[&_a]:underline [&_a]:text-primary [&_img]:max-w-[200px] [&_img]:my-4 [&_h3]:font-bold [&_h3]:text-primary [&_h3]:my-4'>
-          {formaterTexteAvecTag(actualites?.contenu ?? '')}
+      <div className='p-6 bg-primary_lighten'>
+        <div className='[&_a]:underline [&_a]:text-primary [&_img]:max-w-[200px] [&_img]:my-4 [&_h3]:font-bold [&_h3]:text-primary [&_h3]:my-2 [&_p]:text-grey_800'>
+          {formaterActus(actualites?.contenu ?? '')}
         </div>
       </div>
     </div>
