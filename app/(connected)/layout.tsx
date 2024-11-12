@@ -15,8 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const conseiller = await getConseillerServerSide(user, accessToken)
   const siteTitle =
     'Espace conseiller ' + (estPassEmploi(conseiller) ? 'pass emploi' : 'CEJ')
+  const faviconPath = estPassEmploi(conseiller)
+    ? '/pass-emploi_favicon.png'
+    : '/cej_favicon.png'
 
-  return { title: { template: '%s - ' + siteTitle, default: siteTitle } }
+  return {
+    title: { template: '%s - ' + siteTitle, default: siteTitle },
+    icons: {
+      icon: [faviconPath, '/favicon.png'],
+      shortcut: faviconPath,
+      apple: faviconPath,
+    },
+  }
 }
 
 export default async function LayoutWhenConnected({
