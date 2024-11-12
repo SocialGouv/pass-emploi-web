@@ -211,7 +211,7 @@ describe('Agenda - Onglet établissement', () => {
         name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
+        name: 'Aller à la période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
         name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
@@ -237,6 +237,33 @@ describe('Agenda - Onglet établissement', () => {
 
       // When
       await userEvent.click(periodesFuturesButton)
+      // Then
+      expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
+        'id-etablissement',
+        SEPTEMBRE_8_0H,
+        SEPTEMBRE_14_23H
+      )
+    })
+
+    it('permet d’accéder directement à une période de 7 jours', async () => {
+      // Given
+      const periodeInput = screen.getByLabelText('Début période : Du')
+
+      // When
+      await userEvent.clear(periodeInput)
+      await userEvent.type(periodeInput, '2022-08-28')
+      await waitForDebounce(500)
+      // Then
+      expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
+        'id-etablissement',
+        AOUT_25_0H,
+        AOUT_31_23H
+      )
+
+      // When
+      await userEvent.clear(periodeInput)
+      await userEvent.type(periodeInput, '2022-09-10')
+      await waitForDebounce(500)
       // Then
       expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
         'id-etablissement',
@@ -442,7 +469,7 @@ describe('Agenda - Onglet établissement', () => {
         name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
+        name: 'Aller à la période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
         name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
@@ -581,3 +608,7 @@ describe('Agenda - Onglet établissement', () => {
     })
   })
 })
+
+async function waitForDebounce(ms: number): Promise<void> {
+  await act(() => new Promise((r) => setTimeout(r, ms)))
+}

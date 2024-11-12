@@ -50,6 +50,7 @@ export default function OngletAgendaEtablissement({
   const [recherche, setRecherche] = useState<string>('')
   const [evenementsAffiches, setEvenementsAffiches] =
     useState<AnimationCollective[]>()
+  const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
@@ -61,14 +62,16 @@ export default function OngletAgendaEtablissement({
   }
 
   async function modifierPeriode(
-    nouvellePeriodeIndex: number,
-    dateDebut: DateTime,
-    dateFin: DateTime,
-    label: string
+    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    opts: { label: string; shouldFocus: boolean }
   ) {
-    await chargerEvenementsPeriode(dateDebut, dateFin)
-    setLabelPeriode(label)
-    changerPeriode(nouvellePeriodeIndex)
+    await chargerEvenementsPeriode(
+      nouvellePeriode.dateDebut,
+      nouvellePeriode.dateFin
+    )
+    setLabelPeriode(opts.label)
+    changerPeriode(nouvellePeriode.index)
+    setShouldFocus(opts.shouldFocus)
   }
 
   async function chargerEvenementsPeriode(
@@ -127,11 +130,15 @@ export default function OngletAgendaEtablissement({
     tableRef.current?.focus()
   }, [recherche])
 
+  useEffect(() => {
+    if (shouldFocus) tableRef.current?.focus()
+  }, [evenementsAffiches])
+
   return (
     <>
       <RechercheAgendaForm onSearch={setRecherche} />
 
-      <nav className='flex justify-between items-end'>
+      <nav className='flex justify-between items-center'>
         <SelecteurPeriode
           onNouvellePeriode={modifierPeriode}
           periodeCourante={periodeIndex}
@@ -159,6 +166,7 @@ export default function OngletAgendaEtablissement({
 
       {!evenementsAffiches && periodeFailed && (
         <EmptyState
+          shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Maintenance}
           titre={`
             L’affichage de l’agenda de votre ${
@@ -177,7 +185,7 @@ export default function OngletAgendaEtablissement({
       {evenementsAffiches?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
-            shouldFocus={filtres.length > 0}
+            shouldFocus={shouldFocus || filtres.length > 0}
             illustrationName={IllustrationName.Checklist}
             titre={
               filtres.length === 0

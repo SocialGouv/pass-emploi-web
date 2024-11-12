@@ -69,7 +69,7 @@ select:disabled {
   cursor: not-allowed;
 }
 
-[type='date'] {
+[type='date']:not(:read-only) {
   cursor: pointer;
 }
 
