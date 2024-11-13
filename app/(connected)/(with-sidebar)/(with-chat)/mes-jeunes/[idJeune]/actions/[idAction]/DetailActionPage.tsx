@@ -5,7 +5,6 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 
-import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import Modal, { ModalHandles } from 'components/Modal'
@@ -16,7 +15,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Action, Commentaire, StatutAction } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { estMilo, UserType } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -30,14 +29,12 @@ type DetailActionProps = {
   action: Action
   jeune: BaseBeneficiaire
   lectureSeule: boolean
-  commentaires: Commentaire[]
   from: 'pilotage' | 'beneficiaire'
 }
 
 function DetailActionPage({
   action,
   jeune,
-  commentaires,
   lectureSeule,
   from,
 }: DetailActionProps) {
@@ -61,8 +58,7 @@ function DetailActionPage({
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
-    action.status !== StatutAction.Qualifiee &&
-    !Boolean(commentaires.length > 0)
+    action.status !== StatutAction.Qualifiee
 
   const suppressionModalRef = useRef<ModalHandles>(null)
 
@@ -246,10 +242,6 @@ function DetailActionPage({
       </div>
 
       <HistoriqueAction action={action} />
-
-      {Boolean(commentaires.length) && (
-        <CommentairesAction commentairesInitiaux={commentaires} />
-      )}
 
       {showSuppression && (
         <Modal

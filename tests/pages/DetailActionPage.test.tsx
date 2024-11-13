@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
-import { unCommentaire, uneAction } from 'fixtures/action'
+import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -23,7 +23,6 @@ describe('ActionPage client side', () => {
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let routerPush: Function
   const action = uneAction()
-  const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
   const jeune: BaseBeneficiaire & { idConseiller: string } = {
     id: 'beneficiaire-1',
     prenom: 'Nadia',
@@ -49,7 +48,6 @@ describe('ActionPage client side', () => {
         <DetailActionPage
           action={action}
           jeune={jeune}
-          commentaires={commentaires}
           lectureSeule={false}
           from='beneficiaire'
         />,
@@ -141,7 +139,6 @@ describe('ActionPage client side', () => {
         <DetailActionPage
           action={action}
           jeune={jeune}
-          commentaires={commentaires}
           lectureSeule={true}
           from='beneficiaire'
         />,
@@ -210,7 +207,6 @@ describe('ActionPage client side', () => {
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
-            commentaires={[]}
             lectureSeule={false}
             from='beneficiaire'
           />,
@@ -238,7 +234,6 @@ describe('ActionPage client side', () => {
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
-            commentaires={[]}
             lectureSeule={false}
             from='beneficiaire'
           />,
@@ -264,7 +259,6 @@ describe('ActionPage client side', () => {
             <DetailActionPage
               action={actionAQualifier}
               jeune={jeune}
-              commentaires={[]}
               lectureSeule={false}
               from='pilotage'
             />,
@@ -303,7 +297,6 @@ describe('ActionPage client side', () => {
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
-            commentaires={[]}
             lectureSeule={false}
             from='beneficiaire'
           />,
@@ -346,7 +339,6 @@ describe('ActionPage client side', () => {
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
-            commentaires={[]}
             lectureSeule={false}
             from='beneficiaire'
           />,
@@ -404,7 +396,6 @@ describe('ActionPage client side', () => {
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
-            commentaires={[]}
             lectureSeule={false}
             from='beneficiaire'
           />,

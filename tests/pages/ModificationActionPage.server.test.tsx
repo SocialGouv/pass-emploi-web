@@ -16,7 +16,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import {
   getAction,
   getSituationsNonProfessionnelles,
-  recupererLesCommentaires,
 } from 'services/actions.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -48,7 +47,6 @@ describe('ModificationActionPage server side', () => {
       ;(getActionsPredefinies as jest.Mock).mockResolvedValue(
         actionsPredefinies
       )
-      ;(recupererLesCommentaires as jest.Mock).mockResolvedValue([])
     })
 
     it('prépare la page', async () => {
@@ -68,7 +66,6 @@ describe('ModificationActionPage server side', () => {
         {
           action,
           actionsPredefinies,
-          aDesCommentaires: false,
           idBeneficiaire: jeune.id,
           situationsNonProfessionnelles: categories,
           returnTo: expect.stringMatching(

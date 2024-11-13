@@ -2,7 +2,6 @@ import {
   Action,
   ActionPilotage,
   ActionPredefinie,
-  Commentaire,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
@@ -303,25 +302,6 @@ export const desActionsInitiales = (): {
     page: 0,
     metadonnees: { nombreTotal: 0, nombrePages: 0 },
   }
-}
-
-export const unCommentaire = (
-  overrides: Partial<Commentaire> = {}
-): Commentaire => {
-  const defaults: Commentaire = {
-    id: 'id-commentaire-1',
-    message: 'ceci est un commentaire',
-    date: '2022-02-20T14:50:46.000Z',
-    createur: {
-      id: '1',
-      prenom: 'Nils',
-      nom: 'Tavernier',
-      type: 'conseiller',
-    },
-    idAction: 'id-action-1',
-  }
-
-  return { ...defaults, ...overrides }
 }
 
 export const desCategories = (): SituationNonProfessionnelle[] => [

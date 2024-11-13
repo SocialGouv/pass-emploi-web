@@ -3,7 +3,6 @@ import { DateTime } from 'luxon'
 import {
   Action,
   ActionPilotage,
-  CreateurCommentaire,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
@@ -57,14 +56,6 @@ export interface CompteursPortefeuilleJson {
   actions: number
   rdvs: number
   sessions: number
-}
-
-export interface CommentaireJson {
-  id: string
-  idAction: string
-  date: string
-  createur: CreateurCommentaire
-  message: string
 }
 
 export type ActionFormData = {

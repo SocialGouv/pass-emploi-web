@@ -4,7 +4,6 @@ import { apiDelete, apiGet, apiPost } from 'clients/api.client'
 import {
   desCategories,
   desCategoriesAvecNONSNP,
-  unCommentaire,
   uneAction,
   uneActionJson,
   uneListeDActions,
@@ -15,7 +14,6 @@ import {
 import { QualificationAction, StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import {
-  recupereCompteursBeneficiairesPortefeuilleMilo,
   creerAction,
   deleteAction,
   getAction,
@@ -26,7 +24,7 @@ import {
   getSituationsNonProfessionnelles,
   qualifier,
   qualifierActions,
-  recupererLesCommentaires,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
 } from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -648,25 +646,6 @@ describe('ActionsApiService', () => {
         '/actions/id-action',
         'accessToken'
       )
-    })
-  })
-
-  describe('.recupererLesCommentaires', () => {
-    it("retourne les commentaires d'une action", async () => {
-      // GIVEN
-      const commentaire = unCommentaire()
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: [commentaire],
-      })
-      // WHEN
-      const result = await recupererLesCommentaires('id-action', 'accessToken')
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        '/actions/id-action/commentaires',
-        'accessToken'
-      )
-      expect(result).toEqual([commentaire])
     })
   })
 
