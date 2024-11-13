@@ -4,7 +4,6 @@ import { DateTime } from 'luxon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import ActualitesModal from 'components/ActualitesModal'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
@@ -200,33 +199,22 @@ export default function NavLinks({
 
         {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
           items.includes(NavItem.Actualites) && (
-            <>
-              {estMilo(conseiller) && (
-                <NavLink
-                  label='Actualités'
-                  iconName={IconName.Notification}
-                  className='break-all'
-                  onClick={ouvrirActualites}
-                  showLabelOnSmallScreen={showLabelsOnSmallScreen}
-                  badgeLabel={
-                    actualites &&
-                    aDeNouvellesActualites(
-                      conseiller,
-                      actualites.dateDerniereModification
-                    )
-                      ? '!'
-                      : undefined
-                  }
-                />
-              )}
-
-              {!estMilo(conseiller) && (
-                <ActualitesMenuButton
-                  conseiller={conseiller}
-                  onClick={trackActualite}
-                />
-              )}
-            </>
+            <NavLink
+              label='Actualités'
+              iconName={IconName.Notification}
+              className='break-all'
+              onClick={ouvrirActualites}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+              badgeLabel={
+                actualites &&
+                aDeNouvellesActualites(
+                  conseiller,
+                  actualites.dateDerniereModification
+                )
+                  ? '!'
+                  : undefined
+              }
+            />
           )}
       </ul>
       <ul className='border-t-2 border-solid border-white pt-2'>
