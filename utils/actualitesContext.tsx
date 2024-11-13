@@ -9,14 +9,17 @@ import {
 } from 'react'
 
 import { Actualites } from 'interfaces/actualites'
+import { Conseiller } from 'interfaces/conseiller'
 import { getActualites } from 'services/actualites.service'
 
 const ActualitesContext = createContext<Actualites | undefined>(undefined)
 
 export function ActualitesProvider({
+  conseiller,
   children,
   actualitesForTests,
 }: {
+  conseiller: Conseiller
   children: ReactNode
   actualitesForTests?: Actualites
 }) {
@@ -25,7 +28,8 @@ export function ActualitesProvider({
   )
 
   useEffect(() => {
-    if (actualites === undefined) getActualites().then(setActualites)
+    if (actualites === undefined)
+      getActualites(conseiller.structure).then(setActualites)
   }, [actualites])
 
   return (
