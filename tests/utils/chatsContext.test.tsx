@@ -1,12 +1,12 @@
 import { RenderResult, act, render, screen } from '@testing-library/react'
 import React from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -67,7 +67,7 @@ describe('ChatsProvider', () => {
       renderResult = await act(async () =>
         render(
           <>
-            <link rel='icon' href='/favicon.png' />
+            <link rel='icon' href='/cej-favicon.png' />
             <ConseillerProvider conseiller={conseiller}>
               <PortefeuilleProvider portefeuille={portefeuille}>
                 <ChatCredentialsProvider credentials={credentials}>
@@ -95,7 +95,7 @@ describe('ChatsProvider', () => {
       // Then
       expect(
         renderResult.container.querySelector("link[rel='icon']")
-      ).toHaveProperty('href', 'http://localhost/favicon_notif.png')
+      ).toHaveProperty('href', 'http://localhost/cej-favicon_notif.png')
       expect(document.title).toMatch(/Nouveau\(x\) message\(s\) - /)
     })
 
@@ -146,7 +146,7 @@ describe('ChatsProvider', () => {
       await act(async () =>
         render(
           <>
-            <link rel='icon' href='/favicon.png' />
+            <link rel='icon' href='/cej-favicon.png' />
             <ConseillerProvider conseiller={conseiller}>
               <PortefeuilleProvider portefeuille={portefeuille}>
                 <ChatsProvider>

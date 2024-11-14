@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   description: 'Espace conseiller de l’outil du Contrat d’Engagement Jeune',
   applicationName: 'CEJ conseiller',
   icons: {
-    icon: '/favicon.png',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png',
+    icon: '/cej-favicon.png',
+    shortcut: '/cej-favicon.png',
+    apple: '/cej-favicon.png',
   },
 }
 
