@@ -34,7 +34,7 @@ jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat([

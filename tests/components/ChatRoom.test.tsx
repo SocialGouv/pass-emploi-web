@@ -24,7 +24,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/messages.service')
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('<ChatRoom />', () => {
   const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(

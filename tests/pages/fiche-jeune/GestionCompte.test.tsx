@@ -29,7 +29,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('Gestion du compte dans la fiche jeune', () => {

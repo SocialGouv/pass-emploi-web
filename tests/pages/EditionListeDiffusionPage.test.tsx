@@ -21,7 +21,7 @@ import {
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/listes-de-diffusion.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {

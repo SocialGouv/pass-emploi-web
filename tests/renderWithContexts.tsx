@@ -134,10 +134,7 @@ function provideContexts(
         portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
-        <ActualitesProvider
-          actualitesForTests={actualites}
-          conseiller={conseiller}
-        >
+        <ActualitesProvider actualitesForTests={actualites}>
           <ChatCredentialsProvider
             credentials={{
               token: 'firebaseToken',
