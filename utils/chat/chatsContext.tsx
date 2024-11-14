@@ -34,6 +34,7 @@ export function ChatsProvider({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
   const pathname = usePathname()
+  const userStructure = conseiller.structure
 
   const [titleBackup, setTitleBackup] = useState<string | undefined>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
@@ -96,15 +97,15 @@ export function ChatsProvider({
   }, [pathname])
 
   useEffect(() => {
-    /*   if (!hasMessageNonLu && titleBackup !== undefined) {
+    if (!hasMessageNonLu && titleBackup !== undefined) {
       resetBrowserTab(titleBackup)
       setTitleBackup(undefined)
-    }*/
+    }
 
-    //if (hasMessageNonLu && titleBackup === undefined) {
-    setTitleBackup(document.title)
-    displayNotificationInBrowserTab()
-    // }
+    if (hasMessageNonLu && titleBackup === undefined) {
+      setTitleBackup(document.title)
+      displayNotificationInBrowserTab(userStructure)
+    }
   }, [hasMessageNonLu, titleBackup])
 
   return <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
@@ -124,17 +125,23 @@ function aUnNouveauMessage(
   )
 }
 
-function displayNotificationInBrowserTab() {
+function displayNotificationInBrowserTab(userStructure: string) {
   const siteTitle = document.title.split(' - ').at(-1)
   document.title = 'Nouveau(x) message(s) - ' + siteTitle
   const faviconLink: HTMLLinkElement =
     document.querySelector("link[rel='icon']")!
-  faviconLink.href = '/favicon_notif.png'
+
+  if (userStructure === 'POLE_EMPLOI_BRSA') {
+    faviconLink.href = '/pass-emploi_favicon_notif.png'
+  } else {
+    faviconLink.href = '/cej-favicon_notif.png'
+  }
 }
 
 function resetBrowserTab(backupTitle: string) {
   document.title = backupTitle
+
   const faviconLink: HTMLLinkElement =
     document.querySelector("link[rel='icon']")!
-  faviconLink.href = '/favicon.png'
+  faviconLink.href = '/cej-favicon.png'
 }
