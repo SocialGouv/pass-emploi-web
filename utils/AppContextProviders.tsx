@@ -46,7 +46,7 @@ export default function AppContextProviders({
     <MobileViewportProvider>
       <ConseillerProvider conseiller={conseiller}>
         <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-          <ActualitesProvider conseiller={conseiller}>
+          <ActualitesProvider>
             <ChatCredentialsProvider>
               <ChatsProvider>
                 <CurrentConversationProvider>

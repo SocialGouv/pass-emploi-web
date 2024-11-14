@@ -8,7 +8,7 @@ import {
 
 import { ModalHandles } from 'components/Modal'
 
-function FakeModal(
+function FakeModalContainer(
   {
     children,
     title,
@@ -25,12 +25,7 @@ function FakeModal(
     closeModal: onClose,
   }))
 
-  return (
-    <>
-      <h2>{title}</h2>
-      {children}
-    </>
-  )
+  return <>{children}</>
 }
 
-export default forwardRef(FakeModal)
+export default forwardRef(FakeModalContainer)

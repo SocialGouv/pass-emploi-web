@@ -21,7 +21,7 @@ import { toRelativeDateTime } from 'utils/date'
 jest.mock('services/beneficiaires.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('EtablissementPage client side', () => {

@@ -22,7 +22,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Animations collectives', () => {
   describe('contenu', () => {

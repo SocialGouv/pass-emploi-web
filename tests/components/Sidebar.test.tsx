@@ -10,6 +10,9 @@ import Sidebar from 'components/Sidebar'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/conseiller.service')
+jest.mock('components/ModalContainer')
+
 describe('<Sidebar/>', () => {
   let routerPush: Function
   beforeEach(() => {
@@ -45,6 +48,9 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Bénéficiaires' })
     ).toHaveAttribute('href', '/etablissement')
+    expect(
+      within(navigation).getByRole('button', { name: /Actualités/ })
+    ).toBeInTheDocument()
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 
@@ -55,6 +61,23 @@ describe('<Sidebar/>', () => {
 
     // Then
     expect(routerPush).toHaveBeenCalledWith('/api/auth/federated-logout')
+  })
+
+  it('permet de consulter les actualités', async () => {
+    // When
+    await renderSidebar()
+    await userEvent.click(screen.getByRole('button', { name: /Actualités/ }))
+
+    // Then
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Actualités' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: 'Invitation à la journée présentiel du 31 octobre 2024',
+      })
+    ).toBeInTheDocument()
   })
 
   it('afficher le lien vers la réaffectation quand le conseiller est superviseur', async () => {

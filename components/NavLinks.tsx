@@ -197,7 +197,7 @@ export default function NavLinks({
           />
         )}
 
-        {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
+        {process.env.NEXT_PUBLIC_ENABLE_ACTUS === 'true' &&
           items.includes(NavItem.Actualites) && (
             <NavLink
               label='Actualités'

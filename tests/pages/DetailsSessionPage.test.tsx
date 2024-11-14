@@ -21,7 +21,7 @@ import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 jest.mock('services/beneficiaires.service')
 jest.mock('services/sessions.service')

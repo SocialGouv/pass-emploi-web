@@ -12,7 +12,7 @@ import { modifierAgence } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('HomePage client side', () => {
   let container: HTMLElement

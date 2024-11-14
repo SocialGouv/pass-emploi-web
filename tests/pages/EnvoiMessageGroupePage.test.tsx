@@ -15,7 +15,7 @@ import { sendNouveauMessageGroupe, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('services/fichiers.service')
 jest.mock('services/messages.service')
 
