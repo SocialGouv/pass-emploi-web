@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { template: '%s - ' + siteTitle, default: siteTitle },
     icons: {
-      icon: [faviconPath, '/favicon.png'],
+      icon: faviconPath,
       shortcut: faviconPath,
       apple: faviconPath,
     },
