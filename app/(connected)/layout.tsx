@@ -11,11 +11,11 @@ import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { accessToken, user } = await getMandatorySessionServerSide()
+  const { user } = await getMandatorySessionServerSide()
   const siteTitle =
     'Espace conseiller ' + (estUserPassEmploi(user) ? 'pass emploi' : 'CEJ')
   const faviconPath = estUserPassEmploi(user)
-    ? '/pass-emploi_favicon.png'
+    ? '/pass-emploi-favicon.png'
     : '/cej-favicon.png'
 
   return {
