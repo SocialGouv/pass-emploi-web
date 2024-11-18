@@ -11,7 +11,7 @@ import { modifierIdentifiantPartenaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('<DetailsJeune>', () => {
   beforeEach(() => {

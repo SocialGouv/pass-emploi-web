@@ -37,7 +37,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
 jest.mock('services/beneficiaires.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('EditionRdvPage client side', () => {

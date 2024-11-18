@@ -11,7 +11,6 @@ if (typeof window !== 'undefined') {
 }
 
 jest.mock('utils/analytics/useMatomo')
-jest.mock('utils/hooks/useLeanBeWidget')
 
 jest.mock('next/navigation', () => ({
   notFound: jest.fn(() => {

@@ -14,7 +14,7 @@ import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('NouvelleActionPage client side', () => {
   let container: HTMLElement

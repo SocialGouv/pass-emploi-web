@@ -19,7 +19,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('CreationBeneficiaireMiloPage client side', () => {
   let container: HTMLElement

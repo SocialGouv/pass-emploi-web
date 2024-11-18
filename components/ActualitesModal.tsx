@@ -32,16 +32,41 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
         /<h3/g,
         "<div className='bg-white px-4 py-2 rounded-base mb-4'><h3"
       )
-      .replace(/hr/g, '/div')
+      .replace(/<hr \/>/g, '</div>')
   }
 
   function ajouterTagCategorie(str: string) {
-    return str
-      .replace(
-        /{/g,
-        "<span className='flex items-center w-fit text-s-medium text-additional_3 px-3 bg-additional_3_lighten whitespace-nowrap rounded-full'>"
+    const divRegex = /<div\b[^>]*>([.\s\S]*?)<\/div>/g
+    const codeRegex = /<code\b[^>]*>([.\s\S]*?)<\/code>/
+
+    return Array.from(str.matchAll(divRegex))
+      .map((article) => {
+        const articleContent = article[1]
+
+        const baliseCode = articleContent.match(codeRegex)
+
+        if (!baliseCode) return articleContent
+
+        const baliseCodeContent = baliseCode[1]
+
+        const tags = baliseCodeContent.split(',').map((word) => word.trim())
+
+        const categories = tags
+          .map((tag) => {
+            return `<span className='flex items-center w-fit text-s-medium text-additional_3 px-3 bg-additional_3_lighten whitespace-nowrap rounded-full'>${tag}</span>`
+          })
+          .join('')
+
+        return articleContent.replace(
+          /<pre\b[^>]*>[.\s\S]*?<\/pre>/g,
+          `<div className='flex gap-2'>${categories}</div>`
+        )
+      })
+      .map(
+        (match) =>
+          `<div className='bg-white px-4 py-2 rounded-base mb-4'>${match}</div></div>`
       )
-      .replace(/}/g, '</span>')
+      .join('')
   }
 
   const modalTemplate = (

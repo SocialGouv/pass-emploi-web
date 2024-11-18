@@ -1,8 +1,25 @@
 import { Actualites } from 'interfaces/actualites'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { fetchJson } from 'utils/httpClient'
 
-export async function getActualites(): Promise<Actualites | undefined> {
-  const url = process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CEJ_LINK
+export async function getActualites(
+  structure: StructureConseiller
+): Promise<Actualites | undefined> {
+  const url = ((): string | undefined => {
+    switch (structure) {
+      case StructureConseiller.MILO:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_MILO_LINK as string
+      case StructureConseiller.POLE_EMPLOI:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FT_CEJ_LINK as string
+      case StructureConseiller.POLE_EMPLOI_BRSA:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FR_BRSA_LINK as string
+      case StructureConseiller.POLE_EMPLOI_AIJ:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FR_AIJ_LINK as string
+      case StructureConseiller.CONSEIL_DEPT:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CD_LINK as string
+    }
+  })()
+
   if (!url) return
 
   const {

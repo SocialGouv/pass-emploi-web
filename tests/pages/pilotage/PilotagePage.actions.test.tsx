@@ -18,7 +18,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/actions.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Actions', () => {
   describe('contenu', () => {

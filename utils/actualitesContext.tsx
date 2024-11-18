@@ -10,6 +10,7 @@ import {
 
 import { Actualites } from 'interfaces/actualites'
 import { getActualites } from 'services/actualites.service'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 const ActualitesContext = createContext<Actualites | undefined>(undefined)
 
@@ -23,9 +24,11 @@ export function ActualitesProvider({
   const [actualites, setActualites] = useState<Actualites | undefined>(
     actualitesForTests
   )
+  const [conseiller] = useConseiller()
 
   useEffect(() => {
-    if (actualites === undefined) getActualites().then(setActualites)
+    if (actualites === undefined)
+      getActualites(conseiller.structure).then(setActualites)
   }, [actualites])
 
   return (

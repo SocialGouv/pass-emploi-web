@@ -25,7 +25,7 @@ jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
 jest.mock('services/sessions.service')
-jest.mock('components/Modal')
+jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('Agenda - Onglet établissement', () => {
