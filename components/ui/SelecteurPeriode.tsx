@@ -37,6 +37,7 @@ export function SelecteurPeriode({
     return { debut, fin, longLabel: labelPeriode(debut, fin, 'long') }
   })
 
+  const debutPeriodeRef = useRef<HTMLInputElement>(null)
   const [periodeInput, setPeriodeInput] = useState<string>(
     periodeAffichee.debut.toISODate()
   )
@@ -83,7 +84,6 @@ export function SelecteurPeriode({
   }
 
   function changerPeriode(debutPeriodeInput: string) {
-    if (!debutPeriodeInput) return
     if (!regexDate.test(debutPeriodeInput)) return
 
     const debutPeriode = DateTime.fromISO(debutPeriodeInput).set({
@@ -103,6 +103,7 @@ export function SelecteurPeriode({
       { label, shouldFocus: shouldFocusOnChange }
     )
     setPeriodeAffichee({ debut, fin, longLabel: label })
+    debutPeriodeRef.current!.value = debut.toISODate()
   }, [indexPeriodeAffichee])
 
   useEffect(() => {
@@ -152,9 +153,10 @@ export function SelecteurPeriode({
         Du{' '}
       </label>
       <input
+        ref={debutPeriodeRef}
         id='debut-periode'
         type='date'
-        value={periodeInput}
+        defaultValue={periodeAffichee.debut.toISODate()}
         onChange={(e) => setPeriodeInput(e.target.value)}
         step={7}
         className='text-base-bold border-b'
