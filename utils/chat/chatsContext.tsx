@@ -132,9 +132,9 @@ function displayNotificationInBrowserTab(userStructure: string) {
     document.querySelector("link[rel='icon']")!
 
   if (userStructure === 'POLE_EMPLOI_BRSA') {
-    faviconLink.href = '/pass-emploi_favicon_notif.png'
+    faviconLink.href = '/pass-emploi-favicon-notif.png'
   } else {
-    faviconLink.href = '/cej-favicon_notif.png'
+    faviconLink.href = '/cej-favicon-notif.png'
   }
 }
 

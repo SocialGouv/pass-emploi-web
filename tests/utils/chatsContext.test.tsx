@@ -95,7 +95,7 @@ describe('ChatsProvider', () => {
       // Then
       expect(
         renderResult.container.querySelector("link[rel='icon']")
-      ).toHaveProperty('href', 'http://localhost/cej-favicon_notif.png')
+      ).toHaveProperty('href', 'http://localhost/cej-favicon-notif.png')
       expect(document.title).toMatch(/Nouveau\(x\) message\(s\) - /)
     })
 
