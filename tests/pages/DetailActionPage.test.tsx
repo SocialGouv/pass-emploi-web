@@ -75,7 +75,9 @@ describe('ActionPage client side', () => {
       )
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Voir l’historique' })
+        Array.from(container.querySelectorAll('details summary')).find((el) =>
+          /Historique/.test(el.textContent!)
+        )!
       )
       expect(getByDescriptionTerm('Date de création :')).toHaveTextContent(
         '15/02/2022'
@@ -130,21 +132,19 @@ describe('ActionPage client side', () => {
     })
 
     describe('Partage action', () => {
-      let fieldset: HTMLFieldSetElement
-      let boutonVoir: HTMLButtonElement
+      let group: HTMLDetailsElement
+      let boutonVoir: HTMLElement
       beforeEach(async () => {
-        fieldset = screen.getByRole('group', {
-          name: 'Commentaire Voir le commentaire',
-        })
-        boutonVoir = within(fieldset).getByRole('button', {
-          name: 'Voir le commentaire',
-        })
+        group = Array.from(container.querySelectorAll('details')).find((el) =>
+          /Commentaire/.test(el.textContent!)
+        ) as HTMLDetailsElement
+
+        boutonVoir = group.querySelector('summary') as HTMLElement
       })
 
       it('est caché par défaut', async () => {
         // Then
-        expect(boutonVoir).toBeInTheDocument()
-        expect(() => within(fieldset).getByRole('textbox')).toThrow()
+        expect(group).not.toHaveAttribute('open')
       })
 
       describe('quand on ouvre l’accordéon', () => {
@@ -153,9 +153,20 @@ describe('ActionPage client side', () => {
           await userEvent.click(boutonVoir)
         })
 
+        it('demande la saisi d’un message', async () => {
+          expect(
+            within(group).getByRole('button', {
+              name: 'Envoyer au bénéficiaire',
+            })
+          ).toHaveAttribute('disabled')
+        })
+
         it('envoie un message', async () => {
+          //
+          expect(group).toHaveAttribute('open')
+
           // Given
-          const pouet = within(fieldset).getByRole('textbox', {
+          const pouet = within(group).getByRole('textbox', {
             name: 'Demander plus d’information au bénéficiaire sur l’action',
           })
           // FIXME pourquoi ça marche pas avec userEvent.click ? 🤨
@@ -167,7 +178,7 @@ describe('ActionPage client side', () => {
 
           // When
           await userEvent.click(
-            within(fieldset).getByRole('button', {
+            within(group).getByRole('button', {
               name: 'Envoyer au bénéficiaire',
             })
           )
@@ -181,21 +192,6 @@ describe('ActionPage client side', () => {
           })
           expect(document.activeElement).toHaveTextContent(
             'Votre message a bien été envoyé, retrouvez le dans votre conversation avec le bénéficiaire.'
-          )
-        })
-
-        it('demande la saisi d’un message', async () => {
-          // When
-          await userEvent.click(
-            within(fieldset).getByRole('button', {
-              name: 'Envoyer au bénéficiaire',
-            })
-          )
-
-          // Then
-          expect(commenterAction).not.toHaveBeenCalled()
-          expect(document.activeElement).toHaveTextContent(
-            'Veuillez saisir un message à envoyer au bénéficiaire.'
           )
         })
 
@@ -400,6 +396,12 @@ describe('ActionPage client side', () => {
   })
 
   describe("quand l'action qualifiée", () => {
+    const jeune: BaseBeneficiaire & { idConseiller: string } = {
+      id: 'beneficiaire-1',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+      idConseiller: 'id-conseiller',
+    }
     describe('qualifiée en SNP', () => {
       //Given
       const actionAQualifier = uneAction({
@@ -410,12 +412,6 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: true,
         },
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
 
       //When
       beforeEach(async () => {
@@ -467,12 +463,6 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: false,
         },
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
 
       //When
       beforeEach(async () => {
