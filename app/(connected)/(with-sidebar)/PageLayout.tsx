@@ -25,6 +25,7 @@ export default function PageLayout({
       <Header />
 
       <main
+        role='main'
         id={ID_CONTENU}
         tabIndex={-1}
         className={`${layout.content} ${

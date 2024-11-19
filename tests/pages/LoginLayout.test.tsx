@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import LayoutLoginClient from 'app/(connexion)/login/LayoutLoginClient'
+import { MODAL_ROOT_ID } from 'components/globals'
 
 jest.mock('utils/auth/auth', () => ({ signin: jest.fn() }))
 
@@ -51,7 +52,12 @@ describe('LoginLayout client side', () => {
 
       // When
       await act(async () => {
-        ;({ container } = render(<LayoutLoginClient>children</LayoutLoginClient>))
+        ;({ container } = render(
+          <>
+            <LayoutLoginClient>children</LayoutLoginClient>
+            <div id={MODAL_ROOT_ID} />
+          </>
+        ))
       })
     })
 
