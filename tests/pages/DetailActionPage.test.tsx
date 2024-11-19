@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -12,10 +12,12 @@ import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
+import { commenterAction } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
+jest.mock('services/messages.service')
 jest.mock('components/PageActionsPortal')
 
 describe('ActionPage client side', () => {
@@ -36,7 +38,7 @@ describe('ActionPage client side', () => {
     ;(modifierAction as jest.Mock).mockImplementation(
       async (_, statut) => statut
     )
-    ;(deleteAction as jest.Mock).mockResolvedValue({})
+    ;(deleteAction as jest.Mock).mockResolvedValue(undefined)
     ;(useRouter as jest.Mock).mockReturnValue({
       push: routerPush,
     })
@@ -73,7 +75,9 @@ describe('ActionPage client side', () => {
       )
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Voir l’historique' })
+        Array.from(container.querySelectorAll('details summary')).find((el) =>
+          /Historique/.test(el.textContent!)
+        )!
       )
       expect(getByDescriptionTerm('Date de création :')).toHaveTextContent(
         '15/02/2022'
@@ -124,6 +128,83 @@ describe('ActionPage client side', () => {
 
         // Then
         expect(screen.getByText('Date de réalisation :')).toBeInTheDocument()
+      })
+    })
+
+    describe('Partage action', () => {
+      let group: HTMLDetailsElement
+      let boutonVoir: HTMLElement
+      beforeEach(async () => {
+        group = Array.from(container.querySelectorAll('details')).find((el) =>
+          /Commentaire/.test(el.textContent!)
+        ) as HTMLDetailsElement
+
+        boutonVoir = group.querySelector('summary') as HTMLElement
+      })
+
+      it('est caché par défaut', async () => {
+        // Then
+        expect(group).not.toHaveAttribute('open')
+      })
+
+      describe('quand on ouvre l’accordéon', () => {
+        beforeEach(async () => {
+          // When
+          await userEvent.click(boutonVoir)
+        })
+
+        it('demande la saisi d’un message', async () => {
+          expect(
+            within(group).getByRole('button', {
+              name: 'Envoyer au bénéficiaire',
+            })
+          ).toHaveAttribute('disabled')
+        })
+
+        it('envoie un message', async () => {
+          //
+          expect(group).toHaveAttribute('open')
+
+          // Given
+          const pouet = within(group).getByRole('textbox', {
+            name: 'Demander plus d’information au bénéficiaire sur l’action',
+          })
+          // FIXME pourquoi ça marche pas avec userEvent.click ? 🤨
+          fireEvent.change(pouet, {
+            target: {
+              value: 'Peux tu me détailler quelles recherches tu as fait stp ?',
+            },
+          })
+
+          // When
+          await userEvent.click(
+            within(group).getByRole('button', {
+              name: 'Envoyer au bénéficiaire',
+            })
+          )
+
+          // Then
+          expect(commenterAction).toHaveBeenCalledWith({
+            cleChiffrement: 'cleChiffrement',
+            idDestinataire: jeune.id,
+            message: 'Peux tu me détailler quelles recherches tu as fait stp ?',
+            action,
+          })
+          expect(document.activeElement).toHaveTextContent(
+            'Votre message a bien été envoyé, retrouvez le dans votre conversation avec le bénéficiaire.'
+          )
+        })
+
+        it('a11y', async () => {
+          // When
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
+          expect(results!).toHaveNoViolations()
+        })
       })
     })
   })
@@ -315,6 +396,12 @@ describe('ActionPage client side', () => {
   })
 
   describe("quand l'action qualifiée", () => {
+    const jeune: BaseBeneficiaire & { idConseiller: string } = {
+      id: 'beneficiaire-1',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+      idConseiller: 'id-conseiller',
+    }
     describe('qualifiée en SNP', () => {
       //Given
       const actionAQualifier = uneAction({
@@ -325,12 +412,6 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: true,
         },
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
 
       //When
       beforeEach(async () => {
@@ -382,12 +463,6 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: false,
         },
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
 
       //When
       beforeEach(async () => {
