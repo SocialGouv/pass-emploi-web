@@ -25,7 +25,7 @@ function LoginHubPage() {
           </p>
         </header>
 
-        <main className='flex flex-col gap-4'>
+        <main role='main' className='flex flex-col gap-4'>
           {errorMsg && <FailureAlert label={errorMsg} />}
 
           <Link

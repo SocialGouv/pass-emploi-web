@@ -20,7 +20,10 @@ function AuthErrorPage({
         <title>Portail de connexion</title>
       </header>
 
-      <main className='flex flex-col justify-center p-10 mt-32 w-screen'>
+      <main
+        role='main'
+        className='flex flex-col justify-center p-10 mt-32 w-screen'
+      >
         <div className='shadow-m flex flex-col justify-center w-9/10 mx-auto p-8'>
           <h1 className='text-m-bold text-primary text-center mt-6 mb-8'>
             Portail de connexion

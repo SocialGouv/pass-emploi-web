@@ -48,7 +48,7 @@ function LoginCEJPage() {
             </h1>
           </header>
 
-          <main>
+          <main role='main'>
             <ul className='px-6 pt-6 flex flex-col gap-4'>
               <li>
                 <LoginButton

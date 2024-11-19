@@ -58,7 +58,10 @@ function LoginPage({
             </h1>
           </header>
 
-          <main className='grid grid-cols-1 layout_s:grid-rows-[repeat(2,auto)] layout_s:grid-flow-col layout_s:auto-cols-fr'>
+          <main
+            role='main'
+            className='grid grid-cols-1 layout_s:grid-rows-[repeat(2,auto)] layout_s:grid-flow-col layout_s:auto-cols-fr'
+          >
             <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
               Connexion conseiller RSA
             </h2>

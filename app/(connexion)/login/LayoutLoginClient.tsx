@@ -7,7 +7,7 @@ import {
 } from 'next/navigation'
 import React, { ReactNode, useEffect, useState } from 'react'
 
-import { MIN_DESKTOP_WIDTH, MODAL_ROOT_ID } from 'components/globals'
+import { MIN_DESKTOP_WIDTH } from 'components/globals'
 import Footer from 'components/layouts/Footer'
 import OnboardingMobileModal from 'components/onboarding/OnboardingMobileModal'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -77,8 +77,6 @@ export default function LayoutLoginClient({
       {afficherOnboarding && (
         <OnboardingMobileModal onClose={() => setAfficherOnboarding(false)} />
       )}
-
-      <div id={MODAL_ROOT_ID} />
     </>
   )
 }
