@@ -5,7 +5,8 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 
-import { HistoriqueAction } from 'components/action/HistoriqueAction'
+import CommentaireAction from 'components/action/CommentaireAction'
+import HistoriqueAction from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import Modal, { ModalHandles } from 'components/Modal'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -241,6 +242,8 @@ function DetailActionPage({
           )}
         </dl>
       </div>
+
+      <CommentaireAction action={action} beneficiaire={jeune} />
 
       <HistoriqueAction action={action} />
 

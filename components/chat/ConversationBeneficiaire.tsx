@@ -51,7 +51,7 @@ export default function ConversationBeneficiaire({
         <RechercheMessage
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
-          beneficiaireChat={beneficiaireChat}
+          beneficiaireEtChat={beneficiaireChat}
           toggleAfficherRecherche={() => setAfficherRecherche(false)}
         />
       )}
