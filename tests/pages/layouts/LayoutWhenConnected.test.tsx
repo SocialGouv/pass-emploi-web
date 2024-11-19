@@ -2,14 +2,14 @@ import { render } from '@testing-library/react'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import LayoutWhenConnected from 'app/(connected)/layout'
+import LayoutWhenConnected, { generateMetadata } from 'app/(connected)/layout'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -55,6 +55,29 @@ describe('LayoutWhenConnected', () => {
       new Error('NEXT REDIRECT /api/auth/federated-logout')
     )
     expect(redirect).toHaveBeenCalledWith('/api/auth/federated-logout')
+  })
+  it('affiche favicon icon en tant que brsa conseiller connecté', async () => {
+    ;(getServerSession as jest.Mock).mockResolvedValue({
+      user: {
+        estConseiller: true,
+        structure: StructureConseiller.POLE_EMPLOI_BRSA,
+      },
+      accessToken: 'accessToken',
+    })
+
+    const metadata = await generateMetadata()
+
+    expect(metadata).toEqual({
+      title: {
+        template: '%s - Espace conseiller pass emploi',
+        default: 'Espace conseiller pass emploi',
+      },
+      icons: {
+        icon: '/pass-emploi-favicon.png',
+        shortcut: '/pass-emploi-favicon.png',
+        apple: '/pass-emploi-favicon.png',
+      },
+    })
   })
 
   describe('quand l’utilisateur est connecté en tant que conseiller', () => {

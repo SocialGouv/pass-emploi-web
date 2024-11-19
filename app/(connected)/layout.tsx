@@ -4,19 +4,28 @@ import React, { ReactNode } from 'react'
 import A11yPageTitle from 'components/A11yPageTitle'
 import { MODAL_ROOT_ID } from 'components/globals'
 import LiensEvitement from 'components/LiensEvitement'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estUserPassEmploi } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { accessToken, user } = await getMandatorySessionServerSide()
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  const { user } = await getMandatorySessionServerSide()
   const siteTitle =
-    'Espace conseiller ' + (estPassEmploi(conseiller) ? 'pass emploi' : 'CEJ')
+    'Espace conseiller ' + (estUserPassEmploi(user) ? 'pass emploi' : 'CEJ')
+  const faviconPath = estUserPassEmploi(user)
+    ? '/pass-emploi-favicon.png'
+    : '/cej-favicon.png'
 
-  return { title: { template: '%s - ' + siteTitle, default: siteTitle } }
+  return {
+    title: { template: '%s - ' + siteTitle, default: siteTitle },
+    icons: {
+      icon: faviconPath,
+      shortcut: faviconPath,
+      apple: faviconPath,
+    },
+  }
 }
 
 export default async function LayoutWhenConnected({
