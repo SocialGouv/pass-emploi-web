@@ -7,12 +7,13 @@ import {
   addMessage,
   addMessageImportant,
   CreateFirebaseMessage,
-  CreateFirebaseMessageWithOffre,
+  CreateFirebaseMessageCommentaireAction,
+  CreateFirebaseMessagePartageOffre,
   deleteMessageImportant,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
   getIdLastMessage,
-  getMessageImportantSnapshot,
+  findMessageImportant,
   getMessagesGroupe,
   getMessagesPeriode,
   observeChat,
@@ -22,7 +23,9 @@ import {
   signOut as _signOut,
   updateChat,
   updateMessage,
+  getChatDuBeneficiaire,
 } from 'clients/firebase.client'
+import { Action } from 'interfaces/action'
 import {
   BaseBeneficiaire,
   BeneficiaireEtChat,
@@ -65,9 +68,16 @@ export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsListesDeDiffusion: string[]
 }
 
-type FormPartageOffre = {
+type PartageOffre = {
   offre: BaseOffre
   idsDestinataires: string[]
+  cleChiffrement: string
+  message: string
+}
+
+type PartageAction = {
+  action: Action
+  idDestinataire: string
   cleChiffrement: string
   message: string
 }
@@ -79,7 +89,7 @@ export type MessageImportantPreRempli = {
   message: string
 }
 
-type MessageType =
+type MessageTypeEvenement =
   | 'MESSAGE_ENVOYE'
   | 'MESSAGE_ENVOYE_PJ'
   | 'MESSAGE_ENVOYE_MULTIPLE'
@@ -89,6 +99,7 @@ type MessageType =
   | 'MESSAGE_SUPPRIME'
   | 'MESSAGE_IMPORTANT_MODIFIE'
   | 'MESSAGE_IMPORTANT_SUPPRIME'
+  | 'MESSAGE_ACTION_COMMENTEE'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -160,13 +171,13 @@ export async function observeConseillerChats(
 }
 
 export function observeDerniersMessages(
-  idChat: string,
+  beneficiaireEtChat: BeneficiaireEtChat,
   cleChiffrement: string,
   { pages, taillePage }: { pages: number; taillePage: number },
   onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>) => void
 ): () => void {
   return observeDerniersMessagesDuChat(
-    idChat,
+    beneficiaireEtChat,
     pages * taillePage,
     (messagesAntechronologiques: Message[]) => {
       const messagesGroupesParJour: ByDay<Message> = grouperMessagesParJour(
@@ -235,25 +246,21 @@ export async function getMessageImportant(
   cleChiffrement: string
 ): Promise<MessageImportantPreRempli | undefined> {
   const session = await getSession()
-  const snapshot = await getMessageImportantSnapshot(session!.user.id)
-  if (!snapshot) return
+  const messageImportant = await findMessageImportant(session!.user.id)
+  if (!messageImportant) return
 
-  const messageImportant = snapshot.data()
+  const contenu = decrypt(
+    { encryptedText: messageImportant.content, iv: messageImportant.iv },
+    cleChiffrement
+  )
+  const dateFin = DateTime.fromMillis(
+    messageImportant.dateFin.toMillis()
+  ).toISODate()
+  const dateDebut = DateTime.fromMillis(
+    messageImportant.dateDebut.toMillis()
+  ).toISODate()
 
-  if (messageImportant) {
-    const contenu = decrypt(
-      { encryptedText: messageImportant.content, iv: messageImportant.iv },
-      cleChiffrement
-    )
-    const dateFin = DateTime.fromMillis(
-      messageImportant.dateFin.toMillis()
-    ).toISODate()
-    const dateDebut = DateTime.fromMillis(
-      messageImportant.dateDebut.toMillis()
-    ).toISODate()
-
-    return { message: contenu, dateDebut, dateFin, id: snapshot.id }
-  }
+  return { message: contenu, dateDebut, dateFin, id: messageImportant.id }
 }
 
 export async function countMessagesNotRead(
@@ -272,14 +279,14 @@ export async function countMessagesNotRead(
 }
 
 export async function getMessagesDuMemeJour(
-  idChat: string,
+  beneficiaireEtChat: BeneficiaireEtChat,
   messageSource: Message,
   cleChiffrement: string
 ): Promise<Message[]> {
   const debut = messageSource.creationDate.startOf('day')
   const fin = messageSource.creationDate.endOf('day')
 
-  const messages = await getMessagesPeriode(idChat, debut, fin)
+  const messages = await getMessagesPeriode(beneficiaireEtChat, debut, fin)
   return messages.map((message) => {
     if (!message.iv) return message
     return {
@@ -312,7 +319,7 @@ export async function sendNouveauMessage({
     date: now,
   }
 
-  let type: MessageType = 'MESSAGE_ENVOYE'
+  let type: MessageTypeEvenement = 'MESSAGE_ENVOYE'
   if (infoPieceJointe) {
     nouveauMessage.infoPieceJointe = {
       ...infoPieceJointe,
@@ -434,24 +441,37 @@ export async function partagerOffre({
   idsDestinataires,
   message,
   offre,
-}: FormPartageOffre) {
+}: PartageOffre) {
   const session = await getSession()
   const now = DateTime.now()
   const encryptedMessage = encrypt(message, cleChiffrement)
-  const nouveauMessage: CreateFirebaseMessageWithOffre = {
+  const nouveauMessage: CreateFirebaseMessagePartageOffre = {
     idConseiller: session!.user.id,
     message: encryptedMessage,
     offre: offre,
     date: now,
   }
 
-  await envoyerPartageOffre(
-    idsDestinataires,
-    nouveauMessage,
-    'MESSAGE_OFFRE_PARTAGEE',
-    session!,
-    now
-  )
+  await envoyerPartageOffre(idsDestinataires, nouveauMessage, session!)
+}
+
+export async function commenterAction({
+  cleChiffrement,
+  idDestinataire,
+  message,
+  action,
+}: PartageAction): Promise<void> {
+  const session = await getSession()
+  const now = DateTime.now()
+  const encryptedMessage = encrypt(message, cleChiffrement)
+  const nouveauMessage: CreateFirebaseMessageCommentaireAction = {
+    idConseiller: session!.user.id,
+    message: encryptedMessage,
+    action,
+    date: now,
+  }
+
+  await envoyerCommentaireAction(idDestinataire, nouveauMessage, session!)
 }
 
 export async function modifierMessage(
@@ -520,10 +540,8 @@ export async function supprimerMessage(
 
 async function envoyerPartageOffre(
   idsDestinataires: string[],
-  nouveauMessage: CreateFirebaseMessageWithOffre,
-  type: MessageType,
-  session: Session,
-  date: DateTime
+  nouveauMessage: CreateFirebaseMessagePartageOffre,
+  session: Session
 ) {
   const chats = await getChatsDuConseiller(session.user.id)
   const chatsDestinataires = Object.entries(chats)
@@ -537,7 +555,7 @@ async function envoyerPartageOffre(
         updateChat(chat.chatId, {
           lastMessageContent: nouveauMessage.message.encryptedText,
           lastMessageIv: nouveauMessage.message.iv,
-          lastMessageSentAt: date,
+          lastMessageSentAt: nouveauMessage.date,
           lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
           newConseillerMessageCount: chat.newConseillerMessageCount + 1,
         }),
@@ -552,10 +570,44 @@ async function envoyerPartageOffre(
       session.accessToken
     ),
     evenementMessage(
-      type,
+      'MESSAGE_OFFRE_PARTAGEE',
       session.user.structure,
       session.user.id,
       session.accessToken
+    ),
+  ])
+}
+
+async function envoyerCommentaireAction(
+  idDestinataire: string,
+  nouveauMessage: CreateFirebaseMessageCommentaireAction,
+  session: Session
+) {
+  const chat = await getChatDuBeneficiaire(session.user.id, idDestinataire)
+  if (!chat) throw new Error('Conversation non trouvée')
+
+  await Promise.all([
+    addMessage(chat.chatId, nouveauMessage),
+    updateChat(chat.chatId, {
+      lastMessageContent: nouveauMessage.message.encryptedText,
+      lastMessageIv: nouveauMessage.message.iv,
+      lastMessageSentAt: nouveauMessage.date,
+      lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
+      newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+    }),
+  ])
+
+  await Promise.all([
+    notifierNouveauMessage(
+      session!.user.id,
+      [idDestinataire],
+      session!.accessToken
+    ),
+    evenementMessage(
+      'MESSAGE_ACTION_COMMENTEE',
+      session!.user.structure,
+      session!.user.id,
+      session!.accessToken
     ),
   ])
 }
@@ -573,7 +625,7 @@ async function notifierNouveauMessage(
 }
 
 async function evenementMessage(
-  type: MessageType,
+  type: MessageTypeEvenement,
   structure: string,
   idConseiller: string,
   accessToken: string

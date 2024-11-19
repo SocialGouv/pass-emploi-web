@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import MessagesDuJour from 'components/chat/MessagesDuJour'
-import { unChat } from 'fixtures/beneficiaire'
+import { unBeneficiaireChat, unChat } from 'fixtures/beneficiaire'
 import { unMessage } from 'fixtures/message'
 import { Message } from 'interfaces/message'
 import {
@@ -17,7 +17,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/messages.service')
 
 describe('<MessagesDuJour />', () => {
-  const conversation = unChat()
+  const conversation = unBeneficiaireChat()
   const messageSelectionne = unMessage({
     id: 'message-selectionne',
     creationDate: DateTime.fromISO('2023-04-12T05:21'),
@@ -33,7 +33,7 @@ describe('<MessagesDuJour />', () => {
     await act(async () => {
       renderWithContexts(
         <MessagesDuJour
-          conversation={conversation}
+          beneficiaireEtChat={conversation}
           messageSelectionne={messageSelectionne}
           beneficiaireNomComplet='Kenji Jirac'
           idConseiller='id-conseiller'
@@ -47,7 +47,7 @@ describe('<MessagesDuJour />', () => {
     // Then
     expect(getMessagesDuMemeJour).toHaveBeenCalledTimes(1)
     expect(getMessagesDuMemeJour).toHaveBeenCalledWith(
-      conversation.chatId,
+      conversation,
       messageSelectionne,
       'cleChiffrement'
     )

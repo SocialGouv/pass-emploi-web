@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
+import LienAction from 'components/chat/LienAction'
 import LienEvenement from 'components/chat/LienEvenement'
 import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
 import LienOffre from 'components/chat/LienOffre'
@@ -139,6 +140,13 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
         <LienOffre infoOffre={message.infoOffre} isSentByConseiller={true} />
+      )}
+
+      {message.type === TypeMessage.MESSAGE_ACTION && message.infoAction && (
+        <LienAction
+          infoAction={message.infoAction}
+          idBeneficiaire={message.idBeneficiaire}
+        />
       )}
 
       {message.type === TypeMessage.MESSAGE_SESSION_MILO &&

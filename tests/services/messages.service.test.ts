@@ -1,4 +1,4 @@
-import { DocumentSnapshot, Timestamp } from 'firebase/firestore'
+import { Timestamp } from 'firebase/firestore'
 import { DateTime } from 'luxon'
 
 import { apiPost } from 'clients/api.client'
@@ -7,10 +7,11 @@ import {
   addMessageImportant,
   deleteMessageImportant,
   findAndObserveChatsDuConseiller,
+  findMessageImportant,
   FirebaseMessageImportant,
+  getChatDuBeneficiaire,
   getChatsDuConseiller,
   getIdLastMessage,
-  getMessageImportantSnapshot,
   getMessagesGroupe,
   getMessagesPeriode,
   observeChat,
@@ -21,11 +22,12 @@ import {
   updateChat,
   updateMessage,
 } from 'clients/firebase.client'
+import { uneAction } from 'fixtures/action'
 import {
   desItemsBeneficiaires,
+  unBeneficiaireChat,
   unChat,
   uneBaseBeneficiaire,
-  unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import {
   desMessagesAntechronologiques,
@@ -36,23 +38,24 @@ import {
 } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import {
-  Chat,
   BeneficiaireEtChat,
   BeneficiaireFromListe,
+  Chat,
 } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
+  commenterAction,
   countMessagesNotRead,
   desactiverMessageImportant,
   getMessageImportant,
+  getMessagesDuMemeJour,
   getMessagesListeDeDiffusion,
   modifierMessage,
   observeConseillerChats,
   observeDerniersMessages,
   observeJeuneReadingDate,
   partagerOffre,
-  getMessagesDuMemeJour,
   rechercherMessagesConversation,
   sendNouveauMessage,
   sendNouveauMessageGroupe,
@@ -205,7 +208,7 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.observeDerniersMessages', () => {
     let idChat: string
     let onMessagesAntechronologiques: (
-      messagesGroupesParJour: ByDay<Message>[]
+      messagesGroupesParJour: ByDay<Message>
     ) => void
     beforeEach(async () => {
       // Given
@@ -544,23 +547,18 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.getMessageImportant', () => {
     it('récupère le messsage important depuis firebase', async () => {
       //Given
-      const messageSnapshot: DocumentSnapshot<
-        FirebaseMessageImportant,
-        FirebaseMessageImportant
-      > = {
+      const messageSnapshot: FirebaseMessageImportant & { id: string } = {
         id: 'document-id',
-        data: () => ({
-          idConseiller: 'idConseiller',
-          iv: 'iv-message',
-          content: 'contenu-message',
-          dateDebut: Timestamp.fromMillis(
-            DateTime.fromISO('2024-04-25').toMillis()
-          ),
-          dateFin: Timestamp.fromMillis(
-            DateTime.fromISO('2024-04-26').toMillis()
-          ),
-        }),
-      } as DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
+        idConseiller: 'idConseiller',
+        iv: 'iv-message',
+        content: 'contenu-message',
+        dateDebut: Timestamp.fromMillis(
+          DateTime.fromISO('2024-04-25').toMillis()
+        ),
+        dateFin: Timestamp.fromMillis(
+          DateTime.fromISO('2024-04-26').toMillis()
+        ),
+      }
 
       const expectedMessage = {
         id: 'document-id',
@@ -569,15 +567,13 @@ describe('MessagesFirebaseAndApiService', () => {
         dateFin: '2024-04-26',
       }
 
-      ;(getMessageImportantSnapshot as jest.Mock).mockResolvedValue(
-        messageSnapshot
-      )
+      ;(findMessageImportant as jest.Mock).mockResolvedValue(messageSnapshot)
 
       //When
       const message = await getMessageImportant('cleChiffrement')
 
       //Then
-      expect(getMessageImportantSnapshot).toHaveBeenCalledWith('idConseiller')
+      expect(findMessageImportant).toHaveBeenCalledWith('idConseiller')
       expect(message).toEqual(expectedMessage)
     })
   })
@@ -663,6 +659,84 @@ describe('MessagesFirebaseAndApiService', () => {
         '/evenements',
         {
           type: 'MESSAGE_OFFRE_PARTAGEE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'MILO',
+            id: 'idConseiller',
+          },
+        },
+        accessToken
+      )
+    })
+  })
+
+  describe('.envoyerCommentaireAction', () => {
+    const chat = unChat()
+    const newMessage =
+      'Peux-tu me détailler quelles recherches tu as faites stp ?'
+    const action = uneAction()
+    const now = DateTime.now()
+    beforeEach(async () => {
+      // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      ;(getChatDuBeneficiaire as jest.Mock).mockResolvedValue(chat)
+
+      await commenterAction({
+        action,
+        idDestinataire: 'idBeneficiaire',
+        message: newMessage,
+        cleChiffrement,
+      })
+    })
+
+    it('récupère le chat du bénéficiaire avec son conseiller', () => {
+      // Then
+      expect(getChatDuBeneficiaire).toHaveBeenCalledWith(
+        'idConseiller',
+        'idBeneficiaire'
+      )
+    })
+
+    it('ajoute un nouveau message à firebase', () => {
+      // Then
+
+      expect(addMessage).toHaveBeenCalledWith(chat.chatId, {
+        action,
+        idConseiller: 'idConseiller',
+        message: {
+          encryptedText: `Encrypted: ${newMessage}`,
+          iv: `IV: ${newMessage}`,
+        },
+        date: now,
+      })
+    })
+
+    it('met à jour le chat dans firebase', () => {
+      // Then
+      expect(updateChat).toHaveBeenCalledWith(chat.chatId, {
+        lastMessageContent: `Encrypted: ${newMessage}`,
+        lastMessageIv: `IV: ${newMessage}`,
+        lastMessageSentAt: now,
+        lastMessageSentBy: 'conseiller',
+        newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+      })
+    })
+
+    it('notifie envoi de message', () => {
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        `/conseillers/idConseiller/jeunes/notify-messages`,
+        { idsJeunes: ['idBeneficiaire'] },
+        accessToken
+      )
+    })
+
+    it('tracks partage d’offre', () => {
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_ACTION_COMMENTEE',
           emetteur: {
             type: 'CONSEILLER',
             structure: 'MILO',

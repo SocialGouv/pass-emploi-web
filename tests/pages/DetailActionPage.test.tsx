@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -12,10 +12,12 @@ import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
+import { commenterAction } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
+jest.mock('services/messages.service')
 jest.mock('components/PageActionsPortal')
 
 describe('ActionPage client side', () => {
@@ -36,7 +38,7 @@ describe('ActionPage client side', () => {
     ;(modifierAction as jest.Mock).mockImplementation(
       async (_, statut) => statut
     )
-    ;(deleteAction as jest.Mock).mockResolvedValue({})
+    ;(deleteAction as jest.Mock).mockResolvedValue(undefined)
     ;(useRouter as jest.Mock).mockReturnValue({
       push: routerPush,
     })
@@ -124,6 +126,89 @@ describe('ActionPage client side', () => {
 
         // Then
         expect(screen.getByText('Date de réalisation :')).toBeInTheDocument()
+      })
+    })
+
+    describe('Partage action', () => {
+      let fieldset: HTMLFieldSetElement
+      let boutonVoir: HTMLButtonElement
+      beforeEach(async () => {
+        fieldset = screen.getByRole('group', {
+          name: 'Commentaire Voir le commentaire',
+        })
+        boutonVoir = within(fieldset).getByRole('button', {
+          name: 'Voir le commentaire',
+        })
+      })
+
+      it('est caché par défaut', async () => {
+        // Then
+        expect(boutonVoir).toBeInTheDocument()
+        expect(() => within(fieldset).getByRole('textbox')).toThrow()
+      })
+
+      describe('quand on ouvre l’accordéon', () => {
+        beforeEach(async () => {
+          // When
+          await userEvent.click(boutonVoir)
+        })
+
+        it('envoie un message', async () => {
+          // Given
+          const pouet = within(fieldset).getByRole('textbox', {
+            name: 'Demander plus d’information au bénéficiaire sur l’action',
+          })
+          // FIXME pourquoi ça marche pas avec userEvent.click ? 🤨
+          fireEvent.change(pouet, {
+            target: {
+              value: 'Peux tu me détailler quelles recherches tu as fait stp ?',
+            },
+          })
+
+          // When
+          await userEvent.click(
+            within(fieldset).getByRole('button', {
+              name: 'Envoyer au bénéficiaire',
+            })
+          )
+
+          // Then
+          expect(commenterAction).toHaveBeenCalledWith({
+            cleChiffrement: 'cleChiffrement',
+            idDestinataire: jeune.id,
+            message: 'Peux tu me détailler quelles recherches tu as fait stp ?',
+            action,
+          })
+          expect(document.activeElement).toHaveTextContent(
+            'Votre message a bien été envoyé, retrouvez le dans votre conversation avec le bénéficiaire.'
+          )
+        })
+
+        it('demande la saisi d’un message', async () => {
+          // When
+          await userEvent.click(
+            within(fieldset).getByRole('button', {
+              name: 'Envoyer au bénéficiaire',
+            })
+          )
+
+          // Then
+          expect(commenterAction).not.toHaveBeenCalled()
+          expect(document.activeElement).toHaveTextContent(
+            'Veuillez saisir un message à envoyer au bénéficiaire.'
+          )
+        })
+
+        it('a11y', async () => {
+          // When
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
+          expect(results).toHaveNoViolations()
+        })
       })
     })
   })
