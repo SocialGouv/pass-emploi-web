@@ -50,8 +50,8 @@ function ListeListesDeDiffusion(
   useEffect(() => {
     if (isFirstRender.current) return
     if (messagerieEstVisible) {
-      containerRef.current!.setAttribute('tabIndex', '-1')
-      containerRef.current!.focus()
+      containerRef.current?.setAttribute('tabIndex', '-1')
+      containerRef.current?.focus()
     }
   }, [messagerieEstVisible])
 
@@ -92,7 +92,10 @@ function ListeListesDeDiffusion(
             {!listesDeDiffusion && <SpinningLoader alert={true} />}
 
             {listesDeDiffusion && listesDeDiffusion.length === 0 && (
-              <div className='bg-grey_100 flex flex-col justify-center items-center'>
+              <div
+                ref={containerRef}
+                className='bg-grey_100 flex flex-col justify-center items-center'
+              >
                 <EmptyState
                   illustrationName={IllustrationName.SendWhite}
                   titre='Vous n’avez pas encore créé de liste de diffusion.'
