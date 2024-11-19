@@ -75,11 +75,10 @@ function MessagesListeDeDiffusion(
 
   useEffect(() => {
     if (messagerieEstVisible && messages && idMessageAFocus) {
-      const messageAFocus = containerRef.current!.querySelector<HTMLDivElement>(
-        `#message-${idMessageAFocus}`
+      const buttonAFocus = containerRef.current!.querySelector<HTMLDivElement>(
+        `#message-${idMessageAFocus} button`
       )
-      messageAFocus?.setAttribute('tabIndex', '-1')
-      messageAFocus?.focus()
+      buttonAFocus?.focus()
       setIdMessageAFocus(undefined)
     }
   }, [messagerieEstVisible, messages, idMessageAFocus])
