@@ -9,6 +9,7 @@ export enum TypeMessage {
   MESSAGE = 'MESSAGE',
   MESSAGE_PJ = 'MESSAGE_PJ',
   MESSAGE_OFFRE = 'MESSAGE_OFFRE',
+  MESSAGE_ACTION = 'MESSAGE_ACTION',
   MESSAGE_EVENEMENT = 'MESSAGE_EVENEMENT',
   MESSAGE_EVENEMENT_EMPLOI = 'MESSAGE_EVENEMENT_EMPLOI',
   MESSAGE_SESSION_MILO = 'MESSAGE_SESSION_MILO',
@@ -21,10 +22,12 @@ export interface Message {
   sentBy: string
   iv: string | undefined
   conseillerId: string | undefined
+  idBeneficiaire: string
   type: TypeMessage
   status?: string
   infoPiecesJointes?: InfoFichier[]
   infoOffre?: InfoOffre
+  infoAction?: InfoAction
   infoEvenement?: InfoEvenement
   infoEvenementEmploi?: InfoEvenementEmploi
   infoSessionImilo?: InfoSessionMilo
@@ -64,6 +67,11 @@ export interface InfoOffre {
   id: string
   titre: string
   type: TypeOffre
+}
+
+export interface InfoAction {
+  id: string
+  titre: string
 }
 
 export interface InfoEvenement {
