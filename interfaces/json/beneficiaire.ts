@@ -1,13 +1,13 @@
 import {
   BaseBeneficiaire,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
   CategorieSituation,
+  Demarche,
   DetailBeneficiaire,
   EtatSituation,
   IndicateursSemaine,
-  BeneficiaireEtablissement,
-  BeneficiaireFromListe,
   MetadonneesFavoris,
-  Demarche,
 } from 'interfaces/beneficiaire'
 
 export enum StatutDemarche {
@@ -100,6 +100,13 @@ export type IndicateursSemaineJson = {
     offresSauvegardees: number
     recherchesSauvegardees: number
   }
+}
+
+export interface CompteursPortefeuilleJson {
+  idBeneficiaire: string
+  actions: number
+  rdvs: number
+  sessions: number
 }
 
 export type DemarcheJson = {

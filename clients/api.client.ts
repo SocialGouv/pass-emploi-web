@@ -1,3 +1,5 @@
+import { revalidateTag } from 'next/cache'
+
 import { InfoFichier } from 'interfaces/fichier'
 import { fetchJson, fetchNoContent } from 'utils/httpClient'
 
@@ -6,23 +8,23 @@ const apiPrefix = process.env.NEXT_PUBLIC_API_ENDPOINT
 export async function apiGet<T>(
   path: string,
   accessToken: string,
-  cacheTag?: string
+  cacheTag: string
 ): Promise<{ content: T; headers: Headers }> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
   })
-  const next = cacheTag ? { tags: [cacheTag] } : undefined
 
   return fetchJson(`${apiPrefix}${path}`, {
     headers,
-    next,
+    next: { tags: [cacheTag] },
   })
 }
 
 export async function apiPost<T = void>(
   path: string,
   payload: { [key: string]: any },
-  accessToken: string
+  accessToken: string,
+  revalidate: string[] = []
 ): Promise<{ content: T; headers: Headers }> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
@@ -36,7 +38,10 @@ export async function apiPost<T = void>(
   if (payload && Object.keys(payload).length !== 0)
     reqInit.body = JSON.stringify(payload)
 
-  return fetchJson(`${apiPrefix}${path}`, reqInit)
+  const result = await fetchJson(`${apiPrefix}${path}`, reqInit)
+  revalidate.forEach(revalidateTag)
+
+  return result
 }
 
 export async function apiPostFile(
@@ -64,40 +69,47 @@ export async function apiPostFile(
 export async function apiPut(
   path: string,
   payload: { [key: string]: any },
-  accessToken: string
+  accessToken: string,
+  revalidate: string[] = []
 ): Promise<void> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
     'content-type': 'application/json',
   })
 
-  return fetchNoContent(`${apiPrefix}${path}`, {
+  await fetchNoContent(`${apiPrefix}${path}`, {
     method: 'PUT',
     headers,
     body: JSON.stringify(payload),
   })
+
+  revalidate.forEach(revalidateTag)
 }
 
 export async function apiPatch(
   path: string,
   payload: { [key: string]: any },
-  accessToken: string
+  accessToken: string,
+  revalidate: string[] = []
 ): Promise<void> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
     'content-type': 'application/json',
   })
 
-  return fetchNoContent(`${apiPrefix}${path}`, {
+  await fetchNoContent(`${apiPrefix}${path}`, {
     method: 'PATCH',
     headers,
     body: JSON.stringify(payload),
   })
+
+  revalidate.forEach(revalidateTag)
 }
 
 export async function apiDelete(
   path: string,
-  accessToken: string
+  accessToken: string,
+  revalidate: string[] = []
 ): Promise<void> {
   const headers = new Headers({
     Authorization: `bearer ${accessToken}`,
@@ -108,4 +120,6 @@ export async function apiDelete(
     method: 'DELETE',
     headers,
   })
+
+  revalidate.forEach(revalidateTag)
 }

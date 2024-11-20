@@ -68,7 +68,8 @@ export async function getSessionsBeneficiaires(
     SessionMiloBeneficiairesJson[]
   >(
     `/conseillers/milo/${idConseiller}/agenda/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
+    session!.accessToken,
+    'sessions'
   )
   return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
 }
@@ -81,7 +82,8 @@ export async function getDetailsSession(
   try {
     const { content: sessionJson } = await apiGet<DetailsSessionJson>(
       `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
-      accessToken
+      accessToken,
+      'session'
     )
     return jsonToSession(sessionJson)
   } catch (e) {
@@ -154,7 +156,7 @@ export async function getSessionsMiloBeneficiaire(
     const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
     const { content: sessionsMiloJeuneJson } = await apiGet<
       SessionMiloBeneficiaireJson[]
-    >(path, accessToken)
+    >(path, accessToken, 'sessions')
 
     return sessionsMiloJeuneJson.map(
       sessionMiloBeneficiaireJsonToEvenementListItem
@@ -177,7 +179,8 @@ async function getSessionsMissionLocale(
       `/conseillers/milo/${idConseiller}/sessions${
         options ? '?' + options : ''
       }`,
-      accessToken
+      accessToken,
+      'sessions'
     )
     return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
   } catch (e) {

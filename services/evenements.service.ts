@@ -31,7 +31,8 @@ export async function getRendezVousConseiller(
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
   const { content: rdvsJson } = await apiGet<EvenementJson[]>(
     `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
+    session!.accessToken,
+    'rdvs'
   )
   return rdvsJson.map(jsonToListItem)
 }
@@ -43,7 +44,8 @@ export async function getRendezVousJeune(
 ): Promise<EvenementListItem[]> {
   const { content: rdvsJson } = await apiGet<EvenementJeuneJson[]>(
     `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
-    accessToken
+    accessToken,
+    'rdvs'
   )
 
   return rdvsJson.map(jsonToListItem)
@@ -61,7 +63,8 @@ export async function getRendezVousEtablissement(
     AnimationCollectiveJson[]
   >(
     `/etablissements/${idEtablissement}/animations-collectives?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
+    session!.accessToken,
+    'rdvs'
   )
 
   return animationsCollectivesJson.map(jsonToAnimationCollective)
@@ -100,7 +103,8 @@ export async function getDetailsEvenement(
   try {
     const { content: rdvJson } = await apiGet<EvenementJson>(
       `/rendezvous/${idRdv}`,
-      accessToken
+      accessToken,
+      'rdv'
     )
     return jsonToEvenement(rdvJson)
   } catch (e) {
@@ -116,7 +120,8 @@ export async function getTypesRendezVous(
 ): Promise<TypeEvenementReferentiel[]> {
   const { content: types } = await apiGet<TypeEvenementReferentiel[]>(
     '/referentiels/types-rendezvous',
-    accessToken
+    accessToken,
+    'referentiel'
   )
   return types
 }
@@ -177,7 +182,8 @@ async function getAnimationsCollectivesAClore(
     resultats: AnimationCollectivePilotage[]
   }>(
     `/v2/etablissements/${idEtablissement}/animations-collectives?aClore=true&page=${page}`,
-    accessToken
+    accessToken,
+    'rdvs'
   )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)

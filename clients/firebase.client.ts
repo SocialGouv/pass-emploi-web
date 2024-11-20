@@ -529,7 +529,11 @@ export async function rechercherMessages(
       message: FirebaseMessage & { creationDate: { _seconds: number } }
       matches: MessageRechercheMatch[]
     }>
-  }>(`/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`, accessToken)
+  }>(
+    `/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`,
+    accessToken,
+    'messages'
+  )
 
   return resultats.map(({ message, id, matches }) => {
     return {

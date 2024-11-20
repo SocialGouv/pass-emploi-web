@@ -150,8 +150,7 @@ function EditionListeDiffusionPage({
       } else {
         await modifierListe(liste.id, payload)
       }
-      // FIXME : dirty fix, problème de rafraichissement de la liste
-      router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo)
     } catch (erreur) {
       setShowErreurTraitement(true)
       console.error(erreur)
@@ -162,7 +161,7 @@ function EditionListeDiffusionPage({
 
   async function creerListe(payload: ListeDeDiffusionFormData) {
     const { creerListeDeDiffusion } = await import(
-      'services/listes-de-diffusion.service'
+      'server-actions/listes-de-diffusion.server-actions'
     )
     await creerListeDeDiffusion(payload)
     setAlerte(AlerteParam.creationListeDiffusion)
@@ -173,7 +172,7 @@ function EditionListeDiffusionPage({
     payload: ListeDeDiffusionFormData
   ) {
     const { modifierListeDeDiffusion } = await import(
-      'services/listes-de-diffusion.service'
+      'server-actions/listes-de-diffusion.server-actions'
     )
     await modifierListeDeDiffusion(idListe, payload)
     setAlerte(AlerteParam.modificationListeDiffusion)
@@ -183,12 +182,11 @@ function EditionListeDiffusionPage({
     setIsLoading(true)
     try {
       const { supprimerListeDeDiffusion } = await import(
-        'services/listes-de-diffusion.service'
+        'server-actions/listes-de-diffusion.server-actions'
       )
       await supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
-      // FIXME : dirty fix, problème de rafraichissement de la liste
-      router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo)
     } catch (e) {
       console.error(e)
       setShowErreurTraitement(true)

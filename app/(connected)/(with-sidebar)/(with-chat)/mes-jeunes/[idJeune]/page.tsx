@@ -26,18 +26,19 @@ import {
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
-import {
-  getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
   getDemarchesBeneficiaire,
   getJeuneDetails,
-  getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import {
+  getMetadonneesFavorisJeune,
+  getOffres,
+  getRecherchesSauvegardees,
+} from 'services/favoris.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'

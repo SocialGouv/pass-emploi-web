@@ -35,7 +35,8 @@ export async function recupererAgenda(
     content: { actions, rendezVous, sessionsMilo, metadata },
   } = await apiGet<DesRdvEtDesActions>(
     `/jeunes/${idJeune}/home/agenda?maintenant=${maintenantUrlEncode}`,
-    session!.accessToken
+    session!.accessToken,
+    'agenda'
   )
 
   return {

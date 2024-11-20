@@ -23,7 +23,8 @@ export async function getConseillerServerSide(
 ): Promise<Conseiller> {
   const { content: conseillerJson } = await apiGet<ConseillerJson>(
     `/conseillers/${user.id}`,
-    accessToken
+    accessToken,
+    'conseiller'
   )
   return jsonToConseiller(conseillerJson, user)
 }
@@ -42,7 +43,8 @@ export async function getConseillers(
   }
   const { content } = await apiGet<BaseConseillerJson[]>(
     `/conseillers?q=${recherche}${filtreStructure}`,
-    session!.accessToken
+    session!.accessToken,
+    'conseillers'
   )
   return content.map(jsonToBaseConseiller)
 }
@@ -101,7 +103,8 @@ export async function getDossierJeune(
   const session = await getSession()
   const { content: dossier } = await apiGet<DossierMilo | undefined>(
     `/conseillers/milo/dossiers/${idDossier}`,
-    session!.accessToken
+    session!.accessToken,
+    'milo'
   )
   return dossier
 }

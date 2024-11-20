@@ -51,7 +51,7 @@ export async function searchServicesCiviques(
   const { content } = await apiGet<{
     pagination: { total: number }
     results: ServiceCiviqueItemJson[]
-  }>(path + '?' + searchParams, accessToken)
+  }>(path + '?' + searchParams, accessToken, 'offres')
 
   const { pagination, results } = content
   const metadonnees: MetadonneesPagination = {
@@ -69,7 +69,8 @@ async function getServiceCivique(
     const { content: serviceCiviqueJson } =
       await apiGet<DetailServiceCiviqueJson>(
         `/services-civique/${idServiceCivique}`,
-        accessToken
+        accessToken,
+        'offre'
       )
     return serviceCiviqueJson
   } catch (e) {

@@ -14,8 +14,8 @@ import { estUserMilo } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
-  getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
+import { getMetadonneesFavorisJeune } from 'services/favoris.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type InformationsParams = { idJeune: string }

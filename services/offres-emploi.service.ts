@@ -63,7 +63,8 @@ async function getOffreEmploi(idOffreEmploi: string, accessToken: string) {
   try {
     const { content: offreEmploiJson } = await apiGet<DetailOffreEmploiJson>(
       `/offres-emploi/${idOffreEmploi}`,
-      accessToken
+      accessToken,
+      'offres'
     )
     return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
   } catch (e) {
@@ -96,7 +97,7 @@ async function searchOffres({
   const { content } = await apiGet<{
     pagination: { total: number }
     results: OffreEmploiItemJson[]
-  }>(path + '?' + searchUrl, accessToken)
+  }>(path + '?' + searchUrl, accessToken, 'offres')
 
   const { pagination, results } = content
   const metadonnees: MetadonneesPagination = {

@@ -86,9 +86,6 @@ function DetailActionPage({
     }
   }
 
-  // FIXME : dirty fix, problème de l’action
-  const random = Math.random()
-
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${trackingTitle} - Succès envoi message`
@@ -102,7 +99,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}&misc=${random}`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}`}
             >
               Qualifier l’action
               <IconComponent
