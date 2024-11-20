@@ -266,7 +266,7 @@ function DetailsSessionPage({
     router.refresh()
   }
 
-  function trackEmargement() {
+  function trackExport() {
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Emargement',
@@ -519,7 +519,7 @@ function DetailsSessionPage({
                 href={`/emargement/${session.session.id}?type=session`}
                 externalLink={true}
                 label='Exporter la liste des inscrits'
-                onClick={trackEmargement}
+                onClick={trackExport}
               ></ButtonLink>
             )}
           </div>
@@ -529,8 +529,6 @@ function DetailsSessionPage({
               aria-label='Bénéficiaires sélectionnés'
               id='selected-beneficiaires'
               className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
-              aria-live='polite'
-              aria-relevant='additions removals'
             >
               {beneficiairesSelectionnes.value.map((beneficiaire) => (
                 <li

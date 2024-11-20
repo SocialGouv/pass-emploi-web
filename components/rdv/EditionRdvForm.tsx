@@ -157,7 +157,7 @@ export function EditionRdvForm({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const lienEmargement =
+  const lienExport =
     evenement && evenement.id && evenement.statut
       ? `/emargement/${evenement.id}?type=ac`
       : undefined
@@ -633,7 +633,7 @@ export function EditionRdvForm({
     return erreurs
   }
 
-  function trackEmargement() {
+  function trackExport() {
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Emargement',
@@ -853,8 +853,8 @@ export function EditionRdvForm({
                   ? 'nombre-participants--error'
                   : undefined
             }
-            trackEmargement={trackEmargement}
-            lienEmargement={lienEmargement}
+            trackExport={trackExport}
+            lienExport={lienExport}
           />
         </Etape>
 

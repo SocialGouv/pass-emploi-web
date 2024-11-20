@@ -33,8 +33,8 @@ interface BeneficiairesMultiselectAutocompleteProps {
   disabled?: boolean
   renderIndication?: (props: { value: string; id: string }) => JSX.Element
   ariaDescribedBy?: string
-  lienEmargement?: string
-  trackEmargement?: () => void
+  lienExport?: string
+  trackExport?: () => void
 }
 
 const SELECT_ALL_DESTINATAIRES_OPTION = 'Sélectionner tous mes destinataires'
@@ -58,8 +58,8 @@ export default function BeneficiairesMultiselectAutocomplete({
   disabled,
   renderIndication,
   ariaDescribedBy,
-  trackEmargement,
-  lienEmargement,
+  trackExport,
+  lienExport,
 }: BeneficiairesMultiselectAutocompleteProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -308,16 +308,15 @@ export default function BeneficiairesMultiselectAutocomplete({
         aria-label={`${typeSelection} sélectionnés (${countBeneficiairesUniques()})`}
         id='selected-beneficiaires--title'
         className='text-base-medium mb-2 flex mb-4 justify-between items-center'
-        aria-live='polite'
       >
         {typeSelection} ({countBeneficiairesUniques()})
-        {lienEmargement && trackEmargement && (
+        {lienExport && trackExport && (
           <ButtonLink
             style={ButtonStyle.PRIMARY}
-            href={lienEmargement}
+            href={lienExport}
             externalLink={true}
             label='Exporter la liste des inscrits'
-            onClick={trackEmargement}
+            onClick={trackExport}
           ></ButtonLink>
         )}
       </p>
