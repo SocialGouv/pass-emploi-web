@@ -21,6 +21,7 @@ export default function RadioBoxStatut({
 
   return (
     <RadioBox
+      id={'option-statut-' + status.toLowerCase()}
       isSelected={isSelected}
       onChange={() => onChange(status)}
       name='option-statut'

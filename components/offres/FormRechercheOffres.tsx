@@ -170,6 +170,7 @@ export default function FormRechercheOffres({
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
             <RadioBox
+              id='type-offre-emploi'
               isSelected={typeOffre === TypeOffre.EMPLOI}
               onChange={() => changerTypeOffre(TypeOffre.EMPLOI)}
               name='type-offre'
@@ -179,6 +180,7 @@ export default function FormRechercheOffres({
             {aAccesRechercheAlternanceServiceCivique && (
               <>
                 <RadioBox
+                  id='type-offre-alternance'
                   isSelected={typeOffre === TypeOffre.ALTERNANCE}
                   onChange={() => changerTypeOffre(TypeOffre.ALTERNANCE)}
                   name='type-offre'
@@ -186,6 +188,7 @@ export default function FormRechercheOffres({
                 />
 
                 <RadioBox
+                  id='type-offre-servicecivique'
                   isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
                   onChange={() => changerTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
                   name='type-offre'
@@ -193,7 +196,9 @@ export default function FormRechercheOffres({
                 />
               </>
             )}
+
             <RadioBox
+              id='type-offre-immersion'
               isSelected={typeOffre === TypeOffre.IMMERSION}
               onChange={() => changerTypeOffre(TypeOffre.IMMERSION)}
               name='type-offre'

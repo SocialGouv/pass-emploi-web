@@ -398,6 +398,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
             )}
             <div className='flex flex-wrap' id='structure-reaffectation--CEJ'>
               <RadioBox
+                id='structure-reaffectation-FT'
                 isSelected={
                   structureReaffectation.value ===
                   StructureConseiller.POLE_EMPLOI
@@ -412,6 +413,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               />
 
               <RadioBox
+                id='structure-reaffectation-BRSA'
                 isSelected={
                   structureReaffectation.value ===
                   StructureConseiller.POLE_EMPLOI_BRSA
@@ -426,6 +428,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               />
 
               <RadioBox
+                id='structure-reaffectation-AIJ'
                 isSelected={
                   structureReaffectation.value ===
                   StructureConseiller.POLE_EMPLOI_AIJ
@@ -453,6 +456,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
           )}
           <div className='flex flex-wrap'>
             <RadioBox
+              id='type-reaffectation-temporaire'
               isSelected={isReaffectationTemporaire.value === true}
               onChange={() => handleInputTypeReaffectation(true)}
               label='Temporaire'
@@ -460,6 +464,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
             />
 
             <RadioBox
+              id='type-reaffectation-definitive'
               isSelected={isReaffectationTemporaire.value === false}
               onChange={() => handleInputTypeReaffectation(false)}
               label='Définitive'
