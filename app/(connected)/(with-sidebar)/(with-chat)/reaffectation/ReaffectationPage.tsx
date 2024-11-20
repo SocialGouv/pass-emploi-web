@@ -55,7 +55,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
 
   const conseillerInitialRef = useRef<{
-    focus: () => void
     resetRechercheConseiller: () => void
   }>(null)
   const loaderBeneficiairesRef = useRef<HTMLDivElement>(null)
@@ -72,16 +71,14 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     ValueWithError<boolean | undefined>
   >({ value: undefined })
 
-  const [conseillerInitial, setConseillerInitial] = useState<
-    ValueWithError<BaseConseiller | undefined>
-  >({ value: undefined })
+  const [conseillerInitial, setConseillerInitial] =
+    useState<StateChoixConseiller>({ value: undefined })
   const conseillerInitialDebounced = useDebounce<BaseConseiller | undefined>(
     conseillerInitial.value,
     1000
   )
-  const [conseillerDestination, setConseillerDestination] = useState<
-    ValueWithError<BaseConseiller | undefined>
-  >({ value: undefined })
+  const [conseillerDestination, setConseillerDestination] =
+    useState<StateChoixConseiller>({ value: undefined })
 
   const [
     recuperationBeneficiairesEnCours,
@@ -175,7 +172,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     if (conseiller.value?.id === conseillerInitial.value?.id) {
       setConseillerDestination({
         value: undefined,
-        error:
+        errorChoice:
           'Vous ne pouvez pas réaffecter des bénéficiaires à leur conseiller initial',
       })
     } else setConseillerDestination({ value: conseiller.value })
@@ -231,9 +228,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         setBeneficiaires(undefined)
         setConseillerInitial({
           value: conseiller,
-          error: 'Aucun bénéficiaire trouvé pour ce conseiller',
+          errorChoice: 'Aucun bénéficiaire trouvé pour ce conseiller',
         })
-        conseillerInitialRef.current!.focus()
         setTrackingTitle('Réaffectation jeunes – Etape 2 – Erreur')
       }
     } finally {
@@ -266,7 +262,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     if (!conseillerInitial.value) {
       setConseillerInitial({
         ...conseillerInitial,
-        error: 'Veuillez rechercher un conseiller initial',
+        errorInput: 'Veuillez rechercher un conseiller initial',
       })
       return false
     }
@@ -282,7 +278,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     if (!conseillerDestination.value) {
       setConseillerDestination({
         ...conseillerDestination,
-        error: 'Veuillez rechercher un conseiller de destination',
+        errorInput: 'Veuillez rechercher un conseiller de destination',
       })
       isFormValid = false
     }
@@ -329,16 +325,18 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         titreChamp: 'Type de réaffectation',
       })
 
-    if (doitAfficherErreurConseillerInitial())
+    if (!conseillerInitial.value && conseillerInitial.errorInput)
       erreurs.push({
         ancre: '#conseiller-initial',
         label:
           'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
         titreChamp: 'Conseiller initial',
       })
+
     if (
       conseillerInitial.value &&
-      !conseillerInitial.error &&
+      !conseillerInitial.errorInput &&
+      !conseillerInitial.errorChoice &&
       idsBeneficiairesSelected.error
     )
       erreurs.push({
@@ -346,10 +344,12 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         label: 'Le champ Bénéficiaires à réaffecter est vide.',
         titreChamp: 'Bénéficiaires à réaffecter',
       })
+
     if (
       conseillerInitial.value &&
-      !conseillerInitial.error &&
-      conseillerDestination.error
+      !conseillerInitial.errorInput &&
+      !conseillerInitial.errorChoice &&
+      conseillerDestination.errorInput
     )
       erreurs.push({
         ancre: '#conseiller-destinataire',
@@ -359,10 +359,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
       })
 
     return erreurs
-  }
-
-  function doitAfficherErreurConseillerInitial() {
-    return !conseillerInitial.value && conseillerInitial.error
   }
 
   useEffect(() => {
@@ -485,7 +481,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
             onChoixConseiller={(conseiller) =>
               setConseillerInitial({ value: conseiller })
             }
-            error={conseillerInitial.error}
+            errorInput={conseillerInitial.errorInput}
+            errorChoice={conseillerInitial.errorChoice}
           />
 
           <button
@@ -575,7 +572,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                   onChoixConseiller={(conseiller) =>
                     choixConseillerDestination({ value: conseiller })
                   }
-                  error={conseillerDestination.error}
+                  errorInput={conseillerDestination.errorInput}
+                  errorChoice={conseillerDestination.errorChoice}
                 />
 
                 <button
@@ -635,6 +633,20 @@ export default withTransaction(
   'page'
 )(ReaffectationPage)
 
+type StateChoixConseiller = {
+  value: BaseConseiller | undefined
+  errorInput?: string
+  errorChoice?: string
+}
+type ChoixConseillerProps = {
+  name: string
+  onInput: () => void
+  onChoixConseiller: (conseiller: BaseConseiller) => void
+  idConseillerSelectionne?: string
+  structureReaffectation?: StructureReaffectation
+  errorInput?: string
+  errorChoice?: string
+}
 const ChoixConseiller = forwardRef(
   (
     {
@@ -643,17 +655,10 @@ const ChoixConseiller = forwardRef(
       name,
       onChoixConseiller,
       onInput,
-      error,
-    }: {
-      name: string
-      onInput: () => void
-      onChoixConseiller: (conseiller: BaseConseiller) => void
-      idConseillerSelectionne?: string
-      structureReaffectation?: StructureReaffectation
-      error?: string
-    },
+      errorInput,
+      errorChoice,
+    }: ChoixConseillerProps,
     ref: ForwardedRef<{
-      focus: () => void
       resetRechercheConseiller: () => void
     }>
   ) => {
@@ -679,7 +684,6 @@ const ChoixConseiller = forwardRef(
     }
 
     useImperativeHandle(ref, () => ({
-      focus: () => inputRef.current!.focus(),
       resetRechercheConseiller: resetRechercheConseiller,
     }))
 
@@ -731,9 +735,9 @@ const ChoixConseiller = forwardRef(
             {queryConseiller.error}
           </InputError>
         )}
-        {error && (
+        {errorInput && (
           <InputError id={id + '--error'} className='mb-2'>
-            {error}
+            {errorInput}
           </InputError>
         )}
 
@@ -743,7 +747,7 @@ const ChoixConseiller = forwardRef(
             id={id}
             onChange={handleInputQuery}
             required={true}
-            invalid={Boolean(queryConseiller.error || error)}
+            invalid={Boolean(queryConseiller.error || errorInput)}
             ref={inputRef}
           />
 
@@ -767,40 +771,53 @@ const ChoixConseiller = forwardRef(
         </div>
 
         {choixConseillers && choixConseillers.length > 0 && (
-          <fieldset
-            ref={listeRef}
-            className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
-          >
-            <legend className='sr-only'>Choix du conseiller {name}</legend>
-            {choixConseillers.map((conseiller) => (
-              <label
-                key={conseiller.id}
-                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
+          <>
+            {errorChoice && (
+              <InputError
+                ref={(e) => e?.focus()}
+                id={'choix-' + name + '--error'}
+                className='mb-2'
               >
-                <input
-                  type='radio'
-                  name={'choix-' + name}
-                  checked={idConseillerSelectionne === conseiller.id}
-                  required={true}
-                  onChange={() => choisirConseiller(conseiller)}
-                  aria-describedby={error ? id + '--error' : undefined}
-                />
+                {errorChoice}
+              </InputError>
+            )}
+            <fieldset
+              ref={listeRef}
+              className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
+            >
+              <legend className='sr-only'>Choix du conseiller {name}</legend>
+              {choixConseillers.map((conseiller) => (
+                <label
+                  key={conseiller.id}
+                  className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
+                >
+                  <input
+                    type='radio'
+                    name={'choix-' + name}
+                    checked={idConseillerSelectionne === conseiller.id}
+                    required={true}
+                    onChange={() => choisirConseiller(conseiller)}
+                    aria-describedby={
+                      errorChoice ? 'choix-' + name + '--error' : undefined
+                    }
+                  />
 
-                <span className='text-base-bold'>
-                  {conseiller.firstName} {conseiller.lastName}
-                </span>
-                {conseiller.email && (
-                  <>
-                    <span className='sr-only'>, e-mail : </span>
-                    {conseiller.email}
-                  </>
-                )}
-                {!conseiller.email && (
-                  <span aria-label='e-mail non renseignée'>-</span>
-                )}
-              </label>
-            ))}
-          </fieldset>
+                  <span className='text-base-bold'>
+                    {conseiller.firstName} {conseiller.lastName}
+                  </span>
+                  {conseiller.email && (
+                    <>
+                      <span className='sr-only'>, e-mail : </span>
+                      {conseiller.email}
+                    </>
+                  )}
+                  {!conseiller.email && (
+                    <span aria-label='e-mail non renseignée'>-</span>
+                  )}
+                </label>
+              ))}
+            </fieldset>
+          </>
         )}
       </>
     )
