@@ -44,25 +44,26 @@ export default function ActionRow({
   return (
     <TR isSelected={isChecked}>
       <TD className='relative'>
-        <label className='absolute inset-0 z-20 cursor-pointer p-4'>
-          <span className='sr-only'>
-            Sélection {action.titre} {action.qualification?.libelle}
-          </span>
-          <input
-            type='checkbox'
-            checked={isChecked}
-            title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-              action.titre
-            }`}
-            className='w-4 h-4 cursor-pointer'
-            disabled={!actionEstTerminee}
-            onChange={() => onSelection(action)}
-          />
-        </label>
+        {actionEstTerminee && (
+          <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+            <span className='sr-only'>
+              Sélection {action.titre} {action.qualification?.libelle}
+            </span>
+            <input
+              type='checkbox'
+              checked={isChecked}
+              title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+                action.titre
+              }`}
+              className='w-4 h-4 cursor-pointer'
+              onChange={() => onSelection(action)}
+            />
+          </label>
+        )}
       </TD>
       <TD className='rounded-l-base max-w-[400px]'>
         <span
-          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
+          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${isChecked ? 'text-base-bold' : ''}`}
         >
           {action.titre}
         </span>

@@ -78,7 +78,7 @@ describe('<ActionRow/>', () => {
       // When
       renderInTable(
         <ActionRow
-          action={uneAction()}
+          action={uneAction({ status: StatutAction.Terminee })}
           jeuneId='1'
           isChecked={false}
           onSelection={() => {}}
@@ -97,7 +97,7 @@ describe('<ActionRow/>', () => {
       // When
       renderInTable(
         <ActionRow
-          action={uneAction()}
+          action={uneAction({ status: StatutAction.Terminee })}
           jeuneId='1'
           isChecked={true}
           onSelection={() => {}}
@@ -110,6 +110,21 @@ describe('<ActionRow/>', () => {
           name: 'Sélection Identifier ses atouts et ses compétences',
         })
       ).toBeChecked()
+    })
+
+    it('n’affiche pas de checkbox', async () => {
+      // When
+      renderInTable(
+        <ActionRow
+          action={uneAction({ status: StatutAction.AFaire })}
+          jeuneId='1'
+          isChecked={true}
+          onSelection={() => {}}
+        />
+      )
+
+      // Then
+      expect(() => screen.getByRole('checkbox')).toThrow()
     })
 
     it('permet de cocher la checkbox d’une action terminée', async () => {
