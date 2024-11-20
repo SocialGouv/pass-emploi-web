@@ -4,6 +4,8 @@ import React, {
   forwardRef,
   ReactElement,
   useEffect,
+  useImperativeHandle,
+  useRef,
   useState,
 } from 'react'
 
@@ -17,10 +19,18 @@ type FiltresStatutAnimationsCollectivesProps = {
   defaultValue: StatutAnimationCollective[]
 }
 
+export type FiltresHandles = { focus: () => void; reset: () => void }
+
 function FiltresStatutAnimationsCollectives(
   { onFiltres, defaultValue = [] }: FiltresStatutAnimationsCollectivesProps,
-  ref: ForwardedRef<HTMLButtonElement>
+  ref: ForwardedRef<FiltresHandles>
 ) {
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => ({
+    focus: () => buttonRef.current!.focus(),
+    reset,
+  }))
+
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
     StatutAnimationCollective[]
@@ -40,6 +50,11 @@ function FiltresStatutAnimationsCollectives(
     setAfficherFiltres(false)
   }
 
+  function reset() {
+    setStatutsSelectionnes([])
+    onFiltres([])
+  }
+
   useEffect(() => {
     setStatutsSelectionnes(defaultValue)
   }, [afficherFiltres, defaultValue])
@@ -47,7 +62,7 @@ function FiltresStatutAnimationsCollectives(
   return (
     <div className='relative'>
       <button
-        ref={ref}
+        ref={buttonRef}
         onClick={() => setAfficherFiltres(!afficherFiltres)}
         aria-expanded={afficherFiltres}
         aria-controls='filtres-statut'

@@ -5,7 +5,9 @@ import ResettableTextInput from '../ui/Form/ResettableTextInput'
 
 import EmptyState from 'components/EmptyState'
 import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
-import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
+import FiltresStatutAnimationsCollectives, {
+  FiltresHandles,
+} from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
@@ -43,7 +45,7 @@ export default function OngletAgendaEtablissement({
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
 
-  const filtresRef = useRef<HTMLButtonElement>(null)
+  const filtresRef = useRef<FiltresHandles>(null)
   const tableRef = useRef<HTMLTableElement>(null)
 
   const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
@@ -55,11 +57,6 @@ export default function OngletAgendaEtablissement({
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
   const [periodeFailed, setPeriodeFailed] = useState<boolean>(false)
-
-  async function modifierFiltres(nouveauxFiltres: StatutAnimationCollective[]) {
-    setFiltres(nouveauxFiltres)
-    filtresRef.current!.focus()
-  }
 
   async function modifierPeriode(
     nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
@@ -105,10 +102,9 @@ export default function OngletAgendaEtablissement({
     }
   }
 
-  useEffect(() => {
-    if (!evenements) return
+  function filtrerEvenements(): AnimationCollective[] {
     setEvenementsAffiches(undefined)
-    let evenementsFiltres = evenements
+    let evenementsFiltres = evenements!
 
     if (filtres.length)
       evenementsFiltres = evenementsFiltres.filter(
@@ -124,9 +120,25 @@ export default function OngletAgendaEtablissement({
     }
 
     setEvenementsAffiches(evenementsFiltres)
-  }, [evenements, filtres, recherche])
+    return evenementsFiltres
+  }
 
   useEffect(() => {
+    if (!evenements) return
+    filtrerEvenements()
+  }, [evenements])
+
+  useEffect(() => {
+    if (!evenements) return
+    const evenementsFiltres = filtrerEvenements()
+
+    if (evenementsFiltres.length) filtresRef.current!.focus()
+  }, [filtres])
+
+  useEffect(() => {
+    if (!evenements) return
+    filtrerEvenements()
+
     tableRef.current?.focus()
   }, [recherche])
 
@@ -147,7 +159,7 @@ export default function OngletAgendaEtablissement({
 
         <FiltresStatutAnimationsCollectives
           ref={filtresRef}
-          onFiltres={modifierFiltres}
+          onFiltres={setFiltres}
           defaultValue={filtres}
         />
       </nav>
@@ -188,9 +200,9 @@ export default function OngletAgendaEtablissement({
             shouldFocus={shouldFocus || filtres.length > 0}
             illustrationName={IllustrationName.Checklist}
             titre={
-              filtres.length === 0
-                ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
-                : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
+              evenements?.length && filtres.length
+                ? 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
+                : 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
             }
             lien={{
               href: '/mes-jeunes/edition-rdv?type=ac',
@@ -203,7 +215,7 @@ export default function OngletAgendaEtablissement({
             <Button
               type='button'
               style={ButtonStyle.SECONDARY}
-              onClick={() => modifierFiltres([])}
+              onClick={() => filtresRef.current!.reset()}
               className='m-auto mt-8'
             >
               Réinitialiser les filtres
