@@ -7,7 +7,7 @@ import {
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { Actualites } from 'interfaces/actualites'
+import { ActualitesParsees } from 'interfaces/actualites'
 import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -103,7 +103,7 @@ export default function renderWithContexts(
 }
 
 function provideContexts(
-  actualites: Actualites,
+  actualites: ActualitesParsees,
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{

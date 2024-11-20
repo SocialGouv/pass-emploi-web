@@ -1,5 +1,6 @@
 'use client'
 
+import parse from 'html-react-parser'
 import {
   createContext,
   ReactNode,
@@ -8,27 +9,39 @@ import {
   useState,
 } from 'react'
 
-import { Actualites } from 'interfaces/actualites'
+import { ActualitesParsees } from 'interfaces/actualites'
 import { getActualites } from 'services/actualites.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
-const ActualitesContext = createContext<Actualites | undefined>(undefined)
+const ActualitesContext = createContext<ActualitesParsees | undefined>(
+  undefined
+)
 
 export function ActualitesProvider({
   children,
   actualitesForTests,
 }: {
   children: ReactNode
-  actualitesForTests?: Actualites
+  actualitesForTests?: ActualitesParsees
 }) {
-  const [actualites, setActualites] = useState<Actualites | undefined>(
+  const [actualites, setActualites] = useState<ActualitesParsees | undefined>(
     actualitesForTests
   )
   const [conseiller] = useConseiller()
 
   useEffect(() => {
     if (actualites === undefined)
-      getActualites(conseiller.structure).then(setActualites)
+      getActualites(conseiller.structure).then((actualitesRaw) => {
+        setActualites(
+          actualitesRaw && {
+            ...actualitesRaw,
+            articles: actualitesRaw.articles.map((article) => ({
+              ...article,
+              contenu: parse(article.contenu),
+            })),
+          }
+        )
+      })
   }, [actualites])
 
   return (
@@ -38,6 +51,6 @@ export function ActualitesProvider({
   )
 }
 
-export function useActualites(): Actualites | undefined {
+export function useActualites(): ActualitesParsees | undefined {
   return useContext(ActualitesContext)
 }
