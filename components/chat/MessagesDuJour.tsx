@@ -3,7 +3,7 @@ import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Chat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat, Chat } from 'interfaces/beneficiaire'
 import { fromConseiller, Message } from 'interfaces/message'
 import {
   getMessagesDuMemeJour,
@@ -17,13 +17,13 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 export default function MessagesDuJour({
-  conversation,
+  beneficiaireEtChat,
   messageSelectionne,
   beneficiaireNomComplet,
   idConseiller,
   getConseillerNomComplet,
 }: {
-  conversation: Chat
+  beneficiaireEtChat: BeneficiaireEtChat
   messageSelectionne: Message
   beneficiaireNomComplet: string
   idConseiller: string
@@ -47,7 +47,7 @@ export default function MessagesDuJour({
     if (!messageAModifier || !userInput) return
 
     const messageModifie = await _modifierMessage(
-      conversation.chatId,
+      beneficiaireEtChat.chatId,
       messageAModifier,
       userInput,
       chatCredentials!.cleChiffrement
@@ -75,7 +75,7 @@ export default function MessagesDuJour({
       messagesDuJour
     )
     const messageSupprime = await _supprimerMessage(
-      conversation.chatId,
+      beneficiaireEtChat.chatId,
       messageASupprimer,
       chatCredentials!.cleChiffrement
     )
@@ -108,7 +108,7 @@ export default function MessagesDuJour({
     if (!chatCredentials) return
 
     getMessagesDuMemeJour(
-      conversation.chatId,
+      beneficiaireEtChat,
       messageSelectionne,
       chatCredentials.cleChiffrement
     ).then(setMessagesDuJour)
@@ -161,7 +161,7 @@ export default function MessagesDuJour({
                 conseillerNomComplet={getConseillerNomComplet(message)}
                 isConseillerCourant={message.conseillerId === idConseiller}
                 isEnCoursDeModification={false}
-                lastSeenByJeune={conversation.lastJeuneReading}
+                lastSeenByJeune={beneficiaireEtChat.lastJeuneReading}
                 onSuppression={() => supprimerMessage(message)}
                 onModification={() => setMessageAModifier(message)}
               />

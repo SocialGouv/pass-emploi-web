@@ -5,7 +5,6 @@ import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   Action,
   ActionPilotage,
-  Commentaire,
   CompteurActionsPeriode,
   QualificationAction,
   SituationNonProfessionnelle,
@@ -19,7 +18,6 @@ import {
   actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
-  CommentaireJson,
   CompteursPortefeuilleJson,
   jsonToAction,
   jsonToActionPilotage,
@@ -220,17 +218,6 @@ export async function qualifierActions(
 export async function deleteAction(idAction: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
-}
-
-export async function recupererLesCommentaires(
-  idAction: string,
-  accessToken: string
-): Promise<Commentaire[]> {
-  const commentairesJson = await apiGet<CommentaireJson[]>(
-    `/actions/${idAction}/commentaires`,
-    accessToken
-  )
-  return commentairesJson.content
 }
 
 export async function getSituationsNonProfessionnelles(

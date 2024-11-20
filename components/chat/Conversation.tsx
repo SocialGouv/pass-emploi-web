@@ -108,11 +108,11 @@ export function Conversation({
   const pjErrorRef = useRef<HTMLDivElement | null>(null)
 
   const observerMessages = useCallback(
-    (idChatToObserve: string, nombreDePages: number) => {
+    (beneficiaireEtChat: BeneficiaireEtChat, nombreDePages: number) => {
       if (!chatCredentials) return () => {}
 
       return observeDerniersMessages(
-        idChatToObserve,
+        beneficiaireEtChat,
         chatCredentials.cleChiffrement,
         { pages: nombreDePages, taillePage: NB_MESSAGES_PAR_PAGE },
         (messagesGroupesParJour: ByDay<Message>) => {
@@ -125,7 +125,7 @@ export function Conversation({
           setLoadingMoreMessages(false)
 
           if (document.activeElement === inputRef.current) {
-            setReadByConseiller(idChatToObserve)
+            setReadByConseiller(beneficiaireEtChat.chatId)
           }
         }
       )
@@ -176,7 +176,7 @@ export function Conversation({
 
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
-      beneficiaireChat.chatId,
+      beneficiaireChat,
       pageSuivante
     )
   }
@@ -305,10 +305,7 @@ export function Conversation({
   }
 
   useEffect(() => {
-    unsubscribeFromMessages.current = observerMessages(
-      beneficiaireChat.chatId,
-      1
-    )
+    unsubscribeFromMessages.current = observerMessages(beneficiaireChat, 1)
     setReadByConseiller(beneficiaireChat.chatId)
 
     return unsubscribeFromMessages.current

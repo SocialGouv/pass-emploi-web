@@ -51,27 +51,6 @@ export enum StatutAction {
   Annulee = 'Annulee',
 }
 
-export enum EtatQualificationAction {
-  NonQualifiable = 'NonQualifiable',
-  AQualifier = 'AQualifier',
-  Qualifiee = 'Qualifiee',
-}
-
-export interface Commentaire {
-  id: string
-  idAction: string
-  date: string
-  createur: CreateurCommentaire
-  message: string
-}
-
-export interface CreateurCommentaire {
-  prenom: string
-  nom: string
-  id: string
-  type: 'conseiller' | 'jeune'
-}
-
 export type SituationNonProfessionnelle = { code: string; label: string }
 
 export type ActionPredefinie = {

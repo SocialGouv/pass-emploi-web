@@ -6,10 +6,10 @@ import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeu
 import DetailAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/page'
-import { unCommentaire, uneAction } from 'fixtures/action'
+import { uneAction } from 'fixtures/action'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { getAction, recupererLesCommentaires } from 'services/actions.service'
+import { getAction } from 'services/actions.service'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -55,7 +55,6 @@ describe('ActionPage server side', () => {
 
     it("récupère les info de l'action et du jeune", async () => {
       const action = uneAction()
-      const commentaires = [unCommentaire()]
       const jeune: BaseBeneficiaire & { idConseiller: string } = {
         id: 'beneficiaire-1',
         prenom: 'Nadia',
@@ -63,7 +62,6 @@ describe('ActionPage server side', () => {
         idConseiller: 'id-conseiller',
       }
       ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
-      ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
       ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
 
       // When
@@ -80,7 +78,6 @@ describe('ActionPage server side', () => {
         {
           action,
           jeune,
-          commentaires,
           lectureSeule: false,
           from: 'beneficiaire',
         },
@@ -91,7 +88,6 @@ describe('ActionPage server side', () => {
     describe('quand le conseiller vient de pilotage', () => {
       it('prépare la page', async () => {
         const action = uneAction()
-        const commentaires = [unCommentaire()]
         const jeune: BaseBeneficiaire & { idConseiller: string } = {
           id: 'beneficiaire-1',
           prenom: 'Nadia',
@@ -99,7 +95,6 @@ describe('ActionPage server side', () => {
           idConseiller: 'id-conseiller',
         }
         ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
-        ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
         ;(getJeuneDetails as jest.Mock).mockResolvedValue(
           unDetailBeneficiaire()
         )
@@ -121,7 +116,6 @@ describe('ActionPage server side', () => {
           {
             action,
             jeune,
-            commentaires,
             lectureSeule: false,
             from: 'pilotage',
           },
@@ -146,7 +140,6 @@ describe('ActionPage server side', () => {
     describe("quand l'action n'appartient pas au jeune", () => {
       it('renvoie une 404', async () => {
         const action = uneAction()
-        const commentaires = [unCommentaire()]
         const jeune: BaseBeneficiaire & { idConseiller: string } = {
           id: 'beneficiaire-1',
           prenom: 'Nadia',
@@ -154,7 +147,6 @@ describe('ActionPage server side', () => {
           idConseiller: 'id-conseiller',
         }
         ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
-        ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
 
         // When
         const promise = DetailAction({

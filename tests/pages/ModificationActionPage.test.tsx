@@ -36,7 +36,6 @@ describe('ModificationActionPage client side', () => {
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
-          aDesCommentaires={false}
           idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
@@ -262,7 +261,6 @@ describe('ModificationActionPage client side', () => {
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
-          aDesCommentaires={false}
           idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'

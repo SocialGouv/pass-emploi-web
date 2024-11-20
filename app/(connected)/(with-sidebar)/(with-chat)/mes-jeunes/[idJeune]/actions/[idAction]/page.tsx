@@ -9,7 +9,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { estUserMilo } from 'interfaces/conseiller'
-import { getAction, recupererLesCommentaires } from 'services/actions.service'
+import { getAction } from 'services/actions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type DetailActionParams = { idJeune: string; idAction: string }
@@ -48,9 +48,6 @@ export default async function DetailAction({
   if (!actionEtJeune) notFound()
   if (idJeune !== actionEtJeune.jeune.id) notFound()
 
-  const commentaires = await recupererLesCommentaires(idAction, accessToken)
-  if (!commentaires) notFound()
-
   const { action, jeune } = actionEtJeune
   const lectureSeule = jeune.idConseiller !== user.id
 
@@ -68,7 +65,6 @@ export default async function DetailAction({
         from={from}
         action={action}
         jeune={jeune}
-        commentaires={commentaires}
         lectureSeule={lectureSeule}
       />
     </>

@@ -28,7 +28,6 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 type ModificationProps = {
   action: Action
   actionsPredefinies: ActionPredefinie[]
-  aDesCommentaires: boolean
   idBeneficiaire: string
   situationsNonProfessionnelles: SituationNonProfessionnelle[]
   returnTo: string
@@ -37,7 +36,6 @@ type ModificationProps = {
 function ModificationPage({
   action,
   actionsPredefinies,
-  aDesCommentaires,
   idBeneficiaire,
   situationsNonProfessionnelles,
   returnTo,
@@ -55,8 +53,7 @@ function ModificationPage({
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
-    action.status !== StatutAction.Qualifiee &&
-    !aDesCommentaires
+    action.status !== StatutAction.Qualifiee
 
   const suppressionModalRef = useRef<ModalHandles>(null)
 

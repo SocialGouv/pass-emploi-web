@@ -12,7 +12,6 @@ import { estUserMilo } from 'interfaces/conseiller'
 import {
   getAction,
   getSituationsNonProfessionnelles,
-  recupererLesCommentaires,
 } from 'services/actions.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -52,12 +51,6 @@ export default async function ModificationAction({
   const { action, jeune } = actionContent
   if (action.status === StatutAction.Qualifiee) notFound()
 
-  const commentaires = await recupererLesCommentaires(
-    params.idAction,
-    accessToken
-  )
-  if (!commentaires) notFound()
-
   // FIXME : dirty fix, problème de rafraichissement de l’action
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   return (
@@ -68,7 +61,6 @@ export default async function ModificationAction({
       <ModificationPage
         action={action}
         actionsPredefinies={actionsPredefinies}
-        aDesCommentaires={commentaires.length > 0}
         idBeneficiaire={jeune.id}
         situationsNonProfessionnelles={situationsNonProfessionnelles}
         returnTo={returnTo}

@@ -33,14 +33,13 @@ jest.mock('services/messages.service')
 jest.mock('services/fichiers.service')
 
 describe('<ConversationBeneficiaire />', () => {
-  let beneficiaireChat: BeneficiaireEtChat
+  const beneficiaireChat = unBeneficiaireChat()
 
   let conseillersBeneficiaires: ConseillerHistorique[]
   let rerender: (children: ReactElement) => void
   const messagesParJour = desMessagesParJour()
   let unsubscribe: () => void
   beforeEach(async () => {
-    beneficiaireChat = unBeneficiaireChat()
     conseillersBeneficiaires = desConseillersBeneficiaire()
     unsubscribe = jest.fn()
     ;(getChatCredentials as jest.Mock).mockResolvedValue({
@@ -89,7 +88,7 @@ describe('<ConversationBeneficiaire />', () => {
   it('s’abonne au message de la conversation', async () => {
     // Then
     expect(observeDerniersMessages).toHaveBeenCalledWith(
-      beneficiaireChat.chatId,
+      beneficiaireChat,
       'cleChiffrement',
       { pages: 1, taillePage: 10 },
       expect.any(Function)
@@ -107,7 +106,7 @@ describe('<ConversationBeneficiaire />', () => {
     // Then
     expect(unsubscribe).toHaveBeenCalledTimes(1)
     expect(observeDerniersMessages).toHaveBeenCalledWith(
-      beneficiaireChat.chatId,
+      beneficiaireChat,
       'cleChiffrement',
       { pages: 2, taillePage: 10 },
       expect.any(Function)
