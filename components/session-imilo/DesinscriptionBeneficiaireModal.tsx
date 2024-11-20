@@ -104,6 +104,7 @@ export default function DesinscriptionBeneficiaireModal({
               )}
 
               <RadioBox
+                id='type-refus-erreur'
                 isSelected={typeRefus.value === StatutBeneficiaire.DESINSCRIT}
                 onChange={() => {
                   setTypeRefus({ value: StatutBeneficiaire.DESINSCRIT })
@@ -113,6 +114,7 @@ export default function DesinscriptionBeneficiaireModal({
                 name='type-refus'
               />
               <RadioBox
+                id='type-refus-tiers'
                 isSelected={typeRefus.value === StatutBeneficiaire.REFUS_TIERS}
                 onChange={() => {
                   setTypeRefus({ value: StatutBeneficiaire.REFUS_TIERS })
@@ -122,6 +124,7 @@ export default function DesinscriptionBeneficiaireModal({
                 name='type-refus'
               />
               <RadioBox
+                id='type-refus-beneficiaire'
                 isSelected={typeRefus.value === StatutBeneficiaire.REFUS_JEUNE}
                 onChange={() =>
                   setTypeRefus({ value: StatutBeneficiaire.REFUS_JEUNE })

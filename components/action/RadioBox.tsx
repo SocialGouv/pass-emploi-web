@@ -1,4 +1,5 @@
 type RadioBoxProps = {
+  id: string
   isSelected: boolean
   label: string
   name: string
@@ -8,6 +9,7 @@ type RadioBoxProps = {
 }
 
 export default function RadioBox({
+  id,
   isSelected,
   onChange,
   label,
@@ -19,11 +21,13 @@ export default function RadioBox({
 
   return (
     <label
+      htmlFor={id}
       className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
       } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     >
       <input
+        id={id}
         type='radio'
         name={name}
         checked={isSelected}
