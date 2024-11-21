@@ -35,7 +35,7 @@ describe('LoginHubPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('devrait afficher un titre de niveau 1', () => {

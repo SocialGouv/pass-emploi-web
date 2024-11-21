@@ -28,11 +28,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cet événement',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_EVENEMENT,
@@ -61,11 +62,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cet événement',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_EVENEMENT,
@@ -95,11 +97,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cet événement',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_EVENEMENT,
@@ -134,11 +137,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cet événement',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_EVENEMENT,
@@ -177,11 +181,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cet événement emploi',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
@@ -219,11 +224,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cette offre',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_OFFRE,
@@ -262,11 +268,12 @@ describe('FirebaseClient', () => {
       } as QueryDocumentSnapshot<FirebaseMessage>
 
       // When
-      const message = docSnapshotToMessage(docSnapshot)
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
 
       // Then
       const expectedMessage: Message = {
         id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
         content: 'Je vous partage cette offre',
         creationDate: DateTime.local(2022, 1, 17),
         type: TypeMessage.MESSAGE_PJ,

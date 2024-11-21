@@ -2,11 +2,11 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import FiltresStatuts from 'components/action/FiltresStatuts'
-import { StatutAction } from 'interfaces/action'
 import propsStatutsActions from 'components/action/propsStatutsActions'
+import { StatutAction } from 'interfaces/action'
 
 describe('FiltresStatuts', () => {
-  let filtrerActions: (statutsSelectionnes: StatutAction[]) => void
+  let filtrerActions: (statutsSelectionnes: string[]) => void
   beforeEach(async () => {
     // Given
     filtrerActions = jest.fn()

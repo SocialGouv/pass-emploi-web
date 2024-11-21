@@ -17,8 +17,10 @@ describe('<DossierMilo', () => {
         renderWithContexts(
           <DossierBeneficiaireMilo
             dossier={dossier}
-            onCreateCompte={jest.fn()}
+            beneficiaireExisteDejaMilo={false}
             erreurMessageCreationCompte=''
+            onCreateCompte={jest.fn()}
+            onAnnulationCreerCompte={jest.fn()}
             onRefresh={jest.fn()}
             onRetour={jest.fn()}
           />
@@ -57,8 +59,10 @@ describe('<DossierMilo', () => {
         renderWithContexts(
           <DossierBeneficiaireMilo
             dossier={dossier}
-            onCreateCompte={jest.fn()}
             erreurMessageCreationCompte=''
+            beneficiaireExisteDejaMilo={false}
+            onCreateCompte={jest.fn()}
+            onAnnulationCreerCompte={jest.fn()}
             onRefresh={jest.fn()}
             onRetour={jest.fn()}
           />

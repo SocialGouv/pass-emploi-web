@@ -111,7 +111,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       describe('header', () => {
@@ -872,7 +872,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche le créateur de l’événement', () => {
@@ -1207,7 +1207,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it("contient un message pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", () => {
@@ -1361,7 +1361,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche encart explicatif de lecture seule', () => {
@@ -1482,7 +1482,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('récupère les bénéficiaires de l’établissement', async () => {
@@ -1714,7 +1714,7 @@ describe('EditionRdvPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {

@@ -50,7 +50,7 @@ describe('ModificationActionPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it("permet d'annuler la modification de l'action", () => {
@@ -199,7 +199,7 @@ describe('ModificationActionPage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it("modifier l'action", () => {
@@ -221,7 +221,7 @@ describe('ModificationActionPage client side', () => {
               results = await axe(container)
             })
 
-            expect(results).toHaveNoViolations()
+            expect(results!).toHaveNoViolations()
           })
 
           it('affiche message de succès', () => {
@@ -275,7 +275,7 @@ describe('ModificationActionPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('contient un champ pour saisir une date de fin', () => {
@@ -298,7 +298,7 @@ describe('ModificationActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -329,7 +329,7 @@ describe('ModificationActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -356,7 +356,7 @@ describe('ModificationActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {

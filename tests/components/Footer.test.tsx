@@ -8,10 +8,9 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<Footer/>', () => {
-  let component: RenderResult
   it('affiche les liens par défaut du footer ', () => {
     // GIVEN & WHEN
-    component = render(<Footer />)
+    render(<Footer aDesBeneficiaires={true} conseiller={unConseiller()} />)
 
     // THEN
     expect(
@@ -56,9 +55,12 @@ describe('<Footer/>', () => {
     })
 
     // WHEN
-    component = renderWithContexts(<Footer conseiller={conseiller} />, {
-      customConseiller: conseiller,
-    })
+    renderWithContexts(
+      <Footer aDesBeneficiaires={true} conseiller={conseiller} />,
+      {
+        customConseiller: conseiller,
+      }
+    )
 
     //THEN
     expect(

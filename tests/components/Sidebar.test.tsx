@@ -155,5 +155,5 @@ async function renderSidebar(conseiller?: Partial<Conseiller>) {
   await act(async () => {
     results = await axe(container)
   })
-  expect(results).toHaveNoViolations()
+  expect(results!).toHaveNoViolations()
 }

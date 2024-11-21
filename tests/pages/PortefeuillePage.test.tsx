@@ -63,7 +63,7 @@ describe('PortefeuillePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it("affiche la liste des bénéficiaires s'il en a", async () => {
@@ -234,7 +234,7 @@ describe('PortefeuillePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('permer de créer un jeune MILO', async () => {
@@ -301,7 +301,7 @@ describe('PortefeuillePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('permer de créer un jeune FT', async () => {
@@ -350,7 +350,7 @@ describe('PortefeuillePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('permer de créer un jeune FT', async () => {

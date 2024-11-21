@@ -75,7 +75,7 @@ describe('Partage Recherche', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     describe('quand le formulaire n’a pas encore été soumis', () => {
@@ -103,7 +103,7 @@ describe('Partage Recherche', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('contenu', () => {
@@ -130,7 +130,7 @@ describe('Partage Recherche', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('sélectionne plusieurs bénéficiaires dans la liste', () => {
@@ -187,7 +187,7 @@ describe('Partage Recherche', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’offre d’emploi', () => {
@@ -253,7 +253,7 @@ describe('Partage Recherche', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’alternance', () => {
@@ -320,7 +320,7 @@ describe('Partage Recherche', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’immersion', () => {
@@ -387,7 +387,7 @@ describe('Partage Recherche', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion de service civique', () => {

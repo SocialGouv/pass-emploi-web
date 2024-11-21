@@ -270,7 +270,7 @@ describe('FicheBeneficiairePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
@@ -463,5 +463,6 @@ async function renderFicheJeuneNonMilo({
       }
     ))
   })
-  return container
+
+  return container!
 }

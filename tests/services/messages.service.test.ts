@@ -206,7 +206,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.observeDerniersMessages', () => {
-    let idChat: string
+    const beneficiaireEtChat = unBeneficiaireChat()
     let onMessagesAntechronologiques: (
       messagesGroupesParJour: ByDay<Message>
     ) => void
@@ -219,12 +219,11 @@ describe('MessagesFirebaseAndApiService', () => {
           fn: (messages: Message[]) => void
         ) => fn(desMessagesAntechronologiques())
       )
-      idChat = 'idChat'
       onMessagesAntechronologiques = jest.fn()
 
       // When
       observeDerniersMessages(
-        idChat,
+        beneficiaireEtChat,
         cleChiffrement,
         { pages: 2, taillePage: 10 },
         onMessagesAntechronologiques
@@ -234,7 +233,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('subscribes to chat messages in firebase', async () => {
       // Then
       expect(observeDerniersMessagesDuChat).toHaveBeenCalledWith(
-        idChat,
+        beneficiaireEtChat,
         20,
         expect.any(Function)
       )
@@ -947,6 +946,7 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.getMessagesDuJour', () => {
     it('recupere tous les messages du jour d’une conversation', async () => {
       // Given
+      const beneficiaireEtChat = unBeneficiaireChat()
       const message = unMessage()
       ;(getMessagesPeriode as jest.Mock).mockResolvedValue([
         { ...message, content: 'contenu du message' },
@@ -954,14 +954,14 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // When
       const messages = await getMessagesDuMemeJour(
-        'id-chat',
+        beneficiaireEtChat,
         message,
         'cle-chiffrement'
       )
 
       // Then
       expect(getMessagesPeriode).toHaveBeenCalledWith(
-        'id-chat',
+        beneficiaireEtChat,
         message.creationDate.startOf('day'),
         message.creationDate.endOf('day')
       )

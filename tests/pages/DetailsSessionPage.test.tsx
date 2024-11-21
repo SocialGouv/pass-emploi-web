@@ -83,7 +83,7 @@ describe('Détails Session Page Client', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche un encart d’information pour la modification sur i-milo', () => {
@@ -543,7 +543,7 @@ describe('Détails Session Page Client', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -616,7 +616,7 @@ describe('Détails Session Page Client', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -1042,7 +1042,7 @@ describe('Détails Session Page Client', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un message d’alerte', () => {

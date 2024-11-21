@@ -24,7 +24,7 @@ describe('Page Listes de Diffusion', () => {
       await act(async () => {
         results = await axe(container)
       })
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('afficher un lien pour créer une liste de diffusion', () => {
@@ -55,7 +55,7 @@ describe('Page Listes de Diffusion', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche le message idoine', async () => {
@@ -95,7 +95,7 @@ describe('Page Listes de Diffusion', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche les informations des listes', () => {

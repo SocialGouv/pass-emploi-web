@@ -75,7 +75,7 @@ describe('Cloture Session', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('affiche les bénéficiaires de la session', async () => {
@@ -150,7 +150,7 @@ describe('Cloture Session', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('clôt la session', async () => {

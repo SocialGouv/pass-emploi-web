@@ -57,7 +57,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche le formulaire', () => {
@@ -101,7 +101,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('ne soumet pas le formulaire quand aucun titre n’est renseigné', async () => {
@@ -164,7 +164,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       describe('quand le formulaire est validé', () => {
@@ -245,7 +245,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('permet de supprimer la liste', async () => {
@@ -353,7 +353,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('modifie la liste', async () => {

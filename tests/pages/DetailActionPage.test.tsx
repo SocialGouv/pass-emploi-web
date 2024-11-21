@@ -66,7 +66,7 @@ describe('ActionPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it("affiche les information d'une action", async () => {
@@ -203,7 +203,7 @@ describe('ActionPage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
       })
     })
@@ -237,7 +237,7 @@ describe('ActionPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
@@ -330,7 +330,7 @@ describe('ActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       describe('quand le conseiller vient de la page pilotage', () => {
@@ -439,7 +439,7 @@ describe('ActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un encart d’information de qualification en SNP', async () => {
@@ -490,7 +490,7 @@ describe('ActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('ne permet pas de modifier le statut de l’action', () => {

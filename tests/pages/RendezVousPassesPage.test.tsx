@@ -44,7 +44,7 @@ describe('RendezVousPassesPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
@@ -104,7 +104,7 @@ describe('RendezVousPassesPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche un message', async () => {

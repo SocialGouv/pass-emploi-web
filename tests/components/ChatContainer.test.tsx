@@ -68,7 +68,7 @@ describe('<ChatContainer />', () => {
     it('affiche la messagerie', async () => {
       // When
       await act(async () => {
-        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
           customChats: beneficiairesChats,
         })
       })
@@ -87,7 +87,7 @@ describe('<ChatContainer />', () => {
     beforeEach(async () => {
       // When
       await act(async () => {
-        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
           customChats: beneficiairesChats,
           customCurrentConversation: {
             value: {
@@ -120,7 +120,7 @@ describe('<ChatContainer />', () => {
   describe('listes de diffusion', () => {
     beforeEach(async () => {
       await act(async () => {
-        renderWithContexts(<ChatContainer menuState={[false, () => {}]} />, {
+        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
           customChats: [],
         })
       })

@@ -19,12 +19,12 @@ describe('PlanDuSite client side', () => {
     }))
 
     //Then
-let results: AxeResults
-await act(async () => {
-  results = await axe(container)
-})
+    let results: AxeResults
+    await act(async () => {
+      results = await axe(container)
+    })
 
-expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('a11y France Travail', async () => {
@@ -41,6 +41,6 @@ expect(results).toHaveNoViolations()
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 })
