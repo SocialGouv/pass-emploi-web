@@ -44,6 +44,7 @@ describe('SessionsApiService', () => {
             label: 'info coll i-milo',
           },
           statut: 'CLOTUREE',
+          nombreParticipants: 2,
         },
         {
           id: 'id-session',
@@ -57,6 +58,7 @@ describe('SessionsApiService', () => {
             label: 'Atelier i-milo',
           },
           statut: 'A_VENIR',
+          nombreParticipants: 4,
         },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -86,6 +88,7 @@ describe('SessionsApiService', () => {
           statut: StatutAnimationCollective.Close,
           isSession: true,
           estCache: false,
+          nombreParticipants: 2,
         },
         {
           id: 'id-session',
@@ -97,6 +100,7 @@ describe('SessionsApiService', () => {
           statut: StatutAnimationCollective.AVenir,
           isSession: true,
           estCache: true,
+          nombreParticipants: 4,
         },
       ]
       expect(actual).toEqual(sessionsMilo)

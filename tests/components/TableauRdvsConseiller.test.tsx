@@ -22,7 +22,10 @@ describe('<TableauRdvsConseiller>', () => {
 
       // When
       renderWithContexts(
-        <TableauEvenementsConseiller evenements={listeRdv} idConseiller='1' />
+        <TableauEvenementsConseiller
+          evenements={listeRdv}
+          periodeLabel='du dd/mm/yyyy au dd/mm/yyyy'
+        />
       )
     })
 

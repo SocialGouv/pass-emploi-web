@@ -69,7 +69,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('contenu', () => {
@@ -98,7 +98,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('contenu', () => {
@@ -131,7 +131,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('affiche les informations concernant la situation du jeune', () => {
@@ -158,7 +158,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('affiche les informations concernant la situation du jeune ', async () => {
@@ -195,7 +195,7 @@ describe('HistoriquePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un onglet dédié', async () => {
@@ -285,7 +285,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('contenu', () => {
@@ -320,7 +320,7 @@ describe('HistoriquePage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('contenu', () => {
@@ -351,7 +351,7 @@ describe('HistoriquePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('n’affiche pas l’onglet Indicateurs', async () => {
@@ -377,12 +377,13 @@ async function renderHistorique(
   structure: StructureConseiller,
   beneficiaire: DetailBeneficiaire
 ): Promise<HTMLElement> {
-  let container: HTMLElement
   const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
   jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
   ;(getIndicateursJeuneComplets as jest.Mock).mockResolvedValue(
     desIndicateursSemaine()
   )
+
+  let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
       <Historique
@@ -398,5 +399,5 @@ async function renderHistorique(
     ))
   })
 
-  return container
+  return container!
 }

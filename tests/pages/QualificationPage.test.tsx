@@ -49,7 +49,6 @@ describe('QualificationPage client side', () => {
     // When
     ;({ container } = renderWithContexts(
       <QualificationPage
-        beneficiaire={uneBaseBeneficiaire()}
         action={action}
         categories={categories}
         returnTo='/mes-jeunes/beneficiaire-1/actions/id-action-1'
@@ -75,7 +74,7 @@ describe('QualificationPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it("affiche les informations principales de l'action", () => {
@@ -168,7 +167,7 @@ describe('QualificationPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un message d’erreur si le commentaire est vide', async () => {
@@ -235,7 +234,7 @@ describe('QualificationPage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
@@ -295,7 +294,7 @@ describe('QualificationPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche seulement les informations principales', () => {
@@ -332,7 +331,7 @@ describe('QualificationPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it("qualifie l'action en NON SNP", () => {

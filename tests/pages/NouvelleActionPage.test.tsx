@@ -43,7 +43,7 @@ describe('NouvelleActionPage client side', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it("permet d'annuler la création de l'action", () => {
@@ -164,7 +164,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -189,7 +189,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -218,7 +218,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -243,7 +243,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -269,7 +269,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -313,7 +313,7 @@ describe('NouvelleActionPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it("crée l'action", () => {
@@ -339,7 +339,7 @@ describe('NouvelleActionPage client side', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('affiche message de succès', () => {

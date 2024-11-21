@@ -50,7 +50,7 @@ describe('CloturePage client side', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it("affiche les bénéficiaires de l'événement", async () => {
@@ -119,7 +119,7 @@ describe('CloturePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('clôt l’animation collective', async () => {

@@ -68,7 +68,7 @@ describe('EtablissementPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un lien vers la page de réaffectation', () => {
@@ -98,7 +98,7 @@ describe('EtablissementPage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche un champ de recherche', () => {
@@ -316,7 +316,7 @@ describe('EtablissementPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('n’affiche pas la colonne Situation', async () => {
@@ -361,7 +361,7 @@ describe('EtablissementPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('n’affiche pas le champs de recherche', async () => {

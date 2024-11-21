@@ -84,7 +84,7 @@ describe('PilotagePage client side - Animations collectives', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('résume les activités', async () => {

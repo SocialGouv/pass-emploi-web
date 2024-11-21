@@ -166,10 +166,10 @@ describe('<DiplayMessageBeneficiaire />', () => {
 
       // Then
       expect(
-        screen.getByText(message.infoPiecesJointes[0].nom)
+        screen.getByText(message.infoPiecesJointes![0].nom)
       ).toBeInTheDocument()
       expect(() =>
-        screen.getByRole('link', { name: message.infoPiecesJointes[0].nom })
+        screen.getByRole('link', { name: message.infoPiecesJointes![0].nom })
       ).toThrow()
     })
 
@@ -202,10 +202,10 @@ describe('<DiplayMessageBeneficiaire />', () => {
 
       // Then
       expect(
-        screen.getByText(message.infoPiecesJointes[0].nom)
+        screen.getByText(message.infoPiecesJointes![0].nom)
       ).toBeInTheDocument()
       expect(() =>
-        screen.getByRole('link', { name: message.infoPiecesJointes[0].nom })
+        screen.getByRole('link', { name: message.infoPiecesJointes![0].nom })
       ).toThrow()
     })
 
@@ -240,7 +240,7 @@ describe('<DiplayMessageBeneficiaire />', () => {
       expect(
         screen.getByRole('link', {
           name:
-            'Télécharger la pièce jointe ' + message.infoPiecesJointes[0].nom,
+            'Télécharger la pièce jointe ' + message.infoPiecesJointes![0].nom,
         })
       ).toBeInTheDocument()
     })

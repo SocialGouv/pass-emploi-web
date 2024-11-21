@@ -72,7 +72,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       await act(async () => {
         results = await axe(container)
       })
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('devrait afficher les champs pour envoyer un message', () => {
@@ -149,7 +149,7 @@ describe('EnvoiMessageGroupePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('sélectionne plusieurs bénéficiaires dans la liste', () => {
@@ -273,7 +273,7 @@ describe('EnvoiMessageGroupePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche le nom du fichier sélectionné', () => {
@@ -351,7 +351,7 @@ describe('EnvoiMessageGroupePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', async () => {

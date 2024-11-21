@@ -85,7 +85,7 @@ describe('PilotagePage client side - Actions', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('résume les activités', async () => {
@@ -241,7 +241,7 @@ describe('PilotagePage client side - Actions', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('filtre les actions', () => {
@@ -339,7 +339,7 @@ describe('PilotagePage client side - Actions', () => {
             results = await axe(container)
           })
 
-          expect(results).toHaveNoViolations()
+          expect(results!).toHaveNoViolations()
         })
 
         it('permet de qualifier l’action', () => {

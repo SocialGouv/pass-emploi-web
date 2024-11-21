@@ -32,7 +32,7 @@ describe('OffrePage client side - Emploi', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it("permet de partager l'offre", () => {

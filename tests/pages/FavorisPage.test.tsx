@@ -33,7 +33,7 @@ describe('FavorisPage client side', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('affiche la liste des offres du jeune', () => {

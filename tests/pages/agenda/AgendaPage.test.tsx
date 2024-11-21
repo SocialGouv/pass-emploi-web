@@ -71,7 +71,7 @@ describe('AgendaPage client side', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('contient des liens créer pour des évènements', () => {

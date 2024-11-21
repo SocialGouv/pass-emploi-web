@@ -17,7 +17,11 @@ describe('DetailDemarchePage client side', () => {
     const demarche = uneDemarche()
     beforeEach(async () => {
       ;({ container } = renderWithContexts(
-        <DetailDemarchePage demarche={demarche} lectureSeule={false} />
+        <DetailDemarchePage
+          demarche={demarche}
+          lectureSeule={false}
+          isStale={false}
+        />
       ))
     })
 
@@ -28,7 +32,7 @@ describe('DetailDemarchePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it("affiche les information d'une démarche", async () => {
@@ -45,7 +49,7 @@ describe('DetailDemarchePage client side', () => {
       )
 
       expect(getByDescriptionTerm('Moyen :')).toHaveTextContent(
-        demarche.sousTitre
+        demarche.sousTitre!
       )
 
       expect(getByDescriptionTerm('Date d’échéance :')).toHaveTextContent(
@@ -58,7 +62,11 @@ describe('DetailDemarchePage client side', () => {
     const demarche = uneDemarche({ sousTitre: undefined })
     beforeEach(async () => {
       ;({ container } = renderWithContexts(
-        <DetailDemarchePage demarche={demarche} lectureSeule={false} />
+        <DetailDemarchePage
+          demarche={demarche}
+          lectureSeule={false}
+          isStale={false}
+        />
       ))
     })
 
@@ -69,7 +77,7 @@ describe('DetailDemarchePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche information manquante', () => {

@@ -42,7 +42,7 @@ describe('LoginPassEmploiPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('devrait afficher deux titres de niveau 2', () => {

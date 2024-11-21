@@ -398,7 +398,7 @@ describe('Page Recherche Immersions', () => {
         results = await axe(rendered.container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche les offres', async () => {

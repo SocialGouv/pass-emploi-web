@@ -32,7 +32,7 @@ describe('OffrePage client side - Service civique', () => {
       results = await axe(container)
     })
 
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('permet de partager le service civique', () => {

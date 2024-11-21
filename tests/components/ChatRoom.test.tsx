@@ -68,7 +68,6 @@ describe('<ChatRoom />', () => {
         ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
-            showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
             onOuvertureMenu={() => {}}
@@ -86,7 +85,7 @@ describe('<ChatRoom />', () => {
       )
 
       //Then
-      const result = await axe(container)
+      const result = await axe(container!)
       expect(result).toHaveNoViolations()
       expect(() =>
         screen.getByText('Un message important est déjà configuré')
@@ -107,7 +106,6 @@ describe('<ChatRoom />', () => {
           renderWithContexts(
             <ChatRoom
               beneficiairesChats={beneficiairesChats}
-              showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
               onOuvertureMenu={() => {}}
@@ -136,7 +134,6 @@ describe('<ChatRoom />', () => {
           renderWithContexts(
             <ChatRoom
               beneficiairesChats={beneficiairesChats}
-              showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
               onOuvertureMenu={() => {}}
@@ -178,7 +175,6 @@ describe('<ChatRoom />', () => {
               renderWithContexts(
                 <ChatRoom
                   beneficiairesChats={beneficiairesChats}
-                  showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
                   onOuvertureMenu={() => {}}
@@ -277,7 +273,6 @@ describe('<ChatRoom />', () => {
               renderWithContexts(
                 <ChatRoom
                   beneficiairesChats={beneficiairesChats}
-                  showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
                   onOuvertureMenu={() => {}}
@@ -332,7 +327,6 @@ describe('<ChatRoom />', () => {
           renderWithContexts(
             <ChatRoom
               beneficiairesChats={beneficiairesChats}
-              showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
               onOuvertureMenu={() => {}}
@@ -378,7 +372,6 @@ describe('<ChatRoom />', () => {
         ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
-            showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
             onOuvertureMenu={() => {}}
@@ -395,7 +388,7 @@ describe('<ChatRoom />', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche les alertes sur petit écran', () => {
@@ -475,7 +468,6 @@ describe('<ChatRoom />', () => {
         ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={[]}
-            showMenu={false}
             onAccesConversation={() => {}}
             onAccesListesDiffusion={() => {}}
             onOuvertureMenu={() => {}}
@@ -485,7 +477,7 @@ describe('<ChatRoom />', () => {
       })
 
       // Then
-      const results = await axe(container)
+      const results = await axe(container!)
       expect(results).toHaveNoViolations()
       expect(screen.getByText('Vous pouvez échanger :')).toBeInTheDocument()
       expect(
@@ -506,7 +498,6 @@ describe('<ChatRoom />', () => {
       renderWithContexts(
         <ChatRoom
           beneficiairesChats={beneficiairesChats}
-          showMenu={false}
           onAccesConversation={() => {}}
           onAccesListesDiffusion={() => {}}
           onOuvertureMenu={() => {}}

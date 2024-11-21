@@ -9,7 +9,7 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 jest.mock('components/ModalContainer')
 describe('ActualitesModal', () => {
-  let container
+  let container: HTMLElement
 
   const actualites = {
     contenu:
@@ -31,10 +31,11 @@ describe('ActualitesModal', () => {
 
   it('a11y', async () => {
     let results: AxeResults
+
     await act(async () => {
       results = await axe(container)
     })
-    expect(results).toHaveNoViolations()
+    expect(results!).toHaveNoViolations()
   })
 
   it('Affiche la modale', () => {

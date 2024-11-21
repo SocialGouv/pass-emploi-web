@@ -83,7 +83,7 @@ describe('<EmargementRdvPage>', () => {
         'Mission Locale de Montastruc-la-Conseillère'
       )
       expect(
-        screen.getByText(sessionAEmarger.session.animateur)
+        screen.getByText(sessionAEmarger.session.animateur!)
       ).toBeInTheDocument()
       expect(
         screen.getByText(

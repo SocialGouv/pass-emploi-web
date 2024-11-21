@@ -38,7 +38,7 @@ describe('LoginCEJPage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('devrait avoir deux boutons', () => {

@@ -56,7 +56,7 @@ describe('PartageOffrePage client side', () => {
         results = await axe(container)
       })
 
-      expect(results).toHaveNoViolations()
+      expect(results!).toHaveNoViolations()
     })
 
     it('contient une liste pour choisir un ou plusieurs jeune', () => {
@@ -124,7 +124,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
@@ -162,7 +162,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it("partage l'offre", async () => {
@@ -224,7 +224,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -265,7 +265,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -306,7 +306,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {
@@ -343,7 +343,7 @@ describe('PartageOffrePage client side', () => {
           results = await axe(container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('contenu', () => {

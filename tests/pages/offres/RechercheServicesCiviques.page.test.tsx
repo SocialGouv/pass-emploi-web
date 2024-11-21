@@ -469,7 +469,7 @@ describe('Page Recherche Offres Service civique', () => {
           results = await axe(rendered.container)
         })
 
-        expect(results).toHaveNoViolations()
+        expect(results!).toHaveNoViolations()
       })
 
       it('affiche toutes les offres', async () => {
