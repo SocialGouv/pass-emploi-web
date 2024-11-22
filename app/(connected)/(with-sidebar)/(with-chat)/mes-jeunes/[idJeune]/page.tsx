@@ -28,17 +28,18 @@ import {
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
-import {
   getDemarchesBeneficiaire,
-  getJeuneDetails,
-  getMetadonneesFavorisJeune,
-} from 'services/beneficiaires.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+} from 'services/actions.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
+import {
+  getMetadonneesFavorisJeune,
+  getOffres,
+  getRecherchesSauvegardees,
+} from 'services/favoris.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
+import { getSessionsBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
 
@@ -148,7 +149,7 @@ async function renderFicheMilo(
     conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
   ) {
     try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
+      sessionsMilo = await getSessionsBeneficiaire(
         beneficiaire.id,
         accessToken,
         DateTime.now().startOf('day')

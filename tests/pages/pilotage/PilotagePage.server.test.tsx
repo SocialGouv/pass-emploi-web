@@ -1,37 +1,34 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/page'
 import PilotagePage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
+import { unUtilisateur } from 'fixtures/auth'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  getActionsAQualifierServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getActionsAQualifierServerSide } from 'services/actions.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage')
 jest.mock('services/actions.service')
+jest.mock('services/referentiel.service')
 jest.mock('services/sessions.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/evenements.service')
 
 describe('PilotagePage server side', () => {
   describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'POLE_EMPLOI' },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: 'POLE_EMPLOI' }),
       })
 
       // When
@@ -46,10 +43,6 @@ describe('PilotagePage server side', () => {
   describe('quand le conseiller est connecté', () => {
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        accessToken: 'accessToken',
-        user: { id: 'conseiller-id', structure: 'MILO' },
-      })
       ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
         actions: uneListeDActionsAQualifier(),
         metadonnees: {
@@ -93,7 +86,7 @@ describe('PilotagePage server side', () => {
 
       // Then
       expect(getActionsAQualifierServerSide).toHaveBeenCalledWith(
-        'conseiller-id',
+        'id-conseiller',
         'accessToken'
       )
       expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
@@ -101,7 +94,7 @@ describe('PilotagePage server side', () => {
         'accessToken'
       )
       expect(getConseillerServerSide).toHaveBeenCalledWith(
-        { id: 'conseiller-id', structure: 'MILO' },
+        unUtilisateur(),
         'accessToken'
       )
       expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
@@ -109,7 +102,7 @@ describe('PilotagePage server side', () => {
         'accessToken'
       )
       expect(getSessionsACloreServerSide).toHaveBeenCalledWith(
-        'conseiller-id',
+        'id-conseiller',
         'accessToken'
       )
       expect(PilotagePage).toHaveBeenCalledWith(

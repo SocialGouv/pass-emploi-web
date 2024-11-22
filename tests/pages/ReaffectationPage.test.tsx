@@ -11,10 +11,10 @@ import {
   getJeunesDuConseillerParId,
   reaffecter,
 } from 'services/beneficiaires.service'
-import { getConseillers } from 'services/conseiller.service'
+import { getConseillers } from 'services/conseillers.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/beneficiaires.service')
 
 describe('Reaffectation', () => {

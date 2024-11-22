@@ -64,7 +64,9 @@ function DetailActionPage({
   const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
-    const { modifierAction } = await import('services/actions.service')
+    const { modifierAction } = await import(
+      'server-actions/actions.server-actions'
+    )
     await modifierAction(action.id, { statut: statutChoisi })
     setStatut(statutChoisi)
 
@@ -84,9 +86,6 @@ function DetailActionPage({
     }
   }
 
-  // FIXME : dirty fix, problème de l’action
-  const random = Math.random()
-
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${trackingTitle} - Succès envoi message`
@@ -100,7 +99,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}&misc=${random}`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}`}
             >
               Qualifier l’action
               <IconComponent
@@ -179,7 +178,7 @@ function DetailActionPage({
           </h2>
           {!qualifiee && (
             <ButtonLink
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification?misc=${random}`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent

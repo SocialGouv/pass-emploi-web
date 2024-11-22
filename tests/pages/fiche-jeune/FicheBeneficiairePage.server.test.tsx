@@ -1,9 +1,11 @@
 import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { getServerSession } from 'next-auth'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
 import { uneAction } from 'fixtures/action'
+import { unUtilisateur } from 'fixtures/auth'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
@@ -15,22 +17,23 @@ import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { getActionsBeneficiaireServerSide } from 'services/actions.service'
+import {
+  getActionsBeneficiaireServerSide,
+  getDemarchesBeneficiaire,
+} from 'services/actions.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import {
   getConseillersDuJeuneServerSide,
-  getDemarchesBeneficiaire,
-  getJeuneDetails,
-  getMetadonneesFavorisJeune,
-} from 'services/beneficiaires.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+  getConseillerServerSide,
+} from 'services/conseillers.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import {
+  getMetadonneesFavorisJeune,
+  getOffres,
+  getRecherchesSauvegardees,
+} from 'services/favoris.service'
+import { getSessionsBeneficiaire } from 'services/sessions.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 )
@@ -39,7 +42,8 @@ jest.mock('services/sessions.service')
 jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
 jest.mock('services/favoris.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
+jest.mock('services/referentiel.service')
 
 describe('FicheBeneficiairePage server side', () => {
   const rdvAVenir = unEvenementListItem({
@@ -69,9 +73,7 @@ describe('FicheBeneficiairePage server side', () => {
       uneMetadonneeFavoris()
     )
     ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
-    ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
-      sessionsAVenir,
-    ])
+    ;(getSessionsBeneficiaire as jest.Mock).mockResolvedValue([sessionsAVenir])
     ;(getActionsBeneficiaireServerSide as jest.Mock).mockResolvedValue({
       actions: [
         uneAction({ creationDate: now.toISO() }),
@@ -96,10 +98,6 @@ describe('FicheBeneficiairePage server side', () => {
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
     )
-    ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-      accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: 'MILO' },
-    })
   })
 
   describe('Quand la session est valide', () => {
@@ -135,7 +133,7 @@ describe('FicheBeneficiairePage server side', () => {
         'FUTURS',
         'accessToken'
       )
-      expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
+      expect(getSessionsBeneficiaire).toHaveBeenCalledWith(
         'beneficiaire-1',
         'accessToken',
         now.startOf('day')
@@ -231,9 +229,9 @@ describe('FicheBeneficiairePage server side', () => {
   describe('Quand le conseiller n’est pas Milo', () => {
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
+      ;(getServerSession as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { structure: 'POLE_EMPLOI' },
+        user: unUtilisateur({ structure: 'POLE_EMPLOI' }),
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
@@ -249,7 +247,7 @@ describe('FicheBeneficiairePage server side', () => {
     it('ne recupère pas les rendez-vous', async () => {
       // Then
       expect(getRendezVousJeune).not.toHaveBeenCalled()
-      expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
+      expect(getSessionsBeneficiaire).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.not.objectContaining({ rdvs: expect.arrayContaining([]) }),
         {}
@@ -296,9 +294,9 @@ describe('FicheBeneficiairePage server side', () => {
   describe('Quand le conseiller est Conseil Départemental', () => {
     it('récupère les démarches', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
+      ;(getServerSession as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { structure: 'CONSEIL_DEPT' },
+        user: unUtilisateur({ structure: 'CONSEIL_DEPT' }),
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({

@@ -18,13 +18,13 @@ import {
 } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { recupererBeneficiaires } from 'services/conseiller.service'
+import { recupererBeneficiaires } from 'services/beneficiaires.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/PageActionsPortal')
 
 describe('PortefeuillePage client side', () => {

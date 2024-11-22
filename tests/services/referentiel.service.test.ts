@@ -5,10 +5,12 @@ import {
   desLocalites,
   desLocalitesJson,
   desMetiers,
-  uneListeDAgencesMILO,
+  desMotifsDeSuppression,
   uneListeDAgencesFranceTravail,
+  uneListeDAgencesMILO,
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import {
   getActionsPredefinies,
   getAgencesClientSide,
@@ -16,6 +18,7 @@ import {
   getCommunes,
   getCommunesEtDepartements,
   getMetiers,
+  getMotifsSuppression,
 } from 'services/referentiel.service'
 
 jest.mock('clients/api.client')
@@ -98,7 +101,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/communes-et-departements?recherche=Hauts%20de%20seine',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desLocalites())
     })
@@ -117,7 +121,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         "/referentiels/communes-et-departements?villesOnly=true&recherche=L'Ha%C3%BF-les-Roses",
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desCommunes())
     })
@@ -136,7 +141,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/metiers?recherche=D%C3%A9veloppeuse',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desMetiers())
     })
@@ -160,7 +166,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/actions-predefinies',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual([
         {
@@ -168,6 +175,29 @@ describe('ReferentielApiService', () => {
           titre: 'Identifier ses atouts et ses compétences',
         },
       ])
+    })
+  })
+
+  describe('.getMotifsSuppression', () => {
+    it('renvoie les motifs de suppression', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const motifs: MotifSuppressionBeneficiaire[] = desMotifsDeSuppression()
+
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: motifs,
+      })
+
+      // When
+      const actual = await getMotifsSuppression()
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/referentiels/motifs-suppression-jeune',
+        accessToken,
+        'referentiel'
+      )
+      expect(actual).toEqual(motifs)
     })
   })
 })

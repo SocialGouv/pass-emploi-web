@@ -32,7 +32,7 @@ function CreationBeneficiaireMiloPage() {
     clearDossier()
 
     try {
-      const { getDossierJeune } = await import('services/conseiller.service')
+      const { getDossierJeune } = await import('services/conseillers.service')
       const dossierJeune = await getDossierJeune(id)
       setDossier(dossierJeune)
       etapeRef.current!.focus()
@@ -52,7 +52,7 @@ function CreationBeneficiaireMiloPage() {
 
     try {
       const { createCompteJeuneMilo } = await import(
-        'services/conseiller.service'
+        'services/beneficiaires.service'
       )
       const beneficiaireCree = await createCompteJeuneMilo(
         beneficiaireData,

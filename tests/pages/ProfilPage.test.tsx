@@ -14,11 +14,11 @@ import {
   modifierAgence,
   modifierNotificationsSonores,
   supprimerConseiller,
-} from 'services/conseiller.service'
+} from 'services/conseillers.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/beneficiaires.service')
 jest.mock('components/ModalContainer')
 

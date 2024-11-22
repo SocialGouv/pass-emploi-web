@@ -9,10 +9,8 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { estUserCD } from 'interfaces/conseiller'
-import {
-  getDemarchesBeneficiaire,
-  getJeuneDetails,
-} from 'services/beneficiaires.service'
+import { getDemarchesBeneficiaire } from 'services/actions.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type DetailDemarcheParams = { idJeune: string; idDemarche: string }

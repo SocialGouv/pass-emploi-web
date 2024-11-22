@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react'
 
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPost } from 'clients/api.client'
 import {
   DetailOffreEmploiJson,
   jsonToDetailOffreEmploi,
@@ -9,9 +9,11 @@ import {
 } from 'interfaces/json/offre-emploi'
 import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre'
 import { Commune, Departement } from 'interfaces/referentiel'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// ******* TYPES *******
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
@@ -25,6 +27,7 @@ export type SearchOffresEmploiQuery = {
   typesContrats?: Array<TypeContrat>
 }
 
+// ******* READ *******
 export async function getOffreEmploiServerSide(
   idOffreEmploi: string,
   accessToken: string
@@ -59,11 +62,38 @@ export async function searchAlternances(
   return searchOffres({ recherche, page, alternanceOnly: true })
 }
 
+// ******* WRITE *******
+export async function partagerRechercheOffreEmploi(query: {
+  idsJeunes: string[]
+  titre: string
+  motsCles: string
+  labelLocalite: string
+  codeDepartement?: string
+  codeCommune?: string
+}): Promise<void> {
+  const alternanceOnly = false
+  await envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
+}
+
+export async function partagerRechercheAlternance(query: {
+  idsJeunes: string[]
+  titre: string
+  motsCles: string
+  labelLocalite: string
+  codeDepartement?: string
+  codeCommune?: string
+}): Promise<void> {
+  const alternanceOnly = true
+  await envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
+}
+
+// ******* PRIVATE *******
 async function getOffreEmploi(idOffreEmploi: string, accessToken: string) {
   try {
     const { content: offreEmploiJson } = await apiGet<DetailOffreEmploiJson>(
       `/offres-emploi/${idOffreEmploi}`,
-      accessToken
+      accessToken,
+      CACHE_TAGS.EMPLOI.SINGLETON
     )
     return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
   } catch (e) {
@@ -96,7 +126,7 @@ async function searchOffres({
   const { content } = await apiGet<{
     pagination: { total: number }
     results: OffreEmploiItemJson[]
-  }>(path + '?' + searchUrl, accessToken)
+  }>(path + '?' + searchUrl, accessToken, CACHE_TAGS.EMPLOI.LISTE)
 
   const { pagination, results } = content
   const metadonnees: MetadonneesPagination = {
@@ -149,4 +179,34 @@ function dureeToQueryParam(duree: Duree): '1' | '2' {
     case 'Temps partiel':
       return '2'
   }
+}
+
+async function envoyerSuggestionOffreEmploiOuAlternance(
+  query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
+    codeCommune?: string
+  },
+  alternanceOnly: boolean
+) {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      q: query.motsCles,
+      localisation: query.labelLocalite,
+      departement: query.codeDepartement,
+      commune: query.codeCommune,
+      alternance: alternanceOnly,
+    },
+    accessToken
+  )
 }

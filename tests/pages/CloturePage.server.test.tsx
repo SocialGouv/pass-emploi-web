@@ -1,17 +1,15 @@
 import { render } from '@testing-library/react'
 import { notFound, redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
 import Cloture from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/page'
+import { unUtilisateur } from 'fixtures/auth'
 import { unEvenement } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { getDetailsEvenement } from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/evenements.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
@@ -21,8 +19,8 @@ describe('CloturePage server side', () => {
   describe("quand l'utilisateur est connecté", () => {
     beforeEach(() => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: { estConseiller: true, id: 'id-conseiller', structure: 'MILO' },
         accessToken: 'accessToken',
       })
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
@@ -89,8 +87,8 @@ describe('CloturePage server side', () => {
   describe('quand l’utilisateur est France Travail', () => {
     it('renvoie sur la liste des jeunes', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: StructureConseiller.POLE_EMPLOI }),
       })
 
       // When

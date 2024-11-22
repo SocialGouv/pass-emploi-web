@@ -6,7 +6,6 @@ import { DateTime } from 'luxon'
 
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
-import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import {
   Action,
   SituationNonProfessionnelle,
@@ -14,10 +13,12 @@ import {
 } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { qualifier } from 'services/actions.service'
+import { qualifier } from 'server-actions/actions.server-actions'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/actions.service')
+jest.mock('server-actions/actions.server-actions', () => ({
+  qualifier: jest.fn(),
+}))
 
 describe('QualificationPage client side', () => {
   let action: Action & { jeune: { id: string } }
@@ -241,7 +242,7 @@ describe('QualificationPage client side', () => {
           // Then
           expect(qualifier).toHaveBeenCalledWith(action.id, 'SNP_3', {
             commentaire: 'Nouveau titre et commentaire de l’action',
-            dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
+            dateFinModifiee: '2022-09-05T00:00:00.000+02:00',
           })
         })
 
@@ -339,7 +340,7 @@ describe('QualificationPage client side', () => {
           actionAQualifier.id,
           CODE_QUALIFICATION_NON_SNP,
           {
-            dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+            dateFinModifiee: DateTime.fromISO(action.dateEcheance).toISO(),
           }
         )
       })

@@ -8,7 +8,7 @@ import {
 } from 'components/PageNavigationPortals'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

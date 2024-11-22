@@ -1,21 +1,19 @@
 import { render } from '@testing-library/react'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 import DetailAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/page'
 import { uneAction } from 'fixtures/action'
+import { unUtilisateur } from 'fixtures/auth'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { getAction } from 'services/actions.service'
 import { getJeuneDetails } from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/actions.service')
 jest.mock('services/beneficiaires.service')
 jest.mock(
@@ -27,8 +25,8 @@ describe('ActionPage server side', () => {
   describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'POLE_EMPLOI' },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: 'POLE_EMPLOI' }),
       })
 
       // When
@@ -44,10 +42,6 @@ describe('ActionPage server side', () => {
 
   describe("quand le conseiller n'est pas France Travail", () => {
     beforeEach(async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        accessToken: 'accessToken',
-        user: { structure: 'MILO', id: 'id-conseiller' },
-      })
       ;(headers as jest.Mock).mockReturnValue(
         new Map([['referer', '/whatever']])
       )

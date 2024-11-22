@@ -1,37 +1,33 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import {
-  Action,
-  ActionPilotage,
-  CompteurActionsPeriode,
-  QualificationAction,
-  SituationNonProfessionnelle,
-  StatutAction,
-} from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { apiDelete, apiGet, apiPost } from 'clients/api.client'
+import { Action, ActionPilotage, StatutAction } from 'interfaces/action'
+import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
   actionStatusToFiltre,
   actionStatusToJson,
-  CODE_QUALIFICATION_NON_SNP,
-  CompteursPortefeuilleJson,
   jsonToAction,
   jsonToActionPilotage,
-  jsonToQualification,
   MetadonneesActionsJson,
-  QualificationActionJson,
 } from 'interfaces/json/action'
 import {
   BaseBeneficiaireJson,
+  DemarcheJson,
   jsonToBaseBeneficiaire,
+  jsonToDemarche,
 } from 'interfaces/json/beneficiaire'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// TYPES
+export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
+
+// ******* READ *******
 export async function getAction(
   idAction: string,
   accessToken: string
@@ -44,7 +40,7 @@ export async function getAction(
       content: { jeune, ...actionJson },
     } = await apiGet<
       ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
-    >(`/actions/${idAction}`, accessToken)
+    >(`/actions/${idAction}`, accessToken, CACHE_TAGS.ACTION.SINGLETON)
     return {
       action: jsonToAction(actionJson),
       jeune: {
@@ -56,29 +52,6 @@ export async function getAction(
     if (e instanceof ApiError) return undefined
     throw e
   }
-}
-
-export async function recupereCompteursBeneficiairesPortefeuilleMilo(
-  idConseiller: string,
-  dateDebut: DateTime,
-  dateFin: DateTime,
-  accessToken: string
-): Promise<CompteurActionsPeriode[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-
-  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
-    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    accessToken
-  )
-
-  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
-    return {
-      idBeneficiaire,
-      actions,
-      rdvs: Number(rdvs) + Number(sessions),
-    }
-  })
 }
 
 export async function getActionsBeneficiaireClientSide(
@@ -130,6 +103,33 @@ export async function getActionsAQualifierServerSide(
   return getActionsAQualifier(idConseiller, { page: 1 }, accessToken)
 }
 
+export async function getDemarchesBeneficiaire(
+  idBeneficiaire: string,
+  dateDebut: DateTime,
+  idConseiller: string,
+  accessToken: string
+): Promise<{ data: Demarche[]; isStale: boolean } | null> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  try {
+    const {
+      content: { queryModel: demarchesJson, dateDuCache },
+    } = await apiGet<{ queryModel: DemarcheJson[]; dateDuCache?: string }>(
+      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
+      accessToken,
+      CACHE_TAGS.ACTION.LISTE
+    )
+
+    return {
+      data: demarchesJson.map(jsonToDemarche),
+      isStale: Boolean(dateDuCache),
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
+}
+
+// ******* WRITE *******
 export async function creerAction(
   action: ActionFormData,
   idJeune: string
@@ -149,55 +149,6 @@ export async function creerAction(
     payload,
     session!.accessToken
   )
-}
-
-export async function modifierAction(
-  idAction: string,
-  modifications: Partial<ActionFormData>
-): Promise<void> {
-  const session = await getSession()
-
-  const actionModifiee = {
-    status: modifications.statut
-      ? actionStatusToJson(modifications.statut)
-      : undefined,
-    contenu: modifications.titre,
-    description: modifications.description,
-    dateEcheance: modifications.dateEcheance,
-    dateFinReelle: modifications.dateFinReelle,
-    codeQualification: modifications.codeCategorie,
-  }
-
-  await apiPut(`/actions/${idAction}`, actionModifiee, session!.accessToken)
-}
-
-export async function qualifier(
-  idAction: string,
-  type: string,
-  options?: {
-    dateFinModifiee?: DateTime
-    commentaire?: string
-  }
-): Promise<QualificationAction> {
-  const session = await getSession()
-
-  const payload: {
-    codeQualification: string
-    dateFinReelle?: string
-    commentaireQualification?: string
-  } = { codeQualification: type }
-
-  if (options?.dateFinModifiee)
-    payload.dateFinReelle = options.dateFinModifiee.toISO()
-  if (options?.commentaire)
-    payload.commentaireQualification = options.commentaire
-
-  const { content } = await apiPost<QualificationActionJson>(
-    `/actions/${idAction}/qualifier`,
-    payload,
-    session!.accessToken
-  )
-  return jsonToQualification(content)
 }
 
 export async function qualifierActions(
@@ -220,21 +171,7 @@ export async function deleteAction(idAction: string): Promise<void> {
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
 }
 
-export async function getSituationsNonProfessionnelles(
-  { avecNonSNP }: { avecNonSNP: boolean },
-  accessToken: string
-): Promise<SituationNonProfessionnelle[]> {
-  const { content } = await apiGet<SituationNonProfessionnelle[]>(
-    '/referentiels/qualifications-actions/types',
-    accessToken
-  )
-  return avecNonSNP
-    ? content
-    : content.filter(
-        (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
-      )
-}
-
+// ******* PRIVATE *******
 async function getActionsBeneficiaire(
   idJeune: string,
   {
@@ -266,7 +203,7 @@ async function getActionsBeneficiaire(
   } = await apiGet<{
     actions: ActionJson[]
     metadonnees: MetadonneesActionsJson
-  }>(url, accessToken)
+  }>(url, accessToken, CACHE_TAGS.ACTION.LISTE)
 
   const nombrePages = Math.ceil(
     metadonnees.nombreFiltrees / metadonnees.nombreActionsParPage
@@ -277,7 +214,6 @@ async function getActionsBeneficiaire(
   }
 }
 
-export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
 async function getActionsAQualifier(
   idConseiller: string,
   {
@@ -317,7 +253,11 @@ async function getActionsAQualifier(
   } = await apiGet<{
     pagination: { total: number; limit: number }
     resultats: ActionPilotageJson[]
-  }>(`/v2/conseillers/${idConseiller}/actions?${queryParams}`, accessToken)
+  }>(
+    `/v2/conseillers/${idConseiller}/actions?${queryParams}`,
+    accessToken,
+    CACHE_TAGS.ACTION.LISTE
+  )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 

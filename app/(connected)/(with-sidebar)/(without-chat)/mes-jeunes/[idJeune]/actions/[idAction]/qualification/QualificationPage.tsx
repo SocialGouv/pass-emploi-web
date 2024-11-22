@@ -126,17 +126,17 @@ function QualificationPage({
   }
 
   async function qualifierNonSNP() {
-    const { qualifier } = await import('services/actions.service')
+    const { qualifier } = await import('server-actions/actions.server-actions')
     await qualifier(action.id, CODE_QUALIFICATION_NON_SNP, {
-      dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+      dateFinModifiee: DateTime.fromISO(action.dateEcheance).toISO(),
     })
   }
 
   async function qualifierSNP() {
-    const { qualifier } = await import('services/actions.service')
+    const { qualifier } = await import('server-actions/actions.server-actions')
     await qualifier(action.id, codeCategorie.value!, {
       commentaire: commentaire.value,
-      dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
+      dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day').toISO(),
     })
   }
 

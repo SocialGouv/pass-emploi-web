@@ -41,6 +41,7 @@ export default async function DetailAction({
   params: DetailActionParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
+  console.log('>>>', { user })
   if (!estUserMilo(user)) notFound()
   const { idJeune, idAction } = params
 

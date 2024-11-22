@@ -1,13 +1,11 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import Etablissement from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/page'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { unUtilisateur } from 'fixtures/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 )
@@ -16,8 +14,8 @@ describe('EtablissementPage server side', () => {
   describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'POLE_EMPLOI' },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: 'POLE_EMPLOI' }),
       })
 
       // When
@@ -31,10 +29,6 @@ describe('EtablissementPage server side', () => {
 
   describe('quand le conseiller est connecté', () => {
     it('prépare la page en tant que pass emploi', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'MILO' },
-      })
       // When
       render(await Etablissement())
 
@@ -44,10 +38,6 @@ describe('EtablissementPage server side', () => {
     })
 
     it('prépare la page en tant que MILO', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'MILO' },
-      })
       // When
       render(await Etablissement())
 

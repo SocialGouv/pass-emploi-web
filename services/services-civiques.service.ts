@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPost } from 'clients/api.client'
 import {
   DetailServiceCiviqueJson,
   jsonToDetailServiceCivique,
@@ -10,9 +10,11 @@ import {
 } from 'interfaces/json/service-civique'
 import { BaseServiceCivique, DetailServiceCivique } from 'interfaces/offre'
 import { Commune } from 'interfaces/referentiel'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// ******* TYPES *******
 export type SearchServicesCiviquesQuery = {
   commune?: Commune
   domaine?: string
@@ -20,6 +22,7 @@ export type SearchServicesCiviquesQuery = {
   rayon?: number
 }
 
+// ******* READ *******
 export async function getServiceCiviqueServerSide(
   idServiceCivique: string,
   accessToken: string
@@ -51,7 +54,7 @@ export async function searchServicesCiviques(
   const { content } = await apiGet<{
     pagination: { total: number }
     results: ServiceCiviqueItemJson[]
-  }>(path + '?' + searchParams, accessToken)
+  }>(path + '?' + searchParams, accessToken, CACHE_TAGS.SERVICE_CIVIQUE.LISTE)
 
   const { pagination, results } = content
   const metadonnees: MetadonneesPagination = {
@@ -69,7 +72,8 @@ async function getServiceCivique(
     const { content: serviceCiviqueJson } =
       await apiGet<DetailServiceCiviqueJson>(
         `/services-civique/${idServiceCivique}`,
-        accessToken
+        accessToken,
+        CACHE_TAGS.SERVICE_CIVIQUE.SINGLETON
       )
     return serviceCiviqueJson
   } catch (e) {
@@ -80,6 +84,32 @@ async function getServiceCivique(
   }
 }
 
+// ******* WRITE *******
+export async function partagerRechercheServiceCivique(query: {
+  idsJeunes: string[]
+  titre: string
+  labelLocalite: string
+  latitude: number
+  longitude: number
+}): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/services-civique`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      localisation: query.labelLocalite,
+      lat: query.latitude,
+      lon: query.longitude,
+    },
+    accessToken
+  )
+}
+
+// ******* PRIVATE *******
 function buildSearchParams(
   query: SearchServicesCiviquesQuery,
   page: number,

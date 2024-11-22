@@ -13,7 +13,7 @@ import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
-import { modifierAgence } from 'services/conseiller.service'
+import { modifierAgence } from 'services/conseillers.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -21,7 +21,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Animations collectives', () => {

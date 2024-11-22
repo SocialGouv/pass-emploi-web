@@ -13,11 +13,7 @@ import {
 import { getImmersionServerSide } from 'services/immersions.service'
 import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/[idOffre]/OffrePage'
 )
@@ -26,12 +22,6 @@ jest.mock('services/immersions.service')
 jest.mock('services/services-civiques.service')
 
 describe('OffrePage server side', () => {
-  beforeEach(() => {
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      accessToken: 'accessToken',
-    })
-  })
-
   describe('Offre d’emploi', () => {
     it('charge la page avec les détails de l’offre d‘emploi', async () => {
       // Given

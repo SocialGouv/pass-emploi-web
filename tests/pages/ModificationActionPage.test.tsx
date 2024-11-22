@@ -11,9 +11,13 @@ import {
   uneAction,
 } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
-import { creerAction, modifierAction } from 'services/actions.service'
+import { modifierAction } from 'server-actions/actions.server-actions'
+import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('server-actions/actions.server-actions', () => ({
+  modifierAction: jest.fn(),
+}))
 jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
 

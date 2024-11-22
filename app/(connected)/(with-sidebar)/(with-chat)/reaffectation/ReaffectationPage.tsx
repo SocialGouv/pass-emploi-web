@@ -702,7 +702,7 @@ const ChoixConseiller = forwardRef(
       if (queryConseiller.value.length < 2) return
       if (choixConseillers) return
 
-      const { getConseillers } = await import('services/conseiller.service')
+      const { getConseillers } = await import('services/conseillers.service')
       setRechercheConseillerEnCours(true)
       const conseillers = await getConseillers(
         queryConseiller.value,

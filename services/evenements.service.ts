@@ -17,10 +17,11 @@ import {
   jsonToEvenement,
   jsonToListItem,
 } from 'interfaces/json/evenement'
-import { TypeEvenementReferentiel } from 'interfaces/referentiel'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// ******* READ *******
 export async function getRendezVousConseiller(
   idConseiller: string,
   dateDebut: DateTime,
@@ -31,7 +32,8 @@ export async function getRendezVousConseiller(
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
   const { content: rdvsJson } = await apiGet<EvenementJson[]>(
     `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
+    session!.accessToken,
+    CACHE_TAGS.EVENEMENT.LISTE
   )
   return rdvsJson.map(jsonToListItem)
 }
@@ -43,7 +45,8 @@ export async function getRendezVousJeune(
 ): Promise<EvenementListItem[]> {
   const { content: rdvsJson } = await apiGet<EvenementJeuneJson[]>(
     `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
-    accessToken
+    accessToken,
+    CACHE_TAGS.EVENEMENT.LISTE
   )
 
   return rdvsJson.map(jsonToListItem)
@@ -61,7 +64,8 @@ export async function getRendezVousEtablissement(
     AnimationCollectiveJson[]
   >(
     `/etablissements/${idEtablissement}/animations-collectives?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
+    session!.accessToken,
+    CACHE_TAGS.EVENEMENT.LISTE
   )
 
   return animationsCollectivesJson.map(jsonToAnimationCollective)
@@ -100,7 +104,8 @@ export async function getDetailsEvenement(
   try {
     const { content: rdvJson } = await apiGet<EvenementJson>(
       `/rendezvous/${idRdv}`,
-      accessToken
+      accessToken,
+      CACHE_TAGS.EVENEMENT.SINGLETON
     )
     return jsonToEvenement(rdvJson)
   } catch (e) {
@@ -111,16 +116,7 @@ export async function getDetailsEvenement(
   }
 }
 
-export async function getTypesRendezVous(
-  accessToken: string
-): Promise<TypeEvenementReferentiel[]> {
-  const { content: types } = await apiGet<TypeEvenementReferentiel[]>(
-    '/referentiels/types-rendezvous',
-    accessToken
-  )
-  return types
-}
-
+// ******* WRITE *******
 export async function creerEvenement(
   newRDV: EvenementFormData
 ): Promise<string> {
@@ -162,6 +158,7 @@ export async function cloreAnimationCollective(
   )
 }
 
+// ******* PRIVATE *******
 async function getAnimationsCollectivesAClore(
   idEtablissement: string,
   page: number,
@@ -177,7 +174,8 @@ async function getAnimationsCollectivesAClore(
     resultats: AnimationCollectivePilotage[]
   }>(
     `/v2/etablissements/${idEtablissement}/animations-collectives?aClore=true&page=${page}`,
-    accessToken
+    accessToken,
+    CACHE_TAGS.EVENEMENT.LISTE
   )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)

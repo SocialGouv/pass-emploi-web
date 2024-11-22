@@ -13,14 +13,14 @@ import {
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { rechercheBeneficiairesDeLEtablissement } from 'services/beneficiaires.service'
-import { modifierAgence } from 'services/conseiller.service'
+import { modifierAgence } from 'services/conseillers.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toRelativeDateTime } from 'utils/date'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/referentiel.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 

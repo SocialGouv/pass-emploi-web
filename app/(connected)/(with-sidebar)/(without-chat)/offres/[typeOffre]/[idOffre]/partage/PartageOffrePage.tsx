@@ -2,7 +2,7 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, ReactNode, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -94,6 +94,13 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
       setIsPartageEnCours(false)
     }
   }
+
+  const pouet: ReactNode = (
+    <>
+      <h3>Coucou</h3>
+      <p>Pouet</p>
+    </>
+  )
 
   function getCardOffre(): JSX.Element {
     switch (offre.type) {

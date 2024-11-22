@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react'
 
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPost } from 'clients/api.client'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   DetailImmersionJson,
@@ -9,9 +9,11 @@ import {
 } from 'interfaces/json/immersion'
 import { BaseImmersion, DetailImmersion, TypeOffre } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// ******* TYPES *******
 export type SearchImmersionsQuery = {
   commune: ValueWithError<Commune | undefined>
   metier: ValueWithError<Metier | undefined>
@@ -23,6 +25,7 @@ let cache:
   | undefined
 const LIMIT = 10
 
+// ******* READ *******
 export async function getImmersionServerSide(
   idImmersion: string,
   accessToken: string
@@ -30,7 +33,8 @@ export async function getImmersionServerSide(
   try {
     const { content: immersionJson } = await apiGet<DetailImmersionJson>(
       `/offres-immersion/${idImmersion}`,
-      accessToken
+      accessToken,
+      CACHE_TAGS.IMMERSION.SINGLETON
     )
     return jsonToDetailImmersion(immersionJson)
   } catch (e) {
@@ -55,7 +59,8 @@ export async function searchImmersions(
     const searchParams = buildSearchParams(query)
     const result = await apiGet<ImmersionItemJson[]>(
       path + searchParams,
-      session!.accessToken
+      session!.accessToken,
+      CACHE_TAGS.IMMERSION.LISTE
     )
     immersionsJson = result.content
     cache = { query, resultsJson: immersionsJson }
@@ -78,6 +83,36 @@ export async function searchImmersions(
   }
 }
 
+// ******* WRITE *******
+export async function partagerRechercheImmersion(query: {
+  idsJeunes: string[]
+  titre: string
+  labelMetier: string
+  codeMetier: string
+  labelLocalite: string
+  latitude: number
+  longitude: number
+}): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/immersions`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      metier: query.labelMetier,
+      rome: query.codeMetier,
+      localisation: query.labelLocalite,
+      lat: query.latitude,
+      lon: query.longitude,
+    },
+    accessToken
+  )
+}
+
+// ******* PRIVATE *******
 function buildSearchParams(recherche: SearchImmersionsQuery): URLSearchParams {
   return new URLSearchParams({
     lat: recherche.commune.value!.latitude.toString(10),

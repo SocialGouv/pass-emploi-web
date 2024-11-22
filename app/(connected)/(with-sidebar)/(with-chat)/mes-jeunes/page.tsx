@@ -3,14 +3,16 @@ import { Metadata } from 'next'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { CompteurActionsPeriode } from 'interfaces/action'
 import {
   BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
+  CompteursPeriode,
 } from 'interfaces/beneficiaire'
 import { estUserMilo } from 'interfaces/conseiller'
-import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
-import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
+import {
+  getBeneficiairesDuConseillerServerSide,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
+} from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = { title: 'Portefeuille' }
@@ -31,7 +33,7 @@ export default async function Portefeuille({
   if (estUserMilo(user)) {
     const dateDebut = DateTime.now().startOf('week')
     const dateFin = DateTime.now().endOf('week')
-    const compteurActionsPeriode: CompteurActionsPeriode[] =
+    const compteurActionsPeriode: CompteursPeriode[] =
       await recupereCompteursBeneficiairesPortefeuilleMilo(
         user.id,
         dateDebut,

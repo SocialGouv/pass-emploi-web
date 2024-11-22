@@ -144,6 +144,12 @@ export type IndicateursSemaine = {
   }
 }
 
+export type CompteursPeriode = {
+  idBeneficiaire: string
+  actions: number
+  rdvs: number
+}
+
 export type Demarche = {
   id: string
   statut: StatutDemarche

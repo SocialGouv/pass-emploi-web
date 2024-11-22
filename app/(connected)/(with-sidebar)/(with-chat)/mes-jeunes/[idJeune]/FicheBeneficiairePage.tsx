@@ -130,7 +130,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       if (motifsSuppression.length === 0) {
         const { getMotifsSuppression } = await import(
-          'services/beneficiaires.service'
+          'services/referentiel.service'
         )
         const result = await getMotifsSuppression()
         setMotifsSuppression(result)

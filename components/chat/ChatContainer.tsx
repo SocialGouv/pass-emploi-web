@@ -9,7 +9,7 @@ import {
   ConseillerHistorique,
 } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneClientSide } from 'services/conseillers.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { useChats } from 'utils/chat/chatsContext'
 import { useCurrentConversation } from 'utils/chat/currentConversationContext'

@@ -7,11 +7,7 @@ import EditionListeDiffusion, {
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/page'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { recupererListeDeDiffusion } from 'services/listes-de-diffusion.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
 )
@@ -20,10 +16,6 @@ jest.mock('services/listes-de-diffusion.service')
 describe('Page d’édition d’une liste de diffusion', () => {
   beforeEach(() => {
     // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
-      accessToken: 'accessToken',
-    })
     ;(headers as jest.Mock).mockReturnValue(new Map())
   })
 

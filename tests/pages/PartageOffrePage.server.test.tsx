@@ -19,11 +19,7 @@ import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.s
 import { getImmersionServerSide } from 'services/immersions.service'
 import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
 )
@@ -42,10 +38,6 @@ describe('Page Partage Offre', () => {
     offreEmploi = unDetailOffreEmploi()
     serviceCivique = unDetailServiceCivique()
     immersion = unDetailImmersion()
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
-      accessToken: 'accessToken',
-    })
     ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(offreEmploi)
     ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(
       serviceCivique

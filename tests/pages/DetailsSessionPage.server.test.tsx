@@ -1,7 +1,9 @@
 import { render } from '@testing-library/react'
+import { getServerSession } from 'next-auth'
 
 import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import DetailsSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/page'
+import { unUtilisateur } from 'fixtures/auth'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
@@ -11,14 +13,10 @@ import {
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getDetailsSession } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/beneficiaires.service')
 jest.mock('services/sessions.service')
 jest.mock(
@@ -35,8 +33,8 @@ describe('Détails Session Page Server', () => {
   describe('Quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: StructureConseiller.POLE_EMPLOI }),
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
@@ -87,10 +85,6 @@ describe('Détails Session Page Server', () => {
 
     beforeEach(async () => {
       //Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: StructureConseiller.MILO },
-        accessToken: 'accessToken',
-      })
       ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
         beneficiaires: beneficiaires,
       })

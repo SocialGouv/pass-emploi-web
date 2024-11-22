@@ -9,11 +9,11 @@ import {
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { estUserMilo } from 'interfaces/conseiller'
+import { getAction } from 'services/actions.service'
 import {
-  getAction,
+  getActionsPredefinies,
   getSituationsNonProfessionnelles,
-} from 'services/actions.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
+} from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type ModificationActionParams = { idAction: string }
@@ -51,7 +51,6 @@ export default async function ModificationAction({
   const { action, jeune } = actionContent
   if (action.status === StatutAction.Qualifiee) notFound()
 
-  // FIXME : dirty fix, problème de rafraichissement de l’action
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   return (
     <>

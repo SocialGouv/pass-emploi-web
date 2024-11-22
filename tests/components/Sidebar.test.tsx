@@ -10,7 +10,7 @@ import Sidebar from 'components/Sidebar'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('components/ModalContainer')
 
 describe('<Sidebar/>', () => {

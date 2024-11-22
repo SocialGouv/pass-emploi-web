@@ -8,16 +8,18 @@ import React from 'react'
 import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 import { TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { partagerRechercheImmersion } from 'services/immersions.service'
 import {
   partagerRechercheAlternance,
-  partagerRechercheImmersion,
   partagerRechercheOffreEmploi,
-  partagerRechercheServiceCivique,
-} from 'services/suggestions.service'
+} from 'services/offres-emploi.service'
+import { partagerRechercheServiceCivique } from 'services/services-civiques.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/suggestions.service')
+jest.mock('services/offres-emploi.service')
+jest.mock('services/immersions.service')
+jest.mock('services/services-civiques.service')
 
 describe('Partage Recherche', () => {
   let container: HTMLElement

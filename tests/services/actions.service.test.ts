@@ -11,8 +11,11 @@ import {
   uneListeDActionsAQualifierJson,
   uneListeDActionsJson,
 } from 'fixtures/action'
-import { QualificationAction, StatutAction } from 'interfaces/action'
+import { uneDemarcheJson, uneListeDeDemarches } from 'fixtures/beneficiaire'
+import { StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
+import { StatutDemarche } from 'interfaces/json/beneficiaire'
+import { qualifier } from 'server-actions/actions.server-actions'
 import {
   creerAction,
   deleteAction,
@@ -21,11 +24,10 @@ import {
   getActionsAQualifierServerSide,
   getActionsBeneficiaireClientSide,
   getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-  qualifier,
+  getDemarchesBeneficiaire,
   qualifierActions,
-  recupereCompteursBeneficiairesPortefeuilleMilo,
 } from 'services/actions.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -299,7 +301,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions,
@@ -330,7 +333,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -367,7 +371,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=done&etats=QUALIFIEE',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -404,7 +409,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&categories=SANTE',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -441,7 +447,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions,
@@ -470,7 +477,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE&codesCategories=SANTE&codesCategories=EMPLOI',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: uneListeDActionsAQualifier(),
@@ -498,7 +506,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: uneListeDActionsAQualifier(),
@@ -524,7 +533,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/id-jeune/action',
+        '/conseillers/id-conseiller/jeunes/id-jeune/action',
         {
           codeQualification: 'CODE',
           content: 'content',
@@ -549,7 +558,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await qualifier('id-action', CODE_QUALIFICATION_NON_SNP, {
+      await qualifier('id-action', CODE_QUALIFICATION_NON_SNP, {
         commentaire: 'commentaire',
       })
 
@@ -560,14 +569,9 @@ describe('ActionsApiService', () => {
           codeQualification: CODE_QUALIFICATION_NON_SNP,
           commentaireQualification: 'commentaire',
         },
-        'accessToken'
+        'accessToken',
+        ['action', 'actions']
       )
-      const expected: QualificationAction = {
-        libelle: 'Non-SNP',
-        code: 'NON_SNP',
-        isSituationNonProfessionnelle: false,
-      }
-      expect(actual).toStrictEqual(expected)
     })
 
     it('qualifie une action avec une date de début et date de fin', async () => {
@@ -581,9 +585,9 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await qualifier('id-action', 'SANTE', {
+      await qualifier('id-action', 'SANTE', {
         commentaire: 'commentaire',
-        dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
+        dateFinModifiee: '2022-09-06T22:00:00.000Z',
       })
 
       // THEN
@@ -592,16 +596,11 @@ describe('ActionsApiService', () => {
         {
           commentaireQualification: 'commentaire',
           codeQualification: 'SANTE',
-          dateFinReelle: '2022-09-07T00:00:00.000+02:00',
+          dateFinReelle: '2022-09-06T22:00:00.000Z',
         },
-        'accessToken'
+        'accessToken',
+        ['action', 'actions']
       )
-      const expected: QualificationAction = {
-        libelle: 'Santé',
-        code: 'SANTE',
-        isSituationNonProfessionnelle: true,
-      }
-      expect(actual).toStrictEqual(expected)
     })
   })
 
@@ -665,12 +664,13 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(result).toEqual(desCategoriesAvecNONSNP())
     })
 
-    it('retourne la liste des situations non professionnelles', async () => {
+    it('retourne la liste des situations non professionnelles sans Non SNP', async () => {
       // GIVEN
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: desCategoriesAvecNONSNP(),
@@ -685,54 +685,107 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(result).toEqual(desCategories())
     })
   })
 
-  describe('.recupereCompteursBeneficiairesPortefeuilleMilo', () => {
-    it('retourne la liste des compteurs d’actions', async () => {
-      jest
-        .spyOn(DateTime, 'now')
-        .mockReturnValue(DateTime.fromISO('2024-08-01'))
-      const dateDebut = DateTime.now().startOf('week')
-      const dateFin = DateTime.now().endOf('week')
-      const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-      const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-      const compteursActions = [
-        {
-          idBeneficiaire: 'id-beneficiaire',
-          actions: 3,
-          rdvs: 2,
-          sessions: 4,
-        },
-      ]
-
+  describe('.getDemarchesBeneficiaire', () => {
+    it('renvoie les démarches du bénéficiaire à partir d’une date', async () => {
+      // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: compteursActions,
-      })
-
-      // WHEN
-      const result = await recupereCompteursBeneficiairesPortefeuilleMilo(
-        'id-conseiller',
-        dateDebut,
-        dateFin,
-        'accessToken'
-      )
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-        'accessToken'
-      )
-      expect(result).toEqual([
-        {
-          idBeneficiaire: 'id-beneficiaire',
-          actions: 3,
-          rdvs: 6,
+        content: {
+          queryModel: [
+            uneDemarcheJson(),
+            uneDemarcheJson({
+              id: 'id-demarche-2',
+              statut: StatutDemarche.A_FAIRE,
+              attributs: [
+                { cle: 'description', valeur: 'Démarche personnalisée' },
+              ],
+            }),
+          ],
         },
-      ])
+      })
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken',
+        'actions'
+      )
+      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: false })
+    })
+
+    it('renvoie les démarches pas fraiches', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          queryModel: [
+            uneDemarcheJson(),
+            uneDemarcheJson({
+              id: 'id-demarche-2',
+              statut: StatutDemarche.A_FAIRE,
+              attributs: [
+                { cle: 'description', valeur: 'Démarche personnalisée' },
+              ],
+            }),
+          ],
+          dateDuCache: '2024-04-12',
+        },
+      })
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken',
+        'actions'
+      )
+      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: true })
+    })
+
+    it('renvoie un échec', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'Erreur lors de la récupération des démarches')
+      )
+      const dateDebut = DateTime.fromISO('2024-09-10')
+
+      // When
+      const actual = await getDemarchesBeneficiaire(
+        'id-jeune',
+        dateDebut,
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        'accessToken',
+        'actions'
+      )
+      expect(actual).toEqual(null)
     })
   })
 })

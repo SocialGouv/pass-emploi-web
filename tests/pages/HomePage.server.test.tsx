@@ -5,30 +5,21 @@ import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePag
 import Home from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/page'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  uneListeDAgencesMILO,
   uneListeDAgencesFranceTravail,
+  uneListeDAgencesMILO,
 } from 'fixtures/referentiel'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/referentiel.service')
 
 describe('HomePage server side', () => {
   describe('si le conseiller a renseigné son agence et son mail', () => {
     beforeEach(() => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: '1' },
-        accessToken: 'accessToken',
-      })
-
+      /// Given
       const conseillerAvecAgence: Conseiller = unConseiller({
         structureMilo: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
         email: 'pass.emploi@beta.gouv.fr',
@@ -62,8 +53,7 @@ describe('HomePage server side', () => {
 
   describe('si le conseiller Milo n’a pas renseigné sa structure', () => {
     it('prépare la page pour renseigner sa structure', async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
-
+      // Given
       const conseiller = unConseiller({
         structure: StructureConseiller.MILO,
         email: 'pass.emploi@beta.gouv.fr',
@@ -88,8 +78,7 @@ describe('HomePage server side', () => {
 
   describe('si le conseiller France Travail n’a pas renseigné son agence', () => {
     it('prépare la page pour renseigner son agence', async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
-
+      // Given
       const conseiller = unConseiller({
         structure: StructureConseiller.POLE_EMPLOI,
         email: 'pass.emploi@beta.gouv.fr',
@@ -118,8 +107,7 @@ describe('HomePage server side', () => {
 
   describe('si le conseiller n’a pas renseigné son adresse email', () => {
     it('prépare la page pour renseigner son adresse email', async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
-
+      // Given
       const conseiller = unConseiller({
         agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
         structureMilo: {
@@ -151,7 +139,7 @@ describe('HomePage server side', () => {
 
   describe('si c’est un nouveau conseiller', () => {
     it('prépare la page avec l’onboarding', async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
+      // Given
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
         unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
       )
@@ -183,8 +171,6 @@ describe('HomePage server side', () => {
   describe('si le conseiller doit signer la dernière version des CGU', () => {
     it('redirige vers la signature des CGUs', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
-
       const conseiller: Conseiller = unConseiller({
         dateSignatureCGU: '1970-01-01',
       })

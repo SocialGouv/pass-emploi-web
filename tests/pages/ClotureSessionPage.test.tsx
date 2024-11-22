@@ -13,7 +13,7 @@ import { cloreSession } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/sessions.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 
 describe('Cloture Session', () => {
   let container: HTMLElement

@@ -1,18 +1,16 @@
 import { render } from '@testing-library/react'
+import { getServerSession } from 'next-auth'
 
 import RendezVousPasses, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/page'
 import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
+import { unUtilisateur } from 'fixtures/auth'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 )
@@ -30,12 +28,6 @@ describe('RendezVousPassesPage server side', () => {
 
   describe('quand le conseiller n’est pas France Travail', () => {
     it('récupère les rendez-vous passés d’un jeune avec son conseiller', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        accessToken: 'accessToken',
-        user: { id: 'id-conseiller', structure: 'MILO' },
-      })
-
       // When
       const params = { idJeune: 'id-jeune' }
       const metadata = await generateMetadata({ params })
@@ -63,8 +55,8 @@ describe('RendezVousPassesPage server side', () => {
   describe('quand le conseiller est France Travail', () => {
     it('ne recupère pas les rendez-vous', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-        user: { structure: 'POLE_EMPLOI' },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: 'POLE_EMPLOI' }),
       })
 
       // When

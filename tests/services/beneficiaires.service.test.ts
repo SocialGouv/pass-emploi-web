@@ -2,8 +2,6 @@ import { DateTime } from 'luxon'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
-  desConseillersBeneficiaire,
-  desConseillersBeneficiaireJson,
   desIndicateursSemaine,
   desIndicateursSemaineJson,
   desItemsBeneficiaires,
@@ -12,39 +10,27 @@ import {
   unDetailBeneficiaireJson,
   uneBaseBeneficiaire,
   uneBaseBeneficiaireJson,
-  uneDemarcheJson,
-  uneListeDeDemarches,
-  uneMetadonneeFavoris,
-  uneMetadonneeFavorisJson,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { CategorieSituation } from 'interfaces/beneficiaire'
-import {
-  StatutDemarche,
-  SuppressionBeneficiaireFormData,
-} from 'interfaces/json/beneficiaire'
-import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import {
   archiverJeune,
   getBeneficiairesDeLaStructureMilo,
   getBeneficiairesDeLEtablissementClientSide,
   getBeneficiairesDuConseillerClientSide,
   getBeneficiairesDuConseillerServerSide,
-  getConseillersDuJeuneClientSide,
-  getConseillersDuJeuneServerSide,
-  getDemarchesBeneficiaire,
   getIdentitesBeneficiairesClientSide,
   getIdJeuneMilo,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
   getJeunesDuConseillerParId,
-  getMetadonneesFavorisJeune,
-  getMotifsSuppression,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
+  recupererBeneficiaires,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
 import { ApiError } from 'utils/httpClient'
@@ -63,8 +49,9 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/jeunes`,
-        'accessToken'
+        `/conseillers/id-conseiller/jeunes`,
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -83,7 +70,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/idConseiller/jeunes`,
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -106,7 +94,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/${idConseiller}/jeunes`,
-        accessToken
+        accessToken,
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -126,7 +115,11 @@ describe('JeunesApiService', () => {
       const actual = await getJeuneDetails('id-jeune', 'accessToken')
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/jeunes/id-jeune', 'accessToken')
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-jeune',
+        'accessToken',
+        'beneficiaire'
+      )
       expect(actual).toEqual(
         unDetailBeneficiaire({
           urlDossier: 'url-dossier',
@@ -162,7 +155,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/milo/jeunes/numero-dossier',
-        'accessToken'
+        'accessToken',
+        'milo'
       )
       expect(actual).toEqual('id-jeune')
     })
@@ -256,88 +250,6 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getConseillersDuJeuneClientSide', () => {
-    it('renvoie les conseillers du jeune', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desConseillersBeneficiaireJson(),
-      })
-
-      // When
-      const actual = await getConseillersDuJeuneClientSide('id-jeune')
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/conseillers',
-        'accessToken'
-      )
-      expect(actual).toEqual(desConseillersBeneficiaire())
-    })
-  })
-
-  describe('.getConseillersDuJeuneServerSide', () => {
-    it('renvoie les conseillers du jeune', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desConseillersBeneficiaireJson(),
-      })
-
-      // When
-      const actual = await getConseillersDuJeuneServerSide(
-        'id-jeune',
-        'accessToken'
-      )
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/conseillers',
-        'accessToken'
-      )
-      expect(actual).toEqual(desConseillersBeneficiaire())
-    })
-  })
-
-  describe('.getMotifsSuppression', () => {
-    it('renvoie les motifs de suppression', async () => {
-      // Given
-      const accessToken = 'accessToken'
-      const motifs: MotifSuppressionBeneficiaire[] = desMotifsDeSuppression()
-
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: motifs,
-      })
-
-      // When
-      const actual = await getMotifsSuppression()
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/referentiels/motifs-suppression-jeune',
-        accessToken
-      )
-      expect(actual).toEqual(motifs)
-    })
-  })
-
-  describe('.getMetadonneesFavorisJeune', () => {
-    it('renvoie les métadonnées des recherches sauvegardées d’un bénéficiaire', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: { favoris: uneMetadonneeFavorisJson() },
-      })
-
-      // When
-      const actual = await getMetadonneesFavorisJeune('id-jeune', 'accessToken')
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/favoris/metadonnees',
-        'accessToken'
-      )
-      expect(actual).toEqual(uneMetadonneeFavoris())
-    })
-  })
-
   describe('.modifierIdentifiantPartenaire', () => {
     it('modifie l’idPartenaire d’un jeune', async function () {
       // Given
@@ -349,7 +261,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/' + idJeune,
+        '/conseillers/id-conseiller/jeunes/' + idJeune,
         { idPartenaire: idPartenaire },
         'accessToken'
       )
@@ -376,7 +288,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=true',
-        'accessToken'
+        'accessToken',
+        ['actions', 'agenda']
       )
       expect(actual).toEqual(desIndicateursSemaine())
     })
@@ -402,7 +315,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=false',
-        'accessToken'
+        'accessToken',
+        ['actions', 'agenda']
       )
       expect(actual).toEqual(desIndicateursSemaine())
     })
@@ -422,7 +336,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/etablissements/id-etablissement/jeunes',
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual([uneBaseBeneficiaire()])
     })
@@ -445,8 +360,9 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
-        'accessToken'
+        '/conseillers/id-conseiller/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual(basesJeunes)
     })
@@ -491,7 +407,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/jeunes?q=e&page=3',
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual({
         metadonnees: {
@@ -556,7 +473,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/structures-milo/id-structure/jeunes',
-        'tok'
+        'tok',
+        'portefeuille'
       )
       expect(actual).toEqual({
         beneficiaires: [
@@ -579,97 +497,63 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getDemarchesBeneficiaire', () => {
-    it('renvoie les démarches du bénéficiaire à partir d’une date', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          queryModel: [
-            uneDemarcheJson(),
-            uneDemarcheJson({
-              id: 'id-demarche-2',
-              statut: StatutDemarche.A_FAIRE,
-              attributs: [
-                { cle: 'description', valeur: 'Démarche personnalisée' },
-              ],
-            }),
-          ],
+  describe('.recupereCompteursBeneficiairesPortefeuilleMilo', () => {
+    it('retourne la liste des compteurs d’actions', async () => {
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2024-08-01'))
+      const dateDebut = DateTime.now().startOf('week')
+      const dateFin = DateTime.now().endOf('week')
+      const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+      const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+      const compteursActions = [
+        {
+          idBeneficiaire: 'id-beneficiaire',
+          actions: 3,
+          rdvs: 2,
+          sessions: 4,
         },
-      })
-      const dateDebut = DateTime.fromISO('2024-09-10')
+      ]
 
-      // When
-      const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
-        dateDebut,
-        'id-conseiller',
-        'accessToken'
-      )
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
-        'accessToken'
-      )
-      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: false })
-    })
-
-    it('renvoie les démarches pas fraiches', async () => {
-      // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          queryModel: [
-            uneDemarcheJson(),
-            uneDemarcheJson({
-              id: 'id-demarche-2',
-              statut: StatutDemarche.A_FAIRE,
-              attributs: [
-                { cle: 'description', valeur: 'Démarche personnalisée' },
-              ],
-            }),
-          ],
-          dateDuCache: '2024-04-12',
-        },
+        content: compteursActions,
       })
-      const dateDebut = DateTime.fromISO('2024-09-10')
 
-      // When
-      const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
-        dateDebut,
+      // WHEN
+      const result = await recupereCompteursBeneficiairesPortefeuilleMilo(
         'id-conseiller',
+        dateDebut,
+        dateFin,
         'accessToken'
       )
 
-      // Then
+      // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
-        'accessToken'
+        `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        'accessToken',
+        ['actions', 'agenda']
       )
-      expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: true })
+      expect(result).toEqual([
+        {
+          idBeneficiaire: 'id-beneficiaire',
+          actions: 3,
+          rdvs: 6,
+        },
+      ])
     })
+  })
 
-    it('renvoie un échec', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'Erreur lors de la récupération des démarches')
-      )
-      const dateDebut = DateTime.fromISO('2024-09-10')
-
+  describe('.recupererBeneficiaires', () => {
+    it('récupère les bénéficiaires transférés temporairement', async () => {
       // When
-      const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
-        dateDebut,
-        'id-conseiller',
-        'accessToken'
-      )
+      await recupererBeneficiaires()
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+      expect(apiPost).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/recuperer-mes-jeunes',
+        {},
         'accessToken'
       )
-      expect(actual).toEqual(null)
     })
   })
 })

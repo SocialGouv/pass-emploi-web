@@ -7,14 +7,10 @@ import LoginPassEmploi, {
   metadata,
 } from 'app/(connexion)/login/passemploi/page'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('app/(connexion)/login/passemploi/LoginPassEmploiPage')
 
 describe('LoginPassEmploiPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {
-    // Given
-    ;(getServerSession as jest.Mock).mockResolvedValue({})
-
     // When
     const promise = LoginPassEmploi({
       searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },

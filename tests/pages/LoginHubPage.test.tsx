@@ -7,10 +7,6 @@ import React from 'react'
 import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
-}))
-
 describe('LoginHubPage client side', () => {
   let container: HTMLElement
   beforeEach(async () => {

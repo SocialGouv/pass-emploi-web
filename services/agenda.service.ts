@@ -9,8 +9,10 @@ import {
   sessionJsonToEntree,
   SessionMiloBeneficiaireJson,
 } from 'interfaces/json/session'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { compareDates } from 'utils/date'
 
+// TYPES
 type DesRdvEtDesActions = {
   actions: ActionJson[]
   rendezVous: EvenementJeuneJson[]
@@ -24,6 +26,7 @@ type AgendaMetadataJson = {
   actionsEnRetard: string
 }
 
+// ******* READ *******
 export async function recupererAgenda(
   idJeune: string,
   maintenant: DateTime
@@ -35,7 +38,8 @@ export async function recupererAgenda(
     content: { actions, rendezVous, sessionsMilo, metadata },
   } = await apiGet<DesRdvEtDesActions>(
     `/jeunes/${idJeune}/home/agenda?maintenant=${maintenantUrlEncode}`,
-    session!.accessToken
+    session!.accessToken,
+    CACHE_TAGS.EVENEMENT.LISTE
   )
 
   return {
@@ -48,6 +52,7 @@ export async function recupererAgenda(
   }
 }
 
+// ******* PRIVATE *******
 function jsonToMetadata(json: AgendaMetadataJson): AgendaMetadata {
   return {
     dateDeDebut: DateTime.fromISO(json.dateDeDebut),

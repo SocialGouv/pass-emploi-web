@@ -3,15 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginCEJPage from 'app/(connexion)/login/cej/LoginCEJPage'
-import { signin } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
-
-jest.mock('utils/auth/auth', () => ({
-  signin: jest.fn(),
-}))
 
 describe('LoginCEJPage client side', () => {
   let container: HTMLElement
@@ -67,10 +63,10 @@ describe('LoginCEJPage client side', () => {
       await userEvent.click(peButton)
 
       // Then
-      expect(signin).toHaveBeenCalledWith(
-        'pe-conseiller',
-        setErrorMsg,
-        'redirectUrl'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'pe-conseiller' }
       )
     })
 
@@ -84,10 +80,26 @@ describe('LoginCEJPage client side', () => {
       await userEvent.click(miloButton)
 
       // Then
-      expect(signin).toHaveBeenCalledWith(
-        'similo-conseiller',
-        setErrorMsg,
-        'redirectUrl'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'similo-conseiller' }
+      )
+    })
+
+    it('transmet l’erreur d’identification', async () => {
+      // Given
+      const miloButton = screen.getByRole('button', {
+        name: 'Connexion Mission Locale',
+      })
+      ;(signIn as jest.Mock).mockRejectedValue(new Error())
+
+      // When
+      await userEvent.click(miloButton)
+
+      // Then
+      expect(setErrorMsg).toHaveBeenCalledWith(
+        "une erreur est survenue lors de l'authentification"
       )
     })
   })

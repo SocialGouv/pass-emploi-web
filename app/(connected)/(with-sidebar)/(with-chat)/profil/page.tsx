@@ -5,7 +5,7 @@ import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/Profil
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { estUserMilo } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

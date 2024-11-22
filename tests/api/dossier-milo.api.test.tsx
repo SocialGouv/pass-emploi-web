@@ -4,16 +4,14 @@
 
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import { GET } from 'app/api/milo/[numeroDossier]/route'
+import { unUtilisateur } from 'fixtures/auth'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('utils/analytics/matomo')
@@ -22,8 +20,8 @@ describe('GET /api/milo/[numeroDossier]', () => {
   describe('Pour un conseiller pas MiLo', () => {
     it('redirige vers la liste des jeunes', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: StructureConseiller.POLE_EMPLOI }),
       })
 
       // When
@@ -40,13 +38,6 @@ describe('GET /api/milo/[numeroDossier]', () => {
   })
 
   describe('Pour un conseiller MiLo', () => {
-    beforeEach(() => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.MILO },
-      })
-    })
-
     describe('Quand le jeune existe', () => {
       it('redirige vers la fiche du jeune', async () => {
         // Given
@@ -64,7 +55,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
         await expect(promise).rejects.toEqual(
           new Error('NEXT REDIRECT /mes-jeunes/id-jeune')
         )
-        expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', undefined)
+        expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', 'accessToken')
         expect(redirect).toHaveBeenCalledWith('/mes-jeunes/id-jeune')
         expect(trackSSR).toHaveBeenCalledWith({
           structure: 'MILO',
@@ -93,7 +84,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
         await expect(promise).rejects.toEqual(
           new Error('NEXT REDIRECT /mes-jeunes')
         )
-        expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', undefined)
+        expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', 'accessToken')
         expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
         expect(trackSSR).toHaveBeenCalledWith({
           structure: 'MILO',

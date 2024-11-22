@@ -4,11 +4,7 @@ import ListesDiffusionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-
 import ListesDiffusion from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/listes-de-diffusion/page'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/listes-de-diffusion/ListesDiffusionPage'
 )
@@ -17,10 +13,6 @@ jest.mock('services/listes-de-diffusion.service')
 describe('Page Listes de Diffusion', () => {
   it('récupère les listes de diffusion', async () => {
     // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      accessToken: 'access-token',
-      user: { id: 'id-conseiller' },
-    })
     ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )
@@ -31,7 +23,7 @@ describe('Page Listes de Diffusion', () => {
     // Then
     expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
       'id-conseiller',
-      'access-token'
+      'accessToken'
     )
     expect(ListesDiffusionPage).toHaveBeenCalledWith(
       {

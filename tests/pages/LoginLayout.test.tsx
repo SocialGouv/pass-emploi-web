@@ -6,8 +6,6 @@ import React from 'react'
 import LayoutLoginClient from 'app/(connexion)/login/LayoutLoginClient'
 import { MODAL_ROOT_ID } from 'components/globals'
 
-jest.mock('utils/auth/auth', () => ({ signin: jest.fn() }))
-
 describe('LoginLayout client side', () => {
   let container: HTMLElement
   beforeEach(async () => {

@@ -79,7 +79,7 @@ function PortefeuillePage({
     setIsRecuperationBeneficiairesLoading(true)
     try {
       const { recupererBeneficiaires: _recupererBeneficiaires } = await import(
-        'services/conseiller.service'
+        'services/beneficiaires.service'
       )
       await _recupererBeneficiaires()
       setAlerte(AlerteParam.recuperationBeneficiaires)

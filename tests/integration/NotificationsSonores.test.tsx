@@ -21,7 +21,7 @@ import { ChatsProvider } from 'utils/chat/chatsContext'
 
 jest.mock('services/messages.service')
 jest.mock('services/beneficiaires.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
