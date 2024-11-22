@@ -74,13 +74,16 @@ function ResettableTextInput(
         className='m-auto w-10 h-10 rounded-full hover:rounded-full hover:bg-primary_lighten'
         onClick={applyReset}
       >
-        <span className='sr-only'>Effacer le champ de saisie</span>
+        <span id={id + '--reset-label'} className='sr-only'>
+          Effacer le champ de saisie
+        </span>
         <IconComponent
           name={IconName.Close}
           focusable={false}
-          aria-hidden={true}
+          role='img'
+          aria-labelledby={id + '--reset-label'}
+          title='Effacer le champ de saisie'
           className='m-auto w-6 h-6 fill-current'
-          title='Effacer'
         />
       </button>
     </div>

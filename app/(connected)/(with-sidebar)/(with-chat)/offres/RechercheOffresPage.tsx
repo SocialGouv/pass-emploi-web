@@ -309,12 +309,13 @@ function RechercheOffresPage() {
           >
             <IconComponent
               name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}
+              role='img'
+              aria-labelledby='toggle-critere-label'
               title={`${collapsed ? 'Voir' : 'Cacher'} les critères`}
               className='h-6 w-6 fill-primary'
-              aria-hidden={true}
               focusable={false}
             />
-            <span className='sr-only'>
+            <span id='toggle-critere-label' className='sr-only'>
               {collapsed ? 'Voir' : 'Cacher'} les critères
             </span>
           </button>

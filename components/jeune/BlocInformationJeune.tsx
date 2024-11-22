@@ -153,13 +153,15 @@ function DossierExterne({
           rel='noopener noreferrer'
         >
           Dossier jeune i-milo{' '}
-          <span className='sr-only'>(nouvelle fenêtre)</span>
+          <span id='nouvelle-fenetre' className='sr-only'>
+            (nouvelle fenêtre)
+          </span>
           <IconComponent
             name={IconName.OpenInNew}
             focusable={false}
             role='img'
-            title='ouvrir'
-            aria-hidden={true}
+            title='(nouvelle fenêtre)'
+            aria-labelledby='nouvelle-fenetre'
             className='ml-2 w-4 h-4 fill-current'
           />
         </a>

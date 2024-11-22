@@ -11,7 +11,7 @@ import {
 import { utiliseChat } from 'interfaces/conseiller'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import redirectedFromHome from 'utils/redirectedFromHome'
+import { redirectedFromHome } from 'utils/helpers'
 
 export const metadata: Metadata = { title: 'Message multi-destinataires' }
 

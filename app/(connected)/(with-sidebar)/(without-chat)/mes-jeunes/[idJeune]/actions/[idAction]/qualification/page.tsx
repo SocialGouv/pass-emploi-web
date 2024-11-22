@@ -10,6 +10,7 @@ import {
 import { StatutAction } from 'interfaces/action'
 import { estUserMilo } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { unsafeRandomId } from 'utils/helpers'
 
 type QualificationParams = { idAction: string }
 type QualificationSearchParams = Partial<{ liste: string }>
@@ -51,7 +52,7 @@ export default async function Qualification({
   if (action.status !== StatutAction.Terminee) notFound()
 
   // FIXME : dirty fix, problème de l’action
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${unsafeRandomId()}`
   const returnToListe =
     searchParams?.liste === 'pilotage'
       ? '/pilotage'

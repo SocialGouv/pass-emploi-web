@@ -30,12 +30,15 @@ export function AnimationCollectiveRow({
   animationCollective: AnimationCollective
 }) {
   const { date } = animationCollective
+  const duree = toFrenchDuration(animationCollective.duree)
+  const dureeA11y = toFrenchDuration(animationCollective.duree, { a11y: true })
 
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [estCache, setEstCache] = useState<boolean>(
     animationCollective.estCache ?? false
   )
+
   function getHref(ac: AnimationCollective): string {
     if (ac.isSession) return `agenda/sessions/${ac.id}`
     else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
@@ -63,20 +66,20 @@ export function AnimationCollectiveRow({
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
         <div>
           {toFrenchTime(date)} -{' '}
-          <span className='sr-only'>
-            durée{' '}
-            {toFrenchDuration(animationCollective.duree, {
-              a11y: true,
-            })}
-          </span>
-          <span className='inline-flex items-center' aria-hidden={true}>
+          <span className='inline-flex items-center'>
             <IconComponent
               name={IconName.ScheduleOutline}
               focusable={false}
-              title='durée'
+              role='img'
+              aria-labelledby={animationCollective.id + '--duree'}
               className='inline w-[1em] h-[1em] fill-current mr-1'
             />
-            {toFrenchDuration(animationCollective.duree)}
+            <span
+              id={animationCollective.id + '--duree'}
+              aria-label={'durée ' + dureeA11y}
+            >
+              {duree}
+            </span>
           </span>
         </div>
       </TD>

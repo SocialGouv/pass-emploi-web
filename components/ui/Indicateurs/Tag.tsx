@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { unsafeRandomId } from 'utils/helpers'
 
 interface TagProps {
   label: string
@@ -33,22 +34,43 @@ function Tag({
   iconLabel,
   isSmallTag,
 }: TagProps) {
+  function TagIcon() {
+    const iconStyle = 'h-5 w-5 mr-1 fill-current'
+    if (iconLabel) {
+      const labelId = 'tag-icon-' + unsafeRandomId()
+      return (
+        <>
+          <IconComponent
+            name={iconName!}
+            focusable={false}
+            className={iconStyle}
+            role='img'
+            aria-labelledby={labelId}
+            title={iconLabel}
+          />
+          <span id={labelId} className='sr-only'>
+            {iconLabel}
+          </span>
+        </>
+      )
+    } else
+      return (
+        <IconComponent
+          name={iconName!}
+          focusable={false}
+          aria-hidden={true}
+          className={iconStyle}
+        />
+      )
+  }
+
   return (
     <span
       className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
         className ?? ''
       } ${isSmallTag ? '!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4' : ''}`}
     >
-      {iconName && (
-        <IconComponent
-          name={iconName}
-          aria-hidden={!iconLabel}
-          className='h-5 w-5 mr-1 fill-current'
-          aria-label={iconLabel ? iconLabel : undefined}
-          title={iconLabel ? iconLabel : undefined}
-          role='img'
-        />
-      )}
+      {iconName && <TagIcon />}
       {label}
     </span>
   )

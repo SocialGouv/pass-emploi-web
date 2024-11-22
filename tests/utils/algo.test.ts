@@ -1,4 +1,4 @@
-import { getPreviousItemId } from 'utils/algo'
+import { getPreviousItemId } from 'utils/helpers'
 
 describe('getPreviousItemId', () => {
   const idATrouver = 'idATrouver'

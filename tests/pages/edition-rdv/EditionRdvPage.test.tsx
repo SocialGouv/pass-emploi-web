@@ -606,7 +606,9 @@ describe('EditionRdvPage client side', () => {
             // Given
             await userEvent.selectOptions(selectType, 'AUTRE')
 
-            const inputTypePrecision = screen.getByLabelText('* Préciser')
+            const inputTypePrecision = screen.getByRole('textbox', {
+              name: '* Préciser Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.',
+            })
             await userEvent.type(inputTypePrecision, 'un texte de précision')
 
             // When
@@ -650,14 +652,22 @@ describe('EditionRdvPage client side', () => {
           await userEvent.selectOptions(selectType, 'AUTRE')
 
           // Then
-          expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
+          expect(
+            screen.getByRole('textbox', {
+              name: '* Préciser Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.',
+            })
+          ).toBeInTheDocument()
         })
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
           await userEvent.selectOptions(selectType, 'AUTRE')
-          const inputTypePrecision: HTMLInputElement =
-            screen.getByLabelText('* Préciser')
+          const inputTypePrecision: HTMLInputElement = screen.getByRole(
+            'textbox',
+            {
+              name: '* Préciser Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.',
+            }
+          )
 
           // When
           expect(inputTypePrecision).toBeInTheDocument()

@@ -283,14 +283,16 @@ function ChatRoom(
                   />
                   {afficherNotificationMessageImportant && (
                     <>
+                      {/* TODO tooltip https://inclusive-components.design/tooltips-toggletips/ */}
                       <IconComponent
                         name={IconName.DecorativePoint}
                         className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
-                        focusable={false}
-                        aria-hidden={true}
+                        role='img'
+                        aria-labelledby='deja-configure-label'
                         title='Un message important est déjà configuré'
+                        focusable={false}
                       />
-                      <span className='sr-only'>
+                      <span id='deja-configure-label' className='sr-only'>
                         Un message important est déjà configuré
                       </span>
                     </>

@@ -151,7 +151,6 @@ function HeaderChat(
                 >
                   <IconComponent
                     name={flag!.icon}
-                    title={flag!.label}
                     className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}

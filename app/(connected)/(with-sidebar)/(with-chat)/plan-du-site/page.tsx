@@ -6,7 +6,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import redirectedFromHome from 'utils/redirectedFromHome'
+import { redirectedFromHome } from 'utils/helpers'
 
 export const metadata: Metadata = {
   title: 'Plan du site',

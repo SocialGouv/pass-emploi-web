@@ -10,11 +10,11 @@ import {
   modifierMessage as _modifierMessage,
   supprimerMessage as _supprimerMessage,
 } from 'services/messages.service'
-import { getPreviousItemId } from 'utils/algo'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
+import { getPreviousItemId } from 'utils/helpers'
 
 export default function MessagesDuJour({
   conversation,

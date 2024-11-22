@@ -22,9 +22,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   const heure = toFrenchTime(date)
   const heureA11y = toFrenchTime(date, { a11y: true })
   const duree = toFrenchDuration(evenement.duree)
-  const dureeA11y = toFrenchDuration(evenement.duree, {
-    a11y: true,
-  })
+  const dureeA11y = toFrenchDuration(evenement.duree, { a11y: true })
 
   const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id
   const urlSessionMilo = '/agenda/sessions/' + evenement.id
@@ -34,15 +32,21 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
       <TD className='!rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{longMonthDate}</div>
         <div>
-          {heure} - <span className='sr-only'>durée {dureeA11y}</span>
-          <span className='inline-flex items-center' aria-hidden={true}>
+          {heure} -{' '}
+          <span className='inline-flex items-center'>
             <IconComponent
               name={IconName.ScheduleOutline}
               focusable={false}
-              title='durée'
+              role='img'
+              aria-labelledby={evenement.id + '--duree'}
               className='inline w-[1em] h-[1em] fill-current mr-1'
             />
-            {duree}
+            <span
+              id={evenement.id + '--duree'}
+              aria-label={'durée ' + dureeA11y}
+            >
+              {duree}
+            </span>
           </span>
         </div>
       </TD>

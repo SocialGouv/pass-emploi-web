@@ -6,7 +6,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
-import isEmailValid from 'utils/isEmailValid'
+import { isEmailValid } from 'utils/helpers'
 
 type FormulaireBeneficiaireFranceTravailProps = {
   aAccesMap: boolean

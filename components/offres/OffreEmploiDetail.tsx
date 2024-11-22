@@ -171,14 +171,19 @@ export default function OffreEmploiDetail({
                   <dd className={`${ddStyle} flex`}>
                     {offre.experience.libelle}
                     {offre.experience.exigee && (
-                      <IconComponent
-                        name={IconName.Error}
-                        title='Expérience exigée'
-                        aria-label='Expérience exigée'
-                        focusable={false}
-                        className='inline ml-2 h-5 w-5 fill-primary'
-                        role='img'
-                      />
+                      <>
+                        <IconComponent
+                          name={IconName.Error}
+                          role='img'
+                          title='Expérience exigée'
+                          aria-labelledby='experience-label'
+                          focusable={false}
+                          className='inline ml-2 h-5 w-5 fill-primary'
+                        />
+                        <span id='experience-label' className='sr-only'>
+                          Expérience exigée
+                        </span>
+                      </>
                     )}
                   </dd>
                 </>

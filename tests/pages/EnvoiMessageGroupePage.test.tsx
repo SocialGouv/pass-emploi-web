@@ -58,7 +58,9 @@ describe('EnvoiMessageGroupePage client side', () => {
     inputSearchBeneficiaire = screen.getByRole('combobox', {
       name: /Destinataires/,
     })
-    inputMessage = screen.getByLabelText('* Message')
+    inputMessage = screen.getByRole('textbox', {
+      name: '* Message Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.',
+    })
     fileInput = screen.getByLabelText('Ajouter une pièce jointe')
 
     submitButton = screen.getByRole('button', {
@@ -78,7 +80,11 @@ describe('EnvoiMessageGroupePage client side', () => {
     it('devrait afficher les champs pour envoyer un message', () => {
       // Then
       expect(screen.getAllByRole('group').length).toBe(2)
-      expect(screen.getByLabelText('* Message')).toBeInTheDocument()
+      expect(
+        screen.getByRole('textbox', {
+          name: '* Message Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.',
+        })
+      ).toBeInTheDocument()
       expect(inputSearchBeneficiaire).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: 'Envoyer' })

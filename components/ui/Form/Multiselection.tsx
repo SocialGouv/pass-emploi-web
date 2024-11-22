@@ -54,7 +54,7 @@ function Multiselection(
     <ul
       id={id}
       ref={ulRef}
-      aria-labelledby={`${id}--title`}
+      aria-labelledby={id + '--title'}
       className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
     >
       {selection.map(
@@ -73,15 +73,16 @@ function Multiselection(
                 onClick={() => deselectionner(idItem, index)}
                 ref={index === 0 ? ref : undefined}
               >
-                <span className='sr-only'>
+                <span id={idItem + '--label-remove'} className='sr-only'>
                   Enlever {typeSelection} {value}
                 </span>
                 <IconComponent
                   name={IconName.Remove}
                   focusable={false}
-                  aria-hidden={true}
-                  className='w-8 h-8'
+                  role='img'
+                  aria-labelledby={idItem + '--label-remove'}
                   title={`Enlever ${typeSelection} ${value}`}
+                  className='w-8 h-8'
                 />
               </button>
             )}
