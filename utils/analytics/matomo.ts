@@ -1,6 +1,7 @@
 import MatomoTracker from 'matomo-tracker'
 
 import { StructureConseiller } from 'interfaces/conseiller'
+import { unsafeRandomId } from 'utils/helpers'
 
 interface InitSettings {
   url: string
@@ -177,7 +178,7 @@ export function trackSSR({
 
   matomo.track({
     url: pathname,
-    rand: Math.random().toString(10).slice(2, 18),
+    rand: unsafeRandomId(),
     apiv: 1,
     action_name: customTitle,
     urlref: refererUrl,

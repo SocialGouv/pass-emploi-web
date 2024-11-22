@@ -14,7 +14,7 @@ import { getImmersionServerSide } from 'services/immersions.service'
 import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import redirectedFromHome from 'utils/redirectedFromHome'
+import { redirectedFromHome } from 'utils/helpers'
 
 type PartageOffreParams = { typeOffre: string; idOffre: string }
 

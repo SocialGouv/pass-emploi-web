@@ -30,6 +30,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteListeDiffusionModal = dynamic(
@@ -151,7 +152,7 @@ function EditionListeDiffusionPage({
         await modifierListe(liste.id, payload)
       }
       // FIXME : dirty fix, problème de rafraichissement de la liste
-      router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo + '?misc=' + unsafeRandomId())
     } catch (erreur) {
       setShowErreurTraitement(true)
       console.error(erreur)
@@ -188,7 +189,7 @@ function EditionListeDiffusionPage({
       await supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
       // FIXME : dirty fix, problème de rafraichissement de la liste
-      router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo + '?misc=' + unsafeRandomId())
     } catch (e) {
       console.error(e)
       setShowErreurTraitement(true)

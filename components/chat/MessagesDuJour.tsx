@@ -3,18 +3,18 @@ import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BeneficiaireEtChat, Chat } from 'interfaces/beneficiaire'
+import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { fromConseiller, Message } from 'interfaces/message'
 import {
   getMessagesDuMemeJour,
   modifierMessage as _modifierMessage,
   supprimerMessage as _supprimerMessage,
 } from 'services/messages.service'
-import { getPreviousItemId } from 'utils/algo'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
+import { getPreviousItemId } from 'utils/helpers'
 
 export default function MessagesDuJour({
   beneficiaireEtChat,

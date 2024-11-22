@@ -27,7 +27,7 @@ import {
   getTypesRendezVous,
 } from 'services/evenements.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import redirectedFromHome from 'utils/redirectedFromHome'
+import { redirectedFromHome } from 'utils/helpers'
 
 type EditionRdvSearchParams = Partial<{
   idRdv: string

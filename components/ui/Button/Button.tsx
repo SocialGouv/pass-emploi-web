@@ -68,13 +68,16 @@ function Button(
         {isLoading && (
           <>
             <IconComponent
-              aria-hidden={true}
-              focusable={false}
               name={IconName.Spinner}
+              focusable={false}
+              role='img'
+              aria-labelledby='loading-label'
               title='Chargement en cours'
               className='w-6 h-6 animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
             />
-            <span className='sr-only'>Chargement en cours</span>
+            <span id='loading-label' className='sr-only'>
+              Chargement en cours
+            </span>
           </>
         )}
       </span>

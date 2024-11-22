@@ -124,25 +124,25 @@ export function SelecteurPeriode({
       </legend>
 
       <button onClick={allerPeriodePrecedente} type='button'>
-        <span className='sr-only'>
-          Aller à la période précédente{' '}
-          {labelPeriode(
-            jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
-            jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
-            'long'
-          )}
-        </span>
         <IconComponent
           name={IconName.ChevronLeft}
           className='w-6 h-6 fill-primary hover:fill-primary_darken'
           focusable={false}
-          aria-hidden={true}
-          title={
-            `Aller à la période précédente ` +
+          role='img'
+          aria-label={
+            'Aller à la période précédente ' +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
               jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
-              'short'
+              'long'
+            )
+          }
+          title={
+            'Aller à la période précédente ' +
+            labelPeriode(
+              jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
+              jourDeFinDeLaPeriode(indexPeriodeAffichee - 1),
+              'long'
             )
           }
         />
@@ -174,25 +174,25 @@ export function SelecteurPeriode({
       />
 
       <button onClick={allerPeriodeSuivante} type='button'>
-        <span className='sr-only'>
-          Aller à la période suivante{' '}
-          {labelPeriode(
-            jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
-            jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
-            'long'
-          )}
-        </span>
         <IconComponent
           name={IconName.ChevronRight}
           className='w-6 h-6 fill-primary hover:fill-primary_darken'
           focusable={false}
-          aria-hidden={true}
+          role='img'
+          aria-label={
+            `Aller à la période suivante ` +
+            labelPeriode(
+              jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
+              jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
+              'long'
+            )
+          }
           title={
             `Aller à la période suivante ` +
             labelPeriode(
               jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
               jourDeFinDeLaPeriode(indexPeriodeAffichee + 1),
-              'short'
+              'long'
             )
           }
         />

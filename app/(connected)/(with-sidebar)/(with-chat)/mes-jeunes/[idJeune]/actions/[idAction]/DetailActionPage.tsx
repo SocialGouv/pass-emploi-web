@@ -24,6 +24,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate } from 'utils/date'
+import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type DetailActionProps = {
@@ -85,7 +86,7 @@ function DetailActionPage({
   }
 
   // FIXME : dirty fix, problème de l’action
-  const random = Math.random()
+  const random = unsafeRandomId()
 
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage

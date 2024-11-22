@@ -166,10 +166,13 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
           name={IconName.Info}
           role='img'
           focusable={false}
-          aria-label={informationLabel}
+          aria-labelledby='information-label'
           title={informationLabel}
           className='w-6 h-6 mr-2 fill-current'
         />
+        <span id='information-label' className='sr-only'>
+          {informationLabel}
+        </span>
         {liste.titre}
       </div>
     )

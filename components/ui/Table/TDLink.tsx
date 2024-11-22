@@ -3,6 +3,7 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
+import { unsafeRandomId } from 'utils/helpers'
 
 export default function TDLink({
   href,
@@ -13,6 +14,8 @@ export default function TDLink({
   label: string
   className?: string
 }) {
+  const labelId = 'tdlink-icon-' + unsafeRandomId()
+
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
   // absolute position in grandparent : https://stackoverflow.com/a/25768682
   return (
@@ -24,11 +27,14 @@ export default function TDLink({
         <IconComponent
           name={IconName.ChevronRight}
           focusable={false}
-          aria-hidden={true}
+          role='img'
+          aria-labelledby={labelId}
           title={label}
           className=' w-6 h-6 fill-white rounded-full bg-primary mx-auto'
         />
-        <span className='sr-only'>{label}</span>
+        <span id={labelId} className='sr-only'>
+          {label}
+        </span>
       </Link>
     </TD>
   )

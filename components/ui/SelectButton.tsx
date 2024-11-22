@@ -40,6 +40,7 @@ export default function SelectButton({
   return (
     <div
       className={`${className} ${styles.wrapper} ${isLoading ? styles.loading : ''}`}
+      title={isLoading ? 'Chargement en cours' : undefined}
     >
       <span role='alert'>
         {isLoading && (
@@ -48,7 +49,6 @@ export default function SelectButton({
               aria-hidden={true}
               focusable={false}
               name={IconName.Spinner}
-              title='Chargement en cours'
               className='w-6 h-6 fill-current animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
             />
             <span className='sr-only'>Chargement en cours</span>

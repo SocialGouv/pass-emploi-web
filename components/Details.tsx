@@ -8,10 +8,7 @@ import React, {
   useState,
 } from 'react'
 
-import InfoAction from 'components/action/InfoAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Action } from 'interfaces/action'
-import { toShortDate } from 'utils/date'
 
 interface DetailsProps {
   summary: string
@@ -46,11 +43,11 @@ function Details(
     >
       <summary
         className={`text-m-bold text-primary relative flex justify-between items-center cursor-pointer ${expanded ? 'mb-5' : ''}`}
+        title={`${expanded ? 'Cacher' : 'Voir'} ${summary}`}
       >
         {summary}
         <IconComponent
           name={expanded ? IconName.ChevronUp : IconName.ChevronDown}
-          title={`${expanded ? 'Cacher' : 'Voir'} ${summary}`}
           className='h-6 w-6 fill-current'
           focusable={false}
           aria-hidden={true}

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { unsafeRandomId } from 'utils/helpers'
 
 interface DataTagProps {
   text: string
@@ -37,6 +38,38 @@ export function DataTag({
         return 'text-content_color'
     }
   }
+
+  function TagIcon() {
+    const iconStyle = 'inline w-4 h-4 fill-current mr-1'
+
+    if (iconLabel) {
+      const labelId = 'tag-icon-' + unsafeRandomId()
+      return (
+        <>
+          <IconComponent
+            name={iconName!}
+            focusable={false}
+            role='img'
+            aria-labelledby={labelId}
+            title={iconLabel}
+            className={iconStyle}
+          />
+          <span id={labelId} className='sr-only'>
+            {iconLabel}
+          </span>
+        </>
+      )
+    } else
+      return (
+        <IconComponent
+          name={iconName!}
+          aria-hidden={true}
+          focusable={false}
+          className={iconStyle}
+        />
+      )
+  }
+
   return (
     <span
       className={`inline-flex items-center rounded-base ${
@@ -45,16 +78,7 @@ export function DataTag({
         className ?? ''
       }`}
     >
-      {iconName && (
-        <IconComponent
-          name={iconName}
-          aria-hidden={!iconLabel}
-          focusable={false}
-          aria-label={iconLabel}
-          title={iconLabel}
-          className='inline w-4 h-4 fill-current mr-1'
-        />
-      )}
+      {iconName && <TagIcon />}
       {text}
     </span>
   )

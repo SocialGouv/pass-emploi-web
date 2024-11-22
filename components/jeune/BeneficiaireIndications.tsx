@@ -16,7 +16,7 @@ export function BeneficiaireListeItem({
         name={IconName.PeopleFill}
         focusable={false}
         role='img'
-        aria-describedby={`icon-beneficiaire-list-item-${id}`}
+        aria-labelledby={`icon-beneficiaire-list-item-${id}`}
         className='w-6 h-6 fill-primary mr-2'
         title={infoLabel}
       />
@@ -61,7 +61,7 @@ export function BeneficiaireIndicationPresent({
       <IconComponent
         name={IconName.Check}
         role='img'
-        aria-describedby={`icon-indication-present-${id}`}
+        aria-labelledby={`icon-indication-present-${id}`}
         focusable={false}
         className='w-6 h-6 fill-success mr-2'
         title={infoLabel}
@@ -86,7 +86,7 @@ export function BeneficiaireIndicationReaffectaction({
         name={IconName.Info}
         focusable={false}
         role='img'
-        aria-describedby={`icon-indication-reaffectation-${id}`}
+        aria-labelledby={`icon-indication-reaffectation-${id}`}
         className='w-6 h-6 fill-accent_3 mr-2'
         title={infoLabel}
       />
