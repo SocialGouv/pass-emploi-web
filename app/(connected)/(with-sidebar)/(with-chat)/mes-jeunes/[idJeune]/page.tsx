@@ -26,12 +26,12 @@ import {
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
-import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
+  getActionsBeneficiaireServerSide,
   getDemarchesBeneficiaire,
-  getJeuneDetails,
-} from 'services/beneficiaires.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+} from 'services/actions.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getRendezVousJeune } from 'services/evenements.service'
 import {
   getMetadonneesFavorisJeune,
@@ -39,7 +39,7 @@ import {
   getRecherchesSauvegardees,
 } from 'services/favoris.service'
 import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
-import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
+import { getSessionsBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
 
@@ -149,7 +149,7 @@ async function renderFicheMilo(
     conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
   ) {
     try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
+      sessionsMilo = await getSessionsBeneficiaire(
         beneficiaire.id,
         accessToken,
         DateTime.now().startOf('day')

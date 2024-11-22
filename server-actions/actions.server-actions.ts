@@ -6,7 +6,7 @@ import {
   actionStatusToJson,
   QualificationActionJson,
 } from 'interfaces/json/action'
-import { ACTION_CACHE_TAG } from 'services/actions.service'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { getSessionServerSide } from 'utils/auth/auth'
 
 export async function modifierAction(
@@ -30,7 +30,7 @@ export async function modifierAction(
     `/actions/${idAction}`,
     actionModifiee,
     session!.accessToken,
-    Object.values(ACTION_CACHE_TAG)
+    Object.values(CACHE_TAGS.ACTION)
   )
 }
 
@@ -58,6 +58,6 @@ export async function qualifier(
     `/actions/${idAction}/qualifier`,
     payload,
     session!.accessToken,
-    Object.values(ACTION_CACHE_TAG)
+    Object.values(CACHE_TAGS.ACTION)
   )
 }

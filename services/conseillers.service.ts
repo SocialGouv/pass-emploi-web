@@ -2,21 +2,25 @@ import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
+import { apiDelete, apiGet, apiPut } from 'clients/api.client'
+import { ConseillerHistorique, DossierMilo } from 'interfaces/beneficiaire'
 import {
   BaseConseiller,
   Conseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
   BaseConseillerJson,
+  ConseillerHistoriqueJson,
   ConseillerJson,
   jsonToBaseConseiller,
   jsonToConseiller,
+  toConseillerHistorique,
 } from 'interfaces/json/conseiller'
+import { CACHE_TAGS, TAG_MILO_FIXME } from 'services/cache-tags'
+import { ApiError } from 'utils/httpClient'
 
+// ******* READ *******
 export async function getConseillerServerSide(
   user: Session.HydratedUser,
   accessToken: string
@@ -24,7 +28,7 @@ export async function getConseillerServerSide(
   const { content: conseillerJson } = await apiGet<ConseillerJson>(
     `/conseillers/${user.id}`,
     accessToken,
-    'conseiller'
+    CACHE_TAGS.CONSEILLER.SINGLETON
   )
   return jsonToConseiller(conseillerJson, user)
 }
@@ -49,6 +53,37 @@ export async function getConseillers(
   return content.map(jsonToBaseConseiller)
 }
 
+export async function getConseillersDuJeuneServerSide(
+  idJeune: string,
+  accessToken: string
+): Promise<ConseillerHistorique[]> {
+  {
+    return getConseillersDuBeneficiaire(idJeune, accessToken)
+  }
+}
+
+export async function getConseillersDuJeuneClientSide(
+  idJeune: string
+): Promise<ConseillerHistorique[]> {
+  {
+    const session = await getSession()
+    return getConseillersDuBeneficiaire(idJeune, session!.accessToken)
+  }
+}
+
+export async function getDossierJeune(
+  idDossier: string
+): Promise<DossierMilo | undefined> {
+  const session = await getSession()
+  const { content: dossier } = await apiGet<DossierMilo | undefined>(
+    `/conseillers/milo/dossiers/${idDossier}`,
+    session!.accessToken,
+    TAG_MILO_FIXME
+  )
+  return dossier
+}
+
+// ******* WRITE *******
 export async function modifierAgence({
   id,
   nom,
@@ -97,45 +132,29 @@ export async function modifierNotificationsSonores(
   )
 }
 
-export async function getDossierJeune(
-  idDossier: string
-): Promise<DossierMilo | undefined> {
-  const session = await getSession()
-  const { content: dossier } = await apiGet<DossierMilo | undefined>(
-    `/conseillers/milo/dossiers/${idDossier}`,
-    session!.accessToken,
-    'milo'
-  )
-  return dossier
-}
-
-export async function createCompteJeuneMilo(
-  newJeune: BeneficiaireMiloFormData,
-  surcharge?: boolean
-): Promise<BaseBeneficiaire> {
-  const session = await getSession()
-  const { content } = await apiPost<BaseBeneficiaire>(
-    `/conseillers/milo/jeunes`,
-    {
-      ...newJeune,
-      idConseiller: session!.user.id,
-      surcharge,
-    },
-    session!.accessToken
-  )
-  return content
-}
-
-export async function recupererBeneficiaires(): Promise<void> {
-  const session = await getSession()
-  await apiPost(
-    `/conseillers/${session!.user.id}/recuperer-mes-jeunes`,
-    {},
-    session!.accessToken
-  )
-}
-
 export async function supprimerConseiller(idConseiller: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/conseillers/${idConseiller}`, session!.accessToken)
+}
+
+// ******* PRIVATE *******
+async function getConseillersDuBeneficiaire(
+  idBeneficiaire: string,
+  accessToken: string
+): Promise<ConseillerHistorique[]> {
+  {
+    try {
+      const { content: historique } = await apiGet<ConseillerHistoriqueJson[]>(
+        `/jeunes/${idBeneficiaire}/conseillers`,
+        accessToken,
+        'conseillers'
+      )
+      return historique.map(toConseillerHistorique)
+    } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 404) {
+        return []
+      }
+      throw e
+    }
+  }
 }

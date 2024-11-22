@@ -14,12 +14,12 @@ import {
   BeneficiaireEtChat,
   ConseillerHistorique,
 } from 'interfaces/beneficiaire'
-import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneClientSide } from 'services/conseillers.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/beneficiaires.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>

@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { toHaveNoViolations } from 'jest-axe'
+import { getServerSession } from 'next-auth'
+import { getSession } from 'next-auth/react'
+
+import { unUtilisateur } from 'fixtures/auth'
+
 expect.extend(toHaveNoViolations)
 
 global.fetch = jest.fn(async () => new Response())
@@ -31,16 +36,23 @@ jest.mock('next/dist/client/components/redirect', () => ({
 }))
 
 jest.mock('next-auth/react', () => ({
-  getSession: async () => ({
-    user: {
-      id: 'idConseiller',
-      estSuperviseur: false,
-      estSuperviseurResponsable: false,
-      structure: 'MILO',
-    },
-    accessToken: 'accessToken',
-  }),
+  getSession: jest.fn(),
+  signIn: jest.fn(),
+  signOut: jest.fn(),
 }))
+jest.mock('next-auth', () => ({
+  getServerSession: jest.fn(),
+}))
+
+beforeEach(async () => {
+  const session = {
+    user: unUtilisateur(),
+    accessToken: 'accessToken',
+  }
+
+  ;(getSession as jest.Mock).mockResolvedValue(session)
+  ;(getServerSession as jest.Mock).mockResolvedValue(session)
+})
 
 afterEach(() => {
   if (typeof sessionStorage !== 'undefined') sessionStorage.clear()

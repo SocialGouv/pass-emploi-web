@@ -5,14 +5,12 @@ import NouvelleAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/page'
 import { desCategories } from 'fixtures/action'
-import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIdentitesBeneficiairesServerSide } from 'services/beneficiaires.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import {
+  getActionsPredefinies,
+  getSituationsNonProfessionnelles,
+} from 'services/referentiel.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
 jest.mock('services/referentiel.service')
@@ -24,10 +22,6 @@ jest.mock(
 describe('NouvelleActionPage server side', () => {
   it('prépare les métadonnées', async () => {
     // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
-      accessToken: 'accessToken',
-    })
     ;(getIdentitesBeneficiairesServerSide as jest.Mock).mockResolvedValue([
       {
         id: 'id-beneficiaire',
@@ -54,9 +48,6 @@ describe('NouvelleActionPage server side', () => {
 
   it('prépare la page', async () => {
     // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      accessToken: 'accessToken',
-    })
     ;(getActionsPredefinies as jest.Mock).mockResolvedValue([
       {
         id: 'action-predefinie-1',

@@ -1,4 +1,4 @@
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPost } from 'clients/api.client'
 import {
   listeBaseServicesCiviques,
   listeServicesCiviquesJson,
@@ -7,6 +7,7 @@ import {
 import { uneCommune } from 'fixtures/referentiel'
 import {
   getServiceCiviqueServerSide,
+  partagerRechercheServiceCivique,
   searchServicesCiviques,
 } from 'services/services-civiques.service'
 import { ApiError } from 'utils/httpClient'
@@ -30,7 +31,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/services-civique/ID_SERVICE_CIVIQUE',
-        'accessToken'
+        'accessToken',
+        'service-civique'
       )
       expect(actual).toStrictEqual({
         dateDeDebut: '2022-11-01T00:00:00.000Z',
@@ -79,7 +81,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10',
-        'accessToken'
+        'accessToken',
+        'services-civiques'
       )
       expect(actual).toEqual({
         metadonnees: {
@@ -97,7 +100,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&lon=2.323026&lat=48.830108',
-        'accessToken'
+        'accessToken',
+        'services-civiques'
       )
     })
 
@@ -108,7 +112,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&domaine=code-domaine',
-        'accessToken'
+        'accessToken',
+        'services-civiques'
       )
     })
 
@@ -119,7 +124,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
-        'accessToken'
+        'accessToken',
+        'services-civiques'
       )
     })
 
@@ -130,6 +136,40 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&distance=43',
+        'accessToken',
+        'services-civiques'
+      )
+    })
+  })
+
+  describe('.partagerRechercheServiceCivique', () => {
+    it('envoie les bons paramètres de suggestions de service civique', async () => {
+      // Given
+      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const titre = 'Paris'
+      const labelLocalite = 'Paris'
+      const latitude = 2.323026
+      const longitude = 48.830208
+
+      // When
+      await partagerRechercheServiceCivique({
+        idsJeunes,
+        titre,
+        labelLocalite,
+        latitude,
+        longitude,
+      })
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/recherches/suggestions/services-civique',
+        {
+          idsJeunes: idsJeunes,
+          titre: titre,
+          localisation: labelLocalite,
+          lat: latitude,
+          lon: longitude,
+        },
         'accessToken'
       )
     })

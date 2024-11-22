@@ -2,6 +2,7 @@ import { Actualites } from 'interfaces/actualites'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { fetchJson } from 'utils/httpClient'
 
+// ******* READ *******
 export async function getActualites(
   structure: StructureConseiller
 ): Promise<Actualites | undefined> {

@@ -17,10 +17,14 @@ import {
   creerListeDeDiffusion,
   modifierListeDeDiffusion,
   supprimerListeDeDiffusion,
-} from 'services/listes-de-diffusion.service'
+} from 'server-actions/listes-de-diffusion.server-actions'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/listes-de-diffusion.service')
+jest.mock('server-actions/listes-de-diffusion.server-actions', () => ({
+  creerListeDeDiffusion: jest.fn(),
+  modifierListeDeDiffusion: jest.fn(),
+  supprimerListeDeDiffusion: jest.fn(),
+}))
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 

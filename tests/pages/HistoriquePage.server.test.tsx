@@ -10,16 +10,12 @@ import {
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
-import {
-  getConseillersDuJeuneServerSide,
-  getJeuneDetails,
-} from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { getJeuneDetails } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneServerSide } from 'services/conseillers.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/beneficiaires.service')
+jest.mock('services/conseillers.service')
+jest.mock('services/favoris.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 )
@@ -49,10 +45,6 @@ describe('HistoriquePage server side', () => {
     ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
       listeConseillers
     )
-    ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
-      accessToken: 'accessToken',
-      user: { id: 'id-conseiller' },
-    })
 
     // When
     const params = { idJeune: 'id-beneficiaire' }

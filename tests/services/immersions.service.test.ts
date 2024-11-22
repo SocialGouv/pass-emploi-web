@@ -1,4 +1,4 @@
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPost } from 'clients/api.client'
 import {
   listeBaseImmersions,
   listeImmersionsJson,
@@ -8,6 +8,7 @@ import {
 import { uneCommune, unMetier } from 'fixtures/referentiel'
 import {
   getImmersionServerSide,
+  partagerRechercheImmersion,
   searchImmersions,
 } from 'services/immersions.service'
 import { ApiError } from 'utils/httpClient'
@@ -28,7 +29,8 @@ describe('ImmersionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion/ID_IMMERSION',
-        'accessToken'
+        'accessToken',
+        'immersion'
       )
       expect(actual).toStrictEqual(unDetailImmersion())
     })
@@ -73,7 +75,8 @@ describe('ImmersionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion?lat=48.830108&lon=2.323026&distance=52&rome=M1805',
-        'accessToken'
+        'accessToken',
+        'immersions'
       )
 
       expect(actual).toEqual({
@@ -166,6 +169,45 @@ describe('ImmersionsApiService', () => {
         offres: [...listeBaseImmersions({ page: 3 })],
         metadonnees: { nombreTotal: 15, nombrePages: 2 },
       })
+    })
+  })
+
+  describe('.partagerRechercheImmersion', () => {
+    it('envoie les bons paramètres de suggestions d’immersion', async () => {
+      // Given
+      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const titre = 'Vendeur - Paris'
+      const labelMetier = 'Vendeur'
+      const codeMetier = 'E1101'
+      const labelLocalite = 'Paris'
+      const latitude = 2.323026
+      const longitude = 48.830208
+
+      // When
+      await partagerRechercheImmersion({
+        idsJeunes,
+        titre,
+        labelMetier,
+        codeMetier,
+        labelLocalite,
+        latitude,
+        longitude,
+      })
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/recherches/suggestions/immersions',
+        {
+          idsJeunes: idsJeunes,
+          titre: titre,
+          metier: labelMetier,
+          rome: codeMetier,
+          localisation: labelLocalite,
+          lat: latitude,
+          lon: longitude,
+        },
+        'accessToken'
+      )
     })
   })
 })

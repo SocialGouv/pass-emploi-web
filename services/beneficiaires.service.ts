@@ -7,35 +7,29 @@ import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   CompteursPeriode,
-  ConseillerHistorique,
-  Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
   BeneficiaireEtablissementJson,
+  BeneficiaireMiloFormData,
   CompteursPortefeuilleJson,
-  DemarcheJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
   jsonToBaseBeneficiaire,
   jsonToBeneficiaireEtablissement,
-  jsonToDemarche,
   jsonToDetailBeneficiaire,
   jsonToIndicateursSemaine,
   jsonToItemBeneficiaire,
   SuppressionBeneficiaireFormData,
 } from 'interfaces/json/beneficiaire'
-import {
-  ConseillerHistoriqueJson,
-  toConseillerHistorique,
-} from 'interfaces/json/conseiller'
-import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { CACHE_TAGS, TAG_MILO_FIXME } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+// ******* READ *******
 export async function getIdentitesBeneficiairesServerSide(
   idsBeneficiaires: string[],
   idConseiller: string,
@@ -84,7 +78,7 @@ export async function getJeuneDetails(
     const { content: jeune } = await apiGet<DetailBeneficiaireJson>(
       `/jeunes/${idJeune}`,
       accessToken,
-      'beneficiaire'
+      CACHE_TAGS.BENEFICIAIRE.SINGLETON
     )
     return jsonToDetailBeneficiaire(jeune)
   } catch (e) {
@@ -93,38 +87,6 @@ export async function getJeuneDetails(
     }
     throw e
   }
-}
-
-export async function getConseillersDuJeuneServerSide(
-  idJeune: string,
-  accessToken: string
-): Promise<ConseillerHistorique[]> {
-  {
-    return getConseillersDuBeneficiaire(idJeune, accessToken)
-  }
-}
-
-export async function getConseillersDuJeuneClientSide(
-  idJeune: string
-): Promise<ConseillerHistorique[]> {
-  {
-    const session = await getSession()
-    return getConseillersDuBeneficiaire(idJeune, session!.accessToken)
-  }
-}
-
-export async function createCompteJeuneFranceTravail(newJeune: {
-  firstName: string
-  lastName: string
-  email: string
-}): Promise<BaseBeneficiaire> {
-  const session = await getSession()
-  const { content } = await apiPost<BaseBeneficiaireJson>(
-    `/conseillers/pole-emploi/jeunes`,
-    { ...newJeune, idConseiller: session!.user.id },
-    session!.accessToken
-  )
-  return jsonToBaseBeneficiaire(content)
 }
 
 export async function getIdJeuneMilo(
@@ -137,7 +99,7 @@ export async function getIdJeuneMilo(
     } = await apiGet<{ id: string }>(
       `/conseillers/milo/jeunes/${numeroDossier}`,
       accessToken,
-      'milo'
+      TAG_MILO_FIXME
     )
     return id
   } catch (e) {
@@ -146,64 +108,6 @@ export async function getIdJeuneMilo(
     }
     throw e
   }
-}
-
-export async function reaffecter(
-  idConseillerInitial: string,
-  idConseillerDestination: string,
-  idsJeunes: string[],
-  estTemporaire: boolean
-): Promise<void> {
-  const session = await getSession()
-  await apiPost(
-    '/jeunes/transferer',
-    {
-      idConseillerSource: idConseillerInitial,
-      idConseillerCible: idConseillerDestination,
-      idsJeune: idsJeunes,
-      estTemporaire: estTemporaire,
-    },
-    session!.accessToken
-  )
-}
-
-export async function supprimerJeuneInactif(idJeune: string): Promise<void> {
-  const session = await getSession()
-  await apiDelete(`/jeunes/${idJeune}`, session!.accessToken)
-}
-
-export async function archiverJeune(
-  idJeune: string,
-  payload: SuppressionBeneficiaireFormData
-): Promise<void> {
-  const session = await getSession()
-  await apiPost(`/jeunes/${idJeune}/archiver`, payload, session!.accessToken)
-}
-
-export async function getMotifsSuppression(): Promise<
-  MotifSuppressionBeneficiaire[]
-> {
-  const session = await getSession()
-  const { content: motifs } = await apiGet<MotifSuppressionBeneficiaire[]>(
-    '/referentiels/motifs-suppression-jeune',
-    session!.accessToken,
-    'referentiel'
-  )
-  return motifs
-}
-
-export async function modifierIdentifiantPartenaire(
-  idJeune: string,
-  idPartenaire: string
-): Promise<void> {
-  const session = await getSession()
-  const idConseiller = session?.user.id
-
-  return apiPut(
-    `/conseillers/${idConseiller}/jeunes/${idJeune}`,
-    { idPartenaire },
-    session!.accessToken
-  )
 }
 
 export async function getIndicateursJeuneAlleges(
@@ -243,18 +147,6 @@ export async function getBeneficiairesDeLEtablissementClientSide(
   return getBeneficiairesDeLEtablissement(idEtablissement, session!.accessToken)
 }
 
-async function getBeneficiairesDeLEtablissement(
-  idEtablissement: string,
-  accessToken: string
-): Promise<BaseBeneficiaire[]> {
-  const { content: beneficiaires } = await apiGet<BaseBeneficiaireJson[]>(
-    `/etablissements/${idEtablissement}/jeunes`,
-    accessToken,
-    'beneficiaires'
-  )
-  return beneficiaires.map(jsonToBaseBeneficiaire)
-}
-
 export async function getBeneficiairesDeLaStructureMilo(
   idStructureMilo: string,
   accessToken: string
@@ -267,7 +159,7 @@ export async function getBeneficiairesDeLaStructureMilo(
     content: { resultats },
   } = await apiGet<{
     resultats: BeneficiaireEtablissementJson[]
-  }>(url, accessToken, 'portefeuille')
+  }>(url, accessToken, CACHE_TAGS.BENEFICIAIRE.LISTE)
 
   return {
     beneficiaires: resultats.map(jsonToBeneficiaireEtablissement),
@@ -291,7 +183,7 @@ export async function rechercheBeneficiairesDeLEtablissement(
   }>(
     `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}&page=${page}`,
     session!.accessToken,
-    'portefeuille'
+    CACHE_TAGS.BENEFICIAIRE.LISTE
   )
 
   return {
@@ -303,6 +195,148 @@ export async function rechercheBeneficiairesDeLEtablissement(
   }
 }
 
+// FIXME move ?
+export async function recupereCompteursBeneficiairesPortefeuilleMilo(
+  idConseiller: string,
+  dateDebut: DateTime,
+  dateFin: DateTime,
+  accessToken: string
+): Promise<CompteursPeriode[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+
+  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
+    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    accessToken,
+    [CACHE_TAGS.ACTION.LISTE, CACHE_TAGS.EVENEMENT.LISTE]
+  )
+
+  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
+    return {
+      idBeneficiaire,
+      actions,
+      rdvs: Number(rdvs) + Number(sessions),
+    }
+  })
+}
+
+// ******* WRITE *******
+export async function createCompteJeuneFranceTravail(newJeune: {
+  firstName: string
+  lastName: string
+  email: string
+}): Promise<BaseBeneficiaire> {
+  const session = await getSession()
+  const { content } = await apiPost<BaseBeneficiaireJson>(
+    `/conseillers/pole-emploi/jeunes`,
+    { ...newJeune, idConseiller: session!.user.id },
+    session!.accessToken
+  )
+  return jsonToBaseBeneficiaire(content)
+}
+
+export async function createCompteJeuneMilo(
+  newJeune: BeneficiaireMiloFormData,
+  surcharge?: boolean
+): Promise<BaseBeneficiaire> {
+  const session = await getSession()
+  const { content } = await apiPost<BaseBeneficiaire>(
+    `/conseillers/milo/jeunes`,
+    {
+      ...newJeune,
+      idConseiller: session!.user.id,
+      surcharge,
+    },
+    session!.accessToken
+  )
+  return content
+}
+
+export async function reaffecter(
+  idConseillerInitial: string,
+  idConseillerDestination: string,
+  idsJeunes: string[],
+  estTemporaire: boolean
+): Promise<void> {
+  const session = await getSession()
+  await apiPost(
+    '/jeunes/transferer',
+    {
+      idConseillerSource: idConseillerInitial,
+      idConseillerCible: idConseillerDestination,
+      idsJeune: idsJeunes,
+      estTemporaire: estTemporaire,
+    },
+    session!.accessToken
+  )
+}
+
+export async function recupererBeneficiaires(): Promise<void> {
+  const session = await getSession()
+  await apiPost(
+    `/conseillers/${session!.user.id}/recuperer-mes-jeunes`,
+    {},
+    session!.accessToken
+  )
+}
+
+export async function supprimerJeuneInactif(idJeune: string): Promise<void> {
+  const session = await getSession()
+  await apiDelete(`/jeunes/${idJeune}`, session!.accessToken)
+}
+
+export async function archiverJeune(
+  idJeune: string,
+  payload: SuppressionBeneficiaireFormData
+): Promise<void> {
+  const session = await getSession()
+  await apiPost(`/jeunes/${idJeune}/archiver`, payload, session!.accessToken)
+}
+
+export async function modifierIdentifiantPartenaire(
+  idJeune: string,
+  idPartenaire: string
+): Promise<void> {
+  const session = await getSession()
+  const idConseiller = session?.user.id
+
+  return apiPut(
+    `/conseillers/${idConseiller}/jeunes/${idJeune}`,
+    { idPartenaire },
+    session!.accessToken
+  )
+}
+
+// ******* PRIVATE *******
+async function getIdentitesBeneficiaires(
+  idsBeneficiaires: string[],
+  idConseiller: string,
+  accessToken: string
+): Promise<BaseBeneficiaire[]> {
+  if (!idsBeneficiaires.length) return []
+  const queryParam = idsBeneficiaires.map((id) => 'ids=' + id).join('&')
+
+  const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
+    `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
+    accessToken,
+    CACHE_TAGS.BENEFICIAIRE.LISTE
+  )
+
+  return beneficiaires
+}
+
+async function getBeneficiairesDeLEtablissement(
+  idEtablissement: string,
+  accessToken: string
+): Promise<BaseBeneficiaire[]> {
+  const { content: beneficiaires } = await apiGet<BaseBeneficiaireJson[]>(
+    `/etablissements/${idEtablissement}/jeunes`,
+    accessToken,
+    CACHE_TAGS.BENEFICIAIRE.LISTE
+  )
+  return beneficiaires.map(jsonToBaseBeneficiaire)
+}
+
 async function getBeneficiairesDuConseiller(
   idConseiller: string,
   accessToken: string
@@ -310,32 +344,12 @@ async function getBeneficiairesDuConseiller(
   const { content: beneficiaires } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
     accessToken,
-    'portefeuille'
+    CACHE_TAGS.BENEFICIAIRE.LISTE
   )
   return beneficiaires.map(jsonToItemBeneficiaire)
 }
 
-async function getConseillersDuBeneficiaire(
-  idBeneficiaire: string,
-  accessToken: string
-): Promise<ConseillerHistorique[]> {
-  {
-    try {
-      const { content: historique } = await apiGet<ConseillerHistoriqueJson[]>(
-        `/jeunes/${idBeneficiaire}/conseillers`,
-        accessToken,
-        'conseillers'
-      )
-      return historique.map(toConseillerHistorique)
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 404) {
-        return []
-      }
-      throw e
-    }
-  }
-}
-
+// FIXME move ?
 async function getIndicateursBeneficiaire(
   idConseiller: string,
   idBeneficiaire: string,
@@ -350,74 +364,7 @@ async function getIndicateursBeneficiaire(
   const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
     `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
     session!.accessToken,
-    'agenda'
+    [CACHE_TAGS.ACTION.LISTE, CACHE_TAGS.EVENEMENT.LISTE]
   )
   return jsonToIndicateursSemaine(indicateurs)
-}
-
-export async function recupereCompteursBeneficiairesPortefeuilleMilo(
-  idConseiller: string,
-  dateDebut: DateTime,
-  dateFin: DateTime,
-  accessToken: string
-): Promise<CompteursPeriode[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-
-  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
-    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    accessToken,
-    'actions'
-  )
-
-  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
-    return {
-      idBeneficiaire,
-      actions,
-      rdvs: Number(rdvs) + Number(sessions),
-    }
-  })
-}
-
-async function getIdentitesBeneficiaires(
-  idsBeneficiaires: string[],
-  idConseiller: string,
-  accessToken: string
-): Promise<BaseBeneficiaire[]> {
-  if (!idsBeneficiaires.length) return []
-  const queryParam = idsBeneficiaires.map((id) => 'ids=' + id).join('&')
-
-  const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
-    `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
-    accessToken,
-    'beneficiaires'
-  )
-
-  return beneficiaires
-}
-
-export async function getDemarchesBeneficiaire(
-  idBeneficiaire: string,
-  dateDebut: DateTime,
-  idConseiller: string,
-  accessToken: string
-): Promise<{ data: Demarche[]; isStale: boolean } | null> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  try {
-    const {
-      content: { queryModel: demarchesJson, dateDuCache },
-    } = await apiGet<{ queryModel: DemarcheJson[]; dateDuCache?: string }>(
-      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
-      accessToken,
-      'actions'
-    )
-
-    return {
-      data: demarchesJson.map(jsonToDemarche),
-      isStale: Boolean(dateDuCache),
-    }
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) return null
-    throw e
-  }
 }

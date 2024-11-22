@@ -1,11 +1,13 @@
 import { render } from '@testing-library/react'
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import EditionRdvPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/EditionRdvPage'
 import EditionRdv, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/page'
+import { unUtilisateur } from 'fixtures/auth'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   typesAnimationCollective,
@@ -15,29 +17,20 @@ import {
 } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
-import {
-  getDetailsEvenement,
-  getTypesRendezVous,
-} from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { getDetailsEvenement } from 'services/evenements.service'
+import { getTypesRendezVous } from 'services/referentiel.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/EditionRdvPage'
 )
 jest.mock('services/evenements.service')
+jest.mock('services/referentiel.service')
 jest.mock('services/beneficiaires.service')
 
 describe('EditionRdvPage server side', () => {
   beforeEach(() => {
     // Given
     ;(headers as jest.Mock).mockReturnValue(new Map())
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: 'MILO' },
-      accessToken: 'accessToken',
-    })
     ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())
   })
 
@@ -151,10 +144,6 @@ describe('EditionRdvPage server side', () => {
   describe('Animation collective', () => {
     beforeEach(() => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
-        accessToken: 'accessToken',
-      })
       ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
         desItemsBeneficiaires()
       )
@@ -251,12 +240,8 @@ describe('EditionRdvPage server side', () => {
   describe('quand l’utilisateur est France Travail', () => {
     it('renvoie sur la liste des jeunes', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: {
-          id: 'id-conseiller',
-          structure: StructureConseiller.POLE_EMPLOI,
-        },
-        accessToken: 'accessToken',
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: StructureConseiller.POLE_EMPLOI }),
       })
 
       // When

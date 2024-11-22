@@ -1,7 +1,11 @@
 import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiDelete, apiGet, apiPut } from 'clients/api.client'
+import {
+  desConseillersBeneficiaire,
+  desConseillersBeneficiaireJson,
+} from 'fixtures/beneficiaire'
 import {
   unBaseConseillerJson,
   unConseiller,
@@ -10,13 +14,14 @@ import {
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   getConseillers,
+  getConseillersDuJeuneClientSide,
+  getConseillersDuJeuneServerSide,
   getConseillerServerSide,
   modifierAgence,
   modifierDateSignatureCGU,
   modifierNotificationsSonores,
-  recupererBeneficiaires,
   supprimerConseiller,
-} from 'services/conseiller.service'
+} from 'services/conseillers.service'
 
 jest.mock('clients/api.client')
 
@@ -51,7 +56,11 @@ describe('ConseillerApiService', () => {
       const actual = await getConseillerServerSide(user, accessToken)
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/conseillers/id-user', accessToken)
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-user',
+        accessToken,
+        'conseiller'
+      )
       expect(actual).toEqual(
         unConseiller({
           agence: { nom: 'Milo Marseille', id: 'id-agence' },
@@ -76,7 +85,8 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers?q=conseiller@email.com',
-        accessToken
+        accessToken,
+        'conseillers'
       )
       expect(actual).toEqual([
         {
@@ -103,7 +113,8 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers?q=conseiller@email.com&structure=POLE_EMPLOI_BRSA',
-        accessToken
+        accessToken,
+        'conseillers'
       )
       expect(actual).toEqual([
         {
@@ -116,6 +127,49 @@ describe('ConseillerApiService', () => {
     })
   })
 
+  describe('.getConseillersDuJeuneClientSide', () => {
+    it('renvoie les conseillers du jeune', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: desConseillersBeneficiaireJson(),
+      })
+
+      // When
+      const actual = await getConseillersDuJeuneClientSide('id-jeune')
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/conseillers',
+        'accessToken',
+        'conseillers'
+      )
+      expect(actual).toEqual(desConseillersBeneficiaire())
+    })
+  })
+
+  describe('.getConseillersDuJeuneServerSide', () => {
+    it('renvoie les conseillers du jeune', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: desConseillersBeneficiaireJson(),
+      })
+
+      // When
+      const actual = await getConseillersDuJeuneServerSide(
+        'id-jeune',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/conseillers',
+        'accessToken',
+        'conseillers'
+      )
+      expect(actual).toEqual(desConseillersBeneficiaire())
+    })
+  })
+
   describe('.modifierDateSignatureCGU', () => {
     it('modifie le conseiller avec la nouvelle date de signature des CGU', async () => {
       const nouvelleDate = DateTime.now()
@@ -125,7 +179,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller',
         { dateSignatureCGU: nouvelleDate },
         'accessToken'
       )
@@ -139,7 +193,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller',
         { agence: { id: 'id-agence' } },
         'accessToken'
       )
@@ -151,7 +205,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller',
         { agence: { nom: 'Agence libre' } },
         'accessToken'
       )
@@ -167,20 +221,6 @@ describe('ConseillerApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/id-conseiller',
         { notificationsSonores: true },
-        'accessToken'
-      )
-    })
-  })
-
-  describe('.recupererBeneficiaires', () => {
-    it('récupère les bénéficiaires transférés temporairement', async () => {
-      // When
-      await recupererBeneficiaires()
-
-      // Then
-      expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recuperer-mes-jeunes',
-        {},
         'accessToken'
       )
     })

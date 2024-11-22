@@ -8,7 +8,7 @@ import {
   doitSignerLesCGU,
   estMilo,
 } from 'interfaces/conseiller'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

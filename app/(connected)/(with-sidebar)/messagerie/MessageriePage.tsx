@@ -9,7 +9,7 @@ import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeD
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneClientSide } from 'services/conseillers.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChats } from 'utils/chat/chatsContext'
 import { useCurrentConversation } from 'utils/chat/currentConversationContext'

@@ -1,11 +1,19 @@
 import { apiGet } from 'clients/api.client'
 import {
+  uneMetadonneeFavoris,
+  uneMetadonneeFavorisJson,
+} from 'fixtures/beneficiaire'
+import {
   uneListeDeRecherches,
   uneListeDeRecherchesJson,
   uneListeDOffres,
   uneListeDOffresJson,
 } from 'fixtures/favoris'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import {
+  getMetadonneesFavorisJeune,
+  getOffres,
+  getRecherchesSauvegardees,
+} from 'services/favoris.service'
 
 jest.mock('clients/api.client')
 
@@ -39,6 +47,26 @@ describe('FavorisApiService', () => {
 
       // Then
       expect(actual).toStrictEqual(uneListeDeRecherches())
+    })
+  })
+
+  describe('.getMetadonneesFavorisJeune', () => {
+    it('renvoie les métadonnées des recherches sauvegardées d’un bénéficiaire', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: { favoris: uneMetadonneeFavorisJson() },
+      })
+
+      // When
+      const actual = await getMetadonneesFavorisJeune('id-jeune', 'accessToken')
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/favoris/metadonnees',
+        'accessToken',
+        'favoris'
+      )
+      expect(actual).toEqual(uneMetadonneeFavoris())
     })
   })
 })

@@ -12,7 +12,7 @@ import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
-import { modifierAgence } from 'services/conseiller.service'
+import { modifierAgence } from 'services/conseillers.service'
 import { getRendezVousEtablissement } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import {
@@ -23,7 +23,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/sessions.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')

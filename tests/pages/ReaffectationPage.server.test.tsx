@@ -1,13 +1,11 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import Reaffectation from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/page'
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { unUtilisateur } from 'fixtures/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 )
@@ -15,11 +13,6 @@ jest.mock(
 describe('Reaffectation', () => {
   describe("quand le conseiller n'est pas superviseur", () => {
     it('renvoie une page 404', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { estSuperviseur: false },
-      })
-
       // When
       const promise = Reaffectation()
 
@@ -32,15 +25,18 @@ describe('Reaffectation', () => {
   describe('quand le conseiller est superviseur', () => {
     it('prépare la page', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { estSuperviseur: true },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ estSuperviseur: true }),
       })
 
       // When
       render(await Reaffectation())
 
       // Then
-      expect(ReaffectationPage).toHaveBeenCalledWith({}, {})
+      expect(ReaffectationPage).toHaveBeenCalledWith(
+        { estSuperviseurResponsable: false },
+        {}
+      )
     })
   })
 })

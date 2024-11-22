@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
 import ModificationAction, {
@@ -10,19 +11,16 @@ import {
   desCategories,
   uneAction,
 } from 'fixtures/action'
+import { unUtilisateur } from 'fixtures/auth'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { getAction } from 'services/actions.service'
 import {
-  getAction,
+  getActionsPredefinies,
   getSituationsNonProfessionnelles,
-} from 'services/actions.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+} from 'services/referentiel.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/actions.service')
 jest.mock('services/referentiel.service')
 jest.mock(
@@ -37,10 +35,6 @@ describe('ModificationActionPage server side', () => {
     const params = { idAction: 'id-action' }
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.MILO },
-        accessToken: 'accessToken',
-      })
       ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
         categories
       )
@@ -107,8 +101,8 @@ describe('ModificationActionPage server side', () => {
   describe('pour un conseiller France Travail', () => {
     it('la page n’existe pas', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ structure: StructureConseiller.POLE_EMPLOI }),
       })
 
       // When

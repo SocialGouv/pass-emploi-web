@@ -17,7 +17,7 @@ import {
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneClientSide } from 'services/conseillers.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -25,7 +25,7 @@ import {
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/beneficiaires.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 

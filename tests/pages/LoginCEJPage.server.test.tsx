@@ -5,7 +5,6 @@ import { getServerSession } from 'next-auth'
 import LoginCEJPage from 'app/(connexion)/login/cej/LoginCEJPage'
 import LoginCEJ, { metadata } from 'app/(connexion)/login/cej/page'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('app/(connexion)/login/cej/LoginCEJPage')
 
 describe('LoginCEJPage server side', () => {

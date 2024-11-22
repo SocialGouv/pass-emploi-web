@@ -11,14 +11,13 @@ import {
 } from 'fixtures/beneficiaire'
 import { unDossierMilo } from 'fixtures/milo'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import {
-  createCompteJeuneMilo,
-  getDossierJeune,
-} from 'services/conseiller.service'
+import { createCompteJeuneMilo } from 'services/beneficiaires.service'
+import { getDossierJeune } from 'services/conseillers.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/ModalContainer')
 
 describe('CreationBeneficiaireMiloPage client side', () => {

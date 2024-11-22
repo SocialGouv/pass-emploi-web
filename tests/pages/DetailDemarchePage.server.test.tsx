@@ -2,25 +2,21 @@ import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 
 import DetailDemarchePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/demarches/[idDemarche]/DetailDemarchePage'
 import DetailDemarche, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/demarches/[idDemarche]/page'
+import { unUtilisateur } from 'fixtures/auth'
 import {
   unDetailBeneficiaire,
   uneDemarche,
   uneListeDeDemarches,
 } from 'fixtures/beneficiaire'
-import {
-  getDemarchesBeneficiaire,
-  getJeuneDetails,
-} from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import { getDemarchesBeneficiaire } from 'services/actions.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/actions.service')
 jest.mock('services/beneficiaires.service')
 jest.mock(
@@ -31,11 +27,6 @@ jest.mock('next/headers', () => ({ headers: jest.fn(() => new Map()) }))
 describe('DetailDemarchePage server side', () => {
   describe('quand le conseiller n’est pas Conseiller Départemental', () => {
     it('renvoie une 404', async () => {
-      // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'MILO' },
-      })
-
       // When
       const promise = DetailDemarche({
         params: { idJeune: 'id-jeune', idDemarche: 'id-demarche' },
@@ -49,9 +40,9 @@ describe('DetailDemarchePage server side', () => {
 
   describe('quand le conseiller est Conseiller Départemental', () => {
     beforeEach(async () => {
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+      ;(getServerSession as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { structure: 'CONSEIL_DEPT', id: 'id-conseiller' },
+        user: unUtilisateur({ structure: 'CONSEIL_DEPT' }),
       })
       ;(headers as jest.Mock).mockReturnValue(
         new Map([['referer', '/whatever']])

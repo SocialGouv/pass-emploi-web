@@ -144,7 +144,7 @@ function PartageRecherchePage({
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
     const { partagerRechercheOffreEmploi: _partagerRechercheOffreEmploi } =
-      await import('services/suggestions.service')
+      await import('services/offres-emploi.service')
     await _partagerRechercheOffreEmploi({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -161,7 +161,7 @@ function PartageRecherchePage({
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
     const { partagerRechercheAlternance: _partagerRechercheAlternance } =
-      await import('services/suggestions.service')
+      await import('services/offres-emploi.service')
     await _partagerRechercheAlternance({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -184,7 +184,7 @@ function PartageRecherchePage({
     } = criteresRecherche as CriteresRechercheImmersionProps
 
     const { partagerRechercheImmersion: _partagerRechercheImmersion } =
-      await import('services/suggestions.service')
+      await import('services/immersions.service')
     await _partagerRechercheImmersion({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -202,7 +202,7 @@ function PartageRecherchePage({
 
     const {
       partagerRechercheServiceCivique: _partagerRechercheServiceCivique,
-    } = await import('services/suggestions.service')
+    } = await import('services/services-civiques.service')
     await _partagerRechercheServiceCivique({
       idsJeunes: idsDestinataires.value,
       titre,

@@ -2,12 +2,9 @@ import { getSession } from 'next-auth/react'
 
 import { apiGet } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { CACHE_TAGS } from 'services/cache-tags'
 
-export const LISTES_DIFFUSION_CACHE_TAG = {
-  SINGLETON: 'liste-diffusion',
-  LISTE: 'listes-diffusion',
-}
-
+// ******* TYPES *******
 export type ListeDeDiffusionFormData = {
   titre: string
   idsBeneficiaires: string[]
@@ -34,11 +31,12 @@ export async function recupererListeDeDiffusion(
   const { content: listeDeDiffusion } = await apiGet<ListeDeDiffusion>(
     `/listes-de-diffusion/${id}`,
     accessToken,
-    LISTES_DIFFUSION_CACHE_TAG.SINGLETON
+    CACHE_TAGS.LISTE_DIFFUSION.SINGLETON
   )
   return listeDeDiffusion
 }
 
+// ******* PRIVATE *******
 async function getListesDeDiffusion(
   idConseiller: string,
   accessToken: string
@@ -46,7 +44,7 @@ async function getListesDeDiffusion(
   const { content: listesDeDiffusion } = await apiGet<ListeDeDiffusion[]>(
     `/conseillers/${idConseiller}/listes-de-diffusion`,
     accessToken,
-    LISTES_DIFFUSION_CACHE_TAG.LISTE
+    CACHE_TAGS.LISTE_DIFFUSION.LISTE
   )
   return listesDeDiffusion
 }

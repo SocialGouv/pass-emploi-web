@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 import ConsentementCguPage from 'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {

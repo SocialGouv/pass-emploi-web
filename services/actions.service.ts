@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost } from 'clients/api.client'
 import { Action, ActionPilotage, StatutAction } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
@@ -16,13 +16,18 @@ import {
 } from 'interfaces/json/action'
 import {
   BaseBeneficiaireJson,
+  DemarcheJson,
   jsonToBaseBeneficiaire,
+  jsonToDemarche,
 } from 'interfaces/json/beneficiaire'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
-export const ACTION_CACHE_TAG = { SINGLETON: 'action', LISTE: 'actions' }
+// TYPES
+export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
 
+// ******* READ *******
 export async function getAction(
   idAction: string,
   accessToken: string
@@ -35,7 +40,7 @@ export async function getAction(
       content: { jeune, ...actionJson },
     } = await apiGet<
       ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
-    >(`/actions/${idAction}`, accessToken, ACTION_CACHE_TAG.SINGLETON)
+    >(`/actions/${idAction}`, accessToken, CACHE_TAGS.ACTION.SINGLETON)
     return {
       action: jsonToAction(actionJson),
       jeune: {
@@ -98,6 +103,33 @@ export async function getActionsAQualifierServerSide(
   return getActionsAQualifier(idConseiller, { page: 1 }, accessToken)
 }
 
+export async function getDemarchesBeneficiaire(
+  idBeneficiaire: string,
+  dateDebut: DateTime,
+  idConseiller: string,
+  accessToken: string
+): Promise<{ data: Demarche[]; isStale: boolean } | null> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  try {
+    const {
+      content: { queryModel: demarchesJson, dateDuCache },
+    } = await apiGet<{ queryModel: DemarcheJson[]; dateDuCache?: string }>(
+      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
+      accessToken,
+      CACHE_TAGS.ACTION.LISTE
+    )
+
+    return {
+      data: demarchesJson.map(jsonToDemarche),
+      isStale: Boolean(dateDuCache),
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
+}
+
+// ******* WRITE *******
 export async function creerAction(
   action: ActionFormData,
   idJeune: string
@@ -139,6 +171,7 @@ export async function deleteAction(idAction: string): Promise<void> {
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
 }
 
+// ******* PRIVATE *******
 async function getActionsBeneficiaire(
   idJeune: string,
   {
@@ -170,7 +203,7 @@ async function getActionsBeneficiaire(
   } = await apiGet<{
     actions: ActionJson[]
     metadonnees: MetadonneesActionsJson
-  }>(url, accessToken, ACTION_CACHE_TAG.LISTE)
+  }>(url, accessToken, CACHE_TAGS.ACTION.LISTE)
 
   const nombrePages = Math.ceil(
     metadonnees.nombreFiltrees / metadonnees.nombreActionsParPage
@@ -181,7 +214,6 @@ async function getActionsBeneficiaire(
   }
 }
 
-export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
 async function getActionsAQualifier(
   idConseiller: string,
   {
@@ -224,7 +256,7 @@ async function getActionsAQualifier(
   }>(
     `/v2/conseillers/${idConseiller}/actions?${queryParams}`,
     accessToken,
-    ACTION_CACHE_TAG.LISTE
+    CACHE_TAGS.ACTION.LISTE
   )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)

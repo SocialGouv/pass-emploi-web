@@ -1,14 +1,11 @@
 import { render } from '@testing-library/react'
 import { headers } from 'next/headers'
+import { getServerSession } from 'next-auth'
 
 import PartageRecherche from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/page'
 import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 import { TypeOffre } from 'interfaces/offre'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 )
@@ -27,7 +24,7 @@ describe('Partage Recherche', () => {
   describe('quand l’utilisateur est connecté', () => {
     beforeEach(() => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+      ;(getServerSession as jest.Mock).mockResolvedValue({
         user: { id: 'id-conseiller' },
         accessToken: 'accessToken',
       })

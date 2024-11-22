@@ -8,10 +8,10 @@ import { uneListeDAgencesFranceTravail } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierAgence } from 'services/conseiller.service'
+import { modifierAgence } from 'services/conseillers.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('components/ModalContainer')
 
 describe('HomePage client side', () => {

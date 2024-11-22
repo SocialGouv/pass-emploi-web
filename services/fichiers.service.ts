@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiPostFile } from 'clients/api.client'
 import { InfoFichier } from 'interfaces/fichier'
 
+// ******* WRITE *******
 export async function uploadFichier(
   idsJeunes: string[],
   idsListesDeDiffusion: string[],

@@ -1,19 +1,17 @@
 import { render } from '@testing-library/react'
+import { getServerSession } from 'next-auth'
 
 import Profil from 'app/(connected)/(with-sidebar)/(with-chat)/profil/page'
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
+import { unUtilisateur } from 'fixtures/auth'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('services/referentiel.service')
 
 describe('ProfilPage server side', () => {
@@ -66,9 +64,8 @@ describe('ProfilPage server side', () => {
   })
 
   async function renderPageForConseiller(conseiller: Conseiller) {
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: conseiller.structure },
+    ;(getServerSession as jest.Mock).mockResolvedValue({
+      user: unUtilisateur({ structure: conseiller.structure }),
     })
     ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
     ;(getAgencesServerSide as jest.Mock).mockResolvedValue(

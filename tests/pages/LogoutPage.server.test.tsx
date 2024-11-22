@@ -1,18 +1,20 @@
 import { render } from '@testing-library/react'
+import { getServerSession } from 'next-auth'
 
 import LogoutPage from 'app/(connexion)/logout/LogoutPage'
 import Logout from 'app/(connexion)/logout/page'
-import { getSessionServerSide } from 'utils/auth/auth'
+import { unUtilisateur } from 'fixtures/auth'
 
-jest.mock('utils/auth/auth', () => ({ getSessionServerSide: jest.fn() }))
 jest.mock('app/(connexion)/logout/LogoutPage')
 
 describe('LogoutPage server side', () => {
   describe('cej', () => {
     it('prepare la page', async () => {
       // Given
-      ;(getSessionServerSide as jest.Mock).mockReturnValue({
-        user: { structure: 'MILO' },
+      ;(getServerSession as jest.Mock).mockReturnValue({
+        user: unUtilisateur({
+          structure: 'MILO',
+        }),
       })
 
       // When
@@ -26,8 +28,10 @@ describe('LogoutPage server side', () => {
   describe('passemploi', () => {
     it('prepare la page', async () => {
       // Given
-      ;(getSessionServerSide as jest.Mock).mockReturnValue({
-        user: { structure: 'POLE_EMPLOI_AIJ' },
+      ;(getServerSession as jest.Mock).mockReturnValue({
+        user: unUtilisateur({
+          structure: 'POLE_EMPLOI_AIJ',
+        }),
       })
 
       // When

@@ -7,15 +7,11 @@ import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getDetailsSession } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock('services/sessions.service')
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/ClotureSessionPage'
 )
@@ -27,10 +23,6 @@ describe('Cloture Session server side', () => {
   describe("quand l'utilisateur est connecté", () => {
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: StructureConseiller.MILO },
-        accessToken: 'accessToken',
-      })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
@@ -89,7 +81,6 @@ describe('Cloture Session server side', () => {
       )
 
       // Then
-      expect(getMandatorySessionServerSide).toHaveBeenCalled()
       expect(getConseillerServerSide).toHaveBeenCalled()
       expect(getDetailsSession).toHaveBeenCalledWith(
         'id-conseiller',
@@ -156,9 +147,6 @@ describe('Cloture Session server side', () => {
   describe('quand l’utilisateur est France Travail', () => {
     it('renvoie sur la liste des bénéficiaires', async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
-      })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
       )

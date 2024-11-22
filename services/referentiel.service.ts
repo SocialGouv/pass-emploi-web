@@ -6,10 +6,18 @@ import {
   SituationNonProfessionnelle,
 } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
-import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
+import {
+  Agence,
+  Commune,
+  Localite,
+  Metier,
+  MotifSuppressionBeneficiaire,
+  TypeEvenementReferentiel,
+} from 'interfaces/referentiel'
 
-const TAG = 'referentiel'
+const CACHE_TAG_REFETENTIEL = 'referentiel'
 
+// ******* READ *******
 export function getAgencesServerSide(
   structure: string,
   accessToken: string
@@ -40,7 +48,7 @@ export async function getMetiers(query: string): Promise<Metier[]> {
   const { content: metiers } = await apiGet<Metier[]>(
     `/referentiels/metiers?recherche=${encodeURIComponent(query)}`,
     session!.accessToken,
-    TAG
+    CACHE_TAG_REFETENTIEL
   )
   return metiers
 }
@@ -51,7 +59,7 @@ export async function getActionsPredefinies(
   const { content: actionsPredefinies } = await apiGet<ActionPredefinie[]>(
     `/referentiels/actions-predefinies`,
     accessToken,
-    TAG
+    CACHE_TAG_REFETENTIEL
   )
   return actionsPredefinies
 }
@@ -63,7 +71,7 @@ export async function getSituationsNonProfessionnelles(
   const { content } = await apiGet<SituationNonProfessionnelle[]>(
     '/referentiels/qualifications-actions/types',
     accessToken,
-    TAG
+    CACHE_TAG_REFETENTIEL
   )
   return avecNonSNP
     ? content
@@ -72,6 +80,30 @@ export async function getSituationsNonProfessionnelles(
       )
 }
 
+export async function getTypesRendezVous(
+  accessToken: string
+): Promise<TypeEvenementReferentiel[]> {
+  const { content: types } = await apiGet<TypeEvenementReferentiel[]>(
+    '/referentiels/types-rendezvous',
+    accessToken,
+    CACHE_TAG_REFETENTIEL
+  )
+  return types
+}
+
+export async function getMotifsSuppression(): Promise<
+  MotifSuppressionBeneficiaire[]
+> {
+  const session = await getSession()
+  const { content: motifs } = await apiGet<MotifSuppressionBeneficiaire[]>(
+    '/referentiels/motifs-suppression-jeune',
+    session!.accessToken,
+    CACHE_TAG_REFETENTIEL
+  )
+  return motifs
+}
+
+// ******* PRIVATE *******
 async function getAgences(
   structure: string,
   accessToken: string
@@ -79,7 +111,7 @@ async function getAgences(
   const { content: agences } = await apiGet<Agence[]>(
     `/referentiels/agences?structure=${structure}`,
     accessToken,
-    TAG
+    CACHE_TAG_REFETENTIEL
   )
   return agences
 }
@@ -89,7 +121,7 @@ async function getLocalites(path: string, query: string): Promise<Localite[]> {
   const { content: localites } = await apiGet<Localite[]>(
     path + `recherche=${encodeURIComponent(query)}`,
     session!.accessToken,
-    TAG
+    CACHE_TAG_REFETENTIEL
   )
 
   return Array.from(

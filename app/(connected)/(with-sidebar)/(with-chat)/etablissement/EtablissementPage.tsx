@@ -70,7 +70,7 @@ function EtablissementPage() {
     id?: string
     nom: string
   }): Promise<void> {
-    const { modifierAgence } = await import('services/conseiller.service')
+    const { modifierAgence } = await import('services/conseillers.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')

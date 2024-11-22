@@ -22,13 +22,14 @@ import { recupererAgenda } from 'services/agenda.service'
 import {
   archiverJeune,
   getIndicateursJeuneAlleges,
-  getMotifsSuppression,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
+import { getMotifsSuppression } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
+jest.mock('services/referentiel.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 

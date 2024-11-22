@@ -8,7 +8,7 @@ const apiPrefix = process.env.NEXT_PUBLIC_API_ENDPOINT
 export async function apiGet<T>(
   path: string,
   accessToken: string,
-  cacheTag: string
+  cacheTags: string | string[]
 ): Promise<{ content: T; headers: Headers }> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
@@ -16,7 +16,7 @@ export async function apiGet<T>(
 
   return fetchJson(`${apiPrefix}${path}`, {
     headers,
-    next: { tags: [cacheTag] },
+    next: { tags: typeof cacheTags === 'string' ? [cacheTags] : cacheTags },
   })
 }
 

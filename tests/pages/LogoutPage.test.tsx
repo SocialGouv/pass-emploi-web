@@ -9,9 +9,6 @@ import { signOut as chatSignOut } from 'services/messages.service'
 jest.mock('services/messages.service', () => ({
   signOut: jest.fn(async () => {}),
 }))
-jest.mock('next-auth/react', () => ({
-  signOut: jest.fn(),
-}))
 
 describe('LogoutPage client side', () => {
   let container: HTMLElement

@@ -7,12 +7,8 @@ import EnvoiMessageGroupe, {
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/page'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('services/listes-de-diffusion.service')
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
 )
@@ -22,10 +18,6 @@ describe('EnvoiMessageGroupePage server side', () => {
   const listesDeDiffusion = desListesDeDiffusion()
   beforeEach(() => {
     // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
-      accessToken: 'accessToken',
-    })
     ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
       listesDeDiffusion
     )

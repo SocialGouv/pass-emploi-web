@@ -60,7 +60,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
     }
 
     const { modifierNotificationsSonores } = await import(
-      'services/conseiller.service'
+      'services/conseillers.service'
     )
     await modifierNotificationsSonores(
       conseiller.id,
@@ -73,7 +73,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
     id?: string
     nom: string
   }): Promise<void> {
-    const { modifierAgence } = await import('services/conseiller.service')
+    const { modifierAgence } = await import('services/conseillers.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Profil - Succès ajout agence')
@@ -95,7 +95,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
   async function supprimerCompteConseiller(): Promise<void> {
     try {
       const { supprimerConseiller } = await import(
-        'services/conseiller.service'
+        'services/conseillers.service'
       )
       await supprimerConseiller(conseiller.id)
       setShowModaleSuppressionCompte(false)

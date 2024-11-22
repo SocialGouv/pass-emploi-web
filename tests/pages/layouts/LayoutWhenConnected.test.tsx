@@ -11,13 +11,11 @@ import { unConseiller } from 'fixtures/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
-
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 jest.mock('utils/conseiller/conseillerContext', () => ({
   ConseillerProvider: jest.fn(({ children }) => <>{children}</>),
 }))

@@ -3,15 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
-import { signin } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
-
-jest.mock('utils/auth/auth', () => ({
-  signin: jest.fn(),
-}))
 
 describe('LoginPassEmploiPage client side', () => {
   let container: HTMLElement
@@ -88,10 +84,10 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(peBRSAButton)
 
       // Then
-      expect(signin).toHaveBeenCalledWith(
-        'pe-brsa-conseiller',
-        setErrorMsg,
-        'redirectUrl'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'pe-brsa-conseiller' }
       )
     })
 
@@ -105,10 +101,10 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(peAIJButton)
 
       // Then
-      expect(signin).toHaveBeenCalledWith(
-        'pe-aij-conseiller',
-        setErrorMsg,
-        'redirectUrl'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'pe-aij-conseiller' }
       )
     })
 
@@ -122,10 +118,26 @@ describe('LoginPassEmploiPage client side', () => {
       await userEvent.click(cdButton)
 
       // Then
-      expect(signin).toHaveBeenCalledWith(
-        'conseildepartemental-conseiller',
-        setErrorMsg,
-        'redirectUrl'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'conseildepartemental-conseiller' }
+      )
+    })
+
+    it('transmet l’erreur d’identification', async () => {
+      // Given
+      const cdButton = screen.getByRole('button', {
+        name: 'Connexion Conseil départemental',
+      })
+      ;(signIn as jest.Mock).mockRejectedValue(new Error())
+
+      // When
+      await userEvent.click(cdButton)
+
+      // Then
+      expect(setErrorMsg).toHaveBeenCalledWith(
+        "une erreur est survenue lors de l'authentification"
       )
     })
   })

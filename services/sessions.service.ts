@@ -14,9 +14,11 @@ import {
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
 import { InformationBeneficiaireSession, Session } from 'interfaces/session'
+import { CACHE_TAGS } from 'services/cache-tags'
 import { minutesEntreDeuxDates, toLongMonthDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
+// ******* TYPES *******
 export type SessionsAClore = {
   id: string
   titre: string
@@ -24,6 +26,7 @@ export type SessionsAClore = {
   sousTitre?: string
 }
 
+// ******* READ *******
 export async function getSessionsACloreServerSide(
   idConseiller: string,
   accessToken: string
@@ -69,7 +72,7 @@ export async function getSessionsBeneficiaires(
   >(
     `/conseillers/milo/${idConseiller}/agenda/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     session!.accessToken,
-    'sessions'
+    CACHE_TAGS.EVENEMENT.LISTE
   )
   return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
 }
@@ -83,7 +86,7 @@ export async function getDetailsSession(
     const { content: sessionJson } = await apiGet<DetailsSessionJson>(
       `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
       accessToken,
-      'session'
+      CACHE_TAGS.EVENEMENT.SINGLETON
     )
     return jsonToSession(sessionJson)
   } catch (e) {
@@ -94,6 +97,30 @@ export async function getDetailsSession(
   }
 }
 
+export async function getSessionsBeneficiaire(
+  idJeune: string,
+  accessToken: string,
+  dateDebut: DateTime
+): Promise<EvenementListItem[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
+  try {
+    const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
+    const { content: sessionsMiloJeuneJson } = await apiGet<
+      SessionMiloBeneficiaireJson[]
+    >(path, accessToken, CACHE_TAGS.EVENEMENT.LISTE)
+
+    return sessionsMiloJeuneJson.map(
+      sessionMiloBeneficiaireJsonToEvenementListItem
+    )
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) {
+      return []
+    }
+    throw e
+  }
+}
+
+// ******* WRITE *******
 export async function changerInscriptionsSession(
   idSession: string,
   inscriptions?: InformationBeneficiaireSession[]
@@ -146,29 +173,7 @@ export async function cloreSession(
   )
 }
 
-export async function getSessionsMiloBeneficiaire(
-  idJeune: string,
-  accessToken: string,
-  dateDebut: DateTime
-): Promise<EvenementListItem[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
-  try {
-    const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
-    const { content: sessionsMiloJeuneJson } = await apiGet<
-      SessionMiloBeneficiaireJson[]
-    >(path, accessToken, 'sessions')
-
-    return sessionsMiloJeuneJson.map(
-      sessionMiloBeneficiaireJsonToEvenementListItem
-    )
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) {
-      return []
-    }
-    throw e
-  }
-}
-
+// ******* PRIVATE *******
 async function getSessionsMissionLocale(
   idConseiller: string,
   accessToken: string,
@@ -180,7 +185,7 @@ async function getSessionsMissionLocale(
         options ? '?' + options : ''
       }`,
       accessToken,
-      'sessions'
+      CACHE_TAGS.EVENEMENT.LISTE
     )
     return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
   } catch (e) {

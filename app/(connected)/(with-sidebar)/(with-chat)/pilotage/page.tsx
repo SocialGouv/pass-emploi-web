@@ -11,7 +11,7 @@ import {
 import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { getActionsAQualifierServerSide } from 'services/actions.service'
-import { getConseillerServerSide } from 'services/conseiller.service'
+import { getConseillerServerSide } from 'services/conseillers.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
 import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import {

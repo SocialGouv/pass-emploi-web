@@ -12,7 +12,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { estPassEmploi } from 'interfaces/conseiller'
-import { modifierDateSignatureCGU } from 'services/conseiller.service'
+import { modifierDateSignatureCGU } from 'services/conseillers.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 const HeaderCGUConseillerCEJ = dynamic(

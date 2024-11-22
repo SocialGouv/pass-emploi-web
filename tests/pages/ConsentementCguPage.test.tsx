@@ -8,10 +8,10 @@ import React from 'react'
 import ConsentementCguPage from 'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage'
 import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { modifierDateSignatureCGU } from 'services/conseiller.service'
+import { modifierDateSignatureCGU } from 'services/conseillers.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/conseiller.service')
+jest.mock('services/conseillers.service')
 
 describe('ConsentementCGUPage client side', () => {
   let container: HTMLElement

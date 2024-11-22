@@ -3,7 +3,7 @@
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiPost, apiPut } from 'clients/api.client'
-import { LISTES_DIFFUSION_CACHE_TAG } from 'services/listes-de-diffusion.service'
+import { CACHE_TAGS } from 'services/cache-tags'
 
 export type ListeDeDiffusionFormData = {
   titre: string
@@ -21,7 +21,7 @@ export async function creerListeDeDiffusion({
     `/conseillers/${user.id}/listes-de-diffusion`,
     { titre, idsBeneficiaires },
     accessToken,
-    Object.values(LISTES_DIFFUSION_CACHE_TAG)
+    Object.values(CACHE_TAGS.LISTE_DIFFUSION)
   )
 }
 
@@ -35,7 +35,7 @@ export async function modifierListeDeDiffusion(
     '/listes-de-diffusion/' + idListe,
     { titre, idsBeneficiaires },
     session!.accessToken,
-    Object.values(LISTES_DIFFUSION_CACHE_TAG)
+    Object.values(CACHE_TAGS.LISTE_DIFFUSION)
   )
 }
 
@@ -45,6 +45,6 @@ export async function supprimerListeDeDiffusion(
   const session = await getSession()
 
   await apiDelete('/listes-de-diffusion/' + idListe, session!.accessToken, [
-    LISTES_DIFFUSION_CACHE_TAG.SINGLETON,
+    CACHE_TAGS.LISTE_DIFFUSION.SINGLETON,
   ])
 }

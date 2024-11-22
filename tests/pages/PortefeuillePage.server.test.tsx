@@ -1,22 +1,21 @@
 import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { getServerSession } from 'next-auth'
 
 import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/page'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
+import { unUtilisateur } from 'fixtures/auth'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
-import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
-import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import {
+  getBeneficiairesDuConseillerServerSide,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
+} from 'services/beneficiaires.service'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 )
 jest.mock('services/beneficiaires.service')
-jest.mock('services/actions.service')
 
 describe('PortefeuillePage server side', () => {
   beforeEach(() => {
@@ -36,12 +35,6 @@ describe('PortefeuillePage server side', () => {
   })
 
   it('récupère la liste des jeunes', async () => {
-    // Given
-    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-      accessToken: 'accessToken',
-    })
-
     // When
     await Portefeuille({})
 
@@ -55,9 +48,8 @@ describe('PortefeuillePage server side', () => {
   describe('pour un conseiller France Travail', () => {
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-        accessToken: 'accessToken',
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: unUtilisateur({ id: 'id-conseiller', structure: 'POLE_EMPLOI' }),
       })
 
       // When
@@ -91,11 +83,6 @@ describe('PortefeuillePage server side', () => {
   describe('pour un conseiller pas France Travail', () => {
     beforeEach(async () => {
       // Given
-      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
-        accessToken: 'accessToken',
-      })
-
       jest
         .spyOn(DateTime, 'now')
         .mockReturnValue(DateTime.fromISO('2024-08-01'))

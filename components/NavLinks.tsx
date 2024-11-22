@@ -13,7 +13,7 @@ import {
   estSuperviseur,
   utiliseChat,
 } from 'interfaces/conseiller'
-import { modifierDateVisionnageActus } from 'services/conseiller.service'
+import { modifierDateVisionnageActus } from 'services/conseillers.service'
 import { useActualites } from 'utils/actualitesContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'

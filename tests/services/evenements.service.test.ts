@@ -28,10 +28,10 @@ import {
   getRendezVousConseiller,
   getRendezVousEtablissement,
   getRendezVousJeune,
-  getTypesRendezVous,
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
+import { getTypesRendezVous } from 'services/referentiel.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -52,7 +52,8 @@ describe('EvenementsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/types-rendezvous',
-        accessToken
+        accessToken,
+        'referentiel'
       )
       expect(actual).toEqual(typesRendezVous)
     })
@@ -69,7 +70,11 @@ describe('EvenementsApiService', () => {
       const actual = await getDetailsEvenement('id-rdv', 'accessToken')
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/rendezvous/id-rdv', 'accessToken')
+      expect(apiGet).toHaveBeenCalledWith(
+        '/rendezvous/id-rdv',
+        'accessToken',
+        'evenement'
+      )
       expect(actual).toEqual(unEvenement({ nombreMaxParticipants: 10 }))
     })
 
@@ -167,7 +172,8 @@ describe('EvenementsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/v2/conseillers/idConseiller/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toEqual([
         unEvenementListItem({
@@ -204,7 +210,8 @@ describe('EvenementsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
-        accessToken
+        accessToken,
+        'agenda'
       )
       const expected = unEvenementListItem()
       delete expected.labelBeneficiaires
@@ -277,7 +284,8 @@ describe('EvenementsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/etablissements/id-etablissement/animations-collectives?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       const animationsCollectives: AnimationCollective[] = [
         uneAnimationCollective({
@@ -316,7 +324,8 @@ describe('EvenementsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toStrictEqual({
         animationsCollectives: uneListeDAnimationCollectiveAClore(),
@@ -344,7 +353,8 @@ describe('EvenementsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toStrictEqual({
         animationsCollectives: uneListeDAnimationCollectiveAClore(),
@@ -379,7 +389,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/rendezvous',
+        '/conseillers/id-conseiller/rendezvous',
         {
           jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
           modality: modalites[0],

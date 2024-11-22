@@ -11,10 +11,8 @@ import {
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserMilo } from 'interfaces/conseiller'
-import {
-  getConseillersDuJeuneServerSide,
-  getJeuneDetails,
-} from 'services/beneficiaires.service'
+import { getJeuneDetails } from 'services/beneficiaires.service'
+import { getConseillersDuJeuneServerSide } from 'services/conseillers.service'
 import { getMetadonneesFavorisJeune } from 'services/favoris.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
