@@ -97,8 +97,7 @@ export function fromConseiller(message: Message): boolean {
 
 export function getPreviousItemId<T extends { id: string }>(
   idCible: string,
-  { length, days }: ByDay<T>,
-  { orNext }: { orNext?: boolean } = {}
+  { length, days }: ByDay<T>
 ): string | undefined {
   if (length === 0) return
 
@@ -126,15 +125,5 @@ export function getPreviousItemId<T extends { id: string }>(
     indexPreviousDay--
   }
 
-  if (!orNext) return // pas d’item précédent
-
-  const indexNextItem = indexItem + 1
-  if (indexNextItem < day.messages.length) return day.messages[indexNextItem].id // item suivant du même jour
-
-  let indexNextDay = indexDay + 1
-  while (indexNextDay < days.length) {
-    const nextDay = days[indexNextDay]
-    if (nextDay.messages.length) return nextDay.messages[0].id // premier item du 1er jour précédent avec des items
-    indexNextDay++
-  }
+  return
 }

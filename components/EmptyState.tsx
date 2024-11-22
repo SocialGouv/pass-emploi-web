@@ -49,10 +49,7 @@ export default function EmptyState({
   ...props
 }: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps) {
   return (
-    <div
-      tabIndex={shouldFocus ? -1 : undefined}
-      ref={shouldFocus ? (e) => e?.focus() : undefined}
-    >
+    <div>
       <IllustrationComponent
         name={illustrationName}
         focusable={false}
@@ -60,7 +57,11 @@ export default function EmptyState({
         className='w-48 h-48 m-auto mt-12 [--secondary-fill:theme(colors.grey\_100)]'
       />
 
-      <p className='text-base-bold text-center text-content_color mt-8'>
+      <p
+        tabIndex={shouldFocus ? -1 : undefined}
+        ref={shouldFocus ? (e) => e?.focus() : undefined}
+        className='text-base-bold text-center text-content_color mt-8'
+      >
         {titre}
       </p>
 

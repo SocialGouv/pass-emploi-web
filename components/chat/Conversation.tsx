@@ -244,25 +244,15 @@ export function Conversation({
   }
 
   async function supprimerMessage(message: Message) {
-    const idMessageToFocus = getPreviousItemId(message.id, messagesByDay!, {
-      orNext: true,
-    })
-
     await _supprimerMessage(
       beneficiaireChat.chatId,
       message,
       chatCredentials!.cleChiffrement
     )
 
-    if (idMessageToFocus) {
-      const messageToFocus = document.getElementById(
-        `message-${idMessageToFocus}`
-      )!
-      messageToFocus.setAttribute('tabIndex', '-1')
-      messageToFocus.focus()
-    } else {
-      document.getElementById('chat-bouton-retour')!.focus()
-    }
+    const messageToFocus = document.getElementById(`message-${message.id}`)!
+    messageToFocus.setAttribute('tabIndex', '-1')
+    messageToFocus.focus()
 
     trackEvent({
       structure: conseiller.structure,
