@@ -1,10 +1,12 @@
-import { Actualites } from 'interfaces/actualites'
+import sanitizeHtml from 'sanitize-html'
+
+import { ActualitesRaw, ArticleJson } from 'interfaces/actualites'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { fetchJson } from 'utils/httpClient'
 
 export async function getActualites(
   structure: StructureConseiller
-): Promise<Actualites | undefined> {
+): Promise<ActualitesRaw | undefined> {
   const url = ((): string | undefined => {
     switch (structure) {
       case StructureConseiller.MILO:
@@ -22,15 +24,51 @@ export async function getActualites(
 
   if (!url) return
 
-  const {
-    content: {
-      modified,
-      content: { rendered },
-    },
-  }: {
-    content: { modified: string; content: { rendered: string } }
-    headers: Headers
-  } = await fetchJson(url)
+  const articlesJson = await fetchJson(url)
 
-  return { contenu: rendered, dateDerniereModification: modified }
+  const derniereDateModification = articlesJson.content.reduce(
+    (latest: string, item: ArticleJson) => {
+      return new Date(item.modified) > new Date(latest) ? item.modified : latest
+    },
+    articlesJson.content[0].modified
+  )
+
+  return {
+    articles: articlesJson.content.map((article: ArticleJson) => ({
+      id: article.id,
+      contenu: formaterArticle(article),
+      titre: article.title.rendered,
+    })),
+    dateDerniereModification: derniereDateModification,
+  }
+}
+
+function formaterArticle({ content }: ArticleJson) {
+  const contentAssaini = sanitizeHtml(content.rendered, {
+    disallowedTagsMode: 'recursiveEscape',
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+  })
+
+  return ajouterTagCategorie(contentAssaini)
+}
+
+function ajouterTagCategorie(str: string) {
+  const codeRegex = /<code\b[^>]*>([.\s]*?)<\/code>/
+
+  const baliseCode = str.match(codeRegex)
+  if (!baliseCode) return str
+  const baliseCodeContent = baliseCode[1]
+
+  const tags = baliseCodeContent.split(',').map((word) => word.trim())
+
+  const categories = tags
+    .map((tag) => {
+      return `<span className='flex items-center w-fit text-s-medium text-additional_3 px-3 bg-additional_3_lighten whitespace-nowrap rounded-full'>${tag}</span>`
+    })
+    .join('')
+
+  return str.replace(
+    /<pre\b[^>]*>[.\s]*?<\/pre>/g,
+    `<div className='flex gap-2'>${categories}</div>`
+  )
 }
