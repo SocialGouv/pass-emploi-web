@@ -99,7 +99,6 @@ export function ConversationTile({
       </button>
 
       <IconToggle
-        id={`${id}--flag`}
         label={'Suivi de la conversation avec ' + beneficiaireFullname}
         checked={beneficiaireChat.flaggedByConseiller}
         checkedState={{

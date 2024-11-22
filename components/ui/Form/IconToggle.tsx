@@ -5,7 +5,6 @@ type ToggleState = {
   actionTitle: string
 }
 type IconToggleProps = {
-  id: string
   label: string
   checked: boolean
   checkedState: ToggleState
@@ -15,7 +14,6 @@ type IconToggleProps = {
 }
 
 export default function IconToggle({
-  id,
   label,
   checked,
   checkedState,
@@ -26,16 +24,13 @@ export default function IconToggle({
   const state = checked ? checkedState : uncheckedState
   return (
     <>
-      <label htmlFor={id} className='sr-only'>
-        {label}
-      </label>
       <button
-        id={id}
         type='button'
         role='switch'
         aria-checked={checked}
         onClick={onToggle}
-        title={state.actionTitle}
+        aria-label={label}
+        title={label + ' ' + state.actionTitle}
         className={className}
       >
         <IconComponent

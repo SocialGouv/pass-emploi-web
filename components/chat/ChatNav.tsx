@@ -25,12 +25,10 @@ export default function ChatNav({ onClose }: { onClose: () => void }) {
     >
       <nav
         role='navigation'
-        id='menu-mobile'
         className='h-full w-full flex flex-col bg-primary px-6 py-3'
       >
         <button
           type='button'
-          aria-controls='menu-mobile'
           onClick={(e) => modalContainerRef.current!.closeModal(e)}
           aria-expanded={true}
           className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-full'
