@@ -194,32 +194,47 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {evenementsAffiches?.length === 0 && (
+      {evenementsAffiches && evenementsAffiches?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             shouldFocus={shouldFocus || filtres.length > 0}
-            illustrationName={IllustrationName.Checklist}
-            titre={
-              evenements?.length && filtres.length
-                ? 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
-                : 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+            illustrationName={
+              evenements && evenements.length === 0
+                ? IllustrationName.Checklist
+                : IllustrationName.Search
             }
-            lien={{
-              href: '/mes-jeunes/edition-rdv?type=ac',
-              label: 'Créer une animation collective',
-              iconName: IconName.Add,
-            }}
+            titre={
+              evenements && evenements.length === 0
+                ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+                : 'Aucun événement ne correspond à votre recherche sur la période sélectionnée.'
+            }
+            sousTitre={
+              evenements && evenements.length > 0 && filtres.length === 0
+                ? 'Essayez de modifier votre recherche ou la période.'
+                : undefined
+            }
+            {...(evenements && evenements.length === 0
+              ? {
+                  lien: {
+                    href: '/mes-jeunes/edition-rdv?type=ac',
+                    label: 'Créer une animation collective',
+                    iconName: IconName.Add,
+                  },
+                }
+              : {})}
           />
 
           {evenements!.length > 0 && (
-            <Button
-              type='button'
-              style={ButtonStyle.SECONDARY}
-              onClick={() => filtresRef.current!.reset()}
-              className='m-auto mt-8'
-            >
-              Réinitialiser les filtres
-            </Button>
+            <>
+              <Button
+                type='button'
+                style={ButtonStyle.SECONDARY}
+                onClick={() => filtresRef.current!.reset()}
+                className='m-auto mt-8'
+              >
+                Réinitialiser les filtres
+              </Button>
+            </>
           )}
         </div>
       )}
