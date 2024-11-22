@@ -213,15 +213,11 @@ export default function OngletAgendaEtablissement({
                 ? 'Essayez de modifier votre recherche ou la période.'
                 : undefined
             }
-            {...(evenements && evenements.length === 0
-              ? {
-                  lien: {
-                    href: '/mes-jeunes/edition-rdv?type=ac',
-                    label: 'Créer une animation collective',
-                    iconName: IconName.Add,
-                  },
-                }
-              : {})}
+            lien={{
+              href: '/mes-jeunes/edition-rdv?type=ac',
+              label: 'Créer une animation collective',
+              iconName: IconName.Add,
+            }}
           />
 
           {evenements!.length > 0 && (
