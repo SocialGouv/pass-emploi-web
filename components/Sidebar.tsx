@@ -23,7 +23,7 @@ export default function Sidebar() {
           focusable={false}
           aria-label='pass emploi'
           title='pass emploi'
-          className='mb-8 mx-auto w-[95px] fill-white'
+          className='mb-8 mx-auto min-h-[55px] w-[95px] fill-white'
         />
       )}
 
@@ -34,7 +34,7 @@ export default function Sidebar() {
           focusable={false}
           aria-label='contrat d’engagement jeune'
           title='contrat d’engagement jeune'
-          className='mb-8 mx-auto h-[64px] w-[120px] fill-white'
+          className='mx-auto mb-8 min-h-[64px] w-[120px] fill-white'
         />
       )}
 

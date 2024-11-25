@@ -57,7 +57,7 @@ export default function LayoutLoginClient({
   return (
     <>
       <LoginErrorMessageProvider state={[errorMsg, setErrorMsg]}>
-        <div className='flex flex-col justify-center h-screen w-screen overflow-y-auto'>
+        <div className='flex flex-col h-screen w-screen overflow-y-auto'>
           {children}
 
           {!pageEstHubLogin && (
