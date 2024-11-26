@@ -74,7 +74,6 @@ export default function TableauRdvsBeneficiaire({
               <EvenementRow
                 key={rdv.id}
                 evenement={rdv}
-                beneficiaire={beneficiaire}
                 idConseiller={idConseiller}
                 withIndicationPresenceBeneficiaire={isRdvPasses}
               />

@@ -7,24 +7,23 @@ import { TagType } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
-import {
-  BaseBeneficiaire,
-  getNomBeneficiaireComplet,
-} from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { toFrenchTime, toMonthday, toShortDate } from 'utils/date'
+import {
+  toFrenchDuration,
+  toFrenchTime,
+  toMonthday,
+  toShortDate,
+} from 'utils/date'
 
 interface EvenementRowProps {
   evenement: EvenementListItem
   idConseiller: string
-  beneficiaire: BaseBeneficiaire
   withIndicationPresenceBeneficiaire?: boolean
 }
 
 export function EvenementRow({
   evenement,
   idConseiller,
-  beneficiaire,
   withIndicationPresenceBeneficiaire = false,
 }: EvenementRowProps) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -34,9 +33,8 @@ export function EvenementRow({
   const date = DateTime.fromISO(evenement.date)
   const shortDate = toShortDate(date)
   const fullDate = toMonthday(date)
-  const timeAndDuration = `${toFrenchTime(date)} - ${evenement.duree} min`
-
-  const labelBeneficiaires = getNomBeneficiaireComplet(beneficiaire)
+  const timeAndDuration = `${toFrenchTime(date)} - ${toFrenchDuration(evenement.duree)}`
+  const timeAndDurationA11y = `${toFrenchTime(date, { a11y: true })} - ${toFrenchDuration(evenement.duree, { a11y: true })}`
 
   const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id
   const urlSessionMilo = '/agenda/sessions/' + evenement.id
@@ -44,7 +42,7 @@ export function EvenementRow({
   return (
     <TR>
       <TD
-        aria-label={fullDate + ' - ' + timeAndDuration}
+        aria-label={fullDate + ' - ' + timeAndDurationA11y}
         className='rounded-l-base'
       >
         {shortDate} - {timeAndDuration}
@@ -97,32 +95,22 @@ export function EvenementRow({
       </TD>
 
       <TD className='rounded-r-base'>
-        {evenement.createur?.id === idConseiller && (
-          <>
-            <span className='sr-only'>oui</span>
-            <IconComponent
-              name={IconName.CheckCircleFill}
-              aria-hidden={true}
-              focusable={false}
-              className='h-6 fill-primary'
-            />
-          </>
-        )}
-        {evenement.createur?.id !== idConseiller && (
-          <>
-            <span className='sr-only'>non</span>
-            <IconComponent
-              name={IconName.Cancel}
-              aria-hidden={true}
-              focusable={false}
-              className='h-6 fill-grey_700'
-            />
-          </>
-        )}
+        <IconComponent
+          name={
+            evenement.createur?.id === idConseiller
+              ? IconName.CheckCircleFill
+              : IconName.Cancel
+          }
+          aria-hidden={true}
+          focusable={false}
+          className='inline mr-2 h-6 w-6 fill-primary'
+        />
+        {evenement.createur?.id === idConseiller ? 'oui' : 'non'}
       </TD>
+
       <TDLink
         href={evenement.isSession ? urlSessionMilo : urlRdv}
-        label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
+        labelPrefix='Consulter l’événement du'
       />
     </TR>
   )

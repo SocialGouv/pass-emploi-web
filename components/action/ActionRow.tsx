@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import propsStatutsActions from 'components/action/propsStatutsActions'
 import TagStatutAction from 'components/action/TagStatutAction'
 import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
@@ -35,11 +34,6 @@ export default function ActionRow({
   const actionEstTerminee = action.status === StatutAction.Terminee
 
   const dateEcheance = toLongMonthDate(action.dateEcheance)
-
-  function statutAction(): string {
-    if (actionEstEnRetard) return 'en retard'
-    return `${propsStatutsActions[action.status].label}`
-  }
 
   return (
     <TR isSelected={isChecked}>
@@ -86,7 +80,7 @@ export default function ActionRow({
       </TD>
       <TDLink
         href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-        label={`Voir le détail de l'action ${statutAction()} du ${dateEcheance} : ${action.titre}`}
+        labelPrefix='Voir le détail de l’action'
       />
     </TR>
   )

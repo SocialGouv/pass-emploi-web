@@ -1,35 +1,46 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
-import { unsafeRandomId } from 'utils/helpers'
+import { getVisibleText, unsafeRandomId } from 'utils/helpers'
 
 export default function TDLink({
   href,
-  label,
+  labelPrefix,
   className,
 }: {
   href: string
-  label: string
+  labelPrefix: string
   className?: string
 }) {
+  const tdRef = useRef<HTMLTableCellElement>(null)
+  const [label, setLabel] = useState<string>(labelPrefix)
   const labelId = 'tdlink-icon-' + unsafeRandomId()
+
+  useEffect(() => {
+    const rowVisibleText = Array.from(tdRef.current!.parentElement!.children)
+      .slice(0, -1)
+      .map(getVisibleText)
+      .filter((cellVisibleText) => cellVisibleText !== null)
+
+    setLabel(labelPrefix + ' ' + rowVisibleText.join(' '))
+  }, [tdRef.current])
 
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
   // absolute position in grandparent : https://stackoverflow.com/a/25768682
   return (
-    <TD className={className}>
+    <TD ref={tdRef} className={className}>
       <Link
         href={href}
         className='block before:fixed before:inset-0 before:z-10 cursor-pointer'
+        title={label}
       >
         <IconComponent
           name={IconName.ChevronRight}
           focusable={false}
           role='img'
           aria-labelledby={labelId}
-          title={label}
           className=' w-6 h-6 fill-white rounded-full bg-primary mx-auto'
         />
         <span id={labelId} className='sr-only'>

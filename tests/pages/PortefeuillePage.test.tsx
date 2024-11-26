@@ -83,8 +83,9 @@ describe('PortefeuillePage client side', () => {
       jeunes.forEach((jeune) => {
         const nomBeneficiaire = `${jeune.nom} ${jeune.prenom}`
         const row = within(
-          screen.getByRole('cell', { name: new RegExp(nomBeneficiaire) })
-            .parentElement!
+          screen.getByRole('cell', {
+            name: new RegExp('^Accéder.*' + nomBeneficiaire),
+          }).parentElement!
         )
 
         if (jeune.dateFinCEJ)
@@ -117,7 +118,7 @@ describe('PortefeuillePage client side', () => {
 
         //THEN
         expect(
-          within(row).getByRole('cell', { name: 'Le 07/12/2021 à 18h30' })
+          within(row).getByRole('cell', { name: 'Le 07/12/2021 à 18:30' })
         ).toBeInTheDocument()
       })
     })

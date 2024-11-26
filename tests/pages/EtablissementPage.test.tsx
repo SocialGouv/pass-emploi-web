@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -143,7 +143,9 @@ describe('EtablissementPage client side', () => {
           const tableauDeBeneficiaires = screen.getByRole('table', {
             name: 'Résultat de recherche (1 éléments)',
           })
-          expect(tableauDeBeneficiaires).toBeInTheDocument()
+          await waitFor(() => {
+            expect(tableauDeBeneficiaires).toBeInTheDocument()
+          })
           expect(
             within(tableauDeBeneficiaires).getByRole('columnheader', {
               name: 'Bénéficiaire',
@@ -166,7 +168,7 @@ describe('EtablissementPage client side', () => {
           ).toBeInTheDocument()
           expect(
             screen.getByRole('link', {
-              name: 'Accéder à la fiche de Page 1 Albert',
+              name: 'Accéder à la fiche de Page 1 Albert Emploi Le 01/03/2023 à 15:11 Carlo Le Calamar',
             })
           ).toHaveAttribute('href', 'etablissement/beneficiaires/id-jeune')
           expect(
