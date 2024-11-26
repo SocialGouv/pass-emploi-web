@@ -297,7 +297,7 @@ function DemarcheRow({
       </TD>
       <TDLink
         href={`${pathPrefix}/${beneficiaireId}/demarches/${demarche.id}`}
-        label={`Voir le détail de la démarche ${demarche.statut} ${demarche.label} du ${dateEcheance} : ${demarche.titre}`}
+        labelPrefix='Voir le détail de la démarche'
       />
     </TR>
   )

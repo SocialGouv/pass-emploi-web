@@ -26,11 +26,10 @@ jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Animations collectives', () => {
   describe('contenu', () => {
-    let animationsCollectives: AnimationCollectivePilotage[]
+    const animationsCollectives = uneListeDAnimationCollectiveAClore()
     let container: HTMLElement
 
     beforeEach(async () => {
-      animationsCollectives = uneListeDAnimationCollectiveAClore()
       ;(
         getAnimationsCollectivesACloreClientSide as jest.Mock
       ).mockImplementation(async (_, page) => ({
@@ -130,18 +129,24 @@ describe('PilotagePage client side - Animations collectives', () => {
 
       // Then
       animationsCollectives.forEach((animation) => {
-        const dateFormater = DateTime.fromISO(animation.date).toFormat(
+        const dateFormatee = DateTime.fromISO(animation.date).toFormat(
           'dd MMMM yyyy',
           { locale: 'fr-FR' }
         )
-        expect(within(tableau).getByText(dateFormater)).toBeInTheDocument()
-        expect(within(tableau).getByText(animation.titre)).toBeInTheDocument()
         expect(
-          within(tableau).getByText(`${animation.nombreInscrits}`)
+          within(tableau).getByRole('cell', { name: dateFormatee })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('cell', { name: animation.titre })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('cell', {
+            name: `${animation.nombreInscrits}`,
+          })
         ).toBeInTheDocument()
         expect(
           within(tableau).getByRole('link', {
-            name: `Accéder au détail de l’animation collective : ${animation.titre}`,
+            name: `Accéder au détail de l’animation collective du ${dateFormatee} ${animation.titre} ${animation.nombreInscrits}`,
           })
         ).toHaveAttribute(
           'href',

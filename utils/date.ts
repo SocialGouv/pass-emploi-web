@@ -31,18 +31,18 @@ export function toWeekday(date: string | DateTime): string {
   return toFrenchFormat(date, WEEKDAY)
 }
 
-const TIME_H_SEPARATOR = "HH'h'mm"
-const TIME_A11Y_SEPARATOR = "H 'heure' m"
+const TIME = "HH':'mm"
+const TIME_A11Y = "H 'heure' m"
 /** 02h39 (a11y : 2 heure 39) */
 export function toFrenchTime(
   date: string | DateTime,
   { a11y }: { a11y: boolean } = { a11y: false }
 ): string {
-  return toFrenchFormat(date, a11y ? TIME_A11Y_SEPARATOR : TIME_H_SEPARATOR)
+  return toFrenchFormat(date, a11y ? TIME_A11Y : TIME)
 }
 
-const DATETIME_LONG = `dd/MM/yyyy 'à' ${TIME_H_SEPARATOR}`
-const DATETIME_LONG_A11Y = `d MMMM yyyy 'à' ${TIME_A11Y_SEPARATOR}`
+const DATETIME_LONG = `dd/MM/yyyy 'à' ${TIME}`
+const DATETIME_LONG_A11Y = `d MMMM yyyy 'à' ${TIME_A11Y}`
 /** 02/06/2023 à 02h39 (a11y : 2 juin 2023 à 2h30)  */
 export function toFrenchDateTime(
   date: string | DateTime,
@@ -52,7 +52,10 @@ export function toFrenchDateTime(
   return toFrenchFormat(date, DATETIME_LONG)
 }
 
-export function toRelativeDateTime(date: string | DateTime): string {
+export function toRelativeDateTime(
+  date: string | DateTime,
+  { a11y }: { a11y: boolean } = { a11y: false }
+): string {
   if (!date) return ''
 
   const dateTime = date instanceof DateTime ? date : DateTime.fromISO(date)
@@ -62,10 +65,10 @@ export function toRelativeDateTime(date: string | DateTime): string {
   } else if (dateIsYesterday(dateTime)) {
     dateString = 'Hier'
   } else {
-    dateString = `Le ${toShortDate(dateTime)}`
+    dateString = `Le ${a11y ? toLongMonthDate(dateTime) : toShortDate(dateTime)}`
   }
 
-  return `${dateString} à ${toFrenchTime(dateTime)}`
+  return `${dateString} à ${toFrenchTime(dateTime, { a11y })}`
 }
 
 export function compareDates(

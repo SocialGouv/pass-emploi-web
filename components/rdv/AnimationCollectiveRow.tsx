@@ -16,12 +16,7 @@ import {
 } from 'interfaces/evenement'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import {
-  toFrenchDuration,
-  toFrenchTime,
-  toLongMonthDate,
-  toMonthday,
-} from 'utils/date'
+import { toFrenchDuration, toFrenchTime, toLongMonthDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export function AnimationCollectiveRow({
@@ -39,9 +34,10 @@ export function AnimationCollectiveRow({
     animationCollective.estCache ?? false
   )
 
-  function getHref(ac: AnimationCollective): string {
-    if (ac.isSession) return `agenda/sessions/${ac.id}`
-    else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
+  function getHref(): string {
+    if (animationCollective.isSession)
+      return `agenda/sessions/${animationCollective.id}`
+    else return `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}`
   }
 
   async function permuterVisibiliteSession(visibilite: boolean) {
@@ -65,7 +61,9 @@ export function AnimationCollectiveRow({
       <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:col-end-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
         <div>
-          {toFrenchTime(date)} -{' '}
+          <span aria-label={toFrenchTime(date, { a11y: true })}>
+            {toFrenchTime(date)} -{' '}
+          </span>
           <span className='inline-flex items-center'>
             <IconComponent
               name={IconName.ScheduleOutline}
@@ -109,8 +107,8 @@ export function AnimationCollectiveRow({
 
       <TDLink
         className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
-        href={getHref(animationCollective)}
-        label={labelLien(animationCollective)}
+        href={getHref()}
+        labelPrefix={`Consulter ${animationCollective.type} du`}
       />
     </TR>
   )
@@ -134,14 +132,8 @@ function statusProps({ type, statut }: AnimationCollective): {
   }
 }
 
-function labelLien(ac: AnimationCollective): string {
-  return `Consulter ${ac.type} ${ac.titre} du ${toMonthday(
-    ac.date
-  )} à ${toFrenchTime(ac.date)}`
-}
-
-function TagStatut(ac: AnimationCollective): ReactElement {
-  const { label, color } = statusProps(ac)
+function TagStatut(animationCollective: AnimationCollective): ReactElement {
+  const { label, color } = statusProps(animationCollective)
   return (
     <_TagStatut
       label={label}
@@ -212,8 +204,8 @@ function Inscrits({
     <div>
       {!aUneCapaciteLimite && (
         <>
-          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
-          {aPlusieursParticipants ? 's' : ''}
+          <span className='text-m-bold'>{nombreParticipants}</span>{' '}
+          {aPlusieursParticipants ? 'inscrits' : 'inscrit'}
         </>
       )}
 
@@ -223,8 +215,9 @@ function Inscrits({
 
       {aUneCapaciteLimite && !aAtteintLaCapaciteLimite && (
         <>
-          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
-          {nombreParticipants !== 1 ? 's' : ''} /{nombreMaxParticipants}
+          <span className='text-m-bold'>{nombreParticipants}</span>{' '}
+          {nombreParticipants !== 1 ? 'inscrits' : 'inscrit'} /
+          {nombreMaxParticipants}
         </>
       )}
     </div>

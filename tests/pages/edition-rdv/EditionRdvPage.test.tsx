@@ -902,7 +902,7 @@ describe('EditionRdvPage client side', () => {
         evenement.historique.slice(0, 2).forEach(({ date, auteur }) => {
           expect(
             getByTextContent(
-              `${DateTime.fromISO(date).toFormat("dd/MM/yyyy 'à' HH'h'mm")} : ${
+              `${DateTime.fromISO(date).toFormat("dd/MM/yyyy 'à' HH':'mm")} : ${
                 auteur.prenom
               } ${auteur.nom}`,
               historique

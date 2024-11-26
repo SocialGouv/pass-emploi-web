@@ -146,7 +146,15 @@ function EtablissementPage() {
                       )}
                     </TD>
                   )}
-                  <TD>
+                  <TD
+                    aria-label={
+                      jeune.dateDerniereActivite
+                        ? toRelativeDateTime(jeune.dateDerniereActivite, {
+                            a11y: true,
+                          })
+                        : ''
+                    }
+                  >
                     {jeune.dateDerniereActivite &&
                       toRelativeDateTime(jeune.dateDerniereActivite)}
                   </TD>
@@ -157,10 +165,7 @@ function EtablissementPage() {
                   </TD>
                   <TDLink
                     href={'etablissement/beneficiaires/' + jeune.base.id}
-                    label={
-                      'Accéder à la fiche de ' +
-                      getNomBeneficiaireComplet(jeune.base)
-                    }
+                    labelPrefix='Accéder à la fiche de'
                   />
                 </TR>
               ))}

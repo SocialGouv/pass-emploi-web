@@ -140,7 +140,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
                 <TDLink
                   href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
-                  label={`Consulter la liste ${liste.titre}`}
+                  labelPrefix='Consulter la liste'
                 />
               </TR>
             ))}

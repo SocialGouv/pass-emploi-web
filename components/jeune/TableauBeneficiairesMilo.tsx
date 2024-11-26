@@ -195,7 +195,7 @@ export default function TableauBeneficiairesMilo({
 
               <TDLink
                 href={`/mes-jeunes/${beneficiaire.id}`}
-                label={getRowLabel(beneficiaire)}
+                labelPrefix='Accéder à la fiche de'
                 className='!p-2 row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
               />
             </TR>

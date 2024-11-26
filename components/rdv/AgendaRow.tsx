@@ -32,7 +32,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
       <TD className='!rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{longMonthDate}</div>
         <div>
-          {heure} -{' '}
+          <span aria-label={heureA11y}>{heure} - </span>
           <span className='inline-flex items-center'>
             <IconComponent
               name={IconName.ScheduleOutline}
@@ -74,7 +74,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
       <TDLink
         className='row-span-2 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
         href={evenement.isSession ? urlSessionMilo : urlRdv}
-        label={`Consulter l’événement du ${longMonthDate} à ${heureA11y} avec ${evenement.labelBeneficiaires}`}
+        labelPrefix='Consulter l’événement du'
       />
     </TR>
   )
@@ -118,8 +118,8 @@ function Inscrits({
   if (!aUneCapaciteLimite)
     return (
       <p>
-        <span className='text-m-bold'>{nombreParticipants}</span> inscrit
-        {aPlusieursParticipants ? 's' : ''}
+        <span className='text-m-bold'>{nombreParticipants}</span>{' '}
+        {aPlusieursParticipants ? 'inscrits' : 'inscrit'}
       </p>
     )
   else if (aUneCapaciteLimite && aAtteintLaCapaciteLimite)
@@ -127,8 +127,8 @@ function Inscrits({
   else
     return (
       <p>
-        <span className='text-m-bold'>{nombreParticipants}</span> inscrit
-        {nombreParticipants !== 1 ? 's' : ''} /{maxParticipants}
+        <span className='text-m-bold'>{nombreParticipants}</span>{' '}
+        {nombreParticipants !== 1 ? 'inscrits' : 'inscrit'} /{maxParticipants}
       </p>
     )
 }
