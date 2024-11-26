@@ -8,13 +8,13 @@ import React from 'react'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
-import { ActionPilotage } from 'interfaces/action'
 import {
   getActionsAQualifierClientSide,
   qualifierActions,
 } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+import { toLongMonthDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/actions.service')
@@ -22,22 +22,20 @@ jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Actions', () => {
   describe('contenu', () => {
-    let actions: ActionPilotage[]
-    let actionSansCategorie: ActionPilotage
+    const actions = uneListeDActionsAQualifier()
+    const actionSansCategorie = {
+      id: '009347ea-4acb-4b61-9e08-b6caf38e2812',
+      titre: 'Regarder Tchoupi faire du tricycle',
+      beneficiaire: {
+        id: 'tchoupi',
+        nom: 'Trotro',
+        prenom: 'L’âne',
+      },
+      dateFinReelle: '16/01/2024',
+    }
     let container: HTMLElement
 
     beforeEach(async () => {
-      actions = uneListeDActionsAQualifier()
-      actionSansCategorie = {
-        id: '009347ea-4acb-4b61-9e08-b6caf38e2812',
-        titre: 'Regarder Tchoupi faire du tricycle',
-        beneficiaire: {
-          id: 'tchoupi',
-          nom: 'Trotro',
-          prenom: 'L’âne',
-        },
-        dateFinReelle: '16/01/2024',
-      }
       ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
         async (_, { page, tri, filtres }) => ({
           actions: [
@@ -159,7 +157,7 @@ describe('PilotagePage client side - Actions', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', {
-            name: `Accéder au détail de l’action terminée le ${dateFinReelle} : ${action.titre}`,
+            name: `Accéder au détail de l’action de ${action.beneficiaire.nom} ${action.beneficiaire.prenom} ${action.titre} ${action.categorie?.libelle} ${toLongMonthDate(action.dateFinReelle)}`,
           })
         ).toHaveAttribute(
           'href',

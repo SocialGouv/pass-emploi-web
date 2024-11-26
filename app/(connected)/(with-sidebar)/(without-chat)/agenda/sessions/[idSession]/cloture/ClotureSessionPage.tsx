@@ -229,6 +229,8 @@ function ClotureSessionPage({
                         : 'before:fixed before:inset-0 before:z-10 cursor-pointer'
                     }`}
                   >
+                    {/* FIXME title != label */}
+                    {/* FIXME title pas hoverable à cause de "before:z-10" ? */}
                     <input
                       disabled={
                         beneficiaire.statut === StatutBeneficiaire.PRESENT

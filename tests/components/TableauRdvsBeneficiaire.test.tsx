@@ -1,15 +1,13 @@
 import { screen } from '@testing-library/dom'
-import { render, within } from '@testing-library/react'
+import { act, render, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
-import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
-import { EvenementListItem } from 'interfaces/evenement'
-import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { toShortDate } from 'utils/date'
+import { desEvenementsListItems } from 'fixtures/evenement'
+import { toFrenchDuration, toFrenchTime, toMonthday } from 'utils/date'
 
 describe('<TableauRdvsBeneficiaire>', () => {
   beforeEach(async () => {
@@ -37,64 +35,76 @@ describe('<TableauRdvsBeneficiaire>', () => {
   })
 
   describe('Quand il y a des rendez-vous', () => {
-    let listeRdv: EvenementListItem[]
-    beforeEach(() => {
+    const listeRdv = desEvenementsListItems()
+    beforeEach(async () => {
       // Given
-      listeRdv = desEvenementsListItems()
 
       // When
-      render(
-        <TableauRdvsBeneficiaire
-          rdvs={listeRdv}
-          idConseiller='1'
-          beneficiaire={uneBaseBeneficiaire()}
-        />
-      )
-    })
-
-    it('affiche les informations des rendez-vous', () => {
-      // Then
-      listeRdv.forEach((rdv) => {
-        const date = DateTime.fromISO(rdv.date)
-        const horaires = `${toShortDate(date)} - ${date.toFormat(
-          "HH'h'mm"
-        )} - ${rdv.duree} min`
-        expect(screen.getByText(rdv.type)).toBeInTheDocument()
-        expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
-        expect(screen.getByText(horaires)).toBeInTheDocument()
-      })
-    })
-
-    it('permet la modification des rendez-vous', () => {
-      listeRdv.forEach((rdv) => {
-        const link = screen.getByRole('link', {
-          name: `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat(
-            'EEEE d MMMM',
-            { locale: 'fr-FR' }
-          )} avec ${getNomBeneficiaireComplet(uneBaseBeneficiaire())}`,
-        })
-        expect(link).toHaveAttribute(
-          'href',
-          '/mes-jeunes/edition-rdv?idRdv=' + rdv.id
+      await act(async () => {
+        render(
+          <TableauRdvsBeneficiaire
+            rdvs={listeRdv}
+            idConseiller='1'
+            beneficiaire={uneBaseBeneficiaire()}
+          />
         )
       })
     })
 
+    it('affiche les informations des rendez-vous', () => {
+      // Then
+      const rdv1 = listeRdv[0]
+      const date1 = DateTime.fromISO(rdv1.date)
+      const horaires1 = `${toMonthday(date1)} - ${toFrenchTime(date1, { a11y: true })} - ${toFrenchDuration(rdv1.duree, { a11y: true })}`
+      expect(screen.getByRole('cell', { name: rdv1.type })).toBeInTheDocument()
+      expect(
+        screen.getByRole('cell', { name: rdv1.modality! })
+      ).toBeInTheDocument()
+      expect(screen.getByRole('cell', { name: horaires1 })).toBeInTheDocument()
+
+      // Then
+      const rdv2 = listeRdv[1]
+      const date2 = DateTime.fromISO(rdv2.date)
+      const horaires2 = `${toMonthday(date2)} - ${toFrenchTime(date2, { a11y: true })} - ${toFrenchDuration(rdv2.duree, { a11y: true })}`
+      expect(
+        screen.getByRole('cell', { name: 'Non modifiable ' + rdv2.type })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('cell', { name: rdv2.modality! })
+      ).toBeInTheDocument()
+      expect(screen.getByRole('cell', { name: horaires2 })).toBeInTheDocument()
+    })
+
+    it('permet la modification des rendez-vous', () => {
+      const link1 = screen.getByRole('link', {
+        name: 'Consulter l’événement du 21/10/2021 - 12:00 - 2h05 Autre par téléphone oui',
+      })
+      expect(link1).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=' + listeRdv[0].id
+      )
+      const link2 = screen.getByRole('link', {
+        name: 'Consulter l’événement du 25/10/2021 - 14:00 - 25 min Atelier En agence non',
+      })
+      expect(link2).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=' + listeRdv[1].id
+      )
+    })
+
     it('affiche si l’utilisateur est le créateur du rendez-vous', () => {
       const rdvsRows = screen.getAllByRole('row', {
-        name: new RegExp(`${listeRdv[0].labelBeneficiaires}`),
+        name: /Consulter l’événement du/,
       })
       const rendezVous0 = rdvsRows[0]
       const rendezVous1 = rdvsRows[1]
       // Then
-      expect(within(rendezVous0).getByText('oui')).toHaveAttribute(
-        'class',
-        'sr-only'
-      )
-      expect(within(rendezVous1).getByText('non')).toHaveAttribute(
-        'class',
-        'sr-only'
-      )
+      expect(
+        within(rendezVous0).getByRole('cell', { name: 'oui' })
+      ).toBeInTheDocument()
+      expect(
+        within(rendezVous1).getByRole('cell', { name: 'non' })
+      ).toBeInTheDocument()
     })
   })
 })

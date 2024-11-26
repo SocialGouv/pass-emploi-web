@@ -21,7 +21,7 @@ export default function OffreRow({ offre }: { offre: Offre }) {
       </TD>
       <TDLink
         href={`/offres/${offre.urlParam}/${offre.id}`}
-        label={'Ouvrir l’offre ' + offre.titre}
+        labelPrefix={'Ouvrir l’offre ' + offre.titre}
       />
     </TR>
   )

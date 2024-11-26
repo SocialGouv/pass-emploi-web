@@ -152,7 +152,7 @@ describe('Agenda - Onglet établissement', () => {
         .closest('tr')!
       expect(
         within(row1).getByRole('cell', {
-          name: '29 août 2022 14h00 - durée 2 heure 5',
+          name: '29 août 2022 14 heure 0 durée 2 heure 5',
         })
       ).toBeInTheDocument()
       expect(
@@ -160,7 +160,7 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
       expect(
         within(row1).getByRole('link', {
-          name: 'Consulter Atelier Prise de nouvelles par téléphone du lundi 29 août à 14h00',
+          name: 'Consulter Atelier du 29 août 2022 14:00 - 2h05 Prise de nouvelles par téléphone Atelier Visible 1 inscrit / 10 Clos',
         })
       ).toBeInTheDocument()
 
@@ -171,7 +171,7 @@ describe('Agenda - Onglet établissement', () => {
         .closest('tr')!
       expect(
         within(row2).getByRole('cell', {
-          name: '1 septembre 2022 14h00 - durée 30 minutes',
+          name: '1 septembre 2022 14 heure 0 durée 30 minutes',
         })
       ).toBeInTheDocument()
       expect(
@@ -179,13 +179,13 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
       expect(
         within(row2).getByRole('link', {
-          name: 'Consulter Atelier Préparation de CV du jeudi 1 septembre à 14h00',
+          name: 'Consulter Atelier du 1 septembre 2022 14:00 - 30 min Préparation de CV Atelier Visible Complet À clore',
         })
       ).toBeInTheDocument()
 
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier du 4 septembre 2022 14:00 - 2h05 Écriture de lettre de motivation Atelier Visible 1 inscrit / 10 À venir',
         })
       ).toBeInTheDocument()
     })
@@ -380,7 +380,7 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier du 4 septembre 2022 14:00 - 2h05 Écriture de lettre de motivation Atelier Visible 1 inscrit / 10 À venir',
         })
       ).toBeInTheDocument()
       expect(
@@ -390,7 +390,7 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo 2 Titre offre session milo 2 du lundi 5 septembre à 14h00',
+          name: 'Consulter Atelier i-milo 2 du 5 septembre 2022 14:00 - 1h00 Titre offre session milo 2 Nom session Atelier i-milo 2 Non visible 1 inscrit / 10 À venir',
         })
       ).toBeInTheDocument()
     })

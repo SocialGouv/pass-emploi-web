@@ -150,13 +150,13 @@ describe('Agenda - Onglet conseiller', () => {
 
       expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du 1 septembre 2022 à 0 heure 0 avec Jirac Kenji',
+          name: 'Consulter l’événement du 1 septembre 2022 00:00 - 2h05 Jirac Kenji Autre par téléphone créé par Vous 1 inscrit',
         })
       ).toBeInTheDocument()
 
       expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du 7 septembre 2022 à 14 heure 59 avec Jirac Kenji',
+          name: 'Consulter l’événement du 7 septembre 2022 14:59 - 2h05 Jirac Kenji Autre par téléphone créé par Vous 2 inscrits',
         })
       ).toBeInTheDocument()
     })
@@ -219,25 +219,25 @@ describe('Agenda - Onglet conseiller', () => {
     it('affiche le nombre d’inscrits', async () => {
       const row1 = screen
         .getByRole('cell', {
-          name: /1 septembre 2022 00h00 - durée 2 heure 5/,
+          name: /1 septembre 2022 0 heure 0 durée 2 heure 5/,
         })
         .closest('tr')!
 
       const row2 = screen
         .getByRole('cell', {
-          name: /2 septembre 2022 00h00 - durée 2 heure 5/,
+          name: /2 septembre 2022 0 heure 0 durée 2 heure 5/,
         })
         .closest('tr')!
 
       const row3 = screen
         .getByRole('cell', {
-          name: /3 septembre 2022 00h00 - durée 2 heure 5/,
+          name: /3 septembre 2022 0 heure 0 durée 2 heure 5/,
         })
         .closest('tr')!
 
       const row4 = screen
         .getByRole('cell', {
-          name: /4 septembre 2022 00h00 - durée 2 heure 5/,
+          name: /4 septembre 2022 0 heure 0 durée 2 heure 5/,
         })
         .closest('tr')!
 

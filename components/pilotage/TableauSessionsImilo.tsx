@@ -37,7 +37,7 @@ export default function TableauSessionsImilo({
               </TD>
               <TDLink
                 href={`/agenda/sessions/${session.id}`}
-                label={`Accéder au détail de la session : ${session.titre}`}
+                labelPrefix='Accéder au détail de la session du'
               />
             </TR>
           ))}

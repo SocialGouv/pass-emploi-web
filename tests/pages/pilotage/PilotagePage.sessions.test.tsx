@@ -20,10 +20,8 @@ jest.mock('services/sessions.service')
 describe('PilotagePage client side - Sessions', () => {
   describe('contenu', () => {
     let container: HTMLElement
-    let sessions: SessionsAClore[]
-
+    const sessions = uneListeDeSessionsAClore()
     beforeEach(async () => {
-      sessions = uneListeDeSessionsAClore()
       ;(getSessionsACloreServerSide as jest.Mock).mockImplementation(
         async () => {}
       )
@@ -109,15 +107,50 @@ describe('PilotagePage client side - Sessions', () => {
         })
 
         // Then
-        sessions.forEach((session) => {
-          expect(within(tableau).getByText(session.date)).toBeInTheDocument()
-          expect(within(tableau).getByText(session.titre)).toBeInTheDocument()
-          expect(
-            within(tableau).getByRole('link', {
-              name: `Accéder au détail de la session : ${session.titre}`,
-            })
-          ).toHaveAttribute('href', '/agenda/sessions/' + session.id)
-        })
+        const session1 = sessions[0]
+        expect(
+          within(tableau).getByRole('cell', { name: session1.date })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('cell', {
+            name: session1.titre + ' ' + session1.sousTitre,
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('link', {
+            name: 'Accéder au détail de la session du 05/05/2023 Session 1 sous-titre de session 1',
+          })
+        ).toHaveAttribute('href', '/agenda/sessions/' + session1.id)
+
+        const session2 = sessions[1]
+        expect(
+          within(tableau).getByRole('cell', { name: session2.date })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('cell', {
+            name: session2.titre + ' ' + session2.sousTitre,
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('link', {
+            name: 'Accéder au détail de la session du 06/05/2023 Session 2 sous-titre de session 2',
+          })
+        ).toHaveAttribute('href', '/agenda/sessions/' + session2.id)
+
+        const session3 = sessions[2]
+        expect(
+          within(tableau).getByRole('cell', { name: session3.date })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('cell', {
+            name: session3.titre + ' ' + session3.sousTitre,
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableau).getByRole('link', {
+            name: 'Accéder au détail de la session du 07/05/2023 Session 3 sous-titre de session 3',
+          })
+        ).toHaveAttribute('href', '/agenda/sessions/' + session3.id)
       })
     })
   })
