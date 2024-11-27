@@ -2894,13 +2894,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.21.0":
-  version: 1.21.0
-  resolution: "@remix-run/router@npm:1.21.0"
-  checksum: 10c0/570792211c083a1c7146613b79cbb8e0d1e14f34e974052e060e7f9dcad38c800d80fe0a18bf42811bc278ab12c0e8fd62cfce649e905046c4e55bd5a09eafdc
-  languageName: node
-  linkType: hard
-
 "@rtsao/scc@npm:^1.1.0":
   version: 1.1.0
   resolution: "@rtsao/scc@npm:1.1.0"
@@ -3232,6 +3225,13 @@ __metadata:
   dependencies:
     "@babel/types": "npm:^7.20.7"
   checksum: 10c0/7ba7db61a53e28cac955aa99af280d2600f15a8c056619c05b6fc911cbe02c61aa4f2823299221b23ce0cce00b294c0e5f618ec772aa3f247523c2e48cf7b888
+  languageName: node
+  linkType: hard
+
+"@types/cookie@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@types/cookie@npm:0.6.0"
+  checksum: 10c0/5b326bd0188120fb32c0be086b141b1481fec9941b76ad537f9110e10d61ee2636beac145463319c71e4be67a17e85b81ca9e13ceb6e3bb63b93d16824d6c149
   languageName: node
   linkType: hard
 
@@ -4525,6 +4525,13 @@ __metadata:
   version: 0.7.2
   resolution: "cookie@npm:0.7.2"
   checksum: 10c0/9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "cookie@npm:1.0.2"
+  checksum: 10c0/fd25fe79e8fbcfcaf6aa61cd081c55d144eeeba755206c058682257cb38c4bd6795c6620de3f064c740695bb65b7949ebb1db7a95e4636efb8357a335ad3f54b
   languageName: node
   linkType: hard
 
@@ -8949,7 +8956,7 @@ __metadata:
     prettier: "npm:^3.3.3"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
-    react-router-dom: "npm:6.28.0"
+    react-router-dom: "npm:7.0.1"
     sanitize-html: "npm:^2.13.1"
     sharp: "npm:0.33.5"
     source-map-explorer: "npm:^2.5.3"
@@ -9546,27 +9553,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:6.28.0":
-  version: 6.28.0
-  resolution: "react-router-dom@npm:6.28.0"
+"react-router-dom@npm:7.0.1":
+  version: 7.0.1
+  resolution: "react-router-dom@npm:7.0.1"
   dependencies:
-    "@remix-run/router": "npm:1.21.0"
-    react-router: "npm:6.28.0"
+    react-router: "npm:7.0.1"
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 10c0/e2930cf83e8c843a932b008c7ce11059fd83390502a433f0e41f192e3cb80081a621d069eeda7af3cf4bf74d7f8029f0141cdce741bca3f0af82d4bbbc7f7f10
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/aebc0af4ea4ac4e9482b0501c06f3af42adc68b4064c556b00954dcb7a6ec233d41f3eac86e388b9a8068e8ba5d44b854b7e29c806af9ed6a8798682d6984b46
   languageName: node
   linkType: hard
 
-"react-router@npm:6.28.0":
-  version: 6.28.0
-  resolution: "react-router@npm:6.28.0"
+"react-router@npm:7.0.1":
+  version: 7.0.1
+  resolution: "react-router@npm:7.0.1"
   dependencies:
-    "@remix-run/router": "npm:1.21.0"
+    "@types/cookie": "npm:^0.6.0"
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
+    turbo-stream: "npm:2.4.0"
   peerDependencies:
-    react: ">=16.8"
-  checksum: 10c0/b435510de78fd882bf6ca9800a73cd90cee418bd1d19efd91b8dcaebde36929bbb589e25d9f7eec24ceb84255e8d538bc1fe54e6ddb5c43c32798e2b720fa76d
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10c0/aac4c9989ae6b9cf989b5ddcda88f505ba0704a4e4b37ae04c819c2bd02f080361f9eb1793695e3ecf41080d91b79aee454c3163b586d1b19ceca13f6eacec0e
   languageName: node
   linkType: hard
 
@@ -10000,6 +10013,13 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/88f33e148b210c153873cb08cfe1e281d518aaa9a666d4d148add6560db5cd3c582f3a08ccb91f38d5f379ead256da9931234ed122057f40bb5766e65e58adaf
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.1
+  resolution: "set-cookie-parser@npm:2.7.1"
+  checksum: 10c0/060c198c4c92547ac15988256f445eae523f57f2ceefeccf52d30d75dedf6bff22b9c26f756bd44e8e560d44ff4ab2130b178bd2e52ef5571bf7be3bd7632d9a
   languageName: node
   linkType: hard
 
@@ -10915,6 +10935,13 @@ __metadata:
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
+  languageName: node
+  linkType: hard
+
+"turbo-stream@npm:2.4.0":
+  version: 2.4.0
+  resolution: "turbo-stream@npm:2.4.0"
+  checksum: 10c0/e68b2569f1f16e6e9633d090c6024b2ae9f0e97bfeacb572451ca3732e120ebbb546f3bc4afc717c46cb57b5aea6104e04ef497f9912eef6a7641e809518e98a
   languageName: node
   linkType: hard
 

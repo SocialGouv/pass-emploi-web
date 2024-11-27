@@ -36,7 +36,7 @@
     "pino": "9.5.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-router-dom": "6.28.0",
+    "react-router-dom": "7.0.1",
     "sanitize-html": "^2.13.1",
     "sharp": "0.33.5"
   },
