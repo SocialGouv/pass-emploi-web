@@ -243,7 +243,11 @@ function DetailActionPage({
         </dl>
       </div>
 
-      <CommentaireAction action={action} beneficiaire={jeune} />
+      <CommentaireAction
+        action={action}
+        beneficiaire={jeune}
+        initiallyOpened={!action.comment}
+      />
 
       <HistoriqueAction action={action} />
 
