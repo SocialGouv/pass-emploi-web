@@ -14,18 +14,22 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 interface CommentaireActionProps {
   beneficiaire: BaseBeneficiaire
   action: Action
+  initiallyOpened: boolean
 }
 
 export default function CommentaireAction({
   beneficiaire,
   action,
+  initiallyOpened,
 }: CommentaireActionProps) {
   const chatCredentials = useChatCredentials()
   const detailsRef = useRef<{ focusSummary: () => void }>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+  const DEFAULT_MESSAGE =
+    'Pouvez-vous compléter la description de cette action s’il vous plaît ?'
   const [message, setMessage] = useState<ValueWithError<string | undefined>>({
-    value: undefined,
+    value: DEFAULT_MESSAGE,
   })
   const [envoiEnCours, setEnvoiEnCours] = useState<boolean>(false)
   const [succesEnvoi, setSuccesEnvoi] = useState<boolean | undefined>(undefined)
@@ -58,7 +62,11 @@ export default function CommentaireAction({
   }
 
   return (
-    <Details summary='Commentaire' ref={detailsRef}>
+    <Details
+      summary='Commentaire'
+      ref={detailsRef}
+      initiallyOpened={initiallyOpened}
+    >
       {succesEnvoi && (
         <SuccessAlert
           label='Votre message a bien été envoyé, retrouvez le dans votre conversation avec le bénéficiaire.'
@@ -80,6 +88,7 @@ export default function CommentaireAction({
       <Textarea
         ref={inputRef}
         id='commentaire-action'
+        defaultValue={message.value}
         onChange={(value) => setMessage({ value })}
         invalid={Boolean(message.error)}
         required

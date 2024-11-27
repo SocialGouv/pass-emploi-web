@@ -155,10 +155,12 @@ describe('ActionPage client side', () => {
 
         it('demande la saisi d’un message', async () => {
           expect(
-            within(group).getByRole('button', {
-              name: 'Envoyer au bénéficiaire',
+            within(group).getByRole('textbox', {
+              name: 'Demander plus d’information au bénéficiaire sur l’action',
             })
-          ).toHaveAttribute('disabled')
+          ).toHaveValue(
+            'Pouvez-vous compléter la description de cette action s’il vous plaît ?'
+          )
         })
 
         it('envoie un message', async () => {
@@ -166,15 +168,18 @@ describe('ActionPage client side', () => {
           expect(group).toHaveAttribute('open')
 
           // Given
-          const pouet = within(group).getByRole('textbox', {
-            name: 'Demander plus d’information au bénéficiaire sur l’action',
-          })
           // FIXME pourquoi ça marche pas avec userEvent.click ? 🤨
-          fireEvent.change(pouet, {
-            target: {
-              value: 'Peux tu me détailler quelles recherches tu as fait stp ?',
-            },
-          })
+          fireEvent.change(
+            within(group).getByRole('textbox', {
+              name: 'Demander plus d’information au bénéficiaire sur l’action',
+            }),
+            {
+              target: {
+                value:
+                  'Peux tu me détailler quelles recherches tu as fait stp ?',
+              },
+            }
+          )
 
           // When
           await userEvent.click(

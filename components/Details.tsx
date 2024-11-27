@@ -13,10 +13,11 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 interface DetailsProps {
   summary: string
   children: ReactNode
+  initiallyOpened?: boolean
 }
 
 function Details(
-  { summary, children }: DetailsProps,
+  { summary, children, initiallyOpened = false }: DetailsProps,
   ref: ForwardedRef<{ focusSummary: () => void }>
 ) {
   const detailsRef = useRef<HTMLDetailsElement>(null)
@@ -24,7 +25,7 @@ function Details(
     focusSummary: () => detailsRef.current!.querySelector('summary')!.focus(),
   }))
 
-  const [expanded, setExpanded] = useState<boolean>()
+  const [expanded, setExpanded] = useState<boolean>(initiallyOpened)
 
   useEffect(() => {
     function toggleExpanded() {
@@ -40,6 +41,7 @@ function Details(
     <details
       ref={detailsRef}
       className='bg-primary_lighten p-6 mt-8 rounded-base shadow-base'
+      open={initiallyOpened}
     >
       <summary
         className={`text-m-bold text-primary relative flex justify-between items-center cursor-pointer ${expanded ? 'mb-5' : ''}`}
