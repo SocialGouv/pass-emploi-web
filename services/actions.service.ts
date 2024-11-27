@@ -67,18 +67,21 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
-  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
-    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    accessToken
-  )
-
-  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
-    return {
-      idBeneficiaire,
-      actions,
-      rdvs: Number(rdvs) + Number(sessions),
-    }
-  })
+  try {
+    const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
+      `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+      accessToken
+    )
+    return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
+      return {
+        idBeneficiaire,
+        actions,
+        rdvs: Number(rdvs) + Number(sessions),
+      }
+    })
+  } catch {
+    return []
+  }
 }
 
 export async function getActionsBeneficiaireClientSide(
