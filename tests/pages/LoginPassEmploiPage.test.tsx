@@ -26,11 +26,7 @@ describe('LoginPassEmploiPage client side', () => {
     beforeEach(async () => {
       ;({ container } = render(
         <LoginErrorMessageProvider state={[undefined, setErrorMsg]}>
-          <LoginPassEmploiPage
-            ssoFranceTravailBRSAEstActif={true}
-            ssoFranceTravailAIJEstActif={true}
-            ssoConseillerDeptEstActif={true}
-          />
+          <LoginPassEmploiPage />
         </LoginErrorMessageProvider>
       ))
     })

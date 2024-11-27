@@ -38,13 +38,6 @@ describe('LoginPassEmploiPage server side', () => {
     expect(metadata).toEqual({
       title: "Connexion dans l'espace conseiller - Outil du pass emploi",
     })
-    expect(LoginPassEmploiPage).toHaveBeenCalledWith(
-      {
-        ssoConseillerDeptEstActif: true,
-        ssoFranceTravailAIJEstActif: true,
-        ssoFranceTravailBRSAEstActif: true,
-      },
-      {}
-    )
+    expect(LoginPassEmploiPage).toHaveBeenCalledWith({}, {})
   })
 })
