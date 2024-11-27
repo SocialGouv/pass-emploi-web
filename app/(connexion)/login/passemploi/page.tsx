@@ -18,17 +18,5 @@ export default async function LoginPassEmploi({
 }) {
   await redirectIfAlreadyConnected(searchParams)
 
-  return (
-    <LoginPassEmploiPage
-      ssoFranceTravailBRSAEstActif={
-        process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true'
-      }
-      ssoFranceTravailAIJEstActif={
-        process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true'
-      }
-      ssoConseillerDeptEstActif={
-        process.env.NEXT_PUBLIC_ENABLE_CONSEILLER_DEPT_SSO === 'true'
-      }
-    />
-  )
+  return <LoginPassEmploiPage />
 }
