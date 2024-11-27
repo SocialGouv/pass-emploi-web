@@ -23,19 +23,18 @@ jest.mock('services/beneficiaires.service')
 jest.mock('components/ModalContainer')
 
 describe('ProfilPage client side', () => {
-  let conseiller: Conseiller
   let container: HTMLElement
   let jeunes: BeneficiaireFromListe[]
   let push: Function
 
   describe('contenu', () => {
+    const conseiller: Conseiller = unConseiller({
+      email: 'nils.tavernier@mail.com',
+      structure: StructureConseiller.POLE_EMPLOI,
+      agence: { nom: 'MLS3F SAINT-LOUIS' },
+    })
     beforeEach(async () => {
       // Given
-      conseiller = unConseiller({
-        email: 'nils.tavernier@mail.com',
-        structure: StructureConseiller.POLE_EMPLOI,
-        agence: { nom: 'MLS3F SAINT-LOUIS' },
-      })
 
       // When
       await act(async () => {
@@ -101,23 +100,6 @@ describe('ProfilPage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    it('n’affiche pas le bouton de suppression de compte', async () => {
-      // Given
-      const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
-      })
-
-      // When
-      await act(async () => {
-        renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-          customConseiller: conseiller,
-        })
-      })
-
-      // Then
-      expect(() => screen.getByText('Supprimer mon compte')).toThrow()
-    })
-
     describe('si son agence est déjà renseignée', () => {
       beforeEach(async () => {
         // Given
@@ -361,7 +343,11 @@ describe('ProfilPage client side', () => {
   })
 
   describe('Supprimer un compte', () => {
-    describe('en tant que FT sans bénéficiaires', () => {
+    describe('en tant que conseiller sans bénéficiaires', () => {
+      const conseiller = unConseiller({
+        email: 'conseiller@pole-emploi.fr',
+        structure: StructureConseiller.POLE_EMPLOI_BRSA,
+      })
       beforeEach(async () => {
         // Given
         ;(
@@ -369,11 +355,6 @@ describe('ProfilPage client side', () => {
         ).mockResolvedValue([])
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-        conseiller = unConseiller({
-          email: 'conseiller@pole-emploi.fr',
-          structure: StructureConseiller.POLE_EMPLOI_BRSA,
-        })
 
         // When
         await act(async () => {
@@ -428,7 +409,11 @@ describe('ProfilPage client side', () => {
       })
     })
 
-    describe('en tant que FT avec bénéficiaires', () => {
+    describe('en tant que conseiller avec bénéficiaires', () => {
+      const conseiller = unConseiller({
+        email: 'conseiller@milo.fr',
+        structure: StructureConseiller.MILO,
+      })
       beforeEach(async () => {
         // Given
         jeunes = desItemsBeneficiaires()
@@ -471,7 +456,7 @@ describe('ProfilPage client side', () => {
   })
 
   describe('quand on change le paramétrage des notifications', () => {
-    beforeEach(async () => {
+    it('met à jour côté API', async () => {
       // Given
       const conseiller = unConseiller({
         notificationsSonores: false,
@@ -487,9 +472,7 @@ describe('ProfilPage client side', () => {
 
       // When
       await userEvent.click(toggleNotifications)
-    })
 
-    it('met à jour côté API', async () => {
       // Then
       expect(modifierNotificationsSonores).toHaveBeenCalledWith(
         conseiller.id,
