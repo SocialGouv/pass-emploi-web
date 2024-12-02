@@ -210,7 +210,7 @@ export default function OngletAgendaEtablissement({
             }
             sousTitre={
               evenements && evenements.length > 0 && filtres.length === 0
-                ? 'Essayez de modifier votre recherche ou la période.'
+                ? 'Vous pouvez essayer de modifier vos critères de recherche, ajuster les filtres appliqués, ou changer la période.'
                 : undefined
             }
             lien={{
