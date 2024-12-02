@@ -13,7 +13,7 @@ export type ActualitesParsees = {
   articles: Array<{
     contenu: ReturnType<typeof domToReact>
     id: string
-    titre: string
+    titre: ReturnType<typeof domToReact>
   }>
   dateDerniereModification: string
 }

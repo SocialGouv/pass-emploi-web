@@ -43,7 +43,7 @@ export async function getActualites(
   }
 }
 
-function formaterArticle({ content }: ArticleJson) {
+function formaterArticle({ content }: ArticleJson): string {
   const contentAssaini = sanitizeHtml(content.rendered, {
     disallowedTagsMode: 'recursiveEscape',
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
@@ -52,8 +52,8 @@ function formaterArticle({ content }: ArticleJson) {
   return ajouterTagCategorie(contentAssaini)
 }
 
-function ajouterTagCategorie(str: string) {
-  const codeRegex = /<code\b[^>]*>([.\s]*?)<\/code>/
+function ajouterTagCategorie(str: string): string {
+  const codeRegex = /<code\b[^>]*>([\s\S]*?)<\/code>/
 
   const baliseCode = str.match(codeRegex)
   if (!baliseCode) return str
@@ -68,7 +68,7 @@ function ajouterTagCategorie(str: string) {
     .join('')
 
   return str.replace(
-    /<pre\b[^>]*>[.\s]*?<\/pre>/g,
+    /<pre\b[^>]*>[\s\S]*?<\/pre>/g,
     `<div className='flex gap-2'>${categories}</div>`
   )
 }
