@@ -194,22 +194,39 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {evenementsAffiches && evenementsAffiches?.length === 0 && (
-        <div className='flex flex-col justify-center items-center'>
+      {evenementsAffiches &&
+        evenementsAffiches?.length === 0 &&
+        evenements &&
+        evenements.length === 0 && (
+          <div className='flex flex-col justify-center items-center'>
+            <EmptyState
+              shouldFocus={shouldFocus || filtres.length > 0}
+              illustrationName={
+                evenements && evenements.length === 0
+                  ? IllustrationName.Checklist
+                  : IllustrationName.Search
+              }
+              titre={
+                'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+              }
+              sousTitre={undefined}
+              lien={{
+                href: '/mes-jeunes/edition-rdv?type=ac',
+                label: 'Créer une animation collective',
+                iconName: IconName.Add,
+              }}
+            />
+          </div>
+        )}
+      {evenementsAffiches?.length === 0 &&
+        evenements &&
+        evenements?.length > 0 && (
           <EmptyState
             shouldFocus={shouldFocus || filtres.length > 0}
-            illustrationName={
-              evenements && evenements.length === 0
-                ? IllustrationName.Checklist
-                : IllustrationName.Search
-            }
-            titre={
-              evenements && evenements.length === 0
-                ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
-                : 'Aucun événement ne correspond à votre recherche sur la période sélectionnée.'
-            }
+            illustrationName={IllustrationName.Search}
+            titre='Aucun événement ne correspond à votre recherche sur la période sélectionnée.'
             sousTitre={
-              evenements && evenements.length > 0 && filtres.length === 0
+              filtres.length === 0
                 ? 'Vous pouvez essayer de modifier vos critères de recherche, ajuster les filtres appliqués, ou changer la période.'
                 : undefined
             }
@@ -219,22 +236,7 @@ export default function OngletAgendaEtablissement({
               iconName: IconName.Add,
             }}
           />
-
-          {evenements!.length > 0 && (
-            <>
-              <Button
-                type='button'
-                style={ButtonStyle.SECONDARY}
-                onClick={() => filtresRef.current!.reset()}
-                className='m-auto mt-8'
-              >
-                Réinitialiser les filtres
-              </Button>
-            </>
-          )}
-        </div>
-      )}
-
+        )}
       {evenementsAffiches && evenementsAffiches.length > 0 && (
         <table className='w-full mt-6' tabIndex={-1} ref={tableRef}>
           <caption className='mb-6 text-left text-m-bold text-primary'>
