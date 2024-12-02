@@ -50,7 +50,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
         <div className='p-6'>
           {actualites?.articles.map((article) => (
             <div
-              className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey_800'
+              className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_a]:hover:text-primary_darken [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey_800'
               key={article.id}
             >
               <h3 className='font-bold text-primary my-2'>{article.titre}</h3>
