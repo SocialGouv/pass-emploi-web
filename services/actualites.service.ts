@@ -1,3 +1,4 @@
+import parse from 'html-react-parser'
 import sanitizeHtml from 'sanitize-html'
 
 import { ActualitesRaw, ArticleJson } from 'interfaces/actualites'
@@ -37,7 +38,7 @@ export async function getActualites(
     articles: articlesJson.content.map((article: ArticleJson) => ({
       id: article.id,
       contenu: formaterArticle(article),
-      titre: article.title.rendered,
+      titre: parse(article.title.rendered),
     })),
     dateDerniereModification: derniereDateModification,
   }
@@ -53,7 +54,7 @@ function formaterArticle({ content }: ArticleJson) {
 }
 
 function ajouterTagCategorie(str: string) {
-  const codeRegex = /<code\b[^>]*>([.\s]*?)<\/code>/
+  const codeRegex = /<code\b[^>]*>([.\s\S]*?)<\/code>/
 
   const baliseCode = str.match(codeRegex)
   if (!baliseCode) return str
@@ -68,7 +69,7 @@ function ajouterTagCategorie(str: string) {
     .join('')
 
   return str.replace(
-    /<pre\b[^>]*>[.\s]*?<\/pre>/g,
+    /<pre\b[^>]*>[.\s\S]*?<\/pre>/g,
     `<div className='flex gap-2'>${categories}</div>`
   )
 }
