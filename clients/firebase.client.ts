@@ -470,8 +470,8 @@ export function observeDerniersMessagesDuChat(
         limit(nbMessages)
       ),
       (querySnapshot: QuerySnapshot<FirebaseMessage, FirebaseMessage>) => {
-        const messages: Message[] = querySnapshot.docs.map((doc) =>
-          docSnapshotToMessage(doc, beneficiaireEtChat.id)
+        const messages: Message[] = querySnapshot.docs.map((docSnapshot) =>
+          docSnapshotToMessage(docSnapshot, beneficiaireEtChat.id)
         )
         if (messages.length && !messages.at(-1)!.creationDate) {
           return
@@ -567,8 +567,8 @@ export async function getMessagesPeriode(
       )
     )
 
-  return querySnapshots.docs.map((doc) =>
-    docSnapshotToMessage(doc, beneficiaireEtChat.id)
+  return querySnapshots.docs.map((docSnapshot) =>
+    docSnapshotToMessage(docSnapshot, beneficiaireEtChat.id)
   )
 }
 

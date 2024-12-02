@@ -1,23 +1,9 @@
-import {
-  ForwardedRef,
-  forwardRef,
-  MouseEvent,
-  ReactNode,
-  useImperativeHandle,
-} from 'react'
+import { ForwardedRef, forwardRef, useImperativeHandle } from 'react'
 
-import { ModalHandles } from 'components/Modal'
+import { ModalContainerProps, ModalHandles } from 'components/ModalContainer'
 
 function FakeModalContainer(
-  {
-    children,
-    title,
-    onClose,
-  }: {
-    title: string
-    children: ReactNode
-    onClose: (e: KeyboardEvent | MouseEvent) => void
-  },
+  { children, onClose }: ModalContainerProps,
   ref: ForwardedRef<ModalHandles>
 ) {
   useImperativeHandle(ref, () => ({

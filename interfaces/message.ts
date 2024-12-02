@@ -132,6 +132,4 @@ export function getPreviousItemId<T extends { id: string }>(
     if (previousDay.messages.length) return previousDay.messages.at(-1)!.id // dernier item du 1er jour précédent avec des items
     indexPreviousDay--
   }
-
-  return
 }

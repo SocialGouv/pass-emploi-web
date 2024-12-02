@@ -58,7 +58,7 @@ describe('ActualitesModal', () => {
           level: 3,
           name: 'Invitation à la journée présentiel du 31 octobre 2024',
         })
-      )
+      ).toBeInTheDocument()
       expect(screen.getByText('Catégorie')).toBeInTheDocument()
       expect(
         screen.getByText('Rdv demain aux nouveaux locaux de la Fabrique')

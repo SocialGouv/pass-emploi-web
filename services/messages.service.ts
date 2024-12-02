@@ -11,9 +11,10 @@ import {
   CreateFirebaseMessagePartageOffre,
   deleteMessageImportant,
   findAndObserveChatsDuConseiller,
+  findMessageImportant,
+  getChatDuBeneficiaire,
   getChatsDuConseiller,
   getIdLastMessage,
-  findMessageImportant,
   getMessagesGroupe,
   getMessagesPeriode,
   observeChat,
@@ -23,7 +24,6 @@ import {
   signOut as _signOut,
   updateChat,
   updateMessage,
-  getChatDuBeneficiaire,
 } from 'clients/firebase.client'
 import { Action } from 'interfaces/action'
 import {
@@ -599,15 +599,15 @@ async function envoyerCommentaireAction(
 
   await Promise.all([
     notifierNouveauMessage(
-      session!.user.id,
+      session.user.id,
       [idDestinataire],
-      session!.accessToken
+      session.accessToken
     ),
     evenementMessage(
       'MESSAGE_ACTION_COMMENTEE',
-      session!.user.structure,
-      session!.user.id,
-      session!.accessToken
+      session.user.structure,
+      session.user.id,
+      session.accessToken
     ),
   ])
 }

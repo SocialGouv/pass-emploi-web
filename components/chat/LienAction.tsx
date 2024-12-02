@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { InfoAction, InfoOffre } from 'interfaces/message'
-import { TypeOffre } from 'interfaces/offre'
+import { InfoAction } from 'interfaces/message'
 
 export default function LienAction({
   infoAction,
