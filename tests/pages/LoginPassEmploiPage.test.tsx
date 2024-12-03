@@ -61,6 +61,9 @@ describe('LoginPassEmploiPage client side', () => {
       const franceTravailAIJButton = screen.getByRole('button', {
         name: 'Connexion France Travail AIJ',
       })
+      const franceTravailAvenirProButton = screen.getByRole('button', {
+        name: 'Connexion France Travail Avenir Pro',
+      })
       const franceTravailRSAButton = screen.getByRole('button', {
         name: 'Connexion France Travail RSA',
       })
@@ -70,6 +73,7 @@ describe('LoginPassEmploiPage client side', () => {
 
       //THEN
       expect(franceTravailAIJButton).toBeInTheDocument()
+      expect(franceTravailAvenirProButton).toBeInTheDocument()
       expect(franceTravailRSAButton).toBeInTheDocument()
       expect(conseillerDeptButton).toBeInTheDocument()
     })
@@ -103,6 +107,23 @@ describe('LoginPassEmploiPage client side', () => {
       // Then
       expect(signin).toHaveBeenCalledWith(
         'pe-aij-conseiller',
+        setErrorMsg,
+        'redirectUrl'
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller FT Avenir Pro", async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Connexion France Travail Avenir Pro',
+      })
+
+      // When
+      await userEvent.click(button)
+
+      // Then
+      expect(signin).toHaveBeenCalledWith(
+        'avenirpro-conseiller',
         setErrorMsg,
         'redirectUrl'
       )

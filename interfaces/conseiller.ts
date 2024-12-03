@@ -7,6 +7,7 @@ export enum StructureConseiller {
   POLE_EMPLOI_BRSA = 'POLE_EMPLOI_BRSA',
   POLE_EMPLOI_AIJ = 'POLE_EMPLOI_AIJ',
   CONSEIL_DEPT = 'CONSEIL_DEPT',
+  AVENIR_PRO = 'AVENIR_PRO',
 }
 
 export enum UserType {
@@ -52,11 +53,12 @@ export function estBRSA(conseiller: Conseiller): boolean {
 export function estPassEmploi(
   conseiller: Pick<Conseiller, 'structure'>
 ): boolean {
-  return (
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
-    conseiller.structure === StructureConseiller.CONSEIL_DEPT
-  )
+  return [
+    StructureConseiller.POLE_EMPLOI_BRSA,
+    StructureConseiller.POLE_EMPLOI_AIJ,
+    StructureConseiller.CONSEIL_DEPT,
+    StructureConseiller.AVENIR_PRO,
+  ].includes(conseiller.structure)
 }
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
@@ -79,7 +81,8 @@ export function estUserPassEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     user.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
-    user.structure === StructureConseiller.CONSEIL_DEPT
+    user.structure === StructureConseiller.CONSEIL_DEPT ||
+    user.structure === StructureConseiller.AVENIR_PRO
   )
 }
 

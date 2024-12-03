@@ -56,6 +56,7 @@ export default function AidePage() {
         return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK as string
       case StructureConseiller.POLE_EMPLOI_BRSA:
       case StructureConseiller.POLE_EMPLOI_AIJ:
+      case StructureConseiller.AVENIR_PRO:
         return process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string
       case StructureConseiller.CONSEIL_DEPT:
         return process.env.NEXT_PUBLIC_FAQ_CD_BRSA_EXTERNAL_LINK as string
@@ -68,6 +69,7 @@ export default function AidePage() {
       case StructureConseiller.POLE_EMPLOI_BRSA:
       case StructureConseiller.POLE_EMPLOI_AIJ:
       case StructureConseiller.CONSEIL_DEPT:
+      case StructureConseiller.AVENIR_PRO:
         return urlSiteRessource + 'assistance/'
       case StructureConseiller.POLE_EMPLOI:
         return urlSiteRessource + 'formuler-une-demande/'
