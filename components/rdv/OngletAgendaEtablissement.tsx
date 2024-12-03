@@ -8,7 +8,6 @@ import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives, {
   FiltresHandles,
 } from 'components/rdv/FiltresStatutAnimationsCollectives'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -196,19 +195,12 @@ export default function OngletAgendaEtablissement({
 
       {evenementsAffiches &&
         evenementsAffiches?.length === 0 &&
-        evenements &&
-        evenements.length === 0 && (
+        evenements?.length === 0 && (
           <div className='flex flex-col justify-center items-center'>
             <EmptyState
-              shouldFocus={shouldFocus || filtres.length > 0}
-              illustrationName={
-                evenements && evenements.length === 0
-                  ? IllustrationName.Checklist
-                  : IllustrationName.Search
-              }
-              titre={
-                'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
-              }
+              shouldFocus={shouldFocus}
+              illustrationName={IllustrationName.Checklist}
+              titre='Il n’y a pas d’animation collective sur cette période dans votre établissement.'
               sousTitre={undefined}
               lien={{
                 href: '/mes-jeunes/edition-rdv?type=ac',
@@ -222,19 +214,10 @@ export default function OngletAgendaEtablissement({
         evenements &&
         evenements?.length > 0 && (
           <EmptyState
-            shouldFocus={shouldFocus || filtres.length > 0}
+            shouldFocus={shouldFocus}
             illustrationName={IllustrationName.Search}
             titre='Aucun événement ne correspond à votre recherche sur la période sélectionnée.'
-            sousTitre={
-              filtres.length === 0
-                ? 'Vous pouvez essayer de modifier vos critères de recherche, ajuster les filtres appliqués, ou changer la période.'
-                : undefined
-            }
-            lien={{
-              href: '/mes-jeunes/edition-rdv?type=ac',
-              label: 'Créer une animation collective',
-              iconName: IconName.Add,
-            }}
+            sousTitre='Vous pouvez essayer de modifier vos critères de recherche, ajuster les filtres appliqués, ou changer la période.'
           />
         )}
       {evenementsAffiches && evenementsAffiches.length > 0 && (
