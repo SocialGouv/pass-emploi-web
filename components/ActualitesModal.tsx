@@ -49,13 +49,28 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
       {aDesActualites && (
         <div className='p-6'>
           {actualites?.articles.map((article) => (
-            <div
+            <article
               className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_a]:hover:text-primary_darken [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey_800'
               key={article.id}
             >
-              <h3 className='font-bold text-primary my-2'>{article.titre}</h3>
+              <header>
+                <h3 className='font-bold text-primary my-2'>{article.titre}</h3>
+                {article.etiquettes.length > 0 && (
+                  <div className='flex gap-2'>
+                    <span className='sr-only'>Catégories : </span>
+                    {article.etiquettes.map((etiquette) => (
+                      <span
+                        key={etiquette.id}
+                        className={`flex items-center w-fit text-s-medium text-${etiquette.couleur} px-3 bg-${etiquette.couleur}_lighten whitespace-nowrap rounded-full`}
+                      >
+                        {etiquette.nom}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </header>
               {article.contenu}
-            </div>
+            </article>
           ))}
         </div>
       )}
