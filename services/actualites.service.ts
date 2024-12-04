@@ -7,7 +7,7 @@ import { fetchJson } from 'utils/httpClient'
 export async function getActualites(
   structure: StructureConseiller
 ): Promise<ActualitesRaw | undefined> {
-  const url = ((): string | undefined => {
+  const url = ((): string => {
     switch (structure) {
       case StructureConseiller.MILO:
         return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_MILO_LINK as string
@@ -19,6 +19,8 @@ export async function getActualites(
         return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FR_AIJ_LINK as string
       case StructureConseiller.CONSEIL_DEPT:
         return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CD_LINK as string
+      case StructureConseiller.AVENIR_PRO:
+        return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_AVENIR_PRO_LINK as string
     }
   })()
 
