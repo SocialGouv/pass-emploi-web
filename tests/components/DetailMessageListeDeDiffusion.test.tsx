@@ -66,7 +66,7 @@ describe('DetailMessageListeDeDiffusion', () => {
 
   it('affiche l’heure du message', async () => {
     // Then
-    expect(screen.getByText('Envoyé à 14h00')).toBeInTheDocument()
+    expect(screen.getByText('Envoyé à 14:00')).toBeInTheDocument()
   })
 
   it('affiche les destinataires du message', async () => {

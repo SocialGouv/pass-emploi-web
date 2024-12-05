@@ -50,7 +50,7 @@ export default function ActionRowPilotage({
       </TD>
       <TDLink
         href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-        label={`Accéder au détail de l’action terminée le ${dateFinReelle} : ${action.titre}`}
+        labelPrefix='Accéder au détail de l’action de'
       />
     </TR>
   )

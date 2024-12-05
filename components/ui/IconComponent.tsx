@@ -242,7 +242,11 @@ type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {
   name: IconName
   title?: string
 }
-export default function IconComponent({ name, ...props }: IconComponentProps) {
+export default function IconComponent({
+  name,
+  className,
+  ...props
+}: IconComponentProps) {
   const Icon = iconsByName[name]
-  return <Icon {...props} />
+  return <Icon className={className + ' z-50'} {...props} />
 }

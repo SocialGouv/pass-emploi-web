@@ -23,3 +23,34 @@ export function redirectedFromHome(referer: string): boolean {
 export function unsafeRandomId(): string {
   return Math.random().toString().slice(2)
 }
+
+const TYPE_NODE_TEXT = 3
+const TYPE_NODE_ELEMENT = 1
+export function getVisibleText(nodes: Node | Node[]): string | null {
+  if (Object.prototype.hasOwnProperty.call(nodes, 'length'))
+    return (
+      (nodes as Node[])
+        .map(getVisibleText)
+        .filter((visibleText) => visibleText !== null)
+        .join(' ')
+        .trim() || null
+    )
+
+  const node = nodes as Node
+  if (node.nodeType === TYPE_NODE_TEXT) return node.nodeValue?.trim() || null
+  if (node.nodeType !== TYPE_NODE_ELEMENT) return null
+
+  const element = node as Element
+  if (element.classList.contains('sr-only')) return null
+  if (element.nodeName.toUpperCase() === 'SVG') return null
+
+  if (element.nodeName.toUpperCase() === 'SELECT') {
+    const selectedOptions = (element as HTMLSelectElement).selectedOptions
+    return getVisibleText(Array.from(selectedOptions))
+  }
+
+  if (element.hasChildNodes())
+    return getVisibleText(Array.from(node.childNodes))
+
+  return null
+}

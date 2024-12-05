@@ -4,6 +4,7 @@ import { axe } from 'jest-axe'
 
 import ActualitesModal from 'components/ActualitesModal'
 import { unConseiller } from 'fixtures/conseiller'
+import { ActualitesParsees } from 'interfaces/actualites'
 import { ActualitesProvider } from 'utils/actualitesContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
@@ -13,20 +14,22 @@ describe('ActualitesModal', () => {
 
   describe('quand le conseiller a des actualités', () => {
     const article = {
+      id: 1,
       titre: 'Invitation à la journée présentiel du 31 octobre 2024',
+      etiquettes: [
+        { id: 35, nom: 'Recette', couleur: 'additional_3' },
+        { id: 42, nom: 'Test', couleur: 'additional_2' },
+      ],
       contenu: (
         <>
-          <span>Catégorie</span>
           <p>Rdv demain aux nouveaux locaux de la Fabrique</p>
           <a href='www.google.com'>Google</a>
           <img src='pouetImg.jpg' alt='pouet' />
         </>
       ),
-      dateDerniereModification: '2024-01-01',
-      id: 'id-article-1',
     }
 
-    const actualites = {
+    const actualites: ActualitesParsees = {
       articles: [article],
       dateDerniereModification: '2024-01-01',
     }
@@ -58,8 +61,10 @@ describe('ActualitesModal', () => {
           level: 3,
           name: 'Invitation à la journée présentiel du 31 octobre 2024',
         })
+      ).toBeInTheDocument()
+      expect(screen.getByRole('banner')).toHaveTextContent(
+        'Invitation à la journée présentiel du 31 octobre 2024Catégories : RecetteTest'
       )
-      expect(screen.getByText('Catégorie')).toBeInTheDocument()
       expect(
         screen.getByText('Rdv demain aux nouveaux locaux de la Fabrique')
       ).toBeInTheDocument()

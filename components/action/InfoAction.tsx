@@ -7,7 +7,7 @@ interface InfoActionProps {
   isInline?: boolean
 }
 
-function InfoAction({
+export default function InfoAction({
   label,
   children,
   isForm = false,
@@ -47,5 +47,3 @@ function InfoAction({
     </>
   )
 }
-
-export default InfoAction

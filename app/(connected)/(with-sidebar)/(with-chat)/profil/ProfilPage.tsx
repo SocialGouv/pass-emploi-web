@@ -174,23 +174,19 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {!conseillerEstMilo &&
-          (process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true' ||
-            process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true') && (
-            <Button
-              className='mt-4'
-              onClick={openDeleteConseillerModal}
-              style={ButtonStyle.TERTIARY}
-            >
-              <IconComponent
-                name={IconName.Delete}
-                focusable={false}
-                aria-hidden={true}
-                className='mr-2 w-4 h-4'
-              />
-              Supprimer mon compte
-            </Button>
-          )}
+        <Button
+          className='mt-4'
+          onClick={openDeleteConseillerModal}
+          style={ButtonStyle.TERTIARY}
+        >
+          <IconComponent
+            name={IconName.Delete}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Supprimer mon compte
+        </Button>
 
         {showModaleSuppressionCompte && (
           <ConfirmationDeleteConseillerModal

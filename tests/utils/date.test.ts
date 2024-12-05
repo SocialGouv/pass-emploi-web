@@ -107,7 +107,7 @@ describe('dateUtils', () => {
       const uneDate = toRelativeDateTime(now.set({ hour: 13, minute: 12 }))
 
       //Then
-      expect(uneDate).toEqual('Aujourd’hui à 13h12')
+      expect(uneDate).toEqual('Aujourd’hui à 13:12')
     })
 
     it(`formate la date d'hier`, () => {
@@ -117,7 +117,7 @@ describe('dateUtils', () => {
       )
 
       //Then
-      expect(uneDate).toEqual('Hier à 13h12')
+      expect(uneDate).toEqual('Hier à 13:12')
     })
 
     it(`formate autre date`, () => {
@@ -127,7 +127,7 @@ describe('dateUtils', () => {
       )
 
       //Then
-      expect(uneDate).toEqual('Le 25/12/2018 à 13h12')
+      expect(uneDate).toEqual('Le 25/12/2018 à 13:12')
     })
   })
 })

@@ -202,6 +202,8 @@ function userStructureDimensionString(
       return 'Pôle emploi AIJ'
     case StructureConseiller.CONSEIL_DEPT:
       return 'Conseiller départemental'
+    case StructureConseiller.AVENIR_PRO:
+      return 'Avenir Pro'
     case null:
       return 'visiteur'
   }

@@ -29,7 +29,8 @@ import {
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
-import { Chat } from 'interfaces/beneficiaire'
+import { Action } from 'interfaces/action'
+import { BeneficiaireEtChat, Chat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import {
@@ -51,6 +52,7 @@ type TypeMessageFirebase =
   | 'MESSAGE_EVENEMENT'
   | 'MESSAGE_EVENEMENT_EMPLOI'
   | 'MESSAGE_SESSION_MILO'
+  | 'MESSAGE_ACTION'
   | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
 export type FirebaseMessage = {
@@ -63,6 +65,7 @@ export type FirebaseMessage = {
   type: TypeMessageFirebase | undefined
   status?: string
   offre?: InfoOffreFirebase
+  action?: InfoActionFirebase
   evenement?: EvenementPartage
   evenementEmploi?: EvenementEmploi
   sessionMilo?: SessionMilo
@@ -98,6 +101,11 @@ export type InfoOffreFirebase = {
   type?: string
 }
 
+export type InfoActionFirebase = {
+  id: string
+  titre: string
+}
+
 export interface EvenementPartage {
   id: string
   titre: string
@@ -123,7 +131,7 @@ type BaseCreateFirebaseMessage = {
   date: DateTime
 }
 
-type BaseCreateFirebaseMessageImportant = {
+type CreateFirebaseMessageImportant = {
   idConseiller: string
   dateDebut: DateTime
   dateFin: DateTime
@@ -134,9 +142,14 @@ type BaseCreateFirebaseMessageImportant = {
 export type CreateFirebaseMessage = BaseCreateFirebaseMessage & {
   infoPieceJointe?: InfoFichier
 }
-export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
+export type CreateFirebaseMessagePartageOffre = BaseCreateFirebaseMessage & {
   offre: BaseOffre
 }
+
+export type CreateFirebaseMessageCommentaireAction =
+  BaseCreateFirebaseMessage & {
+    action: Action
+  }
 
 type UpdateFirebaseMessage = {
   message: string
@@ -186,7 +199,7 @@ export async function addMessage(
 }
 
 export async function addMessageImportant(
-  data: BaseCreateFirebaseMessageImportant
+  data: CreateFirebaseMessageImportant
 ): Promise<string> {
   const firebaseMessage = createFirebaseMessageImportant(data)
 
@@ -359,6 +372,35 @@ export async function getChatsDuConseiller(
   }
 }
 
+export async function getChatDuBeneficiaire(
+  idConseiller: string,
+  idBeneficiaire: string
+): Promise<Chat | undefined> {
+  try {
+    const collectionRef = collection(
+      getDb(),
+      chatCollection
+    ) as CollectionReference<FirebaseChat, FirebaseChat>
+
+    const querySnapshots: QuerySnapshot<FirebaseChat, FirebaseChat> =
+      await getDocs(
+        query<FirebaseChat, FirebaseChat>(
+          collectionRef,
+          where('conseillerId', '==', idConseiller),
+          where('jeuneId', '==', idBeneficiaire)
+        )
+      )
+    if (querySnapshots.empty) return
+
+    const document = querySnapshots.docs[0]
+    return chatFromFirebase(document.id, document.data())
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    throw e
+  }
+}
+
 export async function getMessagesGroupe(
   idConseiller: string,
   idGroupe: string
@@ -413,22 +455,24 @@ export function observeChat(
 }
 
 export function observeDerniersMessagesDuChat(
-  idChat: string,
+  beneficiaireEtChat: BeneficiaireEtChat,
   nbMessages: number,
   onMessagesAntechronologiques: (messages: Message[]) => void
 ): () => void {
   try {
     return onSnapshot<FirebaseMessage, FirebaseMessage>(
       query<FirebaseMessage, FirebaseMessage>(
-        collection(getChatReference(idChat), 'messages') as CollectionReference<
-          FirebaseMessage,
-          FirebaseMessage
-        >,
+        collection(
+          getChatReference(beneficiaireEtChat.chatId),
+          'messages'
+        ) as CollectionReference<FirebaseMessage, FirebaseMessage>,
         orderBy('creationDate', 'desc'),
         limit(nbMessages)
       ),
       (querySnapshot: QuerySnapshot<FirebaseMessage, FirebaseMessage>) => {
-        const messages: Message[] = querySnapshot.docs.map(docSnapshotToMessage)
+        const messages: Message[] = querySnapshot.docs.map((docSnapshot) =>
+          docSnapshotToMessage(docSnapshot, beneficiaireEtChat.id)
+        )
         if (messages.length && !messages.at(-1)!.creationDate) {
           return
         }
@@ -443,12 +487,9 @@ export function observeDerniersMessagesDuChat(
   }
 }
 
-export async function getMessageImportantSnapshot(
+export async function findMessageImportant(
   idConseiller: string
-): Promise<
-  | DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
-  | undefined
-> {
+): Promise<(FirebaseMessageImportant & { id: string }) | undefined> {
   const collectionRef = collection(
     getDb(),
     messageImportantCollection
@@ -464,7 +505,10 @@ export async function getMessageImportantSnapshot(
     )
   )
 
-  if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
+  if (!querySnapshots.empty) {
+    const document = querySnapshots.docs[0]
+    return { ...document.data(), id: document.id }
+  }
 }
 
 export async function rechercherMessages(
@@ -497,18 +541,19 @@ export async function rechercherMessages(
             message.creationDate._seconds * 1000
           ),
         },
-        id
+        id,
+        idBeneficiaire
       ),
     }
   })
 }
 
 export async function getMessagesPeriode(
-  idChat: string,
+  beneficiaireEtChat: BeneficiaireEtChat,
   debut: DateTime,
   fin: DateTime
 ): Promise<Message[]> {
-  const chatRef = getChatReference(idChat)
+  const chatRef = getChatReference(beneficiaireEtChat.chatId)
   const querySnapshots: QuerySnapshot<FirebaseMessage, FirebaseMessage> =
     await getDocs(
       query<FirebaseMessage, FirebaseMessage>(
@@ -522,7 +567,9 @@ export async function getMessagesPeriode(
       )
     )
 
-  return querySnapshots.docs.map(docSnapshotToMessage)
+  return querySnapshots.docs.map((docSnapshot) =>
+    docSnapshotToMessage(docSnapshot, beneficiaireEtChat.id)
+  )
 }
 
 function retrieveApp() {
@@ -560,7 +607,7 @@ async function getGroupeSnapshot(
       )
     )
 
-  if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
+  if (!querySnapshots.empty) return querySnapshots.docs[0]
 }
 
 async function getChatsSnapshot(
@@ -623,7 +670,10 @@ function getMessageReference(
 }
 
 function createFirebaseMessage(
-  data: CreateFirebaseMessage | CreateFirebaseMessageWithOffre
+  data:
+    | CreateFirebaseMessage
+    | CreateFirebaseMessagePartageOffre
+    | CreateFirebaseMessageCommentaireAction
 ): FirebaseMessage {
   const type: TypeMessage = TypeMessage.MESSAGE
   let { encryptedText, iv } = data.message
@@ -649,26 +699,31 @@ function createFirebaseMessage(
       id,
       titre,
       type: typeOffre,
-    } = (data as CreateFirebaseMessageWithOffre).offre
+    } = (data as CreateFirebaseMessagePartageOffre).offre
     firebaseMessage.offre = { id, titre, type: typeToFirebase(typeOffre) }
+  }
+
+  if (Object.prototype.hasOwnProperty.call(data, 'action')) {
+    firebaseMessage.type = TypeMessage.MESSAGE_ACTION
+    const { id, titre } = (data as CreateFirebaseMessageCommentaireAction)
+      .action
+    firebaseMessage.action = { id, titre }
   }
 
   return firebaseMessage
 }
 
 function createFirebaseMessageImportant(
-  data: BaseCreateFirebaseMessageImportant
+  data: CreateFirebaseMessageImportant
 ): FirebaseMessageImportant {
   let { encryptedText, iv } = data.message
-  const firebaseMessage: FirebaseMessageImportant = {
+  return {
     content: encryptedText,
     iv,
     idConseiller: data.idConseiller,
     dateDebut: toTimestamp(data.dateDebut),
     dateFin: toTimestamp(data.dateFin),
   }
-
-  return firebaseMessage
 }
 
 type FirebaseChat = {
@@ -763,10 +818,15 @@ export function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
 }
 
 export function docSnapshotToMessage(
-  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
+  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>,
+  idBeneficiaire: string
 ): Message {
   const firebaseMessage = docSnapshot.data()
-  return firebaseMessageToMessage(firebaseMessage, docSnapshot.id)
+  return firebaseMessageToMessage(
+    firebaseMessage,
+    docSnapshot.id,
+    idBeneficiaire
+  )
 }
 
 function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
@@ -792,10 +852,12 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
 
 function firebaseMessageToMessage(
   firebaseMessage: FirebaseMessage,
-  id: string
+  id: string,
+  idBeneficiaire: string
 ): Message {
   const message: Message = {
     id,
+    idBeneficiaire,
     sentBy: firebaseMessage.sentBy,
     content: firebaseMessage.content,
     iv: firebaseMessage.iv,
@@ -811,6 +873,10 @@ function firebaseMessageToMessage(
 
   if (message.type === TypeMessage.MESSAGE_OFFRE && firebaseMessage.offre) {
     message.infoOffre = offreFromFirebase(firebaseMessage.offre)
+  }
+
+  if (message.type === TypeMessage.MESSAGE_ACTION && firebaseMessage.action) {
+    message.infoAction = firebaseMessage.action
   }
 
   if (
@@ -879,6 +945,8 @@ function firebaseToMessageType(
       return TypeMessage.MESSAGE_PJ
     case 'MESSAGE_OFFRE':
       return TypeMessage.MESSAGE_OFFRE
+    case 'MESSAGE_ACTION':
+      return TypeMessage.MESSAGE_ACTION
     case 'MESSAGE_EVENEMENT':
       return TypeMessage.MESSAGE_EVENEMENT
     case 'MESSAGE_EVENEMENT_EMPLOI':

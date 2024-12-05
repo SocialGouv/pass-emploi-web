@@ -14,17 +14,13 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
-interface LoginProps {
-  ssoFranceTravailBRSAEstActif?: boolean
-  ssoFranceTravailAIJEstActif?: boolean
-  ssoConseillerDeptEstActif?: boolean
+type LoginPassEmploiPageProps = {
+  ssoAvenirProEstActif?: boolean
 }
 
-function LoginPage({
-  ssoFranceTravailBRSAEstActif,
-  ssoFranceTravailAIJEstActif,
-  ssoConseillerDeptEstActif,
-}: LoginProps) {
+function LoginPassEmploiPage({
+  ssoAvenirProEstActif,
+}: LoginPassEmploiPageProps) {
   const [errorMsg, setErrorMsg] = useLoginErrorMessage()
   const searchParams = useSearchParams()
 
@@ -66,54 +62,73 @@ function LoginPage({
               Connexion conseiller RSA
             </h2>
             <ul className='px-6 pt-6 flex flex-col gap-4 layout_s:border-r-2 layout_s:border-grey_100 '>
-              {ssoFranceTravailBRSAEstActif && (
-                <li>
-                  <LoginButton
-                    altText='France Travail RSA'
-                    label='France Travail'
-                    illustrationName={IllustrationName.LogoFT}
-                    className='whitespace-nowrap'
-                    style={ButtonStyle.SECONDARY}
-                    handleSubmit={(event) =>
-                      handleSignin(event, 'pe-brsa-conseiller')
-                    }
-                  />
-                </li>
-              )}
-              {ssoConseillerDeptEstActif && (
-                <li>
-                  <LoginButton
-                    label='Conseil départemental'
-                    className='whitespace-nowrap'
-                    style={ButtonStyle.SECONDARY}
-                    illustrationName={IllustrationName.LogoCD}
-                    handleSubmit={(event) =>
-                      handleSignin(event, 'conseildepartemental-conseiller')
-                    }
-                  />
-                </li>
-              )}
+              <li>
+                <LoginButton
+                  altText='France Travail RSA'
+                  label='France Travail'
+                  illustrationName={IllustrationName.LogoFT}
+                  className='whitespace-nowrap'
+                  style={ButtonStyle.SECONDARY}
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'pe-brsa-conseiller')
+                  }
+                />
+              </li>
+
+              <li>
+                <LoginButton
+                  label='Conseil départemental'
+                  className='whitespace-nowrap'
+                  style={ButtonStyle.SECONDARY}
+                  illustrationName={IllustrationName.LogoCD}
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'conseildepartemental-conseiller')
+                  }
+                />
+              </li>
             </ul>
 
             <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
               Connexion conseiller AIJ
             </h2>
-            <ul className='px-6 pt-6 flex flex-col gap-4'>
-              {ssoFranceTravailAIJEstActif && (
-                <li>
-                  <LoginButton
-                    altText='France Travail AIJ'
-                    label='France Travail'
-                    className='whitespace-nowrap'
-                    style={ButtonStyle.SECONDARY}
-                    illustrationName={IllustrationName.LogoFT}
-                    handleSubmit={(event) =>
-                      handleSignin(event, 'pe-aij-conseiller')
-                    }
-                  />
-                </li>
-              )}
+            <ul
+              className={`px-6 pt-6 flex flex-col gap-4 ${ssoAvenirProEstActif ? 'layout_s:border-r-2 layout_s:border-grey_100' : ''}`}
+            >
+              <li>
+                <LoginButton
+                  altText='France Travail AIJ'
+                  label='France Travail'
+                  className='whitespace-nowrap'
+                  style={ButtonStyle.SECONDARY}
+                  illustrationName={IllustrationName.LogoFT}
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'pe-aij-conseiller')
+                  }
+                />
+              </li>
             </ul>
+
+            {ssoAvenirProEstActif && (
+              <>
+                <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
+                  Connexion conseiller Avenir Pro
+                </h2>
+                <ul className='px-6 pt-6 flex flex-col gap-4'>
+                  <li>
+                    <LoginButton
+                      altText='France Travail Avenir Pro'
+                      label='France Travail'
+                      className='whitespace-nowrap'
+                      style={ButtonStyle.SECONDARY}
+                      illustrationName={IllustrationName.LogoFT}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'avenirpro-conseiller')
+                      }
+                    />
+                  </li>
+                </ul>
+              </>
+            )}
           </main>
         </div>
       </div>
@@ -121,4 +136,7 @@ function LoginPage({
   )
 }
 
-export default withTransaction(LoginPage.name, 'page')(LoginPage)
+export default withTransaction(
+  LoginPassEmploiPage.name,
+  'page'
+)(LoginPassEmploiPage)

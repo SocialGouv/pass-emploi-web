@@ -44,7 +44,7 @@ export default function TableauAnimationsAClore({
                 </TD>
                 <TDLink
                   href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
-                  label={`Accéder au détail de l’animation collective : ${ac.titre}`}
+                  labelPrefix='Accéder au détail de l’animation collective du'
                 />
               </TR>
             ))}

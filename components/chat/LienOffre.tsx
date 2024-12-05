@@ -27,13 +27,13 @@ export default function LienOffre({
 
       <Link
         href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
-        className={`mt-4 w-max ml-auto text-s-regular underline ${
+        className={`mt-4 w-max ml-auto text-s-regular ${
           isSentByConseiller
             ? 'text-white underline hover:text-primary_lighten'
             : 'text-primary_darken hover:text-primary'
         }`}
       >
-        Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
+        Voir l’offre<span className='sr-only'> {infoOffre.titre}</span>
       </Link>
     </div>
   )

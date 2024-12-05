@@ -115,7 +115,7 @@ describe('Page Listes de Diffusion', () => {
       listesDeDiffusion.forEach((liste) => {
         expect(
           screen.getByRole('link', {
-            name: 'Consulter la liste ' + liste.titre,
+            name: `Consulter la liste ${liste.titre} ${liste.beneficiaires.length} destinataire(s)`,
           })
         ).toHaveAttribute(
           'href',

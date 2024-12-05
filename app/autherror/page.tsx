@@ -32,6 +32,7 @@ export default function AuthError({
     case 'UTILISATEUR_DEJA_PE_BRSA':
     case 'UTILISATEUR_DEJA_PE_AIJ':
     case 'UTILISATEUR_DEJA_CONSEIL_DEPT':
+    case 'UTILISATEUR_DEJA_AVENIR_PRO':
       erreur =
         "Veuillez vous connecter en choisissant France Travail sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
       break
@@ -57,6 +58,8 @@ export default function AuthError({
             case 'POLE_EMPLOI_BRSA':
             case 'POLE_EMPLOI_AIJ':
             case 'FRANCE_TRAVAIL':
+            case 'CONSEIL_DEPT':
+            case 'AVENIR_PRO':
               idpName = 'France Travail Connect'
               break
             default:
@@ -90,6 +93,7 @@ export default function AuthError({
             case StructureConseiller.POLE_EMPLOI_BRSA:
             case StructureConseiller.POLE_EMPLOI_AIJ:
             case StructureConseiller.CONSEIL_DEPT:
+            case StructureConseiller.AVENIR_PRO:
               return (
                 (process.env
                   .NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string) +

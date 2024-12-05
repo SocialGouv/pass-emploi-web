@@ -39,11 +39,7 @@ describe('LoginPassEmploiPage server side', () => {
       title: "Connexion dans l'espace conseiller - Outil du pass emploi",
     })
     expect(LoginPassEmploiPage).toHaveBeenCalledWith(
-      {
-        ssoConseillerDeptEstActif: true,
-        ssoFranceTravailAIJEstActif: true,
-        ssoFranceTravailBRSAEstActif: true,
-      },
+      { ssoAvenirProEstActif: true },
       {}
     )
   })
