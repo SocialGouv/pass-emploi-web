@@ -19,22 +19,32 @@ describe('ActualitesService', () => {
 
       const articlesJson: ArticleJson[] = [
         {
-          content: {
-            rendered: 'Cette journée aura lieu au 35 rue de la République.',
-          },
           id: 1,
+          modified: '2024-11-20T15:38:54',
           title: {
             rendered: 'Invitation à la journée présentiel du 31 octobre 2024',
           },
-          modified: '2024-11-20T15:38:54',
           tags: [7],
+          content: {
+            rendered: 'Cette journée aura lieu au 35 rue de la République.',
+          },
+          sticky: false,
         },
         {
-          content: { rendered: 'Retrouvez notre dernière note sur le blog.' },
           id: 2,
-          title: { rendered: 'Infolettre de novembre 2024' },
           modified: '2024-11-19T15:38:54',
+          title: { rendered: 'Infolettre de novembre 2024' },
           tags: [],
+          content: { rendered: 'Retrouvez notre dernière note sur le blog.' },
+          sticky: true,
+        },
+        {
+          id: 3,
+          modified: '2024-12-03T16:38:54',
+          title: { rendered: 'Ceci est un article de test' },
+          tags: [],
+          content: { rendered: 'Lorem ipsum dolor sit amet' },
+          sticky: true,
         },
       ]
       ;(fetchJson as jest.Mock).mockResolvedValueOnce({
@@ -48,10 +58,10 @@ describe('ActualitesService', () => {
       const actualites: ActualitesRaw = {
         articles: [
           {
-            id: 1,
-            titre: 'Invitation à la journée présentiel du 31 octobre 2024',
-            etiquettes: [{ couleur: 'primary', id: 7, nom: 'Primaire' }],
-            contenu: 'Cette journée aura lieu au 35 rue de la République.',
+            id: 3,
+            titre: 'Ceci est un article de test',
+            etiquettes: [],
+            contenu: 'Lorem ipsum dolor sit amet',
           },
           {
             id: 2,
@@ -59,8 +69,14 @@ describe('ActualitesService', () => {
             etiquettes: [],
             contenu: 'Retrouvez notre dernière note sur le blog.',
           },
+          {
+            id: 1,
+            titre: 'Invitation à la journée présentiel du 31 octobre 2024',
+            etiquettes: [{ couleur: 'primary', id: 7, nom: 'Primaire' }],
+            contenu: 'Cette journée aura lieu au 35 rue de la République.',
+          },
         ],
-        dateDerniereModification: '2024-11-20T15:38:54',
+        dateDerniereModification: '2024-12-03T16:38:54',
       }
       expect(output).toEqual(actualites)
     })

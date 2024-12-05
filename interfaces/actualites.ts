@@ -30,6 +30,7 @@ export type ArticleJson = {
   content: {
     rendered: string
   }
+  sticky: boolean
 }
 
 export type TagJson = {

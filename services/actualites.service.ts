@@ -22,22 +22,23 @@ export async function getActualites(
   ] = await Promise.all([fetchJson(urlTags), fetchJson(urlActualites)])
   if (!articlesJson.length) return
 
-  const derniereDateModification = articlesJson.reduce(
-    (latest: string, item: ArticleJson) => {
-      return new Date(item.modified) > new Date(latest) ? item.modified : latest
-    },
-    articlesJson[0].modified
-  )
-
+  const articlesTries = articlesJson.sort(comparerArticles)
   return {
-    articles: articlesJson.map((article: ArticleJson) => ({
+    articles: articlesTries.map((article: ArticleJson) => ({
       id: article.id,
       titre: article.title.rendered,
       etiquettes: extraireEtiquettes(article, tagsJson),
       contenu: extraireContenuAssaini(article),
     })),
-    dateDerniereModification: derniereDateModification,
+    dateDerniereModification: articlesTries[0].modified,
   }
+}
+
+function comparerArticles(a1: ArticleJson, a2: ArticleJson) {
+  const stickyFirst = Number(a2.sticky) - Number(a1.sticky)
+  if (stickyFirst !== 0) return stickyFirst
+
+  return new Date(a2.modified).getTime() - new Date(a1.modified).getTime()
 }
 
 function extraireContenuAssaini({ content }: ArticleJson): string {
