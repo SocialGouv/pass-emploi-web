@@ -14,7 +14,13 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
-function LoginPage() {
+type LoginPassEmploiPageProps = {
+  ssoAvenirProEstActif?: boolean
+}
+
+function LoginPassEmploiPage({
+  ssoAvenirProEstActif,
+}: LoginPassEmploiPageProps) {
   const [errorMsg, setErrorMsg] = useLoginErrorMessage()
   const searchParams = useSearchParams()
 
@@ -85,7 +91,9 @@ function LoginPage() {
             <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
               Connexion conseiller AIJ
             </h2>
-            <ul className='px-6 pt-6 flex flex-col gap-4 layout_s:border-r-2 layout_s:border-grey_100'>
+            <ul
+              className={`px-6 pt-6 flex flex-col gap-4 ${ssoAvenirProEstActif ? 'layout_s:border-r-2 layout_s:border-grey_100' : ''}`}
+            >
               <li>
                 <LoginButton
                   altText='France Travail AIJ'
@@ -100,23 +108,27 @@ function LoginPage() {
               </li>
             </ul>
 
-            <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
-              Connexion conseiller Avenir Pro
-            </h2>
-            <ul className='px-6 pt-6 flex flex-col gap-4'>
-              <li>
-                <LoginButton
-                  altText='France Travail Avenir Pro'
-                  label='France Travail'
-                  className='whitespace-nowrap'
-                  style={ButtonStyle.SECONDARY}
-                  illustrationName={IllustrationName.LogoFT}
-                  handleSubmit={(event) =>
-                    handleSignin(event, 'avenirpro-conseiller')
-                  }
-                />
-              </li>
-            </ul>
+            {ssoAvenirProEstActif && (
+              <>
+                <h2 className='text-l-bold text-primary_darken text-center my-6 mx-4'>
+                  Connexion conseiller Avenir Pro
+                </h2>
+                <ul className='px-6 pt-6 flex flex-col gap-4'>
+                  <li>
+                    <LoginButton
+                      altText='France Travail Avenir Pro'
+                      label='France Travail'
+                      className='whitespace-nowrap'
+                      style={ButtonStyle.SECONDARY}
+                      illustrationName={IllustrationName.LogoFT}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'avenirpro-conseiller')
+                      }
+                    />
+                  </li>
+                </ul>
+              </>
+            )}
           </main>
         </div>
       </div>
@@ -124,4 +136,7 @@ function LoginPage() {
   )
 }
 
-export default withTransaction(LoginPage.name, 'page')(LoginPage)
+export default withTransaction(
+  LoginPassEmploiPage.name,
+  'page'
+)(LoginPassEmploiPage)

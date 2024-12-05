@@ -18,5 +18,11 @@ export default async function LoginPassEmploi({
 }) {
   await redirectIfAlreadyConnected(searchParams)
 
-  return <LoginPassEmploiPage />
+  return (
+    <LoginPassEmploiPage
+      ssoAvenirProEstActif={
+        process.env.NEXT_PUBLIC_ENABLE_AVENIR_PRO_SSO === 'true'
+      }
+    />
+  )
 }
