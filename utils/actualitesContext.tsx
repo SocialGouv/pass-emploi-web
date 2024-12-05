@@ -38,7 +38,7 @@ export function ActualitesProvider({
             articles: actualitesRaw.articles.map((article) => ({
               ...article,
               titre: parse(article.titre),
-              contenu: parse(transformerLiensExternes(article.contenu)),
+              contenu: parse(nettoyerEtFormater(article.contenu)),
             })),
           }
         )
@@ -54,6 +54,16 @@ export function ActualitesProvider({
 
 export function useActualites(): ActualitesParsees | undefined {
   return useContext(ActualitesContext)
+}
+
+function nettoyerEtFormater(str: string): string {
+  let resultat = supprimerParagraphesVides(str)
+  resultat = transformerLiensExternes(resultat)
+  return resultat
+}
+
+function supprimerParagraphesVides(str: string): string {
+  return str.replace(/(<p>\s*<\/p>)|(<p\s*\/>)/g, '')
 }
 
 function transformerLiensExternes(str: string): string {

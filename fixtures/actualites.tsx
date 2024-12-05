@@ -46,7 +46,7 @@ export function uneActualiteRaw(): ActualitesRaw {
         titre: 'Invitation à la journée présentiel du 31 octobre 2024',
         etiquettes: [],
         contenu:
-          '<p>Rdv demain aux nouveaux locaux de la Fabrique</p><a href="perdu.com">Vous êtes perdu ?</a>',
+          '<p /><p>Rdv demain aux nouveaux locaux de la Fabrique</p>    <p/><a href="perdu.com">Vous êtes perdu ?</a><p></p>',
       },
     ],
     dateDerniereModification: '2024-10-30',

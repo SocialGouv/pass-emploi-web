@@ -23,9 +23,10 @@ describe('ActualitesProvdider', () => {
     )
   })
 
-  it('recupère les actualités et transforme les liens', () => {
+  it('recupère les actualités, transforme les liens et supprime les paragraphes vides', () => {
     // Then
     expect(getActualites).toHaveBeenCalledWith(conseiller.structure)
+    expect(screen.getAllByRole('paragraph')).toHaveLength(1)
     expect(screen.getByRole('paragraph')).toHaveTextContent(
       'Rdv demain aux nouveaux locaux de la Fabrique'
     )

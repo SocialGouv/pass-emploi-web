@@ -22,7 +22,7 @@ export async function getActualites(
   ] = await Promise.all([fetchJson(urlTags), fetchJson(urlActualites)])
   if (!articlesJson.length) return
 
-  const articlesTries = articlesJson.sort(comparerArticles)
+  const articlesTries = articlesJson.toSorted(comparerArticles)
   return {
     articles: articlesTries.map((article: ArticleJson) => ({
       id: article.id,
@@ -55,11 +55,7 @@ function extraireEtiquettes(
   return article.tags
     .map((idTag) => tagsJson.find(({ id }) => id === idTag))
     .filter((tag) => tag !== undefined)
-    .map((tag) => ({
-      id: tag!.id,
-      nom: tag!.name,
-      couleur: tag!.description,
-    }))
+    .map((tag) => ({ id: tag.id, nom: tag.name, couleur: tag.description }))
 }
 
 function getUrlActualites(structure: StructureConseiller) {
