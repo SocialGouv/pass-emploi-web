@@ -173,7 +173,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour ajouter un identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant France Travail (10 caractères maximum)'
+              'Identifiant France Travail (11 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -187,7 +187,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant France Travail (10 caractères maximum)'
+              'Identifiant France Travail (11 caractères maximum)'
             ),
             '12345'
           )
@@ -255,7 +255,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour modifier l’identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant France Travail (10 caractères maximum)'
+              'Identifiant France Travail (11 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -269,7 +269,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant France Travail (10 caractères maximum)'
+              'Identifiant France Travail (11 caractères maximum)'
             ),
             '6789'
           )

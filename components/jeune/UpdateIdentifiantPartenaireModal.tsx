@@ -18,7 +18,7 @@ export default function UpdateIdentifiantPartenaireModal({
   updateIdentifiantPartenaire,
   onClose,
 }: UpdateIdentifiantPartenaireModalProps) {
-  const MAX_INPUT_LENGTH = 10
+  const MAX_INPUT_LENGTH = 11
 
   const [portefeuille] = usePortefeuille()
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
@@ -29,9 +29,8 @@ export default function UpdateIdentifiantPartenaireModal({
 
   function identifiantPartenaireEstValide() {
     return (
-      getIdentifiantPartenaire &&
-      getIdentifiantPartenaire.length > 0 &&
-      getIdentifiantPartenaire.length < 11
+      getIdentifiantPartenaire?.length &&
+      getIdentifiantPartenaire.length <= MAX_INPUT_LENGTH
     )
   }
 

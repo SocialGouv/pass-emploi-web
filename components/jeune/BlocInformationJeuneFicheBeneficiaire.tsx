@@ -10,7 +10,11 @@ import {
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
-import { Conseiller, estMilo } from 'interfaces/conseiller'
+import {
+  Conseiller,
+  estConseilDepartemental,
+  estMilo,
+} from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
@@ -43,7 +47,8 @@ export function BlocInformationJeuneFicheBeneficiaire({
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
   const conseillerEstMilo = estMilo(conseiller)
-
+  const aIdentifiantFT =
+    !conseillerEstMilo && !estConseilDepartemental(conseiller)
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold text-grey_800 mb-2'>Informations</h2>
@@ -78,7 +83,7 @@ export function BlocInformationJeuneFicheBeneficiaire({
 
         {email && <Email email={email} />}
 
-        {!conseillerEstMilo &&
+        {aIdentifiantFT &&
           onIdentifiantPartenaireCopie &&
           onIdentifiantPartenaireClick && (
             <IdentifiantPartenaire
