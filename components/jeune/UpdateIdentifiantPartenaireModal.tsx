@@ -48,8 +48,8 @@ export default function UpdateIdentifiantPartenaireModal({
   )
 
   const titre = identifiantPartenaire
-    ? 'Modifiez l’identifiant France Travail du jeune'
-    : 'Ajoutez l’identifiant France Travail du jeune'
+    ? 'Modifiez l’identifiant France Travail du bénéficiaire'
+    : 'Ajoutez l’identifiant France Travail du bénéficiaire'
 
   return (
     <Modal ref={modalRef} title={titre} onClose={onClose}>
