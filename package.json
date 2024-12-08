@@ -20,7 +20,7 @@
     "@elastic/apm-rum-react": "2.0.2",
     "@next/bundle-analyzer": "14.2.18",
     "crypto-js": "4.2.0",
-    "dotenv": "16.4.5",
+    "dotenv": "16.4.7",
     "elastic-apm-node": "4.8.1",
     "firebase": "11.0.2",
     "html-react-parser": "5.1.18",
