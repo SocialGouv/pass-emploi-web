@@ -56,8 +56,8 @@ describe('HistoriquePage server side', () => {
 
     // When
     const params = { idJeune: 'id-beneficiaire' }
-    metadata = await generateMetadata({ params })
-    render(await Informations({ params }))
+    metadata = await generateMetadata({ params: Promise.resolve(params) })
+    render(await Informations({ params: Promise.resolve(params) }))
   })
 
   it('prépare la page', async () => {
@@ -88,7 +88,7 @@ describe('HistoriquePage server side', () => {
         beneficiaire: detailBeneficiaire,
         onglet: 'INFORMATIONS',
       },
-      {}
+      undefined
     )
   })
 })

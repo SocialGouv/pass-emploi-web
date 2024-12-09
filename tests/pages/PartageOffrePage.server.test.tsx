@@ -63,7 +63,7 @@ describe('Page Partage Offre', () => {
     // When
     render(
       await PartageOffre({
-        params: { typeOffre: 'emploi', idOffre: 'offre-id' },
+        params: Promise.resolve({ typeOffre: 'emploi', idOffre: 'offre-id' }),
       })
     )
 
@@ -77,7 +77,7 @@ describe('Page Partage Offre', () => {
         offre: offreEmploi,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -85,7 +85,10 @@ describe('Page Partage Offre', () => {
     // When
     render(
       await PartageOffre({
-        params: { typeOffre: 'service-civique', idOffre: 'offre-id' },
+        params: Promise.resolve({
+          typeOffre: 'service-civique',
+          idOffre: 'offre-id',
+        }),
       })
     )
 
@@ -99,7 +102,7 @@ describe('Page Partage Offre', () => {
         offre: serviceCivique,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -107,7 +110,10 @@ describe('Page Partage Offre', () => {
     // When
     render(
       await PartageOffre({
-        params: { typeOffre: 'immersion', idOffre: 'offre-id' },
+        params: Promise.resolve({
+          typeOffre: 'immersion',
+          idOffre: 'offre-id',
+        }),
       })
     )
 
@@ -121,7 +127,7 @@ describe('Page Partage Offre', () => {
         offre: immersion,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -131,7 +137,7 @@ describe('Page Partage Offre', () => {
 
     // When
     const promise = PartageOffre({
-      params: { typeOffre: 'emploi', idOffre: 'offre-id' },
+      params: Promise.resolve({ typeOffre: 'emploi', idOffre: 'offre-id' }),
     })
 
     // Then
@@ -153,7 +159,7 @@ describe('Page Partage Offre', () => {
     // When
     render(
       await PartageOffre({
-        params: { typeOffre: 'emploi', idOffre: 'offre-id' },
+        params: Promise.resolve({ typeOffre: 'emploi', idOffre: 'offre-id' }),
       })
     )
 
@@ -162,7 +168,7 @@ describe('Page Partage Offre', () => {
       expect.objectContaining({
         returnTo: '/offres',
       }),
-      {}
+      undefined
     )
   })
 })

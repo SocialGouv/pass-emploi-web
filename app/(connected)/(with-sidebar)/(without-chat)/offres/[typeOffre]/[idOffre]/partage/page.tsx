@@ -16,7 +16,7 @@ import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { redirectedFromHome } from 'utils/helpers'
 
-type PartageOffreParams = { typeOffre: string; idOffre: string }
+type PartageOffreParams = Promise<{ typeOffre: string; idOffre: string }>
 
 export async function generateMetadata({
   params,
@@ -37,7 +37,7 @@ export default async function PartageOffre({
 
   const offre = await fetchOffre(params)
 
-  const referer = headers().get('referer')
+  const referer = (await headers()).get('referer')
   const redirectTo =
     referer && !redirectedFromHome(referer) ? referer : '/offres'
 
@@ -51,11 +51,10 @@ export default async function PartageOffre({
   )
 }
 
-async function fetchOffre({
-  typeOffre,
-  idOffre,
-}: PartageOffreParams): Promise<DetailOffre> {
+async function fetchOffre(params: PartageOffreParams): Promise<DetailOffre> {
   const { accessToken } = await getMandatorySessionServerSide()
+  const { typeOffre, idOffre } = await params
+
   let offre: DetailOffre | undefined
   switch (typeOffre) {
     case 'emploi':

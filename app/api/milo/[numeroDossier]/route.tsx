@@ -8,15 +8,15 @@ import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export async function GET(
   _: Request,
-  { params }: { params: { numeroDossier: string } }
+  { params }: { params: Promise<{ numeroDossier: string }> }
 ) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) redirect('/mes-jeunes')
 
-  const numeroDossier = params.numeroDossier
+  const { numeroDossier } = await params
   const idJeune = await getIdJeuneMilo(numeroDossier, accessToken)
 
-  const refererUrl = headers().get('referer') ?? undefined
+  const refererUrl = (await headers()).get('referer') ?? undefined
 
   trackSSR({
     structure: StructureConseiller.MILO,

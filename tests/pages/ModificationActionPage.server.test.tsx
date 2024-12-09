@@ -54,8 +54,10 @@ describe('ModificationActionPage server side', () => {
       ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
 
       // When
-      const metadata = await generateMetadata({ params })
-      render(await ModificationAction({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await ModificationAction({ params: Promise.resolve(params) }))
 
       // Then
       expect(metadata).toEqual({
@@ -72,7 +74,7 @@ describe('ModificationActionPage server side', () => {
             '/mes-jeunes/beneficiaire-1/actions/id-action-1'
           ),
         },
-        {}
+        undefined
       )
     })
 
@@ -81,7 +83,7 @@ describe('ModificationActionPage server side', () => {
       ;(getAction as jest.Mock).mockResolvedValue(undefined)
 
       // When
-      const promise = ModificationAction({ params })
+      const promise = ModificationAction({ params: Promise.resolve(params) })
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
@@ -96,7 +98,7 @@ describe('ModificationActionPage server side', () => {
       })
 
       // When
-      const promise = ModificationAction({ params })
+      const promise = ModificationAction({ params: Promise.resolve(params) })
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
@@ -112,7 +114,9 @@ describe('ModificationActionPage server side', () => {
       })
 
       // When
-      const promise = ModificationAction({ params: { idAction: 'id-action' } })
+      const promise = ModificationAction({
+        params: Promise.resolve({ idAction: 'id-action' }),
+      })
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))

@@ -29,13 +29,14 @@ import {
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { redirectedFromHome } from 'utils/helpers'
 
-type EditionRdvSearchParams = Partial<{
-  idRdv: string
-  type: string
-  idJeune: string
-  redirectUrl: string
-}>
-
+type EditionRdvSearchParams = Promise<
+  Partial<{
+    idRdv: string
+    type: string
+    idJeune: string
+    redirectUrl: string
+  }>
+>
 export async function generateMetadata({
   searchParams,
 }: {
@@ -65,8 +66,8 @@ export default async function EditionRdv({
   searchParams?: EditionRdvSearchParams
 }) {
   const props = await buildProps(searchParams)
-  const referer = headers().get('referer')
-  const redirectUrl = searchParams?.redirectUrl
+  const referer = (await headers()).get('referer')
+  const redirectUrl = (await searchParams)?.redirectUrl
 
   const returnTo =
     redirectUrl ||
@@ -106,13 +107,15 @@ export default async function EditionRdv({
 }
 
 async function buildProps(
-  searchParams: EditionRdvSearchParams | undefined
+  searchParams?: EditionRdvSearchParams
 ): Promise<Omit<EditionRdvProps, 'returnTo'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) redirect('/mes-jeunes')
 
-  if (searchParams?.idRdv) {
-    const evenement = await getDetailsEvenement(searchParams.idRdv, accessToken)
+  const { idRdv, idJeune, type } = (await searchParams) ?? {}
+
+  if (idRdv) {
+    const evenement = await getDetailsEvenement(idRdv, accessToken)
     if (!evenement) notFound()
 
     const beneficiaires = await getBeneficiairesDuConseillerServerSide(
@@ -123,11 +126,7 @@ async function buildProps(
   }
 
   const typesEvenements = await getTypesRendezVous(accessToken)
-  return buildPropsCreationEvenement(
-    typesEvenements,
-    searchParams?.type === 'ac',
-    searchParams?.idJeune
-  )
+  return buildPropsCreationEvenement(typesEvenements, type === 'ac', idJeune)
 }
 
 function buildPropsModificationEvenement(

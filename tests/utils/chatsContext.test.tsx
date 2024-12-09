@@ -1,4 +1,4 @@
-import { RenderResult, act, render, screen } from '@testing-library/react'
+import { act, render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
 import {
@@ -93,9 +93,10 @@ describe('ChatsProvider', () => {
 
     it('affiche une notification dans l’onglet s’il y a des messages non lus', async () => {
       // Then
-      expect(
-        renderResult.container.querySelector("link[rel='icon']")
-      ).toHaveProperty('href', 'http://localhost/cej-favicon-notif.png')
+      expect(document.querySelector("link[rel='icon']")).toHaveProperty(
+        'href',
+        'http://localhost/cej-favicon-notif.png'
+      )
       expect(document.title).toMatch(/Nouveau\(x\) message\(s\) - /)
     })
 

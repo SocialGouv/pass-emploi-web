@@ -10,10 +10,10 @@ export const metadata: Metadata = {
   title: 'Tableau de bord - Agenda',
 }
 
-type AgendaSearchParams = {
+type AgendaSearchParams = Promise<{
   periodeIndex?: string
   onglet?: string
-}
+}>
 export default async function Agenda({
   searchParams,
 }: {
@@ -22,17 +22,15 @@ export default async function Agenda({
   const { user } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) notFound()
 
-  const periodeIndex = searchParams?.periodeIndex
-    ? parseInt(searchParams.periodeIndex)
-    : 0
-  const onglet =
-    searchParams?.onglet === 'conseiller' ? 'CONSEILLER' : 'ETABLISSEMENT'
-
+  const { periodeIndex, onglet } = (await searchParams) ?? {}
   return (
     <>
       <PageHeaderPortal header='Agenda' />
 
-      <AgendaPage periodeIndexInitial={periodeIndex} onglet={onglet} />
+      <AgendaPage
+        periodeIndexInitial={periodeIndex ? parseInt(periodeIndex) : 0}
+        onglet={onglet === 'conseiller' ? 'CONSEILLER' : 'ETABLISSEMENT'}
+      />
     </>
   )
 }

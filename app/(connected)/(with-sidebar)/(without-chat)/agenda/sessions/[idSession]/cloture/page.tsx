@@ -12,23 +12,20 @@ import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type ClotureSessionParams = {
-  idSession: string
+type ClotureSessionParams = Promise<{ idSession: string }>
+type ClotureSessionSearchParams = Promise<Partial<{ redirectUrl: string }>>
+type RouteProps = {
+  params: ClotureSessionParams
+  searchParams?: ClotureSessionSearchParams
 }
-type ClotureSessionSearchParams = Partial<{ redirectUrl: string }>
 
 export async function generateMetadata({
   params,
-}: {
-  params: ClotureSessionParams
-}): Promise<Metadata> {
+}: RouteProps): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
+  const { idSession } = await params
 
-  const session = await getDetailsSession(
-    user.id,
-    params.idSession,
-    accessToken
-  )
+  const session = await getDetailsSession(user.id, idSession, accessToken)
 
   if (!session) notFound()
 
@@ -36,24 +33,17 @@ export async function generateMetadata({
     title: `Clore - Session ${session.offre.titre}`,
   }
 }
-
 export default async function ClotureSession({
   params,
   searchParams,
-}: {
-  params: ClotureSessionParams
-  searchParams?: ClotureSessionSearchParams
-}) {
+}: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')
 
-  const session = await getDetailsSession(
-    user.id,
-    params.idSession,
-    accessToken
-  )
+  const { idSession } = await params
+  const session = await getDetailsSession(user.id, idSession, accessToken)
   if (!session) notFound()
   if (session?.session.statut !== StatutAnimationCollective.AClore) notFound()
 
@@ -61,9 +51,8 @@ export default async function ClotureSession({
     return { idJeune: inscription.idJeune, statut: inscription.statut }
   })
 
-  const redirectParam = searchParams?.redirectUrl
-    ? `?redirectUrl=${searchParams.redirectUrl}`
-    : ''
+  const { redirectUrl } = (await searchParams) ?? {}
+  const redirectParam = redirectUrl ? `?redirectUrl=${redirectUrl}` : ''
   const returnTo = `/agenda/sessions/${session.session.id}${redirectParam}`
 
   return (

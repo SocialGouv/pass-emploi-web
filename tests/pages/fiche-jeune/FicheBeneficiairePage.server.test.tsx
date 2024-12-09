@@ -105,7 +105,11 @@ describe('FicheBeneficiairePage server side', () => {
   describe('Quand la session est valide', () => {
     beforeEach(async () => {
       // When
-      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
     })
 
     it('récupère les infos du jeune', async () => {
@@ -124,7 +128,7 @@ describe('FicheBeneficiairePage server side', () => {
           lectureSeule: false,
           erreurSessions: false,
         },
-        {}
+        undefined
       )
     })
 
@@ -142,7 +146,7 @@ describe('FicheBeneficiairePage server side', () => {
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ rdvs: [rdvAVenir, sessionsAVenir] }),
-        {}
+        undefined
       )
     })
 
@@ -154,7 +158,7 @@ describe('FicheBeneficiairePage server side', () => {
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ metadonneesFavoris: uneMetadonneeFavoris() }),
-        {}
+        undefined
       )
     })
 
@@ -178,7 +182,7 @@ describe('FicheBeneficiairePage server side', () => {
             metadonnees: { nombreTotal: 14, nombrePages: 2 },
           },
         }),
-        {}
+        undefined
       )
     })
   })
@@ -188,8 +192,8 @@ describe('FicheBeneficiairePage server side', () => {
       // When
       render(
         await FicheBeneficiaire({
-          params: { idJeune: 'id-jeune' },
-          searchParams: { page: '3' },
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+          searchParams: Promise.resolve({ page: '3' }),
         })
       )
 
@@ -205,7 +209,7 @@ describe('FicheBeneficiairePage server side', () => {
             page: 3,
           }),
         }),
-        {}
+        undefined
       )
     })
   })
@@ -215,15 +219,15 @@ describe('FicheBeneficiairePage server side', () => {
       // When
       render(
         await FicheBeneficiaire({
-          params: { idJeune: 'id-jeune' },
-          searchParams: { onglet: 'rdvs' },
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+          searchParams: Promise.resolve({ onglet: 'rdvs' }),
         })
       )
 
       // Then
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ ongletInitial: 'rdvs' }),
-        {}
+        undefined
       )
     })
   })
@@ -243,7 +247,11 @@ describe('FicheBeneficiairePage server side', () => {
       )
 
       // When
-      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
     })
 
     it('ne recupère pas les rendez-vous', async () => {
@@ -252,7 +260,7 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.not.objectContaining({ rdvs: expect.arrayContaining([]) }),
-        {}
+        undefined
       )
     })
 
@@ -265,7 +273,7 @@ describe('FicheBeneficiairePage server side', () => {
             actions: expect.arrayContaining([]),
           }),
         }),
-        {}
+        undefined
       )
     })
 
@@ -275,7 +283,7 @@ describe('FicheBeneficiairePage server side', () => {
         expect.objectContaining({
           favorisOffres: uneListeDOffres(),
         }),
-        {}
+        undefined
       )
     })
 
@@ -288,7 +296,7 @@ describe('FicheBeneficiairePage server side', () => {
         expect.objectContaining({
           favorisRecherches: uneListeDeRecherches(),
         }),
-        {}
+        undefined
       )
     })
   })
@@ -308,7 +316,11 @@ describe('FicheBeneficiairePage server side', () => {
       )
 
       // When
-      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
 
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
@@ -324,7 +336,7 @@ describe('FicheBeneficiairePage server side', () => {
             isStale: false,
           },
         }),
-        {}
+        undefined
       )
     })
   })
@@ -337,14 +349,18 @@ describe('FicheBeneficiairePage server side', () => {
       )
 
       // When
-      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
 
       // Then
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
 
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ lectureSeule: true }),
-        {}
+        undefined
       )
     })
   })

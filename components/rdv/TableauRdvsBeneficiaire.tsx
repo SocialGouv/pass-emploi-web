@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { EvenementRow } from 'components/rdv/EvenementRow'
@@ -93,7 +93,7 @@ function StateAucunRendezvous({
   beneficiaire: BaseBeneficiaire
   isRdvPasses: boolean
   pathPrefix: string
-}): React.JSX.Element {
+}): ReactElement {
   return (
     <>
       {isRdvPasses && (

@@ -10,14 +10,9 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import {
-  BaseBeneficiaire,
-  BeneficiaireEtChat,
-  ConseillerHistorique,
-} from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -36,14 +31,10 @@ describe('MessageriePage client side', () => {
   )
   let beneficiairesChats: BeneficiaireEtChat[]
 
-  let conseillers: ConseillerHistorique[]
   let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
   let messages: ByDay<MessageListeDiffusion>
 
   beforeEach(async () => {
-    ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue(
-      conseillers
-    )
     messages = desMessagesListeDeDiffusionParJour()
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_jeune, _cle, fn) => {

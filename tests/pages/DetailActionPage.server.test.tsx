@@ -33,7 +33,7 @@ describe('ActionPage server side', () => {
 
       // When
       const promise = DetailAction({
-        params: { idJeune: 'id-jeune', idAction: 'id-action' },
+        params: Promise.resolve({ idJeune: 'id-jeune', idAction: 'id-action' }),
       })
 
       // Then
@@ -66,8 +66,10 @@ describe('ActionPage server side', () => {
 
       // When
       const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
-      const metadata = await generateMetadata({ params })
-      render(await DetailAction({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await DetailAction({ params: Promise.resolve(params) }))
 
       // Then
       expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
@@ -81,7 +83,7 @@ describe('ActionPage server side', () => {
           lectureSeule: false,
           from: 'beneficiaire',
         },
-        {}
+        undefined
       )
     })
 
@@ -104,8 +106,10 @@ describe('ActionPage server side', () => {
 
         // When
         const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
-        const metadata = await generateMetadata({ params })
-        render(await DetailAction({ params }))
+        const metadata = await generateMetadata({
+          params: Promise.resolve(params),
+        })
+        render(await DetailAction({ params: Promise.resolve(params) }))
 
         // Then
         expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
@@ -119,7 +123,7 @@ describe('ActionPage server side', () => {
             lectureSeule: false,
             from: 'pilotage',
           },
-          {}
+          undefined
         )
       })
     })
@@ -128,7 +132,10 @@ describe('ActionPage server side', () => {
       it('renvoie une 404', async () => {
         // When
         const promise = DetailAction({
-          params: { idJeune: 'id-jeune', idAction: 'id-action' },
+          params: Promise.resolve({
+            idJeune: 'id-jeune',
+            idAction: 'id-action',
+          }),
         })
 
         // Then
@@ -150,7 +157,10 @@ describe('ActionPage server side', () => {
 
         // When
         const promise = DetailAction({
-          params: { idJeune: 'id-jeune', idAction: 'id-action' },
+          params: Promise.resolve({
+            idJeune: 'id-jeune',
+            idAction: 'id-action',
+          }),
         })
 
         // Then

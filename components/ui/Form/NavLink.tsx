@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -30,26 +30,28 @@ export default function NavLink({
       : 'border-primary hover:border-white text-base-medium'
   }`
 
-  const linkContent: React.JSX.Element = (
-    <>
-      <IconComponent
-        focusable={false}
-        aria-hidden={true}
-        className={`w-6 h-6 ${showLabelOnSmallScreen ? 'mr-2' : 'mr-0 layout_l:mr-2'} ${
-          isActive ? 'fill-primary' : 'fill-white'
-        }`}
-        name={iconName}
-      />
-      <span
-        className={`${showLabelOnSmallScreen ? '' : 'sr-only layout_l:not-sr-only'} text-left break-words ${className ?? ''} ${
-          isActive ? 'text-primary' : 'text-white'
-        }`}
-      >
-        {label}
-      </span>
-      {badgeLabel && <BadgeNavLink label={badgeLabel} />}
-    </>
-  )
+  function LinkContent(): ReactElement {
+    return (
+      <>
+        <IconComponent
+          focusable={false}
+          aria-hidden={true}
+          className={`w-6 h-6 ${showLabelOnSmallScreen ? 'mr-2' : 'mr-0 layout_l:mr-2'} ${
+            isActive ? 'fill-primary' : 'fill-white'
+          }`}
+          name={iconName}
+        />
+        <span
+          className={`${showLabelOnSmallScreen ? '' : 'sr-only layout_l:not-sr-only'} text-left break-words ${className ?? ''} ${
+            isActive ? 'text-primary' : 'text-white'
+          }`}
+        >
+          {label}
+        </span>
+        {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+      </>
+    )
+  }
 
   return (
     <li>
@@ -60,13 +62,13 @@ export default function NavLink({
           className={linkStyle}
           onClick={onClick}
         >
-          {linkContent}
+          <LinkContent />
         </Link>
       )}
 
       {!href && onClick && (
         <button type='button' className={linkStyle} onClick={onClick}>
-          {linkContent}
+          <LinkContent />
         </button>
       )}
     </li>

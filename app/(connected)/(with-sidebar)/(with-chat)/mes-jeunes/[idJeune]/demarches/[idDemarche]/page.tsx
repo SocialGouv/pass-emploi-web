@@ -3,11 +3,14 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import DetailDemarchePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/demarches/[idDemarche]/DetailDemarchePage'
+import DetailDemarchePage, {
+  DetailDemarcheProps,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/demarches/[idDemarche]/DetailDemarchePage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { estUserCD } from 'interfaces/conseiller'
 import {
   getDemarchesBeneficiaire,
@@ -15,7 +18,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type DetailDemarcheParams = { idJeune: string; idDemarche: string }
+type DetailDemarcheParams = Promise<{ idJeune: string; idDemarche: string }>
 
 export async function generateMetadata({
   params,
@@ -37,27 +40,26 @@ export default async function DetailDemarche({
 }: {
   params: DetailDemarcheParams
 }) {
-  const { demarche, lectureSeule, isStale } = await getDemarcheProps(params)
+  const { beneficiaire, ...props } = await getDemarcheProps(params)
 
   return (
     <>
       <PageFilArianePortal />
       <PageHeaderPortal header='Détails de la démarche' />
 
-      <DetailDemarchePage
-        demarche={demarche}
-        lectureSeule={lectureSeule}
-        isStale={isStale}
-      />
+      <DetailDemarchePage {...props} />
     </>
   )
 }
 
-async function getDemarcheProps({ idJeune, idDemarche }: DetailDemarcheParams) {
+async function getDemarcheProps(
+  params: DetailDemarcheParams
+): Promise<DetailDemarcheProps & { beneficiaire: BaseBeneficiaire }> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserCD(user)) notFound()
 
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+  const { idJeune, idDemarche } = await params
 
   const demarches = await getDemarchesBeneficiaire(
     idJeune,

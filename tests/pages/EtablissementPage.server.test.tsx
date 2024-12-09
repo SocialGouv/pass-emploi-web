@@ -40,7 +40,7 @@ describe('EtablissementPage server side', () => {
 
       // Then
 
-      expect(EtablissementPage).toHaveBeenCalledWith({}, {})
+      expect(EtablissementPage).toHaveBeenCalledWith({}, undefined)
     })
 
     it('prépare la page en tant que MILO', async () => {
@@ -53,7 +53,7 @@ describe('EtablissementPage server side', () => {
 
       // Then
 
-      expect(EtablissementPage).toHaveBeenCalledWith({}, {})
+      expect(EtablissementPage).toHaveBeenCalledWith({}, undefined)
     })
   })
 })

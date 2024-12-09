@@ -38,7 +38,7 @@ describe('NouvelleActionPage server side', () => {
 
     // When
     const metadata = await generateMetadata({
-      params: { idJeune: 'id-beneficiaire' },
+      params: Promise.resolve({ idJeune: 'id-beneficiaire' }),
     })
 
     // Then
@@ -70,7 +70,7 @@ describe('NouvelleActionPage server side', () => {
     // When
     render(
       await NouvelleAction({
-        params: { idJeune: 'id-beneficiaire' },
+        params: Promise.resolve({ idJeune: 'id-beneficiaire' }),
       })
     )
 
@@ -88,7 +88,7 @@ describe('NouvelleActionPage server side', () => {
         ],
         returnTo: '/mes-jeunes/id-beneficiaire?onglet=actions',
       },
-      {}
+      undefined
     )
   })
 })

@@ -28,7 +28,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
       // When
       const promise = GET(new Request('https://www.perdu.com'), {
-        params: { numeroDossier: '123456' },
+        params: Promise.resolve({ numeroDossier: '123456' }),
       })
 
       // Then
@@ -57,7 +57,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
         // When
         const promise = GET(new Request('https://www.perdu.com'), {
-          params: { numeroDossier: '123456' },
+          params: Promise.resolve({ numeroDossier: '123456' }),
         })
 
         // Then
@@ -86,7 +86,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
         // When
         const promise = GET(new Request('https://www.perdu.com'), {
-          params: { numeroDossier: '123456' },
+          params: Promise.resolve({ numeroDossier: '123456' }),
         })
 
         // Then

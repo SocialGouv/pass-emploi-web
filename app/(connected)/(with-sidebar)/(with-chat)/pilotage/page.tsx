@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   title: 'Pilotage',
 }
 
-type PilotageSearchParams = Partial<{ onglet: string }>
+type PilotageSearchParams = Promise<Partial<{ onglet: string }>>
 export default async function Pilotage({
   searchParams,
 }: {
@@ -66,7 +66,7 @@ export default async function Pilotage({
   }
 
   let onglet: Onglet = 'ACTIONS'
-  switch (searchParams?.onglet) {
+  switch ((await searchParams)?.onglet) {
     case 'animationsCollectives':
       onglet = 'ANIMATIONS_COLLECTIVES'
       break

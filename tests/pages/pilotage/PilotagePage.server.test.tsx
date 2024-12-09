@@ -126,7 +126,7 @@ describe('PilotagePage server side', () => {
           sessions: uneListeDeSessionsAClore(),
           onglet: 'ACTIONS',
         },
-        {}
+        undefined
       )
     })
 
@@ -145,7 +145,7 @@ describe('PilotagePage server side', () => {
       // When
       render(
         await Pilotage({
-          searchParams: { onglet: 'sessionsImilo' },
+          searchParams: Promise.resolve({ onglet: 'sessionsImilo' }),
         })
       )
 
@@ -162,7 +162,7 @@ describe('PilotagePage server side', () => {
           animationsCollectives: undefined,
           sessions: undefined,
         },
-        {}
+        undefined
       )
     })
 
@@ -173,7 +173,7 @@ describe('PilotagePage server side', () => {
       // When
       render(
         await Pilotage({
-          searchParams: { onglet: 'animationsCollectives' },
+          searchParams: Promise.resolve({ onglet: 'animationsCollectives' }),
         })
       )
 
@@ -190,7 +190,7 @@ describe('PilotagePage server side', () => {
           animationsCollectives: undefined,
           sessions: undefined,
         },
-        {}
+        undefined
       )
     })
   })

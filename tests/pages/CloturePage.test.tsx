@@ -5,7 +5,7 @@ import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
+import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 import { unEvenement } from 'fixtures/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreAnimationCollective } from 'services/evenements.service'

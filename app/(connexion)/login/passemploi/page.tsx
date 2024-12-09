@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default async function LoginPassEmploi({
   searchParams,
 }: {
-  searchParams?: LoginSearchParams
+  searchParams?: Promise<LoginSearchParams>
 }) {
-  await redirectIfAlreadyConnected(searchParams)
+  await redirectIfAlreadyConnected(await searchParams)
 
   return (
     <LoginPassEmploiPage

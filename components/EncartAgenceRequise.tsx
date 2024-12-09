@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React, { useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -24,7 +24,7 @@ export default function EncartAgenceRequise({
   getAgences,
   onAgenceChoisie,
   onChangeAffichageModal,
-}: EncartAgenceRequiseProps): JSX.Element {
+}: EncartAgenceRequiseProps): ReactElement {
   const [portefeuille] = usePortefeuille()
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
