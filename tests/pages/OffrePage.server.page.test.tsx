@@ -57,7 +57,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailEmploi,
         },
-        {}
+        undefined
       )
     })
 
@@ -102,7 +102,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailImmersion,
         },
-        {}
+        undefined
       )
     })
 
@@ -151,7 +151,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailServiceCivique,
         },
-        {}
+        undefined
       )
     })
 

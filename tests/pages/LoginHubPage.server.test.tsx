@@ -41,6 +41,6 @@ describe('LoginPage server side', () => {
       title:
         'Sélection de l’espace de connexion - Outil du Contrat d’Engagement Jeune et du pass emploi',
     })
-    expect(LoginHubPage).toHaveBeenCalledWith({}, {})
+    expect(LoginHubPage).toHaveBeenCalledWith({}, undefined)
   })
 })

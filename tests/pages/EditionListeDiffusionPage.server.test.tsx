@@ -40,7 +40,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       {
         returnTo: '/mes-jeunes/listes-de-diffusion',
       },
-      {}
+      undefined
     )
   })
 
@@ -73,7 +73,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         liste: listeDeDiffusion,
         returnTo: '/mes-jeunes/listes-de-diffusion',
       },
-      {}
+      undefined
     )
   })
 })

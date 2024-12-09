@@ -53,7 +53,7 @@ describe('EditionRdvPage server side', () => {
       expect.objectContaining({
         returnTo: '/agenda',
       }),
-      {}
+      undefined
     )
   })
 
@@ -75,7 +75,7 @@ describe('EditionRdvPage server side', () => {
       expect.objectContaining({
         returnTo: '/mes-jeunes',
       }),
-      {}
+      undefined
     )
   })
 
@@ -95,7 +95,7 @@ describe('EditionRdvPage server side', () => {
           conseillerEstObservateur: false,
           lectureSeule: false,
         },
-        {}
+        undefined
       )
     })
 
@@ -110,7 +110,7 @@ describe('EditionRdvPage server side', () => {
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
         expect.objectContaining({ idBeneficiaire: 'id-jeune' }),
-        {}
+        undefined
       )
     })
 
@@ -137,7 +137,7 @@ describe('EditionRdvPage server side', () => {
       })
       expect(EditionRdvPage).toHaveBeenCalledWith(
         expect.objectContaining({ evenement }),
-        {}
+        undefined
       )
     })
 
@@ -187,7 +187,7 @@ describe('EditionRdvPage server side', () => {
           conseillerEstObservateur: false,
           lectureSeule: false,
         },
-        {}
+        undefined
       )
     })
 
@@ -203,7 +203,7 @@ describe('EditionRdvPage server side', () => {
         expect.objectContaining({
           typesRendezVous: typesAnimationCollective(),
         }),
-        {}
+        undefined
       )
     })
 
@@ -218,7 +218,7 @@ describe('EditionRdvPage server side', () => {
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
         expect.objectContaining({ idBeneficiaire: 'id-jeune' }),
-        {}
+        undefined
       )
     })
 
@@ -247,7 +247,7 @@ describe('EditionRdvPage server side', () => {
           evenement: animationCollective,
           evenementTypeAC: true,
         }),
-        {}
+        undefined
       )
     })
 

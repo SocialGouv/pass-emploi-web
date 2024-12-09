@@ -157,7 +157,7 @@ describe('QualificationPage server side', () => {
             ),
             returnToListe: '/pilotage',
           },
-          {}
+          undefined
         )
       })
     })

@@ -83,7 +83,7 @@ describe('PortefeuillePage server side', () => {
             }))
             .sort(compareBeneficiairesByNom),
         }),
-        {}
+        undefined
       )
     })
   })
@@ -127,7 +127,7 @@ describe('PortefeuillePage server side', () => {
             .sort(compareBeneficiairesByNom),
           isFromEmail: false,
         },
-        {}
+        undefined
       )
     })
   })

@@ -88,7 +88,7 @@ describe('NouvelleActionPage server side', () => {
         ],
         returnTo: '/mes-jeunes/id-beneficiaire?onglet=actions',
       },
-      {}
+      undefined
     )
   })
 })

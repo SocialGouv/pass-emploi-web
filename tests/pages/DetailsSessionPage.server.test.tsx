@@ -132,7 +132,7 @@ describe('Détails Session Page Server', () => {
           session: session,
           returnTo: 'redirectUrl',
         },
-        {}
+        undefined
       )
     })
   })

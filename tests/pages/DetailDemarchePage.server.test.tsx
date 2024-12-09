@@ -96,7 +96,7 @@ describe('DetailDemarchePage server side', () => {
           demarche,
           lectureSeule: false,
         },
-        {}
+        undefined
       )
     })
 

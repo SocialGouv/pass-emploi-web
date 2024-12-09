@@ -108,7 +108,7 @@ describe('LayoutWhenConnected', () => {
       )
       expect(ConseillerProvider).toHaveBeenCalledWith(
         expect.objectContaining({ conseiller }),
-        {}
+        undefined
       )
     })
 
@@ -124,7 +124,7 @@ describe('LayoutWhenConnected', () => {
             extractBaseBeneficiaire
           ),
         }),
-        {}
+        undefined
       )
     })
   })

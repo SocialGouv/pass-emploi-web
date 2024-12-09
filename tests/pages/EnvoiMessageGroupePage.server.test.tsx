@@ -58,7 +58,7 @@ describe('EnvoiMessageGroupePage server side', () => {
         listesDiffusion: listesDeDiffusion,
         returnTo: 'http://localhost:3000/agenda',
       },
-      {}
+      undefined
     )
   })
 
@@ -83,7 +83,7 @@ describe('EnvoiMessageGroupePage server side', () => {
         listesDiffusion: listesDeDiffusion,
         returnTo: '/mes-jeunes',
       },
-      {}
+      undefined
     )
   })
 })

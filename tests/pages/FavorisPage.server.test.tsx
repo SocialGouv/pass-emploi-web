@@ -59,7 +59,7 @@ describe('Favoris', () => {
         recherches,
         lectureSeule: false,
       },
-      {}
+      undefined
     )
   })
 })

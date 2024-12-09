@@ -44,7 +44,7 @@ describe('LoginPassEmploiPage server side', () => {
     })
     expect(LoginPassEmploiPage).toHaveBeenCalledWith(
       { ssoAvenirProEstActif: true },
-      {}
+      undefined
     )
   })
 })

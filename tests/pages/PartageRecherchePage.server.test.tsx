@@ -64,7 +64,7 @@ describe('Partage Recherche', () => {
           },
           returnTo: 'referer-url',
         },
-        {}
+        undefined
       )
     })
 
@@ -96,7 +96,7 @@ describe('Partage Recherche', () => {
           },
           returnTo: 'referer-url',
         },
-        {}
+        undefined
       )
     })
 
@@ -130,7 +130,7 @@ describe('Partage Recherche', () => {
           },
           returnTo: 'referer-url',
         },
-        {}
+        undefined
       )
     })
 
@@ -160,7 +160,7 @@ describe('Partage Recherche', () => {
           },
           returnTo: 'referer-url',
         },
-        {}
+        undefined
       )
     })
   })

@@ -126,7 +126,7 @@ describe('PilotagePage server side', () => {
           sessions: uneListeDeSessionsAClore(),
           onglet: 'ACTIONS',
         },
-        {}
+        undefined
       )
     })
 
@@ -162,7 +162,7 @@ describe('PilotagePage server side', () => {
           animationsCollectives: undefined,
           sessions: undefined,
         },
-        {}
+        undefined
       )
     })
 
@@ -190,7 +190,7 @@ describe('PilotagePage server side', () => {
           animationsCollectives: undefined,
           sessions: undefined,
         },
-        {}
+        undefined
       )
     })
   })

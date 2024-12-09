@@ -77,7 +77,7 @@ describe('Page Partage Offre', () => {
         offre: offreEmploi,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -102,7 +102,7 @@ describe('Page Partage Offre', () => {
         offre: serviceCivique,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -127,7 +127,7 @@ describe('Page Partage Offre', () => {
         offre: immersion,
         returnTo: 'referer-url',
       },
-      {}
+      undefined
     )
   })
 
@@ -168,7 +168,7 @@ describe('Page Partage Offre', () => {
       expect.objectContaining({
         returnTo: '/offres',
       }),
-      {}
+      undefined
     )
   })
 })

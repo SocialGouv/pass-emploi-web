@@ -72,7 +72,7 @@ describe('EmargementRdvPage server side', () => {
           evenement: acAEmarger,
           agence: 'Montastruc-la-Conseillère',
         },
-        {}
+        undefined
       )
     })
   })
@@ -102,7 +102,7 @@ describe('EmargementRdvPage server side', () => {
           evenement: sessionAEmarger,
           agence: 'Montastruc-la-Conseillère',
         },
-        {}
+        undefined
       )
     })
   })

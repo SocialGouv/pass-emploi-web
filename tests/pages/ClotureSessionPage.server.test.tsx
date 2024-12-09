@@ -102,7 +102,7 @@ describe('Cloture Session server side', () => {
           inscriptionsInitiales: inscriptionsInitiales,
           returnTo: `/agenda/sessions/session-1?redirectUrl=redirectUrl`,
         },
-        {}
+        undefined
       )
     })
 

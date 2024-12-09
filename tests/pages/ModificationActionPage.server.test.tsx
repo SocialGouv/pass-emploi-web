@@ -74,7 +74,7 @@ describe('ModificationActionPage server side', () => {
             '/mes-jeunes/beneficiaire-1/actions/id-action-1'
           ),
         },
-        {}
+        undefined
       )
     })
 

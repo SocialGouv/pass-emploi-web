@@ -83,7 +83,7 @@ describe('HomePage server side', () => {
           afficherModaleOnboarding: false,
           redirectUrl: '/mes-jeunes',
         },
-        {}
+        undefined
       )
     })
   })
@@ -117,7 +117,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/agenda',
           referentielAgences: uneListeDAgencesFranceTravail(),
         },
-        {}
+        undefined
       )
     })
   })
@@ -150,7 +150,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/mes-jeunes',
           referentielAgences: undefined,
         },
-        {}
+        undefined
       )
     })
   })
@@ -184,7 +184,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/agenda',
           referentielAgences: uneListeDAgencesFranceTravail(),
         },
-        {}
+        undefined
       )
     })
   })

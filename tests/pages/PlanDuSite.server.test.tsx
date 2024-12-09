@@ -30,6 +30,6 @@ describe('PlanDuSite server side', () => {
 
     // Then
     expect(metadata).toEqual({ title: 'Plan du site' })
-    expect(PlanDuSitePage).toHaveBeenCalledWith({}, {})
+    expect(PlanDuSitePage).toHaveBeenCalledWith({}, undefined)
   })
 })
