@@ -345,13 +345,16 @@ export function Conversation({
   }, [uploadedFileInfo])
 
   useEffect(() => {
-    if (isFirstRender.current) return () => (isFirstRender.current = true)
+    if (isFirstRender.current) return
     if (messagerieEstVisible) focusDernierMessage()
     return () => {}
   }, [messagerieEstVisible])
 
   useEffect(() => {
     isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
   }, [])
 
   useEffect(() => {

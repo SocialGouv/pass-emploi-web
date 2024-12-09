@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 
 interface THProps {
   children: ReactNode
@@ -10,7 +10,7 @@ export function TH({
   children,
   estCliquable = false,
   title,
-}: THProps): React.JSX.Element {
+}: THProps): ReactElement {
   const style = `text-s-medium text-left text-content_color ${
     estCliquable ? 'hover:rounded-base hover:bg-primary_lighten' : 'p-4'
   }`

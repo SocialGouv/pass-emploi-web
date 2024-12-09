@@ -61,7 +61,7 @@ describe('Page Recherche Offres', () => {
     expect(
       screen
         .getAllByRole('alert')
-        .find((pouet) => /Une erreur est survenue/.test(pouet.textContent!))
+        .find((alerte) => /Une erreur est survenue/.test(alerte.textContent!))
     ).toBeInTheDocument()
   })
 
