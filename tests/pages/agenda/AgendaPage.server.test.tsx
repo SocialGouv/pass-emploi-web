@@ -44,7 +44,7 @@ describe('AgendaPage server side', () => {
       // Then
       expect(AgendaPage).toHaveBeenCalledWith(
         { onglet: 'ETABLISSEMENT', periodeIndexInitial: 0 },
-        {}
+        undefined
       )
     })
   })

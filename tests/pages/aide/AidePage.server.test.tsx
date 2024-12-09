@@ -17,6 +17,6 @@ describe('Aide server side', () => {
 
     // Then
     expect(metadata).toEqual({ title: 'Aide et ressources' })
-    expect(AidePage).toHaveBeenCalledWith({}, {})
+    expect(AidePage).toHaveBeenCalledWith({}, undefined)
   })
 })

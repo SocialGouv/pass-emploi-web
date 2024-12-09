@@ -34,7 +34,7 @@ describe('ConsentementCGUPage server side', () => {
     expect(metadata).toEqual({ title: 'Consentement CGU' })
     expect(ConsentementCguPage).toHaveBeenCalledWith(
       { returnTo: '/?onboarding=true' },
-      {}
+      undefined
     )
   })
 
@@ -47,6 +47,9 @@ describe('ConsentementCGUPage server side', () => {
 
     // Then
     expect(metadata).toEqual({ title: 'Consentement CGU' })
-    expect(ConsentementCguPage).toHaveBeenCalledWith({ returnTo: '/?' }, {})
+    expect(ConsentementCguPage).toHaveBeenCalledWith(
+      { returnTo: '/?' },
+      undefined
+    )
   })
 })
