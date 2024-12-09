@@ -35,7 +35,11 @@ describe('AgendaPage server side', () => {
       })
 
       // When
-      render(await Agenda({ searchParams: { onglet: 'etablissement' } }))
+      render(
+        await Agenda({
+          searchParams: Promise.resolve({ onglet: 'etablissement' }),
+        })
+      )
 
       // Then
       expect(AgendaPage).toHaveBeenCalledWith(

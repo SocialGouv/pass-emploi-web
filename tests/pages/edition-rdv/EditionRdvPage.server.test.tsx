@@ -101,7 +101,11 @@ describe('EditionRdvPage server side', () => {
 
     it('récupère le jeune concerné', async () => {
       // When
-      render(await EditionRdv({ searchParams: { idJeune: 'id-jeune' } }))
+      render(
+        await EditionRdv({
+          searchParams: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
 
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
@@ -120,8 +124,10 @@ describe('EditionRdvPage server side', () => {
 
       // When
       const searchParams = { idRdv: 'id-rdv' }
-      const metadata = await generateMetadata({ searchParams })
-      render(await EditionRdv({ searchParams }))
+      const metadata = await generateMetadata({
+        searchParams: Promise.resolve(searchParams),
+      })
+      render(await EditionRdv({ searchParams: Promise.resolve(searchParams) }))
 
       // Then
       expect(getDetailsEvenement).toHaveBeenCalledWith('id-rdv', 'accessToken')
@@ -140,7 +146,9 @@ describe('EditionRdvPage server side', () => {
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(undefined)
 
       // When
-      const promise = EditionRdv({ searchParams: { idRdv: 'id-rdv' } })
+      const promise = EditionRdv({
+        searchParams: Promise.resolve({ idRdv: 'id-rdv' }),
+      })
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
@@ -164,8 +172,10 @@ describe('EditionRdvPage server side', () => {
     it('prépare la page', async () => {
       // When
       const searchParams = { type: 'ac' }
-      const metadata = await generateMetadata({ searchParams })
-      render(await EditionRdv({ searchParams }))
+      const metadata = await generateMetadata({
+        searchParams: Promise.resolve(searchParams),
+      })
+      render(await EditionRdv({ searchParams: Promise.resolve(searchParams) }))
 
       // Then
       expect(metadata).toEqual({ title: 'Créer une animation collective' })
@@ -183,7 +193,9 @@ describe('EditionRdvPage server side', () => {
 
     it('récupère le référentiel des types d’événements de catégorie AC', async () => {
       // When
-      render(await EditionRdv({ searchParams: { type: 'ac' } }))
+      render(
+        await EditionRdv({ searchParams: Promise.resolve({ type: 'ac' }) })
+      )
 
       // Then
       expect(getTypesRendezVous).toHaveBeenCalledWith('accessToken')
@@ -197,7 +209,11 @@ describe('EditionRdvPage server side', () => {
 
     it('récupère le jeune concerné', async () => {
       // When
-      render(await EditionRdv({ searchParams: { idJeune: 'id-jeune' } }))
+      render(
+        await EditionRdv({
+          searchParams: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
 
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
@@ -216,8 +232,10 @@ describe('EditionRdvPage server side', () => {
 
       // When
       const searchParams = { idRdv: 'id-rdv', type: 'ac' }
-      const metadata = await generateMetadata({ searchParams })
-      render(await EditionRdv({ searchParams }))
+      const metadata = await generateMetadata({
+        searchParams: Promise.resolve(searchParams),
+      })
+      render(await EditionRdv({ searchParams: Promise.resolve(searchParams) }))
 
       // Then
       expect(getDetailsEvenement).toHaveBeenCalledWith('id-rdv', 'accessToken')
@@ -239,7 +257,7 @@ describe('EditionRdvPage server side', () => {
 
       // When
       const promise = EditionRdv({
-        searchParams: { idRdv: 'id-rdv', type: 'ac' },
+        searchParams: Promise.resolve({ idRdv: 'id-rdv', type: 'ac' }),
       })
 
       // Then

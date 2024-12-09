@@ -11,7 +11,7 @@ import { recupererListeDeDiffusion } from 'services/listes-de-diffusion.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { redirectedFromHome } from 'utils/helpers'
 
-type EditionListeDiffusionSearchParams = Partial<{ idListe: string }>
+type EditionListeDiffusionSearchParams = Promise<Partial<{ idListe: string }>>
 
 export async function generateMetadata({
   searchParams,
@@ -19,12 +19,10 @@ export async function generateMetadata({
   searchParams?: EditionListeDiffusionSearchParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
+  const { idListe } = (await searchParams) ?? {}
 
-  if (searchParams?.idListe) {
-    const liste = await recupererListeDeDiffusion(
-      searchParams.idListe,
-      accessToken
-    )
+  if (idListe) {
+    const liste = await recupererListeDeDiffusion(idListe, accessToken)
     if (!liste) notFound()
     return {
       title: `Modifier liste de diffusion ${liste.titre} - Portefeuille`,
@@ -41,17 +39,15 @@ export default async function EditionListeDiffusion({
 }) {
   const { accessToken } = await getMandatorySessionServerSide()
 
-  const referer = headers().get('referer')
+  const referer = (await headers()).get('referer')
   const previousUrl =
     referer && !redirectedFromHome(referer)
       ? referer
       : '/mes-jeunes/listes-de-diffusion'
+  const { idListe } = (await searchParams) ?? {}
 
-  if (searchParams?.idListe) {
-    const liste = await recupererListeDeDiffusion(
-      searchParams.idListe,
-      accessToken
-    )
+  if (idListe) {
+    const liste = await recupererListeDeDiffusion(idListe, accessToken)
     if (!liste) notFound()
 
     return (

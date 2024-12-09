@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function PlanDuSite() {
-  const referer = headers().get('referer')
+  const referer = (await headers()).get('referer')
 
   const returnTo =
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'

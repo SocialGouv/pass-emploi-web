@@ -3,7 +3,9 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
+import DetailActionPage, {
+  DetailActionProps,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
@@ -12,21 +14,14 @@ import { estUserMilo } from 'interfaces/conseiller'
 import { getAction } from 'services/actions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type DetailActionParams = { idJeune: string; idAction: string }
+type DetailActionParams = Promise<{ idJeune: string; idAction: string }>
 
 export async function generateMetadata({
   params,
 }: {
   params: DetailActionParams
 }): Promise<Metadata> {
-  const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) notFound()
-
-  const actionEtJeune = await getAction(params.idAction, accessToken)
-  if (!actionEtJeune) notFound()
-
-  const { action, jeune } = actionEtJeune
-  const lectureSeule = jeune.idConseiller !== user.id
+  const { action, jeune, lectureSeule } = await buildProps(params)
 
   return {
     title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - ${
@@ -40,9 +35,28 @@ export default async function DetailAction({
 }: {
   params: DetailActionParams
 }) {
+  const props = await buildProps(params)
+
+  const referer = (await headers()).get('referer')
+  const from =
+    referer && /\/pilotage$/.test(referer) ? 'pilotage' : 'beneficiaire'
+
+  return (
+    <>
+      <PageFilArianePortal />
+      <PageHeaderPortal header='Détails de l’action' />
+
+      <DetailActionPage from={from} {...props} />
+    </>
+  )
+}
+
+async function buildProps(
+  params: DetailActionParams
+): Promise<Omit<DetailActionProps, 'from'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) notFound()
-  const { idJeune, idAction } = params
+  const { idJeune, idAction } = await params
 
   const actionEtJeune = await getAction(idAction, accessToken)
   if (!actionEtJeune) notFound()
@@ -51,22 +65,5 @@ export default async function DetailAction({
   const { action, jeune } = actionEtJeune
   const lectureSeule = jeune.idConseiller !== user.id
 
-  const referer = headers().get('referer')
-  const refererEstPilotage = /\/pilotage$/
-  const from =
-    referer && refererEstPilotage.test(referer) ? 'pilotage' : 'beneficiaire'
-
-  return (
-    <>
-      <PageFilArianePortal />
-      <PageHeaderPortal header='Détails de l’action' />
-
-      <DetailActionPage
-        from={from}
-        action={action}
-        jeune={jeune}
-        lectureSeule={lectureSeule}
-      />
-    </>
-  )
+  return { action, jeune, lectureSeule }
 }

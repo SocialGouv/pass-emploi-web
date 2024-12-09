@@ -24,7 +24,7 @@ export default async function EnvoiMessageGroupe() {
     accessToken
   )
 
-  const referer = headers().get('referer')
+  const referer = (await headers()).get('referer')
   const previousUrl =
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
 

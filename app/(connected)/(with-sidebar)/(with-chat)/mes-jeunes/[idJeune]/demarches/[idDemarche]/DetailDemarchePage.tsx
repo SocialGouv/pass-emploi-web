@@ -10,7 +10,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { toLongMonthDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type DetailDemarcheProps = {
+export type DetailDemarcheProps = {
   demarche: Demarche
   lectureSeule: boolean
   isStale: boolean

@@ -27,7 +27,7 @@ import { toLongMonthDate } from 'utils/date'
 import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type DetailActionProps = {
+export type DetailActionProps = {
   action: Action
   jeune: BaseBeneficiaire
   lectureSeule: boolean

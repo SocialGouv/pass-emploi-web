@@ -38,7 +38,10 @@ describe('DetailDemarchePage server side', () => {
 
       // When
       const promise = DetailDemarche({
-        params: { idJeune: 'id-jeune', idDemarche: 'id-demarche' },
+        params: Promise.resolve({
+          idJeune: 'id-jeune',
+          idDemarche: 'id-demarche',
+        }),
       })
 
       // Then
@@ -73,8 +76,10 @@ describe('DetailDemarchePage server side', () => {
 
       // When
       const params = { idJeune: 'beneficiaire-1', idDemarche: 'id-demarche' }
-      const metadata = await generateMetadata({ params })
-      render(await DetailDemarche({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await DetailDemarche({ params: Promise.resolve(params) }))
 
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
@@ -105,10 +110,10 @@ describe('DetailDemarchePage server side', () => {
       it('renvoie une 404', async () => {
         // When
         const promise = DetailDemarche({
-          params: {
+          params: Promise.resolve({
             idJeune: 'id-jeune',
             idDemarche: 'id-demarche-inexistante',
-          },
+          }),
         })
 
         // Then
@@ -124,7 +129,10 @@ describe('DetailDemarchePage server side', () => {
 
         // When
         const promise = DetailDemarche({
-          params: { idJeune: 'id-jeune', idDemarche: 'id-demarche' },
+          params: Promise.resolve({
+            idJeune: 'id-jeune',
+            idDemarche: 'id-demarche',
+          }),
         })
 
         // Then

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
-import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
+import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   title: 'Clore - Mes événements',
 }
 
-type ClotureParams = { id_evenement: string }
-type ClotureSearchParams = Partial<{ redirectUrl: string }>
+type ClotureParams = Promise<{ idEvenement: string }>
+type ClotureSearchParams = Promise<Partial<{ redirectUrl: string }>>
 export default async function Cloture({
   params,
   searchParams,
@@ -27,12 +27,12 @@ export default async function Cloture({
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) redirect('/mes-jeunes')
 
-  const evenement = await getDetailsEvenement(params.id_evenement, accessToken)
+  const { idEvenement } = await params
+  const evenement = await getDetailsEvenement(idEvenement, accessToken)
   if (evenement?.statut !== StatutAnimationCollective.AClore) notFound()
 
-  const redirectParam = searchParams?.redirectUrl
-    ? `&redirectUrl=${searchParams.redirectUrl}`
-    : ''
+  const { redirectUrl } = (await searchParams) ?? {}
+  const redirectParam = redirectUrl ? `&redirectUrl=${redirectUrl}` : ''
   const returnTo = `/mes-jeunes/edition-rdv?idRdv=${evenement.id}${redirectParam}`
 
   return (

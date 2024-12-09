@@ -51,14 +51,14 @@ describe('EmargementRdvPage server side', () => {
     it('prépare la page', async () => {
       // When
       const metadata = await generateMetadata({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'ac' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'ac' }),
       })
 
       render(
         await EmargementRdv({
-          params: { idEvenement: 'id-evenement' },
-          searchParams: { type: 'ac' },
+          params: Promise.resolve({ idEvenement: 'id-evenement' }),
+          searchParams: Promise.resolve({ type: 'ac' }),
         })
       )
 
@@ -81,14 +81,14 @@ describe('EmargementRdvPage server side', () => {
     it('prépare la page', async () => {
       // When
       const metadata = await generateMetadata({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'session' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'session' }),
       })
 
       render(
         await EmargementRdv({
-          params: { idEvenement: 'id-evenement' },
-          searchParams: { type: 'session' },
+          params: Promise.resolve({ idEvenement: 'id-evenement' }),
+          searchParams: Promise.resolve({ type: 'session' }),
         })
       )
 
@@ -120,8 +120,8 @@ describe('EmargementRdvPage server side', () => {
 
       // When
       const promise = EmargementRdv({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'ac' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'ac' }),
       })
 
       //Then

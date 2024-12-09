@@ -18,7 +18,7 @@ import { Evenement } from 'interfaces/evenement'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
 import { toFrenchDateTime } from 'utils/date'
 
-type EmargementRdvPageProps = {
+export type EmargementRdvPageProps = {
   evenement: Evenement | Session
   agence?: string
 }
