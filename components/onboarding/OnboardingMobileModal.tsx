@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { ReactElement, useRef, useState } from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import { TutorielRaccourci } from 'components/TutorielRaccourci'
@@ -16,7 +16,7 @@ export default function OnboardingMobileModal({
 
   const [etape, setEtape] = useState<number>(1)
 
-  function accueil(): JSX.Element {
+  function Accueil(): ReactElement {
     return (
       <>
         <h3 className='flex text-base-bold'>
@@ -46,7 +46,7 @@ export default function OnboardingMobileModal({
       title='Bienvenue sur l’espace mobile du conseiller'
       onClose={onClose}
     >
-      {etape === 1 && accueil()}
+      {etape === 1 && <Accueil />}
       {etape === 2 && <TutorielRaccourci />}
       <div className='mt-8'>
         <Button

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { InputError } from 'components/ui/Form/InputError'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
@@ -25,6 +25,8 @@ export default function SelectAutocompleteWithFetch<T>({
   required,
   disabled = false,
 }: SelectAutocompleteWithFetchProps<T>) {
+  const isFirstRender = useRef<boolean>(true)
+
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
   const options: Array<{ id: string; value: string }> = entites.map(
     (entite) => ({
@@ -67,6 +69,8 @@ export default function SelectAutocompleteWithFetch<T>({
   }
 
   useEffect(() => {
+    if (isFirstRender.current) return
+
     if (debouncedInput) {
       fetch(debouncedInput).then((newEntites) => {
         const simplifiedEntities: WithSimplifiedLabel<T>[] = newEntites.map(
@@ -84,6 +88,13 @@ export default function SelectAutocompleteWithFetch<T>({
       onUpdateSelected({ hasError: Boolean(required) })
     }
   }, [debouncedInput])
+
+  useEffect(() => {
+    isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
+  }, [])
 
   return (
     <>

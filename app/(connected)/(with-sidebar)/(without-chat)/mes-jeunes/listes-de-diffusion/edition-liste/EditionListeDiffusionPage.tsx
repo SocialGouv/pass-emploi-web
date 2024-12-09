@@ -282,7 +282,7 @@ function EditionListeDiffusionPage({
           defaultBeneficiaires={defaultBeneficiaires}
           required={true}
           error={idsBeneficiaires.error}
-          renderIndication={BeneficiaireIndicationReaffectaction}
+          Indication={BeneficiaireIndicationReaffectaction}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>

@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useRef } from 'react'
+import { ForwardedRef, forwardRef, ReactElement, useRef } from 'react'
 
 import {
   BeneficiaireIndicationPortefeuille,
@@ -16,8 +16,7 @@ interface MultiselectionProps {
   typeSelection: string
   unselect: (id: string) => void
   onYieldFocus: () => void
-  renderIndication?: (props: { value: string; id: string }) => JSX.Element
-  renderListeItem?: (props: { value: string; id: string }) => JSX.Element
+  Indication?: (props: { value: string; id: string }) => ReactElement
   disabled?: boolean
 }
 
@@ -27,8 +26,7 @@ function Multiselection(
     typeSelection,
     unselect,
     onYieldFocus,
-    renderIndication = BeneficiaireIndicationPortefeuille,
-    renderListeItem = BeneficiaireListeItem,
+    Indication = BeneficiaireIndicationPortefeuille,
     disabled,
   }: MultiselectionProps,
   ref: ForwardedRef<HTMLButtonElement>
@@ -63,8 +61,8 @@ function Multiselection(
             key={idItem}
             className='bg-white w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           >
-            {avecIndication && renderIndication({ value, id: idItem })}
-            {estUneListe && renderListeItem({ value, id: idItem })}
+            {avecIndication && <Indication value={value} id={idItem} />}
+            {estUneListe && <BeneficiaireListeItem value={value} id={idItem} />}
             {!avecIndication && !estUneListe && value}
 
             {!disabled && (
