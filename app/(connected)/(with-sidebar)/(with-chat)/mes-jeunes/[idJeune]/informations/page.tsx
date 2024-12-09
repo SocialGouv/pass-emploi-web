@@ -18,16 +18,19 @@ import {
 } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type InformationsParams = { idJeune: string }
-type InformationsSearchParams = Partial<{ onglet: Onglet }>
+type InformationsParams = Promise<{ idJeune: string }>
+type InformationsSearchParams = Promise<Partial<{ onglet: Onglet }>>
+type RouteProps = {
+  params: InformationsParams
+  searchParams?: InformationsSearchParams
+}
 
 export async function generateMetadata({
   params,
-}: {
-  params: InformationsParams
-}): Promise<Metadata> {
+}: RouteProps): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
+  const { idJeune } = await params
+  const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const lectureSeule = user.id !== beneficiaire.idConseiller
@@ -39,20 +42,19 @@ export async function generateMetadata({
 export default async function Informations({
   params,
   searchParams,
-}: {
-  params: InformationsParams
-  searchParams?: InformationsSearchParams
-}) {
+}: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
+  const { idJeune } = await params
+  const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const [metadonneesJeune, conseillers] = await Promise.all([
-    getMetadonneesFavorisJeune(params.idJeune, accessToken),
+    getMetadonneesFavorisJeune(idJeune, accessToken),
     getConseillersDuJeuneServerSide(beneficiaire.id, accessToken),
   ])
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
+  const { onglet } = (await searchParams) ?? {}
   return (
     <>
       <PageFilArianePortal />
@@ -65,7 +67,7 @@ export default async function Informations({
         lectureSeule={lectureSeule}
         beneficiaire={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
-        onglet={searchParamToOnglet(searchParams?.onglet, !estUserMilo(user))}
+        onglet={searchParamToOnglet(onglet, !estUserMilo(user))}
       />
     </>
   )

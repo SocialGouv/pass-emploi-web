@@ -83,8 +83,8 @@ describe('Cloture Session server side', () => {
       // When
       render(
         await ClotureSession({
-          params: params,
-          searchParams: searchParams,
+          params: Promise.resolve(params),
+          searchParams: Promise.resolve(searchParams),
         })
       )
 
@@ -112,8 +112,8 @@ describe('Cloture Session server side', () => {
 
       // When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
@@ -143,8 +143,8 @@ describe('Cloture Session server side', () => {
 
       //When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
@@ -165,8 +165,8 @@ describe('Cloture Session server side', () => {
 
       //When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then

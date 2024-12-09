@@ -15,7 +15,7 @@ describe('LoginPage server side', () => {
 
     // When
     const promise = LoginHub({
-      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+      searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
     // Then
@@ -30,7 +30,11 @@ describe('LoginPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await LoginHub({ searchParams: { source: 'notif-mail' } }))
+    render(
+      await LoginHub({
+        searchParams: Promise.resolve({ source: 'notif-mail' }),
+      })
+    )
 
     // Then
     expect(metadata).toEqual({

@@ -13,7 +13,7 @@ import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type OffreParams = { typeOffre: string; idOffre: string }
+type OffreParams = Promise<{ typeOffre: string; idOffre: string }>
 
 export async function generateMetadata({
   params,
@@ -37,11 +37,11 @@ export default async function Offre({ params }: { params: OffreParams }) {
   )
 }
 
-async function fetchOffre({
-  typeOffre,
-  idOffre,
-}: OffreParams): Promise<{ offre: DetailOffre; header: string }> {
+async function fetchOffre(
+  params: OffreParams
+): Promise<{ offre: DetailOffre; header: string }> {
   const { accessToken } = await getMandatorySessionServerSide()
+  const { idOffre, typeOffre } = await params
 
   let offre: DetailOffre | undefined
   let header: string

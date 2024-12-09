@@ -12,7 +12,8 @@ import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { ApiError } from 'utils/httpClient'
 
-type FavorisParams = { idJeune: string }
+type FavorisParams = Promise<{ idJeune: string }>
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,7 +21,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
-  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
+  const { idJeune } = await params
+  const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
@@ -32,7 +34,7 @@ export async function generateMetadata({
 export default async function Favoris({ params }: { params: FavorisParams }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
-  const idJeune = params.idJeune
+  const { idJeune } = await params
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 

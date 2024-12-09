@@ -13,7 +13,7 @@ import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type RendezVousPassesParams = { idJeune: string }
+type RendezVousPassesParams = Promise<{ idJeune: string }>
 
 export async function generateMetadata({
   params,
@@ -21,7 +21,8 @@ export async function generateMetadata({
   params: RendezVousPassesParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
+  const { idJeune } = await params
+  const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   return {
@@ -35,15 +36,12 @@ export default async function RendezVousPasses({
   params: RendezVousPassesParams
 }) {
   const { accessToken, user } = await getMandatorySessionServerSide()
+  const { idJeune } = await params
 
   const [beneficiaire, rdvs] = await Promise.all([
-    getJeuneDetails(params.idJeune, accessToken),
+    getJeuneDetails(idJeune, accessToken),
     estUserMilo(user)
-      ? await getRendezVousJeune(
-          params.idJeune,
-          PeriodeEvenements.PASSES,
-          accessToken
-        )
+      ? await getRendezVousJeune(idJeune, PeriodeEvenements.PASSES, accessToken)
       : [],
   ])
   if (!beneficiaire) notFound()

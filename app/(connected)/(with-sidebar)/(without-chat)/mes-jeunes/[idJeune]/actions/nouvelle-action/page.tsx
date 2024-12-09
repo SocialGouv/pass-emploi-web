@@ -11,7 +11,7 @@ import { getIdentitesBeneficiairesServerSide } from 'services/beneficiaires.serv
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type NouvelleActionParams = { idJeune: string }
+type NouvelleActionParams = Promise<{ idJeune: string }>
 
 export async function generateMetadata({
   params,
@@ -19,8 +19,9 @@ export async function generateMetadata({
   params: NouvelleActionParams
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
+  const { idJeune } = await params
   const [beneficiaire] = await getIdentitesBeneficiairesServerSide(
-    [params.idJeune],
+    [idJeune],
     user.id,
     accessToken
   )
@@ -41,14 +42,15 @@ export default async function NouvelleAction({
     getActionsPredefinies(accessToken),
   ])
 
-  const returnTo = `/mes-jeunes/${params.idJeune}?onglet=actions`
+  const { idJeune } = await params
+  const returnTo = `/mes-jeunes/${idJeune}?onglet=actions`
   return (
     <>
       <PageRetourPortal lien={returnTo} />
       <PageHeaderPortal header='Créer une nouvelle action' />
 
       <NouvelleActionPage
-        idBeneficiaire={params.idJeune}
+        idBeneficiaire={idJeune}
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo={returnTo}

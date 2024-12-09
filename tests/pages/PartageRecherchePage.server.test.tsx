@@ -40,14 +40,14 @@ describe('Partage Recherche', () => {
       // When
       render(
         await PartageRecherche({
-          params: { typeOffre: 'emploi' },
-          searchParams: {
+          params: Promise.resolve({ typeOffre: 'emploi' }),
+          searchParams: Promise.resolve({
             titre: TITRE,
             motsCles: MOTS_CLES,
             typeLocalite: TYPE_LOCALITE,
             labelLocalite: LABEL_LOCALITE,
             codeLocalite: CODE_LOCALITE,
-          },
+          }),
         })
       )
 
@@ -72,14 +72,14 @@ describe('Partage Recherche', () => {
       // When
       render(
         await PartageRecherche({
-          params: { typeOffre: 'alternance' },
-          searchParams: {
+          params: Promise.resolve({ typeOffre: 'alternance' }),
+          searchParams: Promise.resolve({
             titre: TITRE,
             motsCles: MOTS_CLES,
             typeLocalite: TYPE_LOCALITE,
             labelLocalite: LABEL_LOCALITE,
             codeLocalite: CODE_LOCALITE,
-          },
+          }),
         })
       )
 
@@ -104,15 +104,15 @@ describe('Partage Recherche', () => {
       // When
       render(
         await PartageRecherche({
-          params: { typeOffre: 'immersion' },
-          searchParams: {
+          params: Promise.resolve({ typeOffre: 'immersion' }),
+          searchParams: Promise.resolve({
             titre: TITRE,
             labelMetier: LABEL_METIER,
             codeMetier: CODE_METIER,
             labelLocalite: LABEL_LOCALITE,
             latitude: LATITUDE,
             longitude: LONGITUDE,
-          },
+          }),
         })
       )
 
@@ -138,13 +138,13 @@ describe('Partage Recherche', () => {
       // When
       render(
         await PartageRecherche({
-          params: { typeOffre: 'service-civique' },
-          searchParams: {
+          params: Promise.resolve({ typeOffre: 'service-civique' }),
+          searchParams: Promise.resolve({
             titre: TITRE,
             labelLocalite: LABEL_LOCALITE,
             latitude: LATITUDE,
             longitude: LONGITUDE,
-          },
+          }),
         })
       )
 

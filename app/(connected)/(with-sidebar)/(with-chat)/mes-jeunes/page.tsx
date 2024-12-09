@@ -15,7 +15,7 @@ import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = { title: 'Portefeuille' }
 
-type PortfeuilleSearchParams = Partial<{ source: string }>
+type PortfeuilleSearchParams = Promise<Partial<{ source: string }>>
 export default async function Portefeuille({
   searchParams,
 }: {
@@ -58,14 +58,16 @@ export default async function Portefeuille({
     }))
   }
 
-  beneficiairesAvecCompteurs.sort(compareBeneficiairesByNom)
+  const beneficiairesAlphabetiques = beneficiairesAvecCompteurs.toSorted(
+    compareBeneficiairesByNom
+  )
   return (
     <>
       <PageHeaderPortal header='Portefeuille' />
 
       <PortefeuillePage
-        conseillerJeunes={beneficiairesAvecCompteurs}
-        isFromEmail={Boolean(searchParams?.source)}
+        conseillerJeunes={beneficiairesAlphabetiques}
+        isFromEmail={Boolean((await searchParams)?.source)}
       />
     </>
   )

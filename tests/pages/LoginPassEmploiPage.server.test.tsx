@@ -17,7 +17,7 @@ describe('LoginPassEmploiPage server side', () => {
 
     // When
     const promise = LoginPassEmploi({
-      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+      searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
     // Then
@@ -32,7 +32,11 @@ describe('LoginPassEmploiPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await LoginPassEmploi({ searchParams: { source: 'notif-mail' } }))
+    render(
+      await LoginPassEmploi({
+        searchParams: Promise.resolve({ source: 'notif-mail' }),
+      })
+    )
 
     // Then
     expect(metadata).toEqual({

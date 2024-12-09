@@ -20,7 +20,7 @@ describe('GET api/fichier/[idFichier]', () => {
 
     // When
     const promise = GET(new Request('https://www.perdu.com'), {
-      params: { idFichier: 'idFichier' },
+      params: Promise.resolve({ idFichier: 'idFichier' }),
     })
 
     // Then
