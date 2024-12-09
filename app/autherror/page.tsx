@@ -1,14 +1,14 @@
-import { StructureConseiller } from '../../interfaces/conseiller'
-
 import AuthErrorPage from 'app/autherror/AuthErrorPage'
+import { StructureConseiller } from 'interfaces/conseiller'
 
-type AuthErrorSearchParams = Partial<{
-  reason?: string
-  typeUtilisateur?: string
-  structureUtilisateur?: string
-}>
-
-export default function AuthError({
+type AuthErrorSearchParams = Promise<
+  Partial<{
+    reason?: string
+    typeUtilisateur?: string
+    structureUtilisateur?: string
+  }>
+>
+export default async function AuthError({
   searchParams,
 }: {
   searchParams?: AuthErrorSearchParams
@@ -16,7 +16,10 @@ export default function AuthError({
   let erreur: string
   let codeErreur: string | undefined
   let lienFormulaire: string | undefined
-  switch (searchParams?.reason) {
+  const { reason, typeUtilisateur, structureUtilisateur } =
+    (await searchParams) ?? {}
+
+  switch (reason) {
     case 'UTILISATEUR_INEXISTANT':
       erreur =
         "Votre compte n'est pas enregistré sur l'application, veuillez contacter votre conseiller."
@@ -43,14 +46,13 @@ export default function AuthError({
     default:
       {
         let contacterConseiller =
-          searchParams?.typeUtilisateur === 'JEUNE' ||
-          searchParams?.typeUtilisateur === 'BENEFICIAIRE'
+          typeUtilisateur === 'JEUNE' || typeUtilisateur === 'BENEFICIAIRE'
             ? ' ou contacter votre conseiller'
             : ''
 
-        if (searchParams?.reason === 'Callback') {
+        if (reason === 'Callback') {
           let idpName = ''
-          switch (searchParams?.structureUtilisateur) {
+          switch (structureUtilisateur) {
             case 'MILO':
               idpName = 'i-Milo'
               break
@@ -66,20 +68,16 @@ export default function AuthError({
               idpName = "du fournisseur d'identité"
           }
           erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${contacterConseiller}.`
-          searchParams.reason = undefined
-        } else if (
-          searchParams?.reason === 'VerificationConseillerDepartemental'
-        ) {
+        } else if (reason === 'VerificationConseillerDepartemental') {
           erreur = `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`
-          searchParams.reason = undefined
         } else {
           erreur = `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
-          codeErreur = searchParams?.reason
+          codeErreur = reason
         }
       }
-      if (searchParams?.typeUtilisateur === 'CONSEILLER') {
+      if (typeUtilisateur === 'CONSEILLER') {
         lienFormulaire = ((): string | undefined => {
-          switch (searchParams.structureUtilisateur) {
+          switch (structureUtilisateur) {
             case StructureConseiller.MILO:
               return (
                 (process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK as string) +

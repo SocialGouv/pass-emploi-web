@@ -5,14 +5,14 @@ import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export async function GET(
   _: Request,
-  { params }: { params: { idFichier: string } }
+  { params }: { params: Promise<{ idFichier: string }> }
 ) {
   const { accessToken } = await getMandatorySessionServerSide()
 
   try {
-    const fichierId = params.idFichier
+    const { idFichier } = await params
     redirect(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/fichiers/${fichierId}?token=${accessToken}`
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/fichiers/${idFichier}?token=${accessToken}`
     )
   } catch (error) {
     if (isRedirectError(error)) throw error

@@ -42,16 +42,19 @@ import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
 
-type FicheBeneficiaireParams = { idJeune: string }
-type FicheBeneficiaireSearchParams = { page?: string; onglet?: string }
+type FicheBeneficiaireParams = Promise<{ idJeune: string }>
+type FicheBeneficiaireSearchParams = Promise<{ page?: string; onglet?: string }>
+type RouteProps = {
+  params: FicheBeneficiaireParams
+  searchParams?: FicheBeneficiaireSearchParams
+}
 
 export async function generateMetadata({
   params,
-}: {
-  params: FicheBeneficiaireParams
-}): Promise<Metadata> {
+}: RouteProps): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const jeune = await getJeuneDetails(params.idJeune, accessToken)
+  const { idJeune } = await params
+  const jeune = await getJeuneDetails(idJeune, accessToken)
   if (!jeune) notFound()
 
   if (jeune.idConseiller !== user.id) {
@@ -59,29 +62,22 @@ export async function generateMetadata({
   }
   return { title: `Portefeuille - ${jeune.prenom} ${jeune.nom}` }
 }
-
 export default async function FicheBeneficiaire({
   params,
   searchParams,
-}: {
-  params: FicheBeneficiaireParams
-  searchParams?: FicheBeneficiaireSearchParams
-}) {
+}: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
+  const { idJeune } = await params
 
   const [conseiller, beneficiaire, metadonneesFavoris] = await Promise.all([
     getConseillerServerSide(user, accessToken),
-    getJeuneDetails(params.idJeune, accessToken),
-    getMetadonneesFavorisJeune(params.idJeune, accessToken),
+    getJeuneDetails(idJeune, accessToken),
+    getMetadonneesFavorisJeune(idJeune, accessToken),
   ])
   if (!beneficiaire) notFound()
 
-  const page = searchParams?.page ? parseInt(searchParams.page) : 1
-  const ongletInitial = getOngletInitial(
-    searchParams?.onglet,
-    user,
-    metadonneesFavoris
-  )
+  const { page, onglet } = (await searchParams) ?? {}
+  const ongletInitial = getOngletInitial(onglet, user, metadonneesFavoris)
 
   return (
     <>
@@ -93,7 +89,7 @@ export default async function FicheBeneficiaire({
           conseiller,
           beneficiaire,
           accessToken,
-          page,
+          page ? parseInt(page) : 1,
           ongletInitial,
           metadonneesFavoris
         ))}

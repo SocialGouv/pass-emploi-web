@@ -53,8 +53,14 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     // When
     const searchParams = { idListe: '1' }
-    const metadata = await generateMetadata({ searchParams })
-    render(await EditionListeDiffusion({ searchParams }))
+    const metadata = await generateMetadata({
+      searchParams: Promise.resolve(searchParams),
+    })
+    render(
+      await EditionListeDiffusion({
+        searchParams: Promise.resolve(searchParams),
+      })
+    )
 
     // Then
     expect(recupererListeDeDiffusion).toHaveBeenCalledWith('1', 'accessToken')

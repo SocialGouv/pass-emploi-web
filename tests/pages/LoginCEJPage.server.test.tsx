@@ -15,7 +15,7 @@ describe('LoginCEJPage server side', () => {
 
     // When
     const promise = LoginCEJ({
-      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+      searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
     // Then
@@ -30,7 +30,11 @@ describe('LoginCEJPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await LoginCEJ({ searchParams: { source: 'notif-mail' } }))
+    render(
+      await LoginCEJ({
+        searchParams: Promise.resolve({ source: 'notif-mail' }),
+      })
+    )
 
     // Then
     expect(metadata).toEqual({

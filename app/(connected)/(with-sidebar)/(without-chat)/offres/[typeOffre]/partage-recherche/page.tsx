@@ -12,26 +12,26 @@ export const metadata: Metadata = {
   title: 'Partager une recherche - Recherche d’offres',
 }
 
-type PartageRechercheParams = { typeOffre: string }
+type PartageRechercheParams = Promise<{ typeOffre: string }>
 export default async function PartageRecherche({
   params,
   searchParams,
 }: {
   params: PartageRechercheParams
-  searchParams: CriteresRecherche
+  searchParams?: Promise<CriteresRecherche>
 }) {
-  const referer = headers().get('referer')
+  const referer = (await headers()).get('referer')
   const redirectTo = referer ?? '/offres'
 
-  const typeOffre = urlParamToTypeOffre(params.typeOffre)
+  const { typeOffre } = await params
 
   return (
     <>
       <PageRetourPortal lien={redirectTo} />
 
       <PartageRecherchePage
-        type={typeOffre}
-        criteresRecherche={searchParams}
+        type={urlParamToTypeOffre(typeOffre)}
+        criteresRecherche={(await searchParams)!}
         returnTo={redirectTo}
       />
     </>

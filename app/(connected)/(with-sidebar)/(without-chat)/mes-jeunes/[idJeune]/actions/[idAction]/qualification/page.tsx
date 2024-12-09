@@ -12,18 +12,21 @@ import { estUserMilo } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { unsafeRandomId } from 'utils/helpers'
 
-type QualificationParams = { idAction: string }
-type QualificationSearchParams = Partial<{ liste: string }>
+type QualificationParams = Promise<{ idAction: string }>
+type QualificationSearchParams = Promise<Partial<{ liste: string }>>
+type RouteProps = {
+  params: QualificationParams
+  searchParams?: QualificationSearchParams
+}
 
 export async function generateMetadata({
   params,
-}: {
-  params: QualificationParams
-}): Promise<Metadata> {
+}: RouteProps): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
 
   const { getAction } = await import('services/actions.service')
-  const actionContent = await getAction(params.idAction, accessToken)
+  const { idAction } = await params
+  const actionContent = await getAction(idAction, accessToken)
 
   return {
     title: `Qualifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
@@ -32,18 +35,16 @@ export async function generateMetadata({
 export default async function Qualification({
   params,
   searchParams,
-}: {
-  params: QualificationParams
-  searchParams?: QualificationSearchParams
-}) {
+}: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) notFound()
 
   const { getAction, getSituationsNonProfessionnelles } = await import(
     'services/actions.service'
   )
+  const { idAction } = await params
   const [actionContent, categories] = await Promise.all([
-    getAction(params.idAction, accessToken),
+    getAction(idAction, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: true }, accessToken),
   ])
   if (!actionContent) notFound()
@@ -52,9 +53,10 @@ export default async function Qualification({
   if (action.status !== StatutAction.Terminee) notFound()
 
   // FIXME : dirty fix, problème de l’action
+  const { liste } = (await searchParams) ?? {}
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${unsafeRandomId()}`
   const returnToListe =
-    searchParams?.liste === 'pilotage'
+    liste === 'pilotage'
       ? '/pilotage'
       : `/mes-jeunes/${jeune.id}?onglet=actions`
 

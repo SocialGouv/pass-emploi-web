@@ -14,45 +14,39 @@ import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { redirectedFromHome } from 'utils/helpers'
 
-type DetailsSessionParams = {
-  idSession: string
+type DetailsSessionParams = Promise<{ idSession: string }>
+type DetailsSessionSearchParams = Promise<Partial<{ redirectUrl: string }>>
+type RouteProps = {
+  params: DetailsSessionParams
+  searchParams?: DetailsSessionSearchParams
 }
-type DetailsSessionSearchParams = Partial<{ redirectUrl: string }>
 
 export async function generateMetadata({
   params,
-}: {
-  params: DetailsSessionParams
-}): Promise<Metadata> {
+}: RouteProps): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
+  const { idSession } = await params
 
-  const session = await getDetailsSession(
-    user.id,
-    params.idSession,
-    accessToken
-  )
+  const session = await getDetailsSession(user.id, idSession, accessToken)
 
   return {
     title: `Détail session ${session?.session.nom} - Agenda`,
   }
 }
-
 export default async function DetailsSession({
   params,
   searchParams,
-}: {
-  params: DetailsSessionParams
-  searchParams?: DetailsSessionSearchParams
-}) {
+}: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
   if (!estUserMilo(user)) notFound()
 
-  const idSession = params.idSession
+  const { idSession } = await params
+  const { redirectUrl } = (await searchParams) ?? {}
 
-  let redirectTo = searchParams?.redirectUrl
+  let redirectTo = redirectUrl
   if (!redirectTo) {
-    const referer = headers().get('referer')
+    const referer = (await headers()).get('referer')
     redirectTo =
       referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
