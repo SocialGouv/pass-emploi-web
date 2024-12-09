@@ -57,7 +57,7 @@ describe('RendezVousPassesPage server side', () => {
           rdvs: [unEvenementListItem()],
           lectureSeule: false,
         },
-        {}
+        undefined
       )
     })
   })
@@ -80,7 +80,7 @@ describe('RendezVousPassesPage server side', () => {
       expect(getRendezVousJeune).not.toHaveBeenCalled()
       expect(RendezVousPassesPage).toHaveBeenCalledWith(
         expect.objectContaining({ rdvs: [] }),
-        {}
+        undefined
       )
     })
   })

@@ -41,6 +41,6 @@ describe('LoginCEJPage server side', () => {
       title:
         "Connexion dans l'espace conseiller - Outil du Contrat d’Engagement Jeune",
     })
-    expect(LoginCEJPage).toHaveBeenCalledWith({}, {})
+    expect(LoginCEJPage).toHaveBeenCalledWith({}, undefined)
   })
 })

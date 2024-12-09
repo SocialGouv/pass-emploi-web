@@ -51,7 +51,7 @@ describe('CloturePage server side', () => {
           }),
           returnTo: '/mes-jeunes/edition-rdv?idRdv=1&redirectUrl=redirectUrl',
         },
-        {}
+        undefined
       )
     })
 

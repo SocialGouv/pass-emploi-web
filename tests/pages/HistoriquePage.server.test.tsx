@@ -88,7 +88,7 @@ describe('HistoriquePage server side', () => {
         beneficiaire: detailBeneficiaire,
         onglet: 'INFORMATIONS',
       },
-      {}
+      undefined
     )
   })
 })

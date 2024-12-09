@@ -10,6 +10,7 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -32,6 +33,7 @@ describe('<ChatContainer />', () => {
   let beneficiairesChats: BeneficiaireEtChat[]
 
   beforeEach(async () => {
+    ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue([])
     ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )

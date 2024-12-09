@@ -37,7 +37,7 @@ describe('Page Listes de Diffusion', () => {
       {
         listesDiffusion: desListesDeDiffusion(),
       },
-      {}
+      undefined
     )
   })
 })

@@ -83,7 +83,7 @@ describe('ActionPage server side', () => {
           lectureSeule: false,
           from: 'beneficiaire',
         },
-        {}
+        undefined
       )
     })
 
@@ -123,7 +123,7 @@ describe('ActionPage server side', () => {
             lectureSeule: false,
             from: 'pilotage',
           },
-          {}
+          undefined
         )
       })
     })
