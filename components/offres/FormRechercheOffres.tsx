@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, ReactElement, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
@@ -207,7 +207,7 @@ export default function FormRechercheOffres({
           </div>
         </Etape>
 
-        {getRechercheMain()}
+        <RechercheMain />
 
         {typeOffre && showFilters && (
           <>
@@ -229,7 +229,7 @@ export default function FormRechercheOffres({
               </button>
             </div>
 
-            {showMoreFilters && getRechercheSecondary()}
+            {showMoreFilters && <RechercheSecondary />}
           </>
         )}
 
@@ -280,7 +280,7 @@ export default function FormRechercheOffres({
     </form>
   )
 
-  function getRechercheMain(): JSX.Element | null {
+  function RechercheMain(): ReactElement | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
@@ -328,7 +328,7 @@ export default function FormRechercheOffres({
     }
   }
 
-  function getRechercheSecondary(): JSX.Element | null {
+  function RechercheSecondary(): ReactElement | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (

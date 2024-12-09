@@ -841,7 +841,7 @@ export function EditionRdvForm({
             error={idsJeunes.error}
             required={!evenementTypeAC}
             disabled={lectureSeule}
-            renderIndication={
+            Indication={
               evenement && estClos(evenement)
                 ? BeneficiaireIndicationPresent
                 : BeneficiaireIndicationPortefeuille

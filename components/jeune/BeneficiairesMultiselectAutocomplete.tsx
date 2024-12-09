@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import { ButtonStyle } from '../ui/Button/Button'
 import ButtonLink from '../ui/Button/ButtonLink'
@@ -31,7 +31,7 @@ interface BeneficiairesMultiselectAutocompleteProps {
   defaultBeneficiaires?: OptionBeneficiaire[]
   error?: string
   disabled?: boolean
-  renderIndication?: (props: { value: string; id: string }) => JSX.Element
+  Indication?: (props: { value: string; id: string }) => ReactElement
   ariaDescribedBy?: string
   lienExport?: string
   trackExport?: () => void
@@ -56,7 +56,7 @@ export default function BeneficiairesMultiselectAutocomplete({
   error,
   defaultBeneficiaires = [],
   disabled,
-  renderIndication,
+  Indication,
   ariaDescribedBy,
   trackExport,
   lienExport,
@@ -327,7 +327,7 @@ export default function BeneficiairesMultiselectAutocomplete({
           typeSelection='beneficiaire'
           unselect={deselectionnerOption}
           onYieldFocus={() => inputRef.current!.focus()}
-          renderIndication={renderIndication}
+          Indication={Indication}
           disabled={disabled}
         />
       )}
