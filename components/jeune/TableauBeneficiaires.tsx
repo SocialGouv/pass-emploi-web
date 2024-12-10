@@ -94,6 +94,11 @@ function TableauBeneficiaires(
                 ? 'Trier par dernière activité ordre anticronologique'
                 : 'Trier par dernière activité ordre cronologique'
             }
+            aria-label={
+              triDerniereActiviter
+                ? 'Trier par dernière activité ordre anticronologique'
+                : 'Trier par dernière activité ordre cronologique'
+            }
             type='button'
           >
             Trier par dernière activité
