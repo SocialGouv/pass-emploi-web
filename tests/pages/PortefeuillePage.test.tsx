@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -254,6 +254,25 @@ describe('PortefeuillePage client side', () => {
       expect(
         screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
       ).toBeInTheDocument()
+    })
+    it('parmet de trier bénéficiaire par dernière activité ', () => {
+      //given
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par dernière activité/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par dernière activité ordre anticronologique'
+      )
+      fireEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par dernière activité ordre cronologique'
+      )
     })
 
     it("affiche la colonne nombre d'actions des bénéficiaires", () => {
