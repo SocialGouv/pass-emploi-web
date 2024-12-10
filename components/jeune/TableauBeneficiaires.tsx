@@ -8,10 +8,7 @@ import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
-import {
-  BaseBeneficiaire,
-  BeneficiaireAvecInfosComplementaires,
-} from 'interfaces/beneficiaire'
+import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
@@ -42,7 +39,8 @@ function TableauBeneficiaires(
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
   const [triDerniereActiviter, setTriDerniereActiviter] = useState(true)
-  const [triBeneficiaires, setTriBeneficiaires] = useState(beneficiairesFiltres)
+  const [filtreBeneficiaires, setFiltreBeneficiaires] =
+    useState(beneficiairesFiltres)
 
   const trierParDerniereActivite = () => {
     const nouvelleTri = !triDerniereActiviter
@@ -58,19 +56,19 @@ function TableauBeneficiaires(
         : dateA.diff(dateB).milliseconds
     })
 
-    setTriBeneficiaires(triBeneficiaires)
+    setFiltreBeneficiaires(triBeneficiaires)
     setPage(1)
     setTriDerniereActiviter(nouvelleTri)
   }
 
   useEffect(() => {
-    setTriBeneficiaires(beneficiairesFiltres)
+    setFiltreBeneficiaires(beneficiairesFiltres)
     setPage(1)
   }, [beneficiairesFiltres])
 
   return (
     <>
-      {triBeneficiaires.length === 0 && (
+      {filtreBeneficiaires.length === 0 && (
         <EmptyState
           shouldFocus={true}
           illustrationName={IllustrationName.People}
@@ -79,7 +77,7 @@ function TableauBeneficiaires(
         />
       )}
 
-      {triBeneficiaires.length > 0 && (
+      {filtreBeneficiaires.length > 0 && (
         <>
           <h2 className='text-m-bold mb-2 text-center text-grey_800'>
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
@@ -94,11 +92,7 @@ function TableauBeneficiaires(
                 ? 'Trier par dernière activité ordre anticronologique'
                 : 'Trier par dernière activité ordre cronologique'
             }
-            aria-label={
-              triDerniereActiviter
-                ? 'Trier par dernière activité ordre anticronologique'
-                : 'Trier par dernière activité ordre cronologique'
-            }
+            aria-label='Trier par dernière activité'
             type='button'
           >
             Trier par dernière activité
@@ -109,13 +103,13 @@ function TableauBeneficiaires(
             ref={ref}
             caption={{
               text: 'Liste des bénéficiaires',
-              count: total === triBeneficiaires.length ? total : undefined,
+              count: total === filtreBeneficiaires.length ? total : undefined,
               visible: true,
             }}
           >
             {estMilo(conseiller) && (
               <TableauBeneficiairesMilo
-                beneficiairesFiltres={triBeneficiaires}
+                beneficiairesFiltres={filtreBeneficiaires}
                 page={page}
                 total={total}
               />
@@ -123,7 +117,7 @@ function TableauBeneficiaires(
 
             {!estMilo(conseiller) && (
               <TableauBeneficiairesPasMilo
-                beneficiairesFiltres={triBeneficiaires}
+                beneficiairesFiltres={filtreBeneficiaires}
                 page={page}
                 total={total}
               />
