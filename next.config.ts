@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+import { NextConfig } from 'next'
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -6,9 +6,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   openAnalyzer: false,
 })
 
-module.exports = withBundleAnalyzer({
+const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   productionBrowserSourceMaps: true,
 
   env: {
@@ -58,6 +57,8 @@ module.exports = withBundleAnalyzer({
         destination: '/mes-jeunes/:path*',
       },
     ],
+    afterFiles: [],
+    fallback: [],
   }),
 
   compiler: {
@@ -65,7 +66,7 @@ module.exports = withBundleAnalyzer({
     reactRemoveProperties: true,
   },
 
-  webpack(config) {
+  webpack(config: any) {
     // https://react-svgr.com/docs/next/
     config.module.rules.push({
       test: /\.svg$/i,
@@ -76,10 +77,12 @@ module.exports = withBundleAnalyzer({
     const { EnvironmentPlugin } = require('webpack')
     config.plugins.push(
       new EnvironmentPlugin({
-        NODE_ENV: 'production',
+        NODE_ENV: process.env.NODE_ENV,
       })
     )
 
     return config
   },
-})
+}
+
+export default withBundleAnalyzer(nextConfig)
