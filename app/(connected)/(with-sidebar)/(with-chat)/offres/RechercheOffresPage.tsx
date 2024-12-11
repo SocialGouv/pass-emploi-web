@@ -150,7 +150,7 @@ function RechercheOffresPage() {
       setPageCourante(page)
       setNbPages(nombrePages)
       setTrackingTitle(pageTracking + ' - Résultats')
-    } catch (e) {
+    } catch {
       nettoyerResultats()
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
       setTrackingTitle(pageTracking + ' - Erreur')

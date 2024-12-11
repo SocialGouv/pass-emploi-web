@@ -199,7 +199,7 @@ function EditionListeDiffusionPage({
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (titre.error)
       erreurs.push({
         ancre: '#titre-liste',

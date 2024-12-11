@@ -183,7 +183,7 @@ function DossierBeneficiaireMilo(
               <Button
                 id='creation-button'
                 type='button'
-                onClick={(_e) => addBeneficiaire()}
+                onClick={() => addBeneficiaire()}
                 isLoading={creationEnCours}
                 disabled={Boolean(
                   erreurMessageCreationCompte || beneficiaireExisteDejaMilo

@@ -5518,7 +5518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsx-a11y@npm:^6.10.0, eslint-plugin-jsx-a11y@npm:^6.10.2":
+"eslint-plugin-jsx-a11y@npm:^6.10.0":
   version: 6.10.2
   resolution: "eslint-plugin-jsx-a11y@npm:6.10.2"
   dependencies:
@@ -8957,7 +8957,6 @@ __metadata:
     eslint: "npm:^9.16.0"
     eslint-config-next: "npm:^15.0.4"
     eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-prettier: "npm:^5.2.1"
     firebase: "npm:11.0.2"
     html-react-parser: "npm:5.2.0"

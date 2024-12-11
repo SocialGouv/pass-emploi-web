@@ -115,7 +115,7 @@ function TableauDemarche({
   }
 
   function trierParDateEcheance() {
-    let nouveauTri = getIsSortedDesc()
+    const nouveauTri = getIsSortedDesc()
       ? TRI.dateEcheanceCroissante
       : TRI.dateEcheanceDecroissante
     setTri(nouveauTri)

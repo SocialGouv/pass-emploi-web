@@ -151,7 +151,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setShowModaleSuccesDeleteBeneficiaire(true)
-    } catch (e) {
+    } catch {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
     } finally {
@@ -168,7 +168,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setShowModaleSuccesDeleteBeneficiaire(true)
-    } catch (e) {
+    } catch {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
     } finally {

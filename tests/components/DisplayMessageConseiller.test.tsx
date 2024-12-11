@@ -20,14 +20,14 @@ describe('<DiplayMessageConseiller />', () => {
   })
   const message = unMessage({
     sentBy: 'conseiller',
-    content: 'coucou',
+    content: 'coucou http://perdu.com',
     conseillerId: customConseiller.id,
     creationDate: DateTime.fromISO('2023-04-12T05:21'),
   })
   const supprimerMessage = jest.fn()
   const modifierMessage = jest.fn()
 
-  describe('', () => {
+  describe('affiche le message', () => {
     beforeEach(async () => {
       //When
       await act(async () => {
@@ -55,6 +55,15 @@ describe('<DiplayMessageConseiller />', () => {
       expect(
         screen.queryByRole('button', { name: /Modifier/ })
       ).not.toBeInTheDocument()
+    })
+
+    it('transforme les liens', async () => {
+      const lienExterne = screen.getByRole('link', {
+        name: 'http://perdu.com (nouvelle fenêtre)',
+      })
+      expect(lienExterne).toHaveAttribute('href', 'http://perdu.com')
+      expect(lienExterne).toHaveAttribute('target', '_blank')
+      expect(lienExterne).toHaveAttribute('rel', 'noreferrer noopener')
     })
 
     it('permet de supprimer le message', async () => {

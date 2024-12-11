@@ -45,7 +45,7 @@ export default async function AuthError({
       break
     default:
       {
-        let contacterConseiller =
+        const ouContacterConseiller =
           typeUtilisateur === 'JEUNE' || typeUtilisateur === 'BENEFICIAIRE'
             ? ' ou contacter votre conseiller'
             : ''
@@ -67,11 +67,11 @@ export default async function AuthError({
             default:
               idpName = "du fournisseur d'identité"
           }
-          erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${contacterConseiller}.`
+          erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${ouContacterConseiller}.`
         } else if (reason === 'VerificationConseillerDepartemental') {
           erreur = `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`
         } else {
-          erreur = `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
+          erreur = `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${ouContacterConseiller}.`
           codeErreur = reason
         }
       }

@@ -197,7 +197,7 @@ function EditionRdvPage({
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
       router.push(returnTo)
-    } catch (e) {
+    } catch {
       setShowDeleteRdvError(true)
     }
   }

@@ -138,7 +138,7 @@ function ClotureSessionPage({
       liste: InformationBeneficiaireSession[]
     ) {
       liste.forEach((beneficiaire: InformationBeneficiaireSession) => {
-        return setEmargements((currentEmargements: any) => {
+        return setEmargements((currentEmargements) => {
           return metAJourListeBeneficiairesEmarges(
             currentEmargements,
             beneficiaire

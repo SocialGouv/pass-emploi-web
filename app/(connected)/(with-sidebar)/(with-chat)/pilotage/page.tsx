@@ -60,7 +60,7 @@ export default async function Pilotage({
   if (peutAccederAuxSessions(conseiller)) {
     try {
       sessions = await getSessionsACloreServerSide(user.id, accessToken)
-    } catch (_e) {
+    } catch {
       sessions = undefined
     }
   }
