@@ -39,36 +39,37 @@ function TableauBeneficiaires(
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
   const [triDerniereActiviter, setTriDerniereActiviter] = useState(true)
-  const [filtreBeneficiaires, setFiltreBeneficiaires] =
+  const [beneficiairesTrier, setBeneficiairesTrier] =
     useState(beneficiairesFiltres)
 
-  const trierParDerniereActivite = () => {
-    const nouvelleTri = !triDerniereActiviter
-    const triBeneficiaires = [...beneficiairesFiltres].sort((a, b) => {
+  const trierParDerniereActivite = (
+    beneficiaires: BeneficiaireAvecInfosComplementaires[],
+    ordre: boolean
+  ): BeneficiaireAvecInfosComplementaires[] => {
+    return [...beneficiaires].sort((a, b) => {
       if (!a.isActivated && !b.isActivated) return 0
       if (!a.isActivated) return 1
       if (!b.isActivated) return -1
 
       const dateA = DateTime.fromISO(a.lastActivity!)
       const dateB = DateTime.fromISO(b.lastActivity!)
-      return nouvelleTri
-        ? dateB.diff(dateA).milliseconds
-        : dateA.diff(dateB).milliseconds
+      return ordre ? dateB.diff(dateA).toMillis() : dateA.diff(dateB).toMillis()
     })
-
-    setFiltreBeneficiaires(triBeneficiaires)
-    setPage(1)
-    setTriDerniereActiviter(nouvelleTri)
   }
 
   useEffect(() => {
-    setFiltreBeneficiaires(beneficiairesFiltres)
     setPage(1)
   }, [beneficiairesFiltres])
 
+  useEffect(() => {
+    setBeneficiairesTrier(
+      trierParDerniereActivite(beneficiairesFiltres, triDerniereActiviter)
+    )
+  }, [beneficiairesFiltres, triDerniereActiviter])
+
   return (
     <>
-      {filtreBeneficiaires.length === 0 && (
+      {beneficiairesTrier.length === 0 && (
         <EmptyState
           shouldFocus={true}
           illustrationName={IllustrationName.People}
@@ -77,7 +78,7 @@ function TableauBeneficiaires(
         />
       )}
 
-      {filtreBeneficiaires.length > 0 && (
+      {beneficiairesTrier.length > 0 && (
         <>
           <h2 className='text-m-bold mb-2 text-center text-grey_800'>
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
@@ -85,14 +86,20 @@ function TableauBeneficiaires(
           </h2>
 
           <button
-            onClick={trierParDerniereActivite}
+            onClick={() => {
+              setTriDerniereActiviter(!triDerniereActiviter)
+            }}
             className='flex float-right mt-8 mb-8 text-m-regular text-right text-grey_800'
             title={
               triDerniereActiviter
-                ? 'Trier par dernière activité ordre anticronologique'
-                : 'Trier par dernière activité ordre cronologique'
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
             }
-            aria-label='Trier par dernière activité'
+            aria-label={
+              triDerniereActiviter
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
+            }
             type='button'
           >
             Trier par dernière activité
@@ -103,13 +110,13 @@ function TableauBeneficiaires(
             ref={ref}
             caption={{
               text: 'Liste des bénéficiaires',
-              count: total === filtreBeneficiaires.length ? total : undefined,
+              count: total === beneficiairesTrier.length ? total : undefined,
               visible: true,
             }}
           >
             {estMilo(conseiller) && (
               <TableauBeneficiairesMilo
-                beneficiairesFiltres={filtreBeneficiaires}
+                beneficiairesFiltres={beneficiairesTrier}
                 page={page}
                 total={total}
               />
@@ -117,7 +124,7 @@ function TableauBeneficiaires(
 
             {!estMilo(conseiller) && (
               <TableauBeneficiairesPasMilo
-                beneficiairesFiltres={filtreBeneficiaires}
+                beneficiairesFiltres={beneficiairesTrier}
                 page={page}
                 total={total}
               />
