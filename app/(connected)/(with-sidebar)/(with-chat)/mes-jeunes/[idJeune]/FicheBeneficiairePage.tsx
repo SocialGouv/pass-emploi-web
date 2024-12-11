@@ -32,20 +32,16 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const FicheBeneficiaireMilo = dynamic(
-  () => import('components/jeune/FicheBeneficiaireMilo'),
-  { ssr: false }
+  () => import('components/jeune/FicheBeneficiaireMilo')
 )
 const FicheBeneficiairePasMilo = dynamic(
-  () => import('components/jeune/FicheBeneficiairePasMilo'),
-  { ssr: false }
+  () => import('components/jeune/FicheBeneficiairePasMilo')
 )
 const DeleteBeneficiaireActifModal = dynamic(
-  () => import('components/jeune/DeleteBeneficiaireActifModal'),
-  { ssr: false }
+  () => import('components/jeune/DeleteBeneficiaireActifModal')
 )
 const DeleteJeuneInactifModal = dynamic(
-  () => import('components/jeune/DeleteJeuneInactifModal'),
-  { ssr: false }
+  () => import('components/jeune/DeleteJeuneInactifModal')
 )
 
 function FicheBeneficiairePage(props: FicheBeneficiaireProps) {

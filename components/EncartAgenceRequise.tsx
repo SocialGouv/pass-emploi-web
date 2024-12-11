@@ -9,8 +9,7 @@ import { trackEvent } from 'utils/analytics/matomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const RenseignementAgenceModal = dynamic(
-  () => import('components/RenseignementAgenceModal'),
-  { ssr: false }
+  () => import('components/RenseignementAgenceModal')
 )
 
 type EncartAgenceRequiseProps = {

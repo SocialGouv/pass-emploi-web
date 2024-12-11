@@ -26,8 +26,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const MessageImportantModal = dynamic(
-  () => import('components/chat/MessageImportantModal'),
-  { ssr: false }
+  () => import('components/chat/MessageImportantModal')
 )
 
 type ChatRoomProps = {

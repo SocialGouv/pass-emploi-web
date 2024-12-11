@@ -42,8 +42,7 @@ type StructureReaffectation =
   | StructureConseiller.POLE_EMPLOI_AIJ
 
 const ConseillerIntrouvableSuggestionModal = dynamic(
-  () => import('components/ConseillerIntrouvableSuggestionModal'),
-  { ssr: false }
+  () => import('components/ConseillerIntrouvableSuggestionModal')
 )
 
 type ReaffectationProps = {
