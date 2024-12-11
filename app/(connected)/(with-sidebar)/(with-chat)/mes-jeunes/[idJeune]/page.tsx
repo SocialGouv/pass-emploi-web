@@ -149,7 +149,7 @@ async function renderFicheMilo(
         accessToken,
         DateTime.now().startOf('day')
       )
-    } catch (e) {
+    } catch {
       erreurSessions = true
     }
   }

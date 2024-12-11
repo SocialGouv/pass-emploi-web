@@ -94,7 +94,7 @@ export default function OngletAgendaEtablissement({
           (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
         )
       )
-    } catch (e) {
+    } catch {
       setPeriodeFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })

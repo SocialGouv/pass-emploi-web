@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC, SVGProps } from 'react'
 
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
 import IllustrationCheck from 'assets/images/illustration-check.svg'
@@ -52,7 +52,9 @@ export enum IllustrationName {
   SendWhite = 'SendWhite',
 }
 
-const illustrationsByName: { [key in IllustrationName]: any } = {
+const illustrationsByName: {
+  [key in IllustrationName]: FC<SVGProps<SVGElement>>
+} = {
   [IllustrationName.ArrowForward]: IllustrationArrowForward,
   [IllustrationName.Check]: IllustrationCheck,
   [IllustrationName.Checklist]: IllustrationChecklist,

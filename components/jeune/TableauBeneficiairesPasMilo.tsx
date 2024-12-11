@@ -30,16 +30,6 @@ export default function TableauBeneficiairesPasMilo({
   const messagesColumn = 'Messages non lus par le béneficiaire'
   const derniereActiviteColumn = 'Dernière activité'
 
-  function getRowLabel(beneficiaire: BeneficiaireAvecInfosComplementaires) {
-    const labelFiche = `Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`
-    const labelActivite = beneficiaire.isActivated
-      ? `dernière activité ${toRelativeDateTime(beneficiaire.lastActivity!)}`
-      : 'non activé'
-    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus par le béneficiaire`
-
-    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
-  }
-
   useEffect(() => {
     setBeneficiairesAffiches(
       beneficiairesFiltres.slice(10 * (page - 1), 10 * page)

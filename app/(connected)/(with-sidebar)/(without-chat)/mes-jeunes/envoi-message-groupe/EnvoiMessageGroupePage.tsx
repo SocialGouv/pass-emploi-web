@@ -233,7 +233,7 @@ function EnvoiMessageGroupePage({
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (selectionError)
       erreurs.push({
         ancre: '#select-beneficiaires',

@@ -38,16 +38,6 @@ export default function TableauBeneficiairesMilo({
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
 
-  function getRowLabel(beneficiaire: BeneficiaireAvecInfosComplementaires) {
-    const labelFiche = `Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`
-    const labelActivite = beneficiaire.isActivated
-      ? `dernière activité ${toRelativeDateTime(beneficiaire.lastActivity!)}`
-      : 'non activé'
-    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus`
-
-    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
-  }
-
   useEffect(() => {
     setBeneficiairesAffiches(
       beneficiairesFiltres.slice(10 * (page - 1), 10 * page)

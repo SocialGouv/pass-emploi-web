@@ -578,8 +578,6 @@ export function Conversation({
                 </>
               )}
 
-              {/* onClick pour faciliter le focus sur la textarea, mouse only donc pas d'impact sur la navigation au clavier */}
-              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
               <div
                 className='p-4 bg-white rounded-base border text-base-bold border-grey_700 focus-within:[outline:auto]'
                 onClick={() => inputRef.current!.focus()}

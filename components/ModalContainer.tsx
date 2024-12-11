@@ -114,7 +114,7 @@ function ModalContainer(
   }
 }
 
-function isExternal(title: { id: string } | any): title is { id: string } {
+function isExternal(title: { id: string } | object): title is { id: string } {
   return Object.prototype.hasOwnProperty.call(title, 'id')
 }
 
