@@ -12,12 +12,10 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
 const TableauBeneficiairesMilo = dynamic(
-  () => import('components/jeune/TableauBeneficiairesMilo'),
-  { ssr: false }
+  () => import('components/jeune/TableauBeneficiairesMilo')
 )
 const TableauBeneficiairesPasMilo = dynamic(
-  () => import('components/jeune/TableauBeneficiairesPasMilo'),
-  { ssr: false }
+  () => import('components/jeune/TableauBeneficiairesPasMilo')
 )
 
 type TableauBeneficiairesProps = {

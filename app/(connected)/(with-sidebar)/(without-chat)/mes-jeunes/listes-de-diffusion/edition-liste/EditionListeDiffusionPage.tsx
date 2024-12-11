@@ -34,8 +34,7 @@ import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteListeDiffusionModal = dynamic(
-  () => import('components/ConfirmationDeleteListeDiffusionModal'),
-  { ssr: false }
+  () => import('components/ConfirmationDeleteListeDiffusionModal')
 )
 
 type EditionListeDiffusionProps = {
