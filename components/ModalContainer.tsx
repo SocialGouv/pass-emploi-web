@@ -34,12 +34,9 @@ function ModalContainer(
   }))
   const [isRendered, setIsRendered] = useState(false)
   const previousFocusedElement = useRef<HTMLElement | null>(null)
-  const keyListeners = useRef(
-    new Map([
-      ['Tab', handleTabKey],
-      ['Escape', handleClose],
-    ])
-  )
+  const keyListeners = useRef<{
+    [key: string]: (e: KeyboardEvent) => void
+  }>({ Tab: handleTabKey, Escape: handleClose })
 
   function focusClose() {
     if (!previousFocusedElement.current)
@@ -78,7 +75,7 @@ function ModalContainer(
   }
 
   function keyListener(e: KeyboardEvent) {
-    const listener = keyListeners.current.get(e.key)
+    const listener = keyListeners.current[e.key]
     return listener && listener(e)
   }
 

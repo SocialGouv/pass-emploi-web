@@ -164,7 +164,7 @@ function EtablissementPage() {
                     </div>
                   </TD>
                   <TDLink
-                    href={'etablissement/beneficiaires/' + jeune.base.id}
+                    href={'/etablissement/beneficiaires/' + jeune.base.id}
                     labelPrefix='Accéder à la fiche de'
                   />
                 </TR>

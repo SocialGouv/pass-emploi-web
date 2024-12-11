@@ -170,7 +170,7 @@ describe('EtablissementPage client side', () => {
             screen.getByRole('link', {
               name: 'Accéder à la fiche de Page 1 Albert Emploi Le 01/03/2023 à 15:11 Carlo Le Calamar',
             })
-          ).toHaveAttribute('href', 'etablissement/beneficiaires/id-jeune')
+          ).toHaveAttribute('href', '/etablissement/beneficiaires/id-jeune')
           expect(
             within(tableauDeBeneficiaires).getByText(`Page 1 Albert`)
           ).toBeInTheDocument()
