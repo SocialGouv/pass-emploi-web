@@ -23,52 +23,57 @@ const TableauBeneficiairesPasMilo = dynamic(
 )
 
 type TableauBeneficiairesProps = {
-  beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
+  beneficiaires: BeneficiaireAvecInfosComplementaires[]
   total: number
 }
 
 function TableauBeneficiaires(
-  { beneficiairesFiltres, total }: TableauBeneficiairesProps,
+  { beneficiaires, total }: TableauBeneficiairesProps,
   ref: ForwardedRef<HTMLTableElement>
 ) {
   const [conseiller] = useConseiller()
 
-  const nombrePages = Math.ceil(beneficiairesFiltres.length / 10)
+  const nombrePages = Math.ceil(beneficiaires.length / 10)
   const [page, setPage] = useState<number>(1)
 
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
-  const [triDerniereActiviter, setTriDerniereActiviter] = useState(true)
-  const [filtreBeneficiaires, setFiltreBeneficiaires] =
-    useState(beneficiairesFiltres)
+  const [
+    triDerniereActiviteChronologique,
+    setTriDerniereActiviteChronologique,
+  ] = useState(false)
+  const [beneficiairesTries, setBeneficiairesTries] = useState(
+    trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
+  )
 
-  const trierParDerniereActivite = () => {
-    const nouvelleTri = !triDerniereActiviter
-    const triBeneficiaires = [...beneficiairesFiltres].sort((a, b) => {
-      if (!a.isActivated && !b.isActivated) return 0
-      if (!a.isActivated) return 1
-      if (!b.isActivated) return -1
+  function trierParDerniereActivite(
+    beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
+    ordreChronologique: boolean
+  ): BeneficiaireAvecInfosComplementaires[] {
+    return beneficiairesATrier.toSorted((a, b) => {
+      if (!a.isActivated || !b.isActivated)
+        return Number(b.isActivated) - Number(a.isActivated)
 
       const dateA = DateTime.fromISO(a.lastActivity!)
       const dateB = DateTime.fromISO(b.lastActivity!)
-      return nouvelleTri
-        ? dateB.diff(dateA).milliseconds
-        : dateA.diff(dateB).milliseconds
+      const diff = dateA.toMillis() - dateB.toMillis()
+      return ordreChronologique ? diff : -diff
     })
-
-    setFiltreBeneficiaires(triBeneficiaires)
-    setPage(1)
-    setTriDerniereActiviter(nouvelleTri)
   }
 
   useEffect(() => {
-    setFiltreBeneficiaires(beneficiairesFiltres)
     setPage(1)
-  }, [beneficiairesFiltres])
+  }, [beneficiaires])
+
+  useEffect(() => {
+    setBeneficiairesTries(
+      trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
+    )
+  }, [beneficiaires, triDerniereActiviteChronologique])
 
   return (
     <>
-      {filtreBeneficiaires.length === 0 && (
+      {beneficiaires.length === 0 && (
         <EmptyState
           shouldFocus={true}
           illustrationName={IllustrationName.People}
@@ -77,7 +82,7 @@ function TableauBeneficiaires(
         />
       )}
 
-      {filtreBeneficiaires.length > 0 && (
+      {beneficiaires.length > 0 && (
         <>
           <h2 className='text-m-bold mb-2 text-center text-grey_800'>
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
@@ -85,31 +90,39 @@ function TableauBeneficiaires(
           </h2>
 
           <button
-            onClick={trierParDerniereActivite}
+            onClick={() => {
+              setTriDerniereActiviteChronologique(
+                !triDerniereActiviteChronologique
+              )
+            }}
             className='flex float-right mt-8 mb-8 text-m-regular text-right text-grey_800'
             title={
-              triDerniereActiviter
-                ? 'Trier par dernière activité ordre anticronologique'
-                : 'Trier par dernière activité ordre cronologique'
+              triDerniereActiviteChronologique
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
             }
-            aria-label='Trier par dernière activité'
+            aria-label={
+              triDerniereActiviteChronologique
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
+            }
             type='button'
           >
             Trier par dernière activité
-            <SortIcon isDesc={triDerniereActiviter} />
+            <SortIcon isDesc={!triDerniereActiviteChronologique} />
           </button>
 
           <Table
             ref={ref}
             caption={{
               text: 'Liste des bénéficiaires',
-              count: total === filtreBeneficiaires.length ? total : undefined,
+              count: total === beneficiaires.length ? total : undefined,
               visible: true,
             }}
           >
             {estMilo(conseiller) && (
               <TableauBeneficiairesMilo
-                beneficiairesFiltres={filtreBeneficiaires}
+                beneficiaires={beneficiairesTries}
                 page={page}
                 total={total}
               />
@@ -117,7 +130,7 @@ function TableauBeneficiaires(
 
             {!estMilo(conseiller) && (
               <TableauBeneficiairesPasMilo
-                beneficiairesFiltres={filtreBeneficiaires}
+                beneficiaires={beneficiairesTries}
                 page={page}
                 total={total}
               />
