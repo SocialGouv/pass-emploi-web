@@ -5,10 +5,10 @@ import { getServerSession } from 'next-auth'
 import LayoutWhenConnected, { generateMetadata } from 'app/(connected)/layout'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
+
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import { BeneficiaireFromListe, extractBaseBeneficiaire, extractBeneficiaireWithActivity } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -121,7 +121,7 @@ describe('LayoutWhenConnected', () => {
       expect(PortefeuilleProvider).toHaveBeenCalledWith(
         expect.objectContaining({
           portefeuille: [portefeuille[2], portefeuille[0], portefeuille[1]].map(
-            extractBaseBeneficiaire
+            extractBeneficiaireWithActivity
           ),
         }),
         undefined

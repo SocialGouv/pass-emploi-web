@@ -82,7 +82,7 @@ describe('EditionRdvPage client side', () => {
       typesRendezVous = typesEvenement()
 
       alerteSetter = jest.fn()
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       refresh = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
     })
@@ -1455,7 +1455,7 @@ describe('EditionRdvPage client side', () => {
       typesRendezVous = typesAnimationCollective()
 
       alerteSetter = jest.fn()
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       refresh = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
     })

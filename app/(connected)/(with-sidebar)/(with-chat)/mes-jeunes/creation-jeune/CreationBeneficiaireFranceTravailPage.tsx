@@ -38,7 +38,9 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
         email: nouveauBeneficiaire.email,
       })
 
-      setPortefeuille(portefeuille.concat(beneficiaireCree))
+      setPortefeuille(
+        portefeuille.concat({ ...beneficiaireCree, estAArchiver: false })
+      )
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
     } catch (error) {

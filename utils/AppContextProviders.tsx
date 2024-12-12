@@ -4,10 +4,10 @@ import { apm } from '@elastic/apm-rum'
 import { ThemeProvider } from 'next-themes'
 import React, { ReactNode } from 'react'
 
-import { extractBaseBeneficiaire } from 'fixtures/beneficiaire'
 import {
   BeneficiaireFromListe,
   compareBeneficiairesByNom,
+  extractBeneficiaireWithActivity,
 } from 'interfaces/beneficiaire'
 import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 import { ActualitesProvider } from 'utils/actualitesContext'
@@ -31,7 +31,7 @@ export default function AppContextProviders({
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
-    .map(extractBaseBeneficiaire)
+    .map(extractBeneficiaireWithActivity)
     .sort(compareBeneficiairesByNom)
 
   const theme = estPassEmploi(conseiller) ? 'darker' : 'neutral'

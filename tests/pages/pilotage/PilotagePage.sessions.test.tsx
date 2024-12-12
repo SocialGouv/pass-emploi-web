@@ -2,16 +2,12 @@ import { act, screen, within } from '@testing-library/react'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
-import React from 'react'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories } from 'fixtures/action'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  getSessionsACloreServerSide,
-  SessionsAClore,
-} from 'services/sessions.service'
+import { getSessionsACloreServerSide } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 

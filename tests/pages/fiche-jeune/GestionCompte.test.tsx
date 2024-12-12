@@ -10,11 +10,14 @@ import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  DetailBeneficiaire,
+  extractBeneficiaireWithActivity,
+  Portefeuille,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -36,16 +39,16 @@ describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionBeneficiaire[]
 
   let alerteSetter: jest.Mock
-  let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+  let portefeuilleSetter: (updatedBeneficiaires: Portefeuille) => void
   let push: jest.Mock
-  let portefeuille: BaseBeneficiaire[]
+  let portefeuille: Portefeuille
 
   beforeEach(async () => {
     push = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
-    portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+    portefeuille = desItemsBeneficiaires().map(extractBeneficiaireWithActivity)
 
     motifsSuppression = desMotifsDeSuppression()
     ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
@@ -352,7 +355,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
 async function renderFicheBeneficiaire(
   beneficiaire: DetailBeneficiaire,
-  portefeuilleSetter?: (updatedBeneficiaires: BaseBeneficiaire[]) => void,
+  portefeuilleSetter?: (updatedBeneficiaires: Portefeuille) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
   await act(async () => {

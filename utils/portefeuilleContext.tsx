@@ -2,11 +2,11 @@
 
 import { createContext, ReactNode, useContext, useState } from 'react'
 
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { Portefeuille } from 'interfaces/beneficiaire'
 
 type PortefeuilleState = [
-  BaseBeneficiaire[],
-  (updatedBeneficiaires: BaseBeneficiaire[]) => void,
+  Portefeuille,
+  (updatedBeneficiaires: Portefeuille) => void,
 ]
 
 const PortefeuilleContext = createContext<PortefeuilleState | undefined>(
@@ -19,10 +19,10 @@ export function PortefeuilleProvider({
   setterForTests,
 }: {
   children: ReactNode
-  portefeuille: BaseBeneficiaire[]
-  setterForTests?: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+  portefeuille: Portefeuille
+  setterForTests?: (updatedBeneficiaires: Portefeuille) => void
 }) {
-  const [state, setPortefeuille] = useState<BaseBeneficiaire[]>(portefeuille)
+  const [state, setPortefeuille] = useState<Portefeuille>(portefeuille)
   const setter = setterForTests ?? setPortefeuille
 
   return (
