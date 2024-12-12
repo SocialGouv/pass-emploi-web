@@ -353,7 +353,7 @@ describe('ProfilPage client side', () => {
         ;(
           getBeneficiairesDuConseillerClientSide as jest.Mock
         ).mockResolvedValue([])
-        push = jest.fn(() => Promise.resolve())
+        push = jest.fn()
         ;(useRouter as jest.Mock).mockReturnValue({ push })
 
         // When

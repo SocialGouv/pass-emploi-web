@@ -59,7 +59,9 @@ function CreationBeneficiaireMiloPage() {
         surcharge
       )
 
-      setPortefeuille(portefeuille.concat(beneficiaireCree))
+      setPortefeuille(
+        portefeuille.concat({ ...beneficiaireCree, estAArchiver: false })
+      )
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
       router.refresh()

@@ -34,7 +34,7 @@ describe('EnvoiMessageGroupePage client side', () => {
   let push: Function
   beforeEach(async () => {
     alerteSetter = jest.fn()
-    push = jest.fn(() => Promise.resolve())
+    push = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({ push })
 
     beneficiaires = desItemsBeneficiaires()
@@ -250,7 +250,7 @@ describe('EnvoiMessageGroupePage client side', () => {
     let newMessage: string
     let file: File
     beforeEach(async () => {
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
       ;(uploadFichier as jest.Mock).mockResolvedValue({
         id: 'id-fichier',

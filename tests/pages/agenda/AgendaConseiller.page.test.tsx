@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -114,8 +115,13 @@ describe('Agenda - Onglet conseiller', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
-      expect(results).toHaveNoViolations()
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results!).toHaveNoViolations()
     })
 
     it('a deux boutons de navigation', () => {
