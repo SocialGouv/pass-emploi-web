@@ -44,6 +44,11 @@ export default function NavLinks({
   const [portefeuille] = usePortefeuille()
   const actualites = useActualites()
 
+  const nombreBeneficiairesAArchiver = portefeuille.reduce(
+    (count, beneficiaire) => count + Number(beneficiaire.estAArchiver),
+    0
+  )
+
   const [afficherActualiteModal, setAfficherActualiteModal] =
     useState<boolean>(false)
 
@@ -140,6 +145,11 @@ export default function NavLinks({
             href='/pilotage'
             isActive={isCurrentRoute('/pilotage')}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            badgeLabel={
+              nombreBeneficiairesAArchiver > 0
+                ? 'Des actions requièrent votre attention'
+                : undefined
+            }
           />
         )}
 
@@ -211,7 +221,7 @@ export default function NavLinks({
                   conseiller,
                   actualites.dateDerniereModification
                 )
-                  ? '!'
+                  ? 'De nouvelles actualités sont disponibles'
                   : undefined
               }
             />
