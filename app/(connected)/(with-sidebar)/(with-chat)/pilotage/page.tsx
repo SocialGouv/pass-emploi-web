@@ -73,6 +73,9 @@ export default async function Pilotage({
     case 'sessionsImilo':
       onglet = 'SESSIONS_IMILO'
       break
+    case 'archivage':
+      onglet = 'ARCHIVAGE'
+      break
   }
 
   return (
