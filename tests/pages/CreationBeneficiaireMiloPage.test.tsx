@@ -6,11 +6,14 @@ import { useRouter } from 'next/navigation'
 import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
+  unBeneficiaireWithActivity,
   uneBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unDossierMilo } from 'fixtures/milo'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  extractBeneficiaireWithActivity,
+  Portefeuille,
+} from 'interfaces/beneficiaire'
 import {
   createCompteJeuneMilo,
   getDossierJeune,
@@ -70,12 +73,14 @@ describe('CreationBeneficiaireMiloPage client side', () => {
   })
 
   describe('quand on a recherché un dossier', () => {
-    let push: Function
-    let refresh: Function
+    let push: () => void
+    let refresh: () => void
     let setAlerte: () => void
-    let setPortefeuille: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+    let setPortefeuille: (updatedBeneficiaires: Portefeuille) => void
     const dossier = unDossierMilo()
-    const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+    const portefeuille = desItemsBeneficiaires().map(
+      extractBeneficiaireWithActivity
+    )
     beforeEach(async () => {
       // Given
       ;(getDossierJeune as jest.Mock).mockResolvedValue(dossier)
@@ -83,7 +88,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         uneBaseBeneficiaire()
       )
 
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       refresh = jest.fn()
       setAlerte = jest.fn()
       setPortefeuille = jest.fn()
@@ -138,7 +143,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseBeneficiaire(),
+        unBeneficiaireWithActivity(),
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',

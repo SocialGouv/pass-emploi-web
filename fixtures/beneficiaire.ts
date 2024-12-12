@@ -5,6 +5,7 @@ import {
   BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireEtChat,
   BeneficiaireFromListe,
+  BeneficiaireWithActivity,
   CategorieSituation,
   Chat,
   ConseillerHistorique,
@@ -31,6 +32,16 @@ export const uneBaseBeneficiaire = (
     id: 'beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const unBeneficiaireWithActivity = (
+  overrides: Partial<BeneficiaireWithActivity> = {}
+): BeneficiaireWithActivity => {
+  const defaults: BeneficiaireWithActivity = {
+    ...uneBaseBeneficiaire(),
+    estAArchiver: false,
   }
   return { ...defaults, ...overrides }
 }
@@ -103,10 +114,9 @@ export const unItemBeneficiaire = (
   overrides: Partial<BeneficiaireFromListe> = {}
 ): BeneficiaireFromListe => {
   const defaults: BeneficiaireFromListe = {
-    ...uneBaseBeneficiaire(),
+    ...unBeneficiaireWithActivity({ lastActivity: '2021-12-07T17:30:07.756Z' }),
     isActivated: true,
     isReaffectationTemporaire: false,
-    lastActivity: '2021-12-07T17:30:07.756Z',
     situationCourante: CategorieSituation.SANS_SITUATION,
   }
   return { ...defaults, ...overrides }
@@ -167,6 +177,7 @@ export const unItemBeneficiaireJson = (
     id: 'beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
+    estAArchiver: false,
     isActivated: true,
     isReaffectationTemporaire: false,
     lastActivity: '2021-12-07T17:30:07.756Z',
@@ -310,12 +321,6 @@ export const desConseillersBeneficiaireJson =
       date: conseiller.depuis,
     }))
   }
-
-export function extractBaseBeneficiaire(
-  base: BaseBeneficiaire
-): BaseBeneficiaire {
-  return { id: base.id, nom: base.nom, prenom: base.prenom }
-}
 
 export const desIndicateursSemaineJson = (
   overrides: Partial<IndicateursSemaineJson> = {}

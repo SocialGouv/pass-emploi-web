@@ -1,16 +1,18 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
-import { Mock } from 'jest-mock'
 import { useRouter } from 'next/navigation'
 
 import CreationBeneficiaireFranceTravailPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
+  unBeneficiaireWithActivity,
   uneBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  extractBeneficiaireWithActivity,
+  Portefeuille,
+} from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeuneFranceTravail } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -21,17 +23,17 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
   let container: HTMLElement
   let submitButton: HTMLElement
 
-  let push: Function
+  let push: () => void
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
-  let portefeuille: BaseBeneficiaire[]
+  let portefeuilleSetter: (updatedBeneficiaires: Portefeuille) => void
+  let portefeuille: Portefeuille
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
-    push = jest.fn(() => Promise.resolve())
+    push = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
-    portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+    portefeuille = desItemsBeneficiaires().map(extractBeneficiaireWithActivity)
     ;({ container } = renderWithContexts(
       <CreationBeneficiaireFranceTravailPage />,
       {
@@ -139,7 +141,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
     it('a11y', async () => {
       // Given
-      ;(createCompteJeuneFranceTravail as Mock<any>).mockResolvedValue(
+      ;(createCompteJeuneFranceTravail as jest.Mock).mockResolvedValue(
         uneBaseBeneficiaire()
       )
 
@@ -153,7 +155,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // Given
-      ;(createCompteJeuneFranceTravail as Mock<any>).mockResolvedValue(
+      ;(createCompteJeuneFranceTravail as jest.Mock).mockResolvedValue(
         uneBaseBeneficiaire()
       )
 
@@ -170,7 +172,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
       expect(portefeuilleSetter).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseBeneficiaire(),
+        unBeneficiaireWithActivity(),
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',
@@ -181,7 +183,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
-      ;(createCompteJeuneFranceTravail as Mock<any>).mockRejectedValue({
+      ;(createCompteJeuneFranceTravail as jest.Mock).mockRejectedValue({
         message: "un message d'erreur",
       })
 

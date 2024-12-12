@@ -5,11 +5,10 @@ import React from 'react'
 import ChatContainer from 'components/chat/ChatContainer'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, BeneficiaireEtChat, extractBaseBeneficiaire } from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'

@@ -5,12 +5,11 @@ import React from 'react'
 import MessageriePage from 'app/(connected)/(with-sidebar)/messagerie/MessageriePage'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import { BaseBeneficiaire, BeneficiaireEtChat, extractBaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'

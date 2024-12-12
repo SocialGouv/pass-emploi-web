@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
-import { compareDates, compareDatesDesc } from 'utils/date'
 
 export enum EtatSituation {
   EN_COURS = 'en cours',
@@ -21,16 +20,23 @@ export enum CategorieSituation {
   SANS_SITUATION = 'Sans situation',
 }
 
-export interface BaseBeneficiaire {
+export type Portefeuille = BeneficiaireWithActivity[]
+
+export type BaseBeneficiaire = {
   id: string
   prenom: string
   nom: string
 }
 
-export interface BeneficiaireFromListe extends BaseBeneficiaire {
+export type BeneficiaireWithActivity = BaseBeneficiaire & {
+  estAArchiver: boolean
+  lastActivity?: string
+  dateFinCEJ?: string
+}
+
+export type BeneficiaireFromListe = BeneficiaireWithActivity & {
   isActivated: boolean
   isReaffectationTemporaire: boolean
-  lastActivity?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string
@@ -38,10 +44,9 @@ export interface BeneficiaireFromListe extends BaseBeneficiaire {
   }
   situationCourante: CategorieSituation
   structureMilo?: { id: string }
-  dateFinCEJ?: string
 }
 
-export interface DetailBeneficiaire extends BaseBeneficiaire {
+export type DetailBeneficiaire = BaseBeneficiaire & {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
@@ -60,7 +65,7 @@ export interface DetailBeneficiaire extends BaseBeneficiaire {
   structureMilo?: { id: string }
 }
 
-export interface MetadonneesFavoris {
+export type MetadonneesFavoris = {
   autoriseLePartage: boolean
   offres: {
     total: number
@@ -95,7 +100,7 @@ export type BeneficiaireEtablissement = {
   dateDerniereActivite?: string
 }
 
-export interface Chat {
+export type Chat = {
   chatId: string
   seenByConseiller: boolean
   flaggedByConseiller: boolean
@@ -110,7 +115,7 @@ export interface Chat {
 
 export type BeneficiaireEtChat = BaseBeneficiaire & Chat
 
-export interface DossierMilo {
+export type DossierMilo = {
   id: string
   prenom: string
   nom: string
@@ -119,7 +124,7 @@ export interface DossierMilo {
   email?: string
 }
 
-export interface ConseillerHistorique {
+export type ConseillerHistorique = {
   id: string
   nom: string
   prenom: string
@@ -163,13 +168,6 @@ export function compareBeneficiairesByNom(
   )
 }
 
-export function compareBeneficiairesByLastNameDesc(
-  beneficiaire1: BaseBeneficiaire,
-  beneficiaire2: BaseBeneficiaire
-): number {
-  return -compareBeneficiairesByNom(beneficiaire1, beneficiaire2)
-}
-
 export function compareBeneficiairesBySituation(
   beneficiaire1: BeneficiaireFromListe,
   beneficiaire2: BeneficiaireFromListe
@@ -177,13 +175,6 @@ export function compareBeneficiairesBySituation(
   return `${beneficiaire1.situationCourante}`.localeCompare(
     `${beneficiaire2.situationCourante}`
   )
-}
-
-export function compareBeneficiairesBySituationDesc(
-  beneficiaire1: BeneficiaireFromListe,
-  beneficiaire2: BeneficiaireFromListe
-): number {
-  return -compareBeneficiairesBySituation(beneficiaire1, beneficiaire2)
 }
 
 export function compareBeneficiaireChat(
@@ -195,34 +186,6 @@ export function compareBeneficiaireChat(
     comparerParConversationSuivie(a, b) ||
     comparerParDate(a, b)
   )
-}
-
-export function compareBeneficiairesByLastActivity(
-  beneficiaire1: BeneficiaireFromListe,
-  beneficiaire2: BeneficiaireFromListe,
-  sortStatutCompteActif: number
-) {
-  const date1 = beneficiaire1.lastActivity
-    ? DateTime.fromISO(beneficiaire1.lastActivity)
-    : undefined
-  const date2 = beneficiaire2.lastActivity
-    ? DateTime.fromISO(beneficiaire2.lastActivity)
-    : undefined
-  return compareDates(date1, date2) || sortStatutCompteActif
-}
-
-export function compareBeneficiairesByLastActivityDesc(
-  beneficiaire1: BeneficiaireFromListe,
-  beneficiaire2: BeneficiaireFromListe,
-  sortStatutCompteActif: number
-) {
-  const date1 = beneficiaire1.lastActivity
-    ? DateTime.fromISO(beneficiaire1.lastActivity)
-    : undefined
-  const date2 = beneficiaire2.lastActivity
-    ? DateTime.fromISO(beneficiaire2.lastActivity)
-    : undefined
-  return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
 export function getNomBeneficiaireComplet(
@@ -264,4 +227,21 @@ function comparerParDate(a: BeneficiaireEtChat, b: BeneficiaireEtChat): number {
     return 1
   }
   return 0
+}
+
+export function extractBaseBeneficiaire(
+  base: BaseBeneficiaire
+): BaseBeneficiaire {
+  return { id: base.id, nom: base.nom, prenom: base.prenom }
+}
+
+export function extractBeneficiaireWithActivity(
+  beneficiaire: BeneficiaireWithActivity
+): BeneficiaireWithActivity {
+  return {
+    ...extractBaseBeneficiaire(beneficiaire),
+    estAArchiver: beneficiaire.estAArchiver,
+    lastActivity: beneficiaire.lastActivity,
+    dateFinCEJ: beneficiaire.dateFinCEJ,
+  }
 }
