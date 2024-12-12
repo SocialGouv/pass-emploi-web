@@ -95,7 +95,7 @@ function TableauBeneficiaires(
                 !triDerniereActiviteChronologique
               )
             }}
-            className='flex float-right mt-8 mb-8 text-m-regular text-right text-grey_800'
+            className='flex float-right mt-4 mb-4 text-s-regular text-right'
             title={
               triDerniereActiviteChronologique
                 ? 'Trier par dernière activité ordre antichronologique'
