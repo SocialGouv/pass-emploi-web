@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { BaseBeneficiaire } from '../../../../../interfaces/beneficiaire'
+
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -29,11 +31,18 @@ const OngletAnimationsCollectivesPilotage = dynamic(
 const OngletSessionsImiloPilotage = dynamic(
   () => import('components/pilotage/OngletSessionsImiloPilotage')
 )
+const OngletBeneficiairesAArchiverPilotage = dynamic(
+  () => import('components/pilotage/OngletBeneficiairesAArchiverPilotage')
+)
 const EncartAgenceRequise = dynamic(
   () => import('components/EncartAgenceRequise')
 )
 
-export type Onglet = 'ACTIONS' | 'ANIMATIONS_COLLECTIVES' | 'SESSIONS_IMILO'
+export type Onglet =
+  | 'ACTIONS'
+  | 'ANIMATIONS_COLLECTIVES'
+  | 'SESSIONS_IMILO'
+  | 'ARCHIVAGE'
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -46,6 +55,10 @@ const ongletProps: {
   SESSIONS_IMILO: {
     queryParam: 'sessionsImilo',
     trackingLabel: 'Sessions i-milo',
+  },
+  ARCHIVAGE: {
+    queryParam: 'archivage',
+    trackingLabel: 'Archivage bénéficiaire',
   },
 }
 
@@ -86,6 +99,12 @@ function PilotagePage({
         }
       | undefined
     >(animationsCollectives)
+
+  const beneficiairesAArchiver = portefeuille.filter(
+    (beneficiaire) => beneficiaire.estAArchiver
+  )
+  const nbBeneficiairesAArchiver = beneficiairesAArchiver.length
+  const aDesBeneficiairesAArchiver = nbBeneficiairesAArchiver > 0
 
   const pageTracking = 'Pilotage'
   const [trackingLabel, setTrackingLabel] = useState<string>(
@@ -215,6 +234,17 @@ function PilotagePage({
               )}
             </>
           )}
+          {aDesBeneficiairesAArchiver && (
+            <div>
+              <dt className='text-base-bold'>Bénéficiaires</dt>
+              <dd
+                className={`mt-2 rounded-base px-3 py-2 ${aDesBeneficiairesAArchiver ? 'bg-warning_lighten text-warning' : 'bg-primary_lighten text-primary_darken'}`}
+              >
+                <div className='text-xl-bold'>{nbBeneficiairesAArchiver}</div>
+                <span className='text-base-bold'> À archiver</span>
+              </dd>
+            </div>
+          )}
         </dl>
       </div>
 
@@ -243,6 +273,17 @@ function PilotagePage({
             selected={currentTab === 'SESSIONS_IMILO'}
             controls='liste-sessions-i-milo-a-clore'
             onSelectTab={() => switchTab('SESSIONS_IMILO')}
+            iconName={IconName.EventFill}
+          />
+        )}
+        {aDesBeneficiairesAArchiver && (
+          <Tab
+            label='Archivage'
+            ariaLabel='Archivage des bénéficiaires'
+            count={nbBeneficiairesAArchiver}
+            selected={currentTab === 'ARCHIVAGE'}
+            controls='liste-beneficiaires-a-archiver'
+            onSelectTab={() => switchTab('ARCHIVAGE')}
             iconName={IconName.EventFill}
           />
         )}
@@ -308,6 +349,20 @@ function PilotagePage({
             {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
           </div>
         )}
+
+      {currentTab === 'ARCHIVAGE' && aDesBeneficiairesAArchiver && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-beneficiaires-a-archiver--tab'
+          tabIndex={0}
+          id='liste-beneficiaires-a-archiver'
+          className='mt-8 pb-8 border-b border-primary_lighten'
+        >
+          <OngletBeneficiairesAArchiverPilotage
+            beneficiaires={beneficiairesAArchiver}
+          />
+        </div>
+      )}
     </>
   )
 }
