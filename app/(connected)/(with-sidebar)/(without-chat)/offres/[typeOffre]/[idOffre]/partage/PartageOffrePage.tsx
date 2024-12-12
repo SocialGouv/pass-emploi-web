@@ -2,7 +2,7 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, ReactElement, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -95,7 +95,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
     }
   }
 
-  function getCardOffre(): JSX.Element {
+  function OffreCard(): ReactElement {
     switch (offre.type) {
       case TypeOffre.EMPLOI:
       case TypeOffre.ALTERNANCE:
@@ -111,7 +111,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
 
   return (
     <>
-      {getCardOffre()}
+      <OffreCard />
 
       <form onSubmit={partager} noValidate={true} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>

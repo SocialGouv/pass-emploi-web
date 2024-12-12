@@ -40,7 +40,7 @@ describe('Reaffectation', () => {
       render(await Reaffectation())
 
       // Then
-      expect(ReaffectationPage).toHaveBeenCalledWith({}, {})
+      expect(ReaffectationPage).toHaveBeenCalledWith({}, undefined)
     })
   })
 })

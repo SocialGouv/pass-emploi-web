@@ -40,8 +40,10 @@ describe('OffrePage server side', () => {
 
       // When
       const params = { typeOffre: 'emploi', idOffre: 'id-offre' }
-      const metadata = await generateMetadata({ params })
-      render(await Offre({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await Offre({ params: Promise.resolve(params) }))
 
       // Then
       expect(getOffreEmploiServerSide).toHaveBeenCalledWith(
@@ -55,7 +57,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailEmploi,
         },
-        {}
+        undefined
       )
     })
 
@@ -65,7 +67,7 @@ describe('OffrePage server side', () => {
 
       // When
       const promise = Offre({
-        params: { typeOffre: 'emploi', idOffre: 'offre-id' },
+        params: Promise.resolve({ typeOffre: 'emploi', idOffre: 'offre-id' }),
       })
 
       // Then
@@ -82,8 +84,10 @@ describe('OffrePage server side', () => {
 
       // When
       const params = { typeOffre: 'immersion', idOffre: 'id-offre' }
-      const metadata = await generateMetadata({ params })
-      render(await Offre({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await Offre({ params: Promise.resolve(params) }))
 
       // Then
       expect(getImmersionServerSide).toHaveBeenCalledWith(
@@ -98,7 +102,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailImmersion,
         },
-        {}
+        undefined
       )
     })
 
@@ -108,7 +112,10 @@ describe('OffrePage server side', () => {
 
       // When
       const promise = Offre({
-        params: { typeOffre: 'immersion', idOffre: 'offre-id' },
+        params: Promise.resolve({
+          typeOffre: 'immersion',
+          idOffre: 'offre-id',
+        }),
       })
 
       // Then
@@ -127,8 +134,10 @@ describe('OffrePage server side', () => {
 
       // When
       const params = { typeOffre: 'service-civique', idOffre: 'id-offre' }
-      const metadata = await generateMetadata({ params })
-      render(await Offre({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await Offre({ params: Promise.resolve(params) }))
 
       // Then
       expect(getServiceCiviqueServerSide).toHaveBeenCalledWith(
@@ -142,7 +151,7 @@ describe('OffrePage server side', () => {
         {
           offre: detailServiceCivique,
         },
-        {}
+        undefined
       )
     })
 
@@ -152,7 +161,10 @@ describe('OffrePage server side', () => {
 
       // When
       const promise = Offre({
-        params: { typeOffre: 'service-civique', idOffre: 'offre-id' },
+        params: Promise.resolve({
+          typeOffre: 'service-civique',
+          idOffre: 'offre-id',
+        }),
       })
 
       // Then

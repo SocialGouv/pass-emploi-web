@@ -587,7 +587,7 @@ export function EditionRdvForm({
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (codeTypeRendezVous.error)
       erreurs.push({
         ancre: '#typeEvenement',
@@ -663,7 +663,6 @@ export function EditionRdvForm({
     })
   }
 
-  // @ts-ignore
   return (
     <>
       <RecapitulatifErreursFormulaire
@@ -841,7 +840,7 @@ export function EditionRdvForm({
             error={idsJeunes.error}
             required={!evenementTypeAC}
             disabled={lectureSeule}
-            renderIndication={
+            Indication={
               evenement && estClos(evenement)
                 ? BeneficiaireIndicationPresent
                 : BeneficiaireIndicationPortefeuille
@@ -1088,12 +1087,4 @@ function buildOptionTypeDeLevenement(evenement: Evenement) {
       {evenement.type.label}
     </option>,
   ]
-}
-
-function dureeFromMinutes(duration?: number): string | undefined {
-  if (!duration) return
-
-  const hours = Math.floor(duration / 60)
-  const minutes = duration % 60
-  return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0')
 }

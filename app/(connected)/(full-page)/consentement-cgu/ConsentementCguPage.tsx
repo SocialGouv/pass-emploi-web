@@ -55,7 +55,7 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
       try {
         await modifierDateSignatureCGU(DateTime.now())
         router.push(returnTo)
-      } catch (e) {
+      } catch {
         setShowErrorValidation(true)
       }
     }

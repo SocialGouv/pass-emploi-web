@@ -32,7 +32,7 @@ describe('QualificationPage server side', () => {
 
       // When
       const promise = Qualification({
-        params: { idAction: 'id-action' },
+        params: Promise.resolve({ idAction: 'id-action' }),
       })
 
       // Then
@@ -55,7 +55,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { idAction: 'id-action' },
+          params: Promise.resolve({ idAction: 'id-action' }),
         })
 
         // Then
@@ -77,7 +77,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { idAction: 'id-action' },
+          params: Promise.resolve({ idAction: 'id-action' }),
         })
 
         // Then
@@ -106,7 +106,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { idAction: 'id-action' },
+          params: Promise.resolve({ idAction: 'id-action' }),
         })
 
         // Then
@@ -121,7 +121,7 @@ describe('QualificationPage server side', () => {
         const action = uneAction({ status: StatutAction.Terminee })
         const beneficiaire = uneBaseBeneficiaire()
         const situationsNonProfessionnelles = desCategoriesAvecNONSNP()
-        const params = { idAction: 'id-action' }
+        const params = Promise.resolve({ idAction: 'id-action' })
         ;(getAction as jest.Mock).mockResolvedValue({
           action,
           jeune: beneficiaire,
@@ -134,8 +134,8 @@ describe('QualificationPage server side', () => {
         const metadata = await generateMetadata({ params })
         render(
           await Qualification({
-            params: { idAction: action.id },
-            searchParams: { liste: 'pilotage' },
+            params: Promise.resolve({ idAction: action.id }),
+            searchParams: Promise.resolve({ liste: 'pilotage' }),
           })
         )
 
@@ -157,7 +157,7 @@ describe('QualificationPage server side', () => {
             ),
             returnToListe: '/pilotage',
           },
-          {}
+          undefined
         )
       })
     })

@@ -42,8 +42,7 @@ type StructureReaffectation =
   | StructureConseiller.POLE_EMPLOI_AIJ
 
 const ConseillerIntrouvableSuggestionModal = dynamic(
-  () => import('components/ConseillerIntrouvableSuggestionModal'),
-  { ssr: false }
+  () => import('components/ConseillerIntrouvableSuggestionModal')
 )
 
 type ReaffectationProps = {
@@ -306,7 +305,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
       resetAll()
       setAlerte(AlerteParam.reaffectation)
       setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
-    } catch (erreur) {
+    } catch {
       setErreurReaffectation(
         'Suite à un problème inconnu la réaffectation a échoué. Vous pouvez réessayer.'
       )
@@ -317,7 +316,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (isReaffectationTemporaire.error)
       erreurs.push({
         ancre: '#structure-reaffectation--CEJ',

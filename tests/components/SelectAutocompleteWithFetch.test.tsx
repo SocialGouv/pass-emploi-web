@@ -15,7 +15,6 @@ describe('SelectAutocompleteWithFetch', () => {
   const getOptions = () => screen.getByRole('listbox', { hidden: true })
   const getSelect = () =>
     screen.getByRole('combobox', { name: 'Label autocomplete' })
-  const callInitComponent = 1
 
   beforeEach(() => {
     // Given
@@ -102,9 +101,7 @@ describe('SelectAutocompleteWithFetch', () => {
         await userEvent.type(getSelect(), 'pouet')
 
         // Then
-        expect(onUpdateSelected).toHaveBeenCalledTimes(
-          callInitComponent + 'pouet'.length
-        )
+        expect(onUpdateSelected).toHaveBeenCalledTimes('pouet'.length)
         expect(onUpdateSelected).toHaveBeenCalledWith({ hasError: true })
       })
 
@@ -114,9 +111,7 @@ describe('SelectAutocompleteWithFetch', () => {
         await userEvent.clear(getSelect())
 
         // Then
-        expect(onUpdateSelected).toHaveBeenCalledTimes(
-          callInitComponent + 'pouet'.length + 1
-        )
+        expect(onUpdateSelected).toHaveBeenCalledTimes('pouet'.length + 1)
         expect(onUpdateSelected).toHaveBeenLastCalledWith({ hasError: false })
       })
     })
@@ -129,7 +124,7 @@ describe('SelectAutocompleteWithFetch', () => {
 
         // Then
         expect(onUpdateSelected).toHaveBeenCalledTimes(
-          callInitComponent + 'valeur-avec-tiret'.length + 1
+          'valeur-avec-tiret'.length + 1
         )
         expect(onUpdateSelected).toHaveBeenLastCalledWith({
           selected: {
@@ -146,9 +141,7 @@ describe('SelectAutocompleteWithFetch', () => {
         await waitForDebounce(500)
 
         // Then
-        expect(onUpdateSelected).toHaveBeenCalledTimes(
-          callInitComponent + 'valeu'.length + 1
-        )
+        expect(onUpdateSelected).toHaveBeenCalledTimes('valeu'.length + 1)
         expect(onUpdateSelected).toHaveBeenLastCalledWith({
           selected: undefined,
           hasError: true,

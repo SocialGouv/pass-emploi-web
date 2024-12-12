@@ -29,7 +29,7 @@ describe('ProfilPage server side', () => {
 
       // Then
       expect(getAgencesServerSide).not.toHaveBeenCalled()
-      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, {})
+      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, undefined)
     })
   })
 
@@ -45,7 +45,7 @@ describe('ProfilPage server side', () => {
       await renderPageForConseiller(conseiller)
 
       // Then
-      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, {})
+      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, undefined)
     })
   })
 
@@ -60,7 +60,7 @@ describe('ProfilPage server side', () => {
       // Then
       expect(ProfilPage).toHaveBeenCalledWith(
         { referentielAgences: uneListeDAgencesMILO() },
-        {}
+        undefined
       )
     })
   })

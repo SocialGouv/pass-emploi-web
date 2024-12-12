@@ -34,8 +34,7 @@ import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteListeDiffusionModal = dynamic(
-  () => import('components/ConfirmationDeleteListeDiffusionModal'),
-  { ssr: false }
+  () => import('components/ConfirmationDeleteListeDiffusionModal')
 )
 
 type EditionListeDiffusionProps = {
@@ -199,7 +198,7 @@ function EditionListeDiffusionPage({
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (titre.error)
       erreurs.push({
         ancre: '#titre-liste',
@@ -282,7 +281,7 @@ function EditionListeDiffusionPage({
           defaultBeneficiaires={defaultBeneficiaires}
           required={true}
           error={idsBeneficiaires.error}
-          renderIndication={BeneficiaireIndicationReaffectaction}
+          Indication={BeneficiaireIndicationReaffectaction}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>

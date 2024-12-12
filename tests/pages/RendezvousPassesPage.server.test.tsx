@@ -38,8 +38,10 @@ describe('RendezVousPassesPage server side', () => {
 
       // When
       const params = { idJeune: 'id-jeune' }
-      const metadata = await generateMetadata({ params })
-      render(await RendezVousPasses({ params }))
+      const metadata = await generateMetadata({
+        params: Promise.resolve(params),
+      })
+      render(await RendezVousPasses({ params: Promise.resolve(params) }))
 
       // Then
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
@@ -55,7 +57,7 @@ describe('RendezVousPassesPage server side', () => {
           rdvs: [unEvenementListItem()],
           lectureSeule: false,
         },
-        {}
+        undefined
       )
     })
   })
@@ -68,13 +70,17 @@ describe('RendezVousPassesPage server side', () => {
       })
 
       // When
-      render(await RendezVousPasses({ params: { idJeune: 'id-jeune' } }))
+      render(
+        await RendezVousPasses({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+        })
+      )
 
       // Then
       expect(getRendezVousJeune).not.toHaveBeenCalled()
       expect(RendezVousPassesPage).toHaveBeenCalledWith(
         expect.objectContaining({ rdvs: [] }),
-        {}
+        undefined
       )
     })
   })

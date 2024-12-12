@@ -35,8 +35,7 @@ import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const LeavePageConfirmationModal = dynamic(
-  () => import('components/LeavePageConfirmationModal'),
-  { ssr: false }
+  () => import('components/LeavePageConfirmationModal')
 )
 
 type EnvoiMessageGroupeProps = {
@@ -233,7 +232,7 @@ function EnvoiMessageGroupePage({
   }
 
   function getErreurs(): LigneErreur[] {
-    let erreurs = []
+    const erreurs = []
     if (selectionError)
       erreurs.push({
         ancre: '#select-beneficiaires',

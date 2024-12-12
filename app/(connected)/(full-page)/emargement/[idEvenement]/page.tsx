@@ -1,9 +1,11 @@
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
-import EmargementRdvPage from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
+import EmargementRdvPage, {
+  EmargementRdvPageProps,
+} from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { Conseiller, estUserMilo } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { Evenement } from 'interfaces/evenement'
 import { Session } from 'interfaces/session'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -11,74 +13,60 @@ import { getDetailsEvenement } from 'services/evenements.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type EmargementRdvParams = { idEvenement: string }
-type EmargementRdvSearchParams = { type: string }
-
-export async function generateMetadata({
-  params,
-  searchParams,
-}: {
+type EmargementRdvParams = Promise<{ idEvenement: string }>
+type EmargementRdvSearchParams = Promise<{ type: string }>
+type RouteProps = {
   params: EmargementRdvParams
-  searchParams: EmargementRdvSearchParams
-}): Promise<Metadata> {
-  const evenementTypeSession = searchParams.type === 'session'
-  if (!params?.idEvenement) notFound()
-
-  const props = await buildProps(params.idEvenement, evenementTypeSession)
-
-  const titre = evenementTypeSession
-    ? (props.evenement as Session).session.nom
-    : (props.evenement as Evenement).titre
-
-  return {
-    title: `Emargement - ${titre}`,
-  }
+  searchParams?: EmargementRdvSearchParams
 }
 
-export default async function EmargementRdv({
-  params,
-  searchParams,
-}: {
-  params?: EmargementRdvParams
-  searchParams: EmargementRdvSearchParams
-}) {
-  const evenementTypeSession = searchParams.type === 'session'
-  if (!params?.idEvenement) notFound()
+export async function generateMetadata(
+  routeProps: RouteProps
+): Promise<Metadata> {
+  const { titre } = await buildProps(routeProps)
 
-  const props = await buildProps(params.idEvenement, evenementTypeSession)
+  return { title: titre }
+}
 
-  const titre = evenementTypeSession
-    ? (props.evenement as Session).session.nom
-    : (props.evenement as Evenement).titre
+export default async function EmargementRdv(routeProps: RouteProps) {
+  const { titre, ...props } = await buildProps(routeProps)
 
   return (
     <>
-      <PageHeaderPortal header={`Emargement - ${titre}`} />
+      <PageHeaderPortal header={titre} />
 
-      <EmargementRdvPage
-        evenement={props.evenement}
-        agence={props.conseiller.structureMilo?.nom}
-      />
+      <EmargementRdvPage {...props} />
     </>
   )
 }
 
-async function buildProps(
-  idEvenement: string,
-  evenementSession: boolean
-): Promise<{
-  evenement: Evenement | Session
-  conseiller: Conseiller
-}> {
+async function buildProps({
+  params,
+  searchParams,
+}: {
+  params: EmargementRdvParams
+  searchParams?: EmargementRdvSearchParams
+}): Promise<{ titre: string } & EmargementRdvPageProps> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) redirect('/mes-jeunes')
 
+  const { idEvenement } = await params
+  const { type } = (await searchParams) ?? {}
+  const isSession = type === 'session'
+
   const conseiller = await getConseillerServerSide(user, accessToken)
 
-  const evenement = evenementSession
+  const evenement = isSession
     ? await getDetailsSession(user.id, idEvenement, accessToken)
     : await getDetailsEvenement(idEvenement, accessToken)
   if (!evenement) notFound()
+  const titreEvenement = isSession
+    ? (evenement as Session).session.nom
+    : (evenement as Evenement).titre
 
-  return { evenement, conseiller }
+  return {
+    titre: 'Emargement - ' + titreEvenement,
+    evenement,
+    agence: conseiller.structureMilo?.nom,
+  }
 }

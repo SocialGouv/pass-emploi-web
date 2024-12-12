@@ -30,16 +30,12 @@ import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationUpdateRdvModal = dynamic(
-  () => import('components/ConfirmationUpdateRdvModal'),
-  { ssr: false }
+  () => import('components/ConfirmationUpdateRdvModal')
 )
 const LeavePageConfirmationModal = dynamic(
-  () => import('components/LeavePageConfirmationModal'),
-  { ssr: false }
+  () => import('components/LeavePageConfirmationModal')
 )
-const DeleteRdvModal = dynamic(() => import('components/rdv/DeleteRdvModal'), {
-  ssr: false,
-})
+const DeleteRdvModal = dynamic(() => import('components/rdv/DeleteRdvModal'))
 
 export type EditionRdvProps = {
   conseillerEstObservateur: boolean
@@ -197,7 +193,7 @@ function EditionRdvPage({
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
       router.push(returnTo)
-    } catch (e) {
+    } catch {
       setShowDeleteRdvError(true)
     }
   }

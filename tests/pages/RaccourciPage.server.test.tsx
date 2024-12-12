@@ -13,6 +13,6 @@ describe("Page Détail d'une action d'un jeune", () => {
     render(Raccourci())
 
     // Then
-    expect(RaccourciPage).toHaveBeenCalledWith({}, {})
+    expect(RaccourciPage).toHaveBeenCalledWith({}, undefined)
   })
 })

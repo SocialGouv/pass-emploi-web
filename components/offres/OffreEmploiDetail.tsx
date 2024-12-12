@@ -273,9 +273,7 @@ export default function OffreEmploiDetail({
           <section aria-labelledby='heading-entreprise' className='mt-6'>
             <h3 id='heading-entreprise' className={sectionTitleStyle}>
               <SectionTitleDot />
-              <span className='sr-only'>
-                Informations de l&apos;
-              </span>Entreprise
+              <span className='sr-only'>Informations de l&apos;</span>Entreprise
             </h3>
 
             <dl>
