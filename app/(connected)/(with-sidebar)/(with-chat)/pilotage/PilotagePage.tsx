@@ -56,7 +56,7 @@ const ongletProps: {
   },
   ARCHIVAGE: {
     queryParam: 'archivage',
-    trackingLabel: 'Archivage bénéficiaire',
+    trackingLabel: 'Archivage bénéficiaires',
   },
 }
 
@@ -192,6 +192,7 @@ function PilotagePage({
               <span className='text-base-bold'> À qualifier</span>
             </dd>
           </div>
+
           {conseiller.agence?.id && (
             <>
               <div>
@@ -232,17 +233,16 @@ function PilotagePage({
               )}
             </>
           )}
-          {aDesBeneficiairesAArchiver && (
-            <div>
-              <dt className='text-base-bold'>Bénéficiaires</dt>
-              <dd
-                className={`mt-2 rounded-base px-3 py-2 ${aDesBeneficiairesAArchiver ? 'bg-warning_lighten text-warning' : 'bg-primary_lighten text-primary_darken'}`}
-              >
-                <div className='text-xl-bold'>{nbBeneficiairesAArchiver}</div>
-                <span className='text-base-bold'> À archiver</span>
-              </dd>
-            </div>
-          )}
+
+          <div>
+            <dt className='text-base-bold'>Bénéficiaires</dt>
+            <dd
+              className={`mt-2 rounded-base px-3 py-2 ${aDesBeneficiairesAArchiver ? 'bg-warning_lighten text-warning' : 'bg-primary_lighten text-primary_darken'}`}
+            >
+              <div className='text-xl-bold'>{nbBeneficiairesAArchiver}</div>
+              <span className='text-base-bold'> À archiver</span>
+            </dd>
+          </div>
         </dl>
       </div>
 
@@ -274,17 +274,15 @@ function PilotagePage({
             iconName={IconName.EventFill}
           />
         )}
-        {aDesBeneficiairesAArchiver && (
-          <Tab
-            label='Archivage'
-            ariaLabel='Archivage des bénéficiaires'
-            count={nbBeneficiairesAArchiver}
-            selected={currentTab === 'ARCHIVAGE'}
-            controls='liste-beneficiaires-a-archiver'
-            onSelectTab={() => switchTab('ARCHIVAGE')}
-            iconName={IconName.EventFill}
-          />
-        )}
+        <Tab
+          label='Archivage des comptes'
+          count={nbBeneficiairesAArchiver}
+          selected={currentTab === 'ARCHIVAGE'}
+          controls='liste-beneficiaires-a-archiver'
+          onSelectTab={() => switchTab('ARCHIVAGE')}
+          iconName={IconName.Delete}
+          important={true}
+        />
       </TabList>
 
       {currentTab === 'ACTIONS' && (
@@ -348,7 +346,7 @@ function PilotagePage({
           </div>
         )}
 
-      {currentTab === 'ARCHIVAGE' && aDesBeneficiairesAArchiver && (
+      {currentTab === 'ARCHIVAGE' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-beneficiaires-a-archiver--tab'

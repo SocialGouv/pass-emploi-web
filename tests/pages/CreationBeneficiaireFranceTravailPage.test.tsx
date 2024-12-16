@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import CreationBeneficiaireFranceTravailPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
 import {
   desItemsBeneficiaires,
-  unBeneficiaireWithActivity,
   uneBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import {
@@ -172,7 +171,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
       expect(portefeuilleSetter).toHaveBeenCalledWith([
         ...portefeuille,
-        unBeneficiaireWithActivity(),
+        { ...uneBaseBeneficiaire(), isActivated: false, estAArchiver: false },
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',
