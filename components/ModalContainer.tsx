@@ -15,7 +15,7 @@ import styles from 'styles/components/Modal.module.css'
 
 export type ModalHandles = {
   focusClose: () => void
-  closeModal: (e: KeyboardEvent | MouseEvent) => void
+  closeModal: (e?: KeyboardEvent | MouseEvent) => void
 }
 export type ModalContainerProps = {
   onClose: () => void
@@ -68,8 +68,8 @@ function ModalContainer(
     }
   }
 
-  function handleClose(e: KeyboardEvent | MouseEvent) {
-    e.preventDefault()
+  function handleClose(e?: KeyboardEvent | MouseEvent) {
+    e?.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
     onClose()
   }

@@ -1,6 +1,7 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { ForwardedRef, forwardRef, useRef, useState } from 'react'
 
@@ -62,6 +63,7 @@ function CreationBeneficiaireMiloPage() {
       setPortefeuille(
         portefeuille.concat({
           ...beneficiaireCree,
+          creationDate: DateTime.now().toISO(),
           isActivated: false,
           estAArchiver: false,
         })

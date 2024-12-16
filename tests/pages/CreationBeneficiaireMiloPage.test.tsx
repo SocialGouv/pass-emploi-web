@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
 import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
@@ -80,8 +81,10 @@ describe('CreationBeneficiaireMiloPage client side', () => {
     const portefeuille = desItemsBeneficiaires().map(
       extractBeneficiaireWithActivity
     )
+    const now = DateTime.now()
     beforeEach(async () => {
       // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       ;(getDossierJeune as jest.Mock).mockResolvedValue(dossier)
       ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(
         uneBaseBeneficiaire()
@@ -142,7 +145,12 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
-        { ...uneBaseBeneficiaire(), isActivated: false, estAArchiver: false },
+        {
+          ...uneBaseBeneficiaire(),
+          creationDate: now.toISO(),
+          isActivated: false,
+          estAArchiver: false,
+        },
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',
