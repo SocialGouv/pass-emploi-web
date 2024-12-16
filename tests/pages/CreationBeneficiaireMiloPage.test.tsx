@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
 import {
   desItemsBeneficiaires,
-  unBeneficiaireWithActivity,
   uneBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unDossierMilo } from 'fixtures/milo'
@@ -143,7 +142,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
-        unBeneficiaireWithActivity(),
+        { ...uneBaseBeneficiaire(), isActivated: false, estAArchiver: false },
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',

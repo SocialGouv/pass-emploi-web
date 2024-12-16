@@ -7,6 +7,7 @@ export interface TabProps {
   controls: string
   selected: boolean
   onSelectTab: () => void
+  important?: boolean
   count?: number
   iconName?: IconName
   ariaLabel?: string
@@ -20,7 +21,10 @@ export default function Tab({
   count,
   iconName,
   ariaLabel,
+  important,
 }: TabProps) {
+  const accentuer = important && count && count > 0
+
   return (
     <li role='presentation'>
       <button
@@ -54,8 +58,8 @@ export default function Tab({
             <span className='sr-only'> </span>
             <Badge
               count={count}
-              textColor='primary'
-              bgColor='primary_lighten'
+              textColor={accentuer ? 'white' : 'primary'}
+              bgColor={accentuer ? 'warning' : 'primary_lighten'}
               style='ml-4'
               size={6}
             />

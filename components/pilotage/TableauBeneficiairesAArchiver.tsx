@@ -1,18 +1,17 @@
 import { DateTime } from 'luxon'
 
-import {
-  BeneficiaireWithActivity,
-  getNomBeneficiaireComplet,
-} from '../../interfaces/beneficiaire'
-import { TagDate } from '../ui/Indicateurs/Tag'
-
+import { TagDate } from 'components/ui/Indicateurs/Tag'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
+import {
+  BeneficiaireWithActivity,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
 
-interface TableauBeneficiairesAArchiverProps {
+type TableauBeneficiairesAArchiverProps = {
   beneficiaires: BeneficiaireWithActivity[]
 }
 
@@ -38,10 +37,7 @@ export default function TableauBeneficiairesAArchiver({
           <tbody>
             {beneficiaires.map((beneficiaire: BeneficiaireWithActivity) => (
               <TR key={beneficiaire.id}>
-                <TD
-                  isBold
-                  className='h-full !p-2 !rounded-tl-base !rounded-bl-none layout_m:!rounded-l-base'
-                >
+                <TD isBold>
                   <div>{getNomBeneficiaireComplet(beneficiaire)}</div>
                 </TD>
 
@@ -72,7 +68,7 @@ export default function TableauBeneficiairesAArchiver({
                 </TD>
 
                 <TD>
-                  {beneficiaire.lastActivity && (
+                  {beneficiaire.isActivated && (
                     <>
                       <span
                         className='text-xs-regular text-grey_800'
@@ -85,7 +81,8 @@ export default function TableauBeneficiairesAArchiver({
                       </span>
                     </>
                   )}
-                  {!beneficiaire.lastActivity && (
+
+                  {!beneficiaire.isActivated && (
                     <span className='text-s-regular text-warning'>
                       Compte non activé
                     </span>

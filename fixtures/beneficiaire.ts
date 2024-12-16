@@ -41,6 +41,8 @@ export const unBeneficiaireWithActivity = (
 ): BeneficiaireWithActivity => {
   const defaults: BeneficiaireWithActivity = {
     ...uneBaseBeneficiaire(),
+    isActivated: true,
+    lastActivity: '2021-12-07T17:30:07.756Z',
     estAArchiver: false,
   }
   return { ...defaults, ...overrides }
@@ -114,8 +116,7 @@ export const unItemBeneficiaire = (
   overrides: Partial<BeneficiaireFromListe> = {}
 ): BeneficiaireFromListe => {
   const defaults: BeneficiaireFromListe = {
-    ...unBeneficiaireWithActivity({ lastActivity: '2021-12-07T17:30:07.756Z' }),
-    isActivated: true,
+    ...unBeneficiaireWithActivity(),
     isReaffectationTemporaire: false,
     situationCourante: CategorieSituation.SANS_SITUATION,
   }
