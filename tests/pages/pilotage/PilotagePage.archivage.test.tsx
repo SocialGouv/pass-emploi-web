@@ -1,4 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
@@ -6,19 +7,23 @@ import { useRouter } from 'next/navigation'
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories } from 'fixtures/action'
 import { unBeneficiaireWithActivity } from 'fixtures/beneficiaire'
+import { desMotifsDeSuppression } from 'fixtures/referentiel'
+import { getMotifsSuppression } from 'services/beneficiaires.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('components/ModalContainer')
 
 describe('PilotagePage client side - Archivage des bénéficiaires', () => {
   describe('contenu', () => {
     let container: HTMLElement
-
+    const motifsSuppression = desMotifsDeSuppression()
     beforeEach(async () => {
+      ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
       await act(async () => {
@@ -40,10 +45,14 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
               value: [
                 unBeneficiaireWithActivity({
                   id: 'a-archiver-1',
+                  prenom: 'Ada',
+                  nom: 'Lovelace',
                   estAArchiver: true,
                 }),
                 unBeneficiaireWithActivity({
                   id: 'a-archiver-2',
+                  prenom: 'Grace',
+                  nom: 'Hopper',
                   estAArchiver: true,
                 }),
                 unBeneficiaireWithActivity(),
@@ -97,10 +106,30 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
           name: 'Dernière activité',
         })
       ).toBeInTheDocument()
+      expect(
+        within(tableau).getByRole('button', { name: 'Archiver Lovelace Ada' })
+      ).toBeInTheDocument()
+      expect(
+        within(tableau).getByRole('button', { name: 'Archiver Hopper Grace' })
+      ).toBeInTheDocument()
+    })
+
+    it('permet d’archiver les bénéficiaires', async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Archiver Lovelace Ada' })
+      )
+
+      // Then
+      expect(
+        screen.getByText(
+          'Souhaitez-vous supprimer le compte bénéficiaire : Ada Lovelace ?'
+        )
+      ).toBeInTheDocument()
     })
   })
 
-  describe("quand le conseiller n'a pas d'animation collective à clore", () => {
+  describe("quand le conseiller n'a pas de bénéficiaire à archiver", () => {
     it('affiche un message qui le précise', async () => {
       // Given
       renderWithContexts(
