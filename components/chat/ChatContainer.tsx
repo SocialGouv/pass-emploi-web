@@ -58,7 +58,7 @@ export default function ChatContainer({
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion)
       getListesDeDiffusionClientSide().then(setListesDeDiffusion)
     if (showRubriqueListesDeDiffusion === false)
-      chatRoomRef.current!.focusAccesListesDiffusion()
+      chatRoomRef.current?.focusAccesListesDiffusion()
   }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
 
   useEffect(() => {
