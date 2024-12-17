@@ -6,7 +6,7 @@ import { getSessionServerSide } from 'utils/auth/auth'
 const rootUrl: string | undefined = process.env.NEXTAUTH_URL
 
 export async function GET() {
-  if (!(await getSessionServerSide())) return
+  if (!(await getSessionServerSide())) redirect('/login')
 
   try {
     const issuerLogout = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
