@@ -41,6 +41,7 @@ export const unBeneficiaireWithActivity = (
 ): BeneficiaireWithActivity => {
   const defaults: BeneficiaireWithActivity = {
     ...uneBaseBeneficiaire(),
+    creationDate: '2020-04-12T05:30:07.756Z',
     isActivated: true,
     lastActivity: '2021-12-07T17:30:07.756Z',
     estAArchiver: false,
@@ -181,6 +182,7 @@ export const unItemBeneficiaireJson = (
     estAArchiver: false,
     isActivated: true,
     isReaffectationTemporaire: false,
+    creationDate: '2020-04-12T05:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
   }
   return { ...defaults, ...overrides }

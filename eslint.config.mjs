@@ -35,7 +35,11 @@ const eslintConfig = [
       ],
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { varsIgnorePattern: '^_', ignoreRestSiblings: true },
+        {
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
       ],
       'jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['tabpanel'] }],
       'jsx-a11y/no-noninteractive-element-to-interactive-role': [

@@ -20,7 +20,10 @@ import Textarea from 'components/ui/Form/Textarea'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  BaseBeneficiaire,
+  BeneficiaireWithActivity,
+} from 'interfaces/beneficiaire'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -28,7 +31,7 @@ import { dateIsInInterval, toShortDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteBeneficiaireActifModalProps {
-  beneficiaire: DetailBeneficiaire
+  beneficiaire: BeneficiaireWithActivity
   motifsSuppression: MotifSuppressionBeneficiaire[]
   onClose: () => void
   soumettreSuppression: (
@@ -36,15 +39,19 @@ interface DeleteBeneficiaireActifModalProps {
   ) => Promise<void>
 }
 
-export default function DeleteBeneficiaireActifModal({
-  beneficiaire,
-  motifsSuppression,
-  onClose,
-  soumettreSuppression,
-}: DeleteBeneficiaireActifModalProps) {
+function DeleteBeneficiaireActifModal(
+  {
+    beneficiaire,
+    motifsSuppression,
+    onClose,
+    soumettreSuppression,
+  }: DeleteBeneficiaireActifModalProps,
+  ref: ForwardedRef<ModalHandles>
+) {
   const [portefeuille] = usePortefeuille()
 
   const modalRef = useRef<ModalHandles>(null)
+  useImperativeHandle(ref, () => modalRef.current!)
 
   const [showModalConfirmation, setShowModalConfirmation] =
     useState<boolean>(true)
@@ -90,6 +97,7 @@ export default function DeleteBeneficiaireActifModal({
     </>
   )
 }
+export default forwardRef(DeleteBeneficiaireActifModal)
 
 const ModalConfirmation = forwardRef(
   (
@@ -151,7 +159,7 @@ const ModalSuppressionForm = forwardRef(
       onSuppression,
       onClose,
     }: {
-      beneficiaire: DetailBeneficiaire
+      beneficiaire: BeneficiaireWithActivity
       motifsSuppression: MotifSuppressionBeneficiaire[]
       onSuppression: (payload: SuppressionBeneficiaireFormData) => Promise<void>
       onClose: () => void

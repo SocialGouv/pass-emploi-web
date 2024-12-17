@@ -1,6 +1,7 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
@@ -41,6 +42,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
       setPortefeuille(
         portefeuille.concat({
           ...beneficiaireCree,
+          creationDate: DateTime.now().toISO(),
           isActivated: false,
           estAArchiver: false,
         })

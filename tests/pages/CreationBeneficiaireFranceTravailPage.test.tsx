@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
 import CreationBeneficiaireFranceTravailPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
@@ -128,8 +129,10 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
   })
 
   describe('quand le formulaire a été soumis', () => {
+    const now = DateTime.now()
     beforeEach(async () => {
       // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       const inputFirstname = screen.getByLabelText('* Prénom')
       await userEvent.type(inputFirstname, 'Nadia')
       const inputName = screen.getByLabelText('* Nom')
@@ -171,7 +174,12 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
       expect(portefeuilleSetter).toHaveBeenCalledWith([
         ...portefeuille,
-        { ...uneBaseBeneficiaire(), isActivated: false, estAArchiver: false },
+        {
+          ...uneBaseBeneficiaire(),
+          creationDate: now.toISO(),
+          isActivated: false,
+          estAArchiver: false,
+        },
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',

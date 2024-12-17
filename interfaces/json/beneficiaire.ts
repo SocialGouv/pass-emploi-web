@@ -30,6 +30,7 @@ export interface BaseBeneficiaireJson {
 }
 
 export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
+  creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
   estAArchiver: boolean
