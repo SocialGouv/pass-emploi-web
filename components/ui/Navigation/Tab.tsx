@@ -1,5 +1,4 @@
-import IconComponent, { IconName } from '../IconComponent'
-
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 
 export interface TabProps {

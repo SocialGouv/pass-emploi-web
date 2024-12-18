@@ -2,10 +2,9 @@ import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
-import SortIcon from '../ui/SortIcon'
-
 import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import SortIcon from 'components/ui/SortIcon'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
