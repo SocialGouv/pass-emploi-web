@@ -5,16 +5,16 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
 import {
-  BaseConseiller,
   Conseiller,
+  SimpleConseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
-  BaseConseillerJson,
   ConseillerJson,
-  jsonToBaseConseiller,
   jsonToConseiller,
+  jsonToSimpleConseiller,
+  SimpleConseillerJson,
 } from 'interfaces/json/conseiller'
 
 export async function getConseillerServerSide(
@@ -35,17 +35,17 @@ export type StructureReaffectation =
 export async function getConseillers(
   recherche: string,
   structure?: StructureReaffectation
-): Promise<BaseConseiller[]> {
+): Promise<SimpleConseiller[]> {
   const session = await getSession()
   let filtreStructure = ''
   if (structure) {
     filtreStructure = `&structure=${structure}`
   }
-  const { content } = await apiGet<BaseConseillerJson[]>(
+  const { content } = await apiGet<SimpleConseillerJson[]>(
     `/conseillers?q=${recherche}${filtreStructure}`,
     session!.accessToken
   )
-  return content.map(jsonToBaseConseiller)
+  return content.map(jsonToSimpleConseiller)
 }
 
 export async function modifierAgence({

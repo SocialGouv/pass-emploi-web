@@ -6,7 +6,7 @@ import React from 'react'
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   getJeunesDuConseillerParId,
   reaffecter,
@@ -16,27 +16,37 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
 jest.mock('services/beneficiaires.service')
+jest.mock('components/ModalContainer')
 
 describe('Reaffectation', () => {
   let container: HTMLElement
-  let jeunes: BeneficiaireFromListe[]
-  let conseillers: BaseConseiller[]
+  const jeunes: BeneficiaireFromListe[] = desItemsBeneficiaires().map(
+    (benef) => ({ ...benef, structureMilo: { nom: 'Agence', id: 'id-test' } })
+  )
+  const conseillers: SimpleConseiller[] = [
+    {
+      id: 'id-nils-tavernier',
+      firstName: 'Nils',
+      lastName: 'Tavernier',
+      idStructureMilo: 'id-test',
+    },
+    {
+      id: 'id-neil-armstrong',
+      firstName: 'Neil',
+      lastName: 'Armstrong',
+      email: 'neil.armstrong@nasa.fr',
+      idStructureMilo: 'id-test',
+    },
+    {
+      id: 'id-ada-lovelace',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada.lovelace@internet.com',
+      idStructureMilo: 'id-autre-milo',
+    },
+  ]
   beforeEach(async () => {
     // Given
-    jeunes = desItemsBeneficiaires()
-    conseillers = [
-      {
-        id: 'id-nils-tavernier',
-        firstName: 'Nils',
-        lastName: 'Tavernier',
-      },
-      {
-        id: 'id-neil-armstrong',
-        firstName: 'Neil',
-        lastName: 'Armstrong',
-        email: 'neil.armstrong@nasa.fr',
-      },
-    ]
     ;(getConseillers as jest.Mock).mockResolvedValue(conseillers)
     ;(getJeunesDuConseillerParId as jest.Mock).mockResolvedValue(jeunes)
   })
@@ -563,6 +573,57 @@ describe('Reaffectation', () => {
             )
           ).toBeInTheDocument()
           expect(reaffecter).not.toHaveBeenCalled()
+        })
+      })
+
+      describe('demande confirmation si la réaffectation se fait vers un conseiller avec une structure milo différente', () => {
+        beforeEach(async () => {
+          // GIVEN
+          await userEvent.type(conseillerDestinataireInput, 'Ada')
+          await userEvent.click(
+            within(etape).getByRole('button', {
+              name: /conseiller destinataire/,
+            })
+          )
+          await userEvent.click(
+            within(etape).getByRole('radio', { name: /Ada Lovelace/ })
+          )
+          await userEvent.click(checkboxBeneficiaire)
+
+          // WHEN
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Valider mon choix' })
+          )
+        })
+
+        it('a11y', async () => {
+          const results = await axe(container)
+          expect(results).toHaveNoViolations()
+        })
+
+        it('affiche une modale', () => {
+          // THEN
+          expect(
+            screen.getByRole('heading', {
+              name: 'Vous êtes sur le point de réaffecter un ou plusieurs bénéficiaires appartenant à une autre Mission Locale.',
+            })
+          ).toBeInTheDocument()
+          expect(reaffecter).not.toHaveBeenCalled()
+        })
+
+        it('déclenche la réaffectation', async () => {
+          // WHEN
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Continuer le réaffectation' })
+          )
+
+          // WHEN
+          expect(reaffecter).toHaveBeenCalledWith(
+            'id-nils-tavernier',
+            'id-ada-lovelace',
+            ['beneficiaire-2'],
+            false
+          )
         })
       })
     })

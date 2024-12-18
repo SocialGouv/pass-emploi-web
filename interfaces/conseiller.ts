@@ -26,7 +26,11 @@ export type BaseConseiller = {
   email?: string
 }
 
-export interface Conseiller extends BaseConseiller {
+export type SimpleConseiller = BaseConseiller & {
+  idStructureMilo?: string
+}
+
+export type Conseiller = BaseConseiller & {
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller

@@ -6,6 +6,7 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import ChoixConseiller from 'app/components/ChoixConseiller'
 import RadioBox from 'components/action/RadioBox'
+import ReaffectationVerificationMissionLocaleModal from 'components/ReaffectationVerificationMissionLocaleModal'
 import Button from 'components/ui/Button/Button'
 import Etape, { NumeroEtape } from 'components/ui/Form/Etape'
 import { InputError } from 'components/ui/Form/InputError'
@@ -20,7 +21,7 @@ import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { StructureReaffectation } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -59,7 +60,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   const [conseillerInitial, setConseillerInitial] =
     useState<StateChoixConseiller>({ value: undefined })
-  const conseillerInitialDebounced = useDebounce<BaseConseiller | undefined>(
+  const conseillerInitialDebounced = useDebounce<SimpleConseiller | undefined>(
     conseillerInitial.value,
     1000
   )
@@ -85,6 +86,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
+  const [onConfirmationReaffectation, setOnConfirmationReaffectation] =
+    useState<() => void>()
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
@@ -153,7 +156,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   }
 
   function choixConseillerDestination(
-    conseiller: ValueWithError<BaseConseiller | undefined>
+    conseiller: ValueWithError<SimpleConseiller | undefined>
   ) {
     if (conseiller.value?.id === conseillerInitial.value?.id) {
       setConseillerDestination({
@@ -192,7 +195,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
-  async function fetchListeBeneficiaires(conseiller: BaseConseiller) {
+  async function fetchListeBeneficiaires(conseiller: SimpleConseiller) {
     setRecuperationBeneficiairesEnCours(true)
 
     try {
@@ -272,7 +275,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     return isFormValid
   }
 
-  async function reaffecterBeneficiaires(e: FormEvent) {
+  async function preparerReaffectationBeneficiaires(e: FormEvent) {
     e.preventDefault()
     if (isReaffectationEnCours) return
     if (!formIsValid()) {
@@ -280,6 +283,23 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
       return
     }
 
+    if (
+      beneficiaires!
+        .filter(({ id }) => idsBeneficiairesSelected.value.includes(id))
+        .some(
+          ({ structureMilo }) =>
+            structureMilo?.id !== conseillerDestination.value!.idStructureMilo
+        )
+    ) {
+      setOnConfirmationReaffectation(
+        () => async () => reaffecterBeneficiaires()
+      )
+    } else {
+      await reaffecterBeneficiaires()
+    }
+  }
+
+  async function reaffecterBeneficiaires() {
     setReaffectationEnCours(true)
     try {
       const { reaffecter } = await import('services/beneficiaires.service')
@@ -374,7 +394,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         Tous les champs sont obligatoires
       </p>
 
-      <form onSubmit={reaffecterBeneficiaires} className='grow'>
+      <form onSubmit={preparerReaffectationBeneficiaires} className='grow'>
         {estSuperviseurResponsable && (
           <Etape numero={1} titre='Choisissez un accompagnement'>
             {structureReaffectation.error && (
@@ -615,6 +635,13 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
           onClose={() => setShowModalConseillerIntrouvable(false)}
         />
       )}
+
+      {onConfirmationReaffectation && (
+        <ReaffectationVerificationMissionLocaleModal
+          onClose={() => setOnConfirmationReaffectation(undefined)}
+          onReaffectation={onConfirmationReaffectation}
+        />
+      )}
     </>
   )
 }
@@ -625,7 +652,7 @@ export default withTransaction(
 )(ReaffectationPage)
 
 type StateChoixConseiller = {
-  value: BaseConseiller | undefined
+  value: SimpleConseiller | undefined
   errorInput?: string
   errorChoice?: string
 }

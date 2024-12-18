@@ -13,13 +13,13 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller } from 'interfaces/conseiller'
 import { StructureReaffectation } from 'services/conseiller.service'
 
 type ChoixConseillerProps = {
   name: string
   onInput: () => void
-  onChoixConseiller: (conseiller: BaseConseiller) => void
+  onChoixConseiller: (conseiller: SimpleConseiller) => void
   idConseillerSelectionne?: string
   structureReaffectation?: StructureReaffectation
   errorInput?: string
@@ -49,7 +49,7 @@ function ChoixConseiller(
     value: '',
   })
   const [choixConseillers, setChoixConseillers] = useState<
-    BaseConseiller[] | undefined
+    SimpleConseiller[] | undefined
   >()
 
   const [rechercheConseillerEnCours, setRechercheConseillerEnCours] =
@@ -91,7 +91,7 @@ function ChoixConseiller(
     setRechercheConseillerEnCours(false)
   }
 
-  function choisirConseiller(conseiller: BaseConseiller): void {
+  function choisirConseiller(conseiller: SimpleConseiller): void {
     if (conseiller.id !== idConseillerSelectionne) {
       onChoixConseiller(conseiller)
     }
