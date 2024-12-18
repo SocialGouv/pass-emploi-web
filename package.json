@@ -37,7 +37,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router-dom": "6.28.0",
-    "sanitize-html": "2.13.1",
+    "sanitize-html": "2.14.0",
     "sharp": "0.33.5"
   },
   "devDependencies": {
