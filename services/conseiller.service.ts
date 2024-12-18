@@ -28,12 +28,13 @@ export async function getConseillerServerSide(
   return jsonToConseiller(conseillerJson, user)
 }
 
+export type StructureReaffectation =
+  | StructureConseiller.POLE_EMPLOI
+  | StructureConseiller.POLE_EMPLOI_BRSA
+  | StructureConseiller.POLE_EMPLOI_AIJ
 export async function getConseillers(
   recherche: string,
-  structure?:
-    | StructureConseiller.POLE_EMPLOI
-    | StructureConseiller.POLE_EMPLOI_BRSA
-    | StructureConseiller.POLE_EMPLOI_AIJ
+  structure?: StructureReaffectation
 ): Promise<BaseConseiller[]> {
   const session = await getSession()
   let filtreStructure = ''
