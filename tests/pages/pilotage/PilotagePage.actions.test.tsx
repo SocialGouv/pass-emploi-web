@@ -171,18 +171,18 @@ describe('PilotagePage client side - Actions', () => {
       //When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+          name: 'Afficher la liste des actions triées par bénéficiaire par ordre alphabétique',
         })
       )
 
       // Then
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
-        tri: 'ALPHABETIQUE',
+        tri: 'BENEFICIAIRE_ALPHABETIQUE',
         filtres: [],
       })
       expect(
-        screen.getByText('Action page 1 ALPHABETIQUE 0filtres')
+        screen.getByText('Action page 1 BENEFICIAIRE_ALPHABETIQUE 0filtres')
       ).toBeInTheDocument()
     })
 
@@ -190,24 +190,53 @@ describe('PilotagePage client side - Actions', () => {
       //When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+          name: 'Afficher la liste des actions triées par bénéficiaire par ordre alphabétique',
         })
       )
 
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique inversé',
+          name: 'Afficher la liste des actions triées par bénéficiaire par ordre alphabétique inversé',
         })
       )
 
       // Then
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
-        tri: 'INVERSE',
+        tri: 'BENEFICIAIRE_INVERSE',
         filtres: [],
       })
       expect(
-        screen.getByText('Action page 1 INVERSE 0filtres')
+        screen.getByText('Action page 1 BENEFICIAIRE_INVERSE 0filtres')
+      ).toBeInTheDocument()
+    })
+    it('permet de trier les actions par date de réalisation', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Afficher la liste des actions triées par date de réalisation décroissante',
+        })
+      )
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+        page: 1,
+        tri: 'REALISATION_ANTICHRONOLOGIQUE',
+        filtres: [],
+      })
+      expect(
+        screen.getByText('Action page 1 REALISATION_ANTICHRONOLOGIQUE 0filtres')
+      ).toBeInTheDocument()
+
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Afficher la liste des actions triées par date de réalisation croissante',
+        })
+      )
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+        page: 1,
+        tri: 'REALISATION_CHRONOLOGIQUE',
+        filtres: [],
+      })
+      expect(
+        screen.getByText('Action page 1 REALISATION_CHRONOLOGIQUE 0filtres')
       ).toBeInTheDocument()
     })
 
@@ -216,7 +245,7 @@ describe('PilotagePage client side - Actions', () => {
         // Given
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+            name: 'Afficher la liste des actions triées par bénéficiaire par ordre alphabétique',
           })
         )
         await userEvent.click(screen.getByLabelText('Page 2'))
@@ -246,11 +275,11 @@ describe('PilotagePage client side - Actions', () => {
         // Then
         expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
           page: 1,
-          tri: 'ALPHABETIQUE',
+          tri: 'BENEFICIAIRE_ALPHABETIQUE',
           filtres: ['SNP_1', 'SNP_2'],
         })
         expect(
-          screen.getByText('Action page 1 ALPHABETIQUE 2filtres')
+          screen.getByText('Action page 1 BENEFICIAIRE_ALPHABETIQUE 2filtres')
         ).toBeInTheDocument()
       })
 
@@ -261,11 +290,11 @@ describe('PilotagePage client side - Actions', () => {
         // Then
         expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
           page: 2,
-          tri: 'ALPHABETIQUE',
+          tri: 'BENEFICIAIRE_ALPHABETIQUE',
           filtres: ['SNP_1', 'SNP_2'],
         })
         expect(
-          screen.getByText('Action page 2 ALPHABETIQUE 2filtres')
+          screen.getByText('Action page 2 BENEFICIAIRE_ALPHABETIQUE 2filtres')
         ).toBeInTheDocument()
       })
     })
@@ -274,7 +303,7 @@ describe('PilotagePage client side - Actions', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+          name: 'Afficher la liste des actions triées par bénéficiaire par ordre alphabétique',
         })
       )
       await userEvent.click(screen.getByText('Catégorie'))
@@ -289,11 +318,11 @@ describe('PilotagePage client side - Actions', () => {
       // Then
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 2,
-        tri: 'ALPHABETIQUE',
+        tri: 'BENEFICIAIRE_ALPHABETIQUE',
         filtres: ['SNP_1'],
       })
       expect(
-        screen.getByText('Action page 2 ALPHABETIQUE 1filtres')
+        screen.getByText('Action page 2 BENEFICIAIRE_ALPHABETIQUE 1filtres')
       ).toBeInTheDocument()
     })
 

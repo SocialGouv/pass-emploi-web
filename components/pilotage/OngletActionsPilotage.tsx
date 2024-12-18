@@ -46,7 +46,9 @@ export default function OngletActionsPilotage({
     useState<MetadonneesPagination>(metadonneesInitiales)
 
   const [page, setPage] = useState<number>(1)
-  const [tri, setTri] = useState<TriActionsAQualifier>()
+  const [tri, setTri] = useState<TriActionsAQualifier>(
+    'REALISATION_CHRONOLOGIQUE'
+  )
   const [filtres, setFiltres] = useState<string[]>([])
   const [erreurQualification, setErreurQualification] = useState<
     string | undefined
