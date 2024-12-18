@@ -1,9 +1,8 @@
 import { DateTime } from 'luxon'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
-import Button, { ButtonStyle } from './Button/Button'
-import IconComponent, { IconName } from './IconComponent'
-
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 import { useDebounce } from 'utils/hooks/useDebounce'
 

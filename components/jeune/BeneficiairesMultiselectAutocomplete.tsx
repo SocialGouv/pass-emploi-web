@@ -1,8 +1,7 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
-import { ButtonStyle } from '../ui/Button/Button'
-import ButtonLink from '../ui/Button/ButtonLink'
-
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
@@ -307,7 +306,7 @@ export default function BeneficiairesMultiselectAutocomplete({
       <p
         aria-label={`${typeSelection} sélectionnés (${countBeneficiairesUniques()})`}
         id='selected-beneficiaires--title'
-        className='text-base-medium mb-2 flex mb-4 justify-between items-center'
+        className='text-base-medium flex mb-4 justify-between items-center'
       >
         {typeSelection} ({countBeneficiairesUniques()})
         {lienExport && trackExport && (

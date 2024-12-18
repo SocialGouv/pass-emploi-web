@@ -29,7 +29,14 @@ const eslintConfig = [
           },
 
           'newlines-between': 'always',
-          groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
           pathGroupsExcludedImportTypes: ['builtin'],
         },
       ],
