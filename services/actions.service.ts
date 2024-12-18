@@ -130,7 +130,11 @@ export async function getActionsAQualifierServerSide(
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
-  return getActionsAQualifier(idConseiller, { page: 1 }, accessToken)
+  return getActionsAQualifier(
+    idConseiller,
+    { page: 1, tri: 'REALISATION_CHRONOLOGIQUE' },
+    accessToken
+  )
 }
 
 export async function creerAction(
@@ -280,7 +284,12 @@ async function getActionsBeneficiaire(
   }
 }
 
-export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
+export type TriActionsAQualifier =
+  | 'BENEFICIAIRE_ALPHABETIQUE'
+  | 'BENEFICIAIRE_INVERSE'
+  | 'REALISATION_CHRONOLOGIQUE'
+  | 'REALISATION_ANTICHRONOLOGIQUE'
+
 async function getActionsAQualifier(
   idConseiller: string,
   {
@@ -302,18 +311,10 @@ async function getActionsAQualifier(
     aQualifier: 'true',
   })
 
-  if (tri) {
-    queryParams.append(
-      'tri',
-      tri === 'ALPHABETIQUE'
-        ? 'BENEFICIAIRE_ALPHABETIQUE'
-        : 'BENEFICIAIRE_INVERSE'
-    )
-  }
+  if (tri) queryParams.append('tri', tri)
 
-  if (filtres) {
+  if (filtres)
     filtres.forEach((filtre) => queryParams.append('codesCategories', filtre))
-  }
 
   const {
     content: { pagination, resultats },
