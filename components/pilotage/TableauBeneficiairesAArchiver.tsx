@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
+import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import DeleteBeneficiaireModal from 'components/jeune/DeleteBeneficiaireModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { TagDate } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -14,6 +14,10 @@ import {
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
+
+const DeleteBeneficiaireModal = dynamic(
+  () => import('components/jeune/DeleteBeneficiaireModal')
+)
 
 type TableauBeneficiairesAArchiverProps = {
   beneficiaires: BeneficiaireWithActivity[]
@@ -86,12 +90,12 @@ export default function TableauBeneficiairesAArchiver({
               <TD>
                 {beneficiaire.isActivated && (
                   <>
-                    <span
+                    <div
                       className='text-xs-regular text-grey_800'
                       aria-hidden={true}
                     >
                       {derniereActiviteColumn}
-                    </span>
+                    </div>
                     <span className='text-s-regular'>
                       {toRelativeDateTime(beneficiaire.lastActivity!)}
                     </span>
@@ -125,6 +129,7 @@ export default function TableauBeneficiairesAArchiver({
       {beneficiaireAArchiver && (
         <DeleteBeneficiaireModal
           beneficiaire={beneficiaireAArchiver}
+          onSuccess={() => setBeneficiaireAArchiver(undefined)}
           onClose={() => setBeneficiaireAArchiver(undefined)}
           onError={() => setShowSuppressionCompteBeneficiaireError(true)}
         />

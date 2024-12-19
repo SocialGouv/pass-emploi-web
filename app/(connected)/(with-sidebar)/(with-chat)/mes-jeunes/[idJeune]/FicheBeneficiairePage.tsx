@@ -271,11 +271,13 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       {showModaleDeleteBeneficiaire && (
         <DeleteBeneficiaireModal
           beneficiaire={beneficiaire}
+          onSuccess={() => router.push('/mes-jeunes')}
           onClose={() => setShowModaleDeleteBeneficiaire(false)}
           onError={() => {
             setShowSuppressionCompteBeneficiaireError(true)
             setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
           }}
+          labelSuccess='Revenir à mon portefeuille'
         />
       )}
     </>

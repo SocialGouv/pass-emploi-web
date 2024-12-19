@@ -1,5 +1,4 @@
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
 import Modal from 'components/Modal'
@@ -22,16 +21,19 @@ const DeleteJeuneInactifModal = dynamic(
 
 type DeleteBeneficiaireModalProps = {
   beneficiaire: BeneficiaireWithActivity
+  onSuccess: () => void
   onClose: () => void
   onError: () => void
+  labelSuccess?: string
 }
 
 export default function DeleteBeneficiaireModal({
   beneficiaire,
+  labelSuccess,
+  onSuccess,
   onClose,
   onError,
 }: DeleteBeneficiaireModalProps) {
-  const router = useRouter()
   const [portefeuille, setPortefeuille] = usePortefeuille()
   const [currentConversation, setCurrentConversation] = useCurrentConversation()
 
@@ -53,7 +55,6 @@ export default function DeleteBeneficiaireModal({
       const { archiverJeune } = await import('services/beneficiaires.service')
       await archiverJeune(beneficiaire.id, payload)
 
-      removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setShowModaleSuccesDeleteBeneficiaire(true)
     } catch {
       onError()
@@ -68,7 +69,6 @@ export default function DeleteBeneficiaireModal({
       )
       await _supprimerJeuneInactif(beneficiaire.id)
 
-      removeBeneficiaireFromPortefeuille(beneficiaire.id)
       setShowModaleSuccesDeleteBeneficiaire(true)
     } catch {
       onError()
@@ -81,10 +81,12 @@ export default function DeleteBeneficiaireModal({
     const index = updatedPortefeuille.findIndex(
       ({ id }) => id === idBeneficiaire
     )
-    updatedPortefeuille.splice(index, 1)
+    if (index > -1) updatedPortefeuille.splice(index, 1)
     setPortefeuille(updatedPortefeuille)
     if (currentConversation?.conversation.id === idBeneficiaire)
       setCurrentConversation(undefined)
+
+    onSuccess()
   }
 
   useEffect(() => {
@@ -116,18 +118,21 @@ export default function DeleteBeneficiaireModal({
 
       {showModaleSuccesDeleteBeneficiaire && (
         <Modal
+          ref={modalRef}
           title={`Le compte bénéficiaire : ${beneficiaire.prenom} ${beneficiaire.nom} a bien été supprimé.`}
-          onClose={() => router.push('/mes-jeunes')}
+          onClose={() => removeBeneficiaireFromPortefeuille(beneficiaire.id)}
           titleIllustration={IllustrationName.Check}
         >
-          <Button
-            type='button'
-            style={ButtonStyle.PRIMARY}
-            className='block m-auto'
-            onClick={() => router.push('/mes-jeunes')}
-          >
-            Revenir à mon portefeuille
-          </Button>
+          {labelSuccess && (
+            <Button
+              type='button'
+              style={ButtonStyle.PRIMARY}
+              className='block m-auto'
+              onClick={() => modalRef.current!.closeModal()}
+            >
+              {labelSuccess}
+            </Button>
+          )}
         </Modal>
       )}
     </>

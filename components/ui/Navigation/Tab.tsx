@@ -59,7 +59,7 @@ export default function Tab({
               count={count}
               textColor={accentuer ? 'white' : 'primary'}
               bgColor={accentuer ? 'warning' : 'primary_lighten'}
-              style='ml-4'
+              style='shrink-0 ml-4'
               size={6}
             />
             <span className='sr-only'> éléments</span>
