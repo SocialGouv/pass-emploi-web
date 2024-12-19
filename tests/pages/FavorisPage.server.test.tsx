@@ -80,7 +80,7 @@ describe('Quand la ressource n’est pas accessible au conseiller', () => {
     // Then
 
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT /mes-jeunes/id-jeune')
+      new Error('NEXT_REDIRECT /mes-jeunes/id-jeune')
     )
     expect(redirect).toHaveBeenCalledWith('/mes-jeunes/id-jeune')
   })

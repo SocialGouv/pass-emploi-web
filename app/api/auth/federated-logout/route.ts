@@ -1,4 +1,3 @@
-import { isRedirectError } from 'next/dist/client/components/redirect'
 import { redirect } from 'next/navigation'
 
 import { getSessionServerSide } from 'utils/auth/auth'
@@ -18,7 +17,7 @@ export async function GET() {
 
     redirect(`${issuerLogout}?${redirectToSessionLogout}`)
   } catch (error) {
-    if (isRedirectError(error)) throw error
+    if ((error as Error)?.message.startsWith('NEXT_REDIRECT')) throw error
 
     console.error(error)
     redirect(rootUrl ?? '')

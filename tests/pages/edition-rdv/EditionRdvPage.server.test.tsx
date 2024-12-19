@@ -282,7 +282,7 @@ describe('EditionRdvPage server side', () => {
 
       // Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })

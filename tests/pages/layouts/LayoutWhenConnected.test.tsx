@@ -37,7 +37,7 @@ describe('LayoutWhenConnected', () => {
     const promise = LayoutWhenConnected({ children: <div /> })
 
     // Then
-    await expect(promise).rejects.toEqual(new Error('NEXT REDIRECT /login'))
+    await expect(promise).rejects.toEqual(new Error('NEXT_REDIRECT /login'))
     expect(redirect).toHaveBeenCalledWith('/login')
   })
 
@@ -52,7 +52,7 @@ describe('LayoutWhenConnected', () => {
 
     // Then
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT /api/auth/federated-logout')
+      new Error('NEXT_REDIRECT /api/auth/federated-logout')
     )
     expect(redirect).toHaveBeenCalledWith('/api/auth/federated-logout')
   })

@@ -45,7 +45,7 @@ describe('HomePage server side', () => {
 
       //Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })
@@ -57,7 +57,7 @@ describe('HomePage server side', () => {
       })
 
       //Then
-      await expect(promise).rejects.toEqual(new Error('NEXT REDIRECT /agenda'))
+      await expect(promise).rejects.toEqual(new Error('NEXT_REDIRECT /agenda'))
       expect(redirect).toHaveBeenCalledWith('/agenda')
     })
   })
@@ -207,7 +207,7 @@ describe('HomePage server side', () => {
 
       //Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /consentement-cgu')
+        new Error('NEXT_REDIRECT /consentement-cgu')
       )
       expect(redirect).toHaveBeenCalledWith('/consentement-cgu')
     })

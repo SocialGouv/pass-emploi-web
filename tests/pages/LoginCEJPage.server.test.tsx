@@ -20,7 +20,7 @@ describe('LoginCEJPage server side', () => {
 
     // Then
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT vers-linfini-et-au-dela')
+      new Error('NEXT_REDIRECT vers-linfini-et-au-dela')
     )
     expect(redirect).toHaveBeenCalledWith('vers-linfini-et-au-dela')
   })
