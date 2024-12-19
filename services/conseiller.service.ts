@@ -5,16 +5,16 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
 import {
-  BaseConseiller,
   Conseiller,
+  SimpleConseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
-  BaseConseillerJson,
   ConseillerJson,
-  jsonToBaseConseiller,
   jsonToConseiller,
+  jsonToSimpleConseiller,
+  SimpleConseillerJson,
 } from 'interfaces/json/conseiller'
 
 export async function getConseillerServerSide(
@@ -28,23 +28,24 @@ export async function getConseillerServerSide(
   return jsonToConseiller(conseillerJson, user)
 }
 
+export type StructureReaffectation =
+  | StructureConseiller.POLE_EMPLOI
+  | StructureConseiller.POLE_EMPLOI_BRSA
+  | StructureConseiller.POLE_EMPLOI_AIJ
 export async function getConseillers(
   recherche: string,
-  structure?:
-    | StructureConseiller.POLE_EMPLOI
-    | StructureConseiller.POLE_EMPLOI_BRSA
-    | StructureConseiller.POLE_EMPLOI_AIJ
-): Promise<BaseConseiller[]> {
+  structure?: StructureReaffectation
+): Promise<SimpleConseiller[]> {
   const session = await getSession()
   let filtreStructure = ''
   if (structure) {
     filtreStructure = `&structure=${structure}`
   }
-  const { content } = await apiGet<BaseConseillerJson[]>(
+  const { content } = await apiGet<SimpleConseillerJson[]>(
     `/conseillers?q=${recherche}${filtreStructure}`,
     session!.accessToken
   )
-  return content.map(jsonToBaseConseiller)
+  return content.map(jsonToSimpleConseiller)
 }
 
 export async function modifierAgence({
