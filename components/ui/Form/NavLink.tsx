@@ -81,7 +81,7 @@ function BadgeNavLink({ label }: { label: string }) {
       <IconComponent
         focusable={false}
         aria-hidden={true}
-        className='w-4 h-4 fill-warning absolute top-0 left-0 bg-white rounded-full'
+        className='w-4 h-4 fill-warning absolute border border-white top-0 left-0 bg-white rounded-full'
         name={IconName.Error}
       />
       <span className='sr-only'>{label}</span>
