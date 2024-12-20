@@ -44,8 +44,8 @@ describe('Détails Session Page Server', () => {
 
       //When
       const promise = DetailsSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
@@ -107,8 +107,8 @@ describe('Détails Session Page Server', () => {
       //When
       render(
         await DetailsSession({
-          params: params,
-          searchParams: searchParams,
+          params: Promise.resolve(params),
+          searchParams: Promise.resolve(searchParams),
         })
       )
     })
@@ -132,7 +132,7 @@ describe('Détails Session Page Server', () => {
           session: session,
           returnTo: 'redirectUrl',
         },
-        {}
+        undefined
       )
     })
   })

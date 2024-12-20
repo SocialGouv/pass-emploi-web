@@ -1,6 +1,4 @@
-import { ReactElement, ReactNode } from 'react'
-
-export type MandatoryNode = Exclude<ReactNode, undefined | null>
+import { ReactElement } from 'react'
 
 type ElementOnly = ReactElement | null | undefined
 export type ElementsOnly = ElementOnly | Iterable<ElementOnly>

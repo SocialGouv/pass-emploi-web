@@ -29,13 +29,19 @@ type EmptyStateWithButtonProps = EmptyStateProps & {
 }
 
 export function hasLien(
-  props: {} | { lien: EmptyStateLinkProps } | { bouton: EmptyStateButtonProps }
+  props:
+    | { lien: EmptyStateLinkProps }
+    | { bouton: EmptyStateButtonProps }
+    | object
 ): props is { lien: EmptyStateLinkProps } {
   return Object.prototype.hasOwnProperty.call(props, 'lien')
 }
 
 export function hasBouton(
-  props: {} | { lien: EmptyStateLinkProps } | { bouton: EmptyStateButtonProps }
+  props:
+    | { lien: EmptyStateLinkProps }
+    | { bouton: EmptyStateButtonProps }
+    | object
 ): props is { bouton: EmptyStateButtonProps } {
   return Object.prototype.hasOwnProperty.call(props, 'bouton')
 }

@@ -30,8 +30,7 @@ import { toFrenchDateTime, toShortDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const DesinscriptionBeneficiaireModal = dynamic(
-  () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
-  { ssr: false }
+  () => import('components/session-imilo/DesinscriptionBeneficiaireModal')
 )
 
 type DetailSessionProps = {

@@ -26,8 +26,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const MessageImportantModal = dynamic(
-  () => import('components/chat/MessageImportantModal'),
-  { ssr: false }
+  () => import('components/chat/MessageImportantModal')
 )
 
 type ChatRoomProps = {
@@ -127,7 +126,7 @@ function ChatRoom(
       setMessageImportantPreRempli(nouveauMessageImportant)
 
       setSuccesEnvoiMessageImportant(true)
-    } catch (error) {
+    } catch {
       setSuccesEnvoiMessageImportant(false)
     } finally {
       setMessageImportantIsLoading(false)
@@ -146,7 +145,7 @@ function ChatRoom(
       setMessageImportantPreRempli(undefined)
 
       setSuccesDesactivationMessageImportant(true)
-    } catch (error) {
+    } catch {
       setSuccesDesactivationMessageImportant(false)
     } finally {
       setMessageImportantIsLoading(false)

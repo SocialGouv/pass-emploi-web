@@ -1,14 +1,15 @@
 import { render, RenderResult } from '@testing-library/react'
-import React, { Dispatch, ReactNode, SetStateAction } from 'react'
+import { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import { uneActualite } from 'fixtures/actualites'
-import {
-  desItemsBeneficiaires,
-  extractBaseBeneficiaire,
-} from 'fixtures/beneficiaire'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { ActualitesParsees } from 'interfaces/actualites'
-import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  extractBeneficiaireWithActivity,
+  Portefeuille,
+} from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ActualitesProvider } from 'utils/actualitesContext'
@@ -32,8 +33,8 @@ export default function renderWithContexts(
   options: {
     customConseiller?: Partial<Conseiller>
     customPortefeuille?: Partial<{
-      value: BaseBeneficiaire[]
-      setter: (portefeuille: BaseBeneficiaire[]) => void
+      value: Portefeuille
+      setter: (portefeuille: Portefeuille) => void
     }>
     customChats?: BeneficiaireEtChat[]
     customCurrentConversation?: Partial<{
@@ -71,7 +72,7 @@ export default function renderWithContexts(
     ...customPortefeuille,
     value:
       customPortefeuille?.value ??
-      desItemsBeneficiaires().map(extractBaseBeneficiaire),
+      desItemsBeneficiaires().map(extractBeneficiaireWithActivity),
   }
 
   const currentConversation = { ...customCurrentConversation }
@@ -107,8 +108,8 @@ function provideContexts(
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
-    value: BaseBeneficiaire[]
-    setter: (portefeuille: BaseBeneficiaire[]) => void
+    value: Portefeuille
+    setter: (portefeuille: Portefeuille) => void
   }>,
   chats: BeneficiaireEtChat[] | undefined,
   currentConversation: Partial<{

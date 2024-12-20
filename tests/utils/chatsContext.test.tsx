@@ -1,13 +1,15 @@
-import { RenderResult, act, render, screen } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import React from 'react'
 
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  extractBeneficiaireWithActivity,
+} from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -17,14 +19,16 @@ import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 jest.mock('services/messages.service')
 
 const mockAudio = jest.fn()
-// @ts-ignore
+// @ts-expect-error trop compliqué de redéfinir tout Audio
 global.Audio = class FakeAudio {
   play = mockAudio
 }
 
 describe('ChatsProvider', () => {
   let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
-  const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+  const portefeuille = desItemsBeneficiaires().map(
+    extractBeneficiaireWithActivity
+  )
   const conversations = [
     unBeneficiaireChat({
       ...portefeuille[0],
@@ -61,10 +65,9 @@ describe('ChatsProvider', () => {
       token: 'tokenFirebase',
       cleChiffrement: 'cleChiffrement',
     }
-    let renderResult: RenderResult
     beforeEach(async () => {
       // When
-      renderResult = await act(async () =>
+      await act(async () =>
         render(
           <>
             <link rel='icon' href='/cej-favicon.png' />
@@ -86,16 +89,17 @@ describe('ChatsProvider', () => {
       // Then
       expect(observeConseillerChats).toHaveBeenCalledWith(
         'cleChiffrement',
-        portefeuille.map(extractBaseBeneficiaire),
+        portefeuille,
         expect.any(Function)
       )
     })
 
     it('affiche une notification dans l’onglet s’il y a des messages non lus', async () => {
       // Then
-      expect(
-        renderResult.container.querySelector("link[rel='icon']")
-      ).toHaveProperty('href', 'http://localhost/cej-favicon-notif.png')
+      expect(document.querySelector("link[rel='icon']")).toHaveProperty(
+        'href',
+        'http://localhost/cej-favicon-notif.png'
+      )
       expect(document.title).toMatch(/Nouveau\(x\) message\(s\) - /)
     })
 

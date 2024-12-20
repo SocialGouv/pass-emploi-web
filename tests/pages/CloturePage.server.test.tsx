@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { notFound, redirect } from 'next/navigation'
 
-import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
-import Cloture from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/page'
+import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
+import Cloture from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/page'
 import { unEvenement } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
@@ -14,7 +14,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/evenements.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
+  'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 )
 
 describe('CloturePage server side', () => {
@@ -34,8 +34,8 @@ describe('CloturePage server side', () => {
       // When
       render(
         await Cloture({
-          params: { id_evenement: 'id-animation-collective' },
-          searchParams: { redirectUrl: 'redirectUrl' },
+          params: Promise.resolve({ idEvenement: 'id-animation-collective' }),
+          searchParams: Promise.resolve({ redirectUrl: 'redirectUrl' }),
         })
       )
 
@@ -51,7 +51,7 @@ describe('CloturePage server side', () => {
           }),
           returnTo: '/mes-jeunes/edition-rdv?idRdv=1&redirectUrl=redirectUrl',
         },
-        {}
+        undefined
       )
     })
 
@@ -61,7 +61,7 @@ describe('CloturePage server side', () => {
 
       // When
       const promise = Cloture({
-        params: { id_evenement: 'id-animation-collective' },
+        params: Promise.resolve({ idEvenement: 'id-animation-collective' }),
       })
 
       // Then
@@ -77,7 +77,7 @@ describe('CloturePage server side', () => {
 
       // When
       const promise = Cloture({
-        params: { id_evenement: 'id-animation-collective' },
+        params: Promise.resolve({ idEvenement: 'id-animation-collective' }),
       })
 
       // Then
@@ -95,12 +95,12 @@ describe('CloturePage server side', () => {
 
       // When
       const promise = Cloture({
-        params: { id_evenement: 'id-animation-collective' },
+        params: Promise.resolve({ idEvenement: 'id-animation-collective' }),
       })
 
       // Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })

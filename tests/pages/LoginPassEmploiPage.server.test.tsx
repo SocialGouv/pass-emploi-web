@@ -17,12 +17,12 @@ describe('LoginPassEmploiPage server side', () => {
 
     // When
     const promise = LoginPassEmploi({
-      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+      searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
     // Then
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT vers-linfini-et-au-dela')
+      new Error('NEXT_REDIRECT vers-linfini-et-au-dela')
     )
     expect(redirect).toHaveBeenCalledWith('vers-linfini-et-au-dela')
   })
@@ -32,7 +32,11 @@ describe('LoginPassEmploiPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await LoginPassEmploi({ searchParams: { source: 'notif-mail' } }))
+    render(
+      await LoginPassEmploi({
+        searchParams: Promise.resolve({ source: 'notif-mail' }),
+      })
+    )
 
     // Then
     expect(metadata).toEqual({
@@ -40,7 +44,7 @@ describe('LoginPassEmploiPage server side', () => {
     })
     expect(LoginPassEmploiPage).toHaveBeenCalledWith(
       { ssoAvenirProEstActif: true },
-      {}
+      undefined
     )
   })
 })

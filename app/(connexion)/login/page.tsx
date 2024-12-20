@@ -15,9 +15,9 @@ export const metadata: Metadata = {
 export default async function LoginHub({
   searchParams,
 }: {
-  searchParams?: LoginSearchParams
+  searchParams?: Promise<LoginSearchParams>
 }) {
-  await redirectIfAlreadyConnected(searchParams)
+  await redirectIfAlreadyConnected(await searchParams)
 
   return <LoginHubPage />
 }

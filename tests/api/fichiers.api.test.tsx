@@ -20,13 +20,13 @@ describe('GET api/fichier/[idFichier]', () => {
 
     // When
     const promise = GET(new Request('https://www.perdu.com'), {
-      params: { idFichier: 'idFichier' },
+      params: Promise.resolve({ idFichier: 'idFichier' }),
     })
 
     // Then
     await expect(promise).rejects.toEqual(
       new Error(
-        'NEXT REDIRECT NEXT_PUBLIC_API_ENDPOINT/fichiers/idFichier?token=accessToken'
+        'NEXT_REDIRECT NEXT_PUBLIC_API_ENDPOINT/fichiers/idFichier?token=accessToken'
       )
     )
     expect(redirect).toHaveBeenCalledWith(

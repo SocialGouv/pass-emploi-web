@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   title: 'Pilotage',
 }
 
-type PilotageSearchParams = Partial<{ onglet: string }>
+type PilotageSearchParams = Promise<Partial<{ onglet: string }>>
 export default async function Pilotage({
   searchParams,
 }: {
@@ -60,18 +60,21 @@ export default async function Pilotage({
   if (peutAccederAuxSessions(conseiller)) {
     try {
       sessions = await getSessionsACloreServerSide(user.id, accessToken)
-    } catch (_e) {
+    } catch {
       sessions = undefined
     }
   }
 
   let onglet: Onglet = 'ACTIONS'
-  switch (searchParams?.onglet) {
+  switch ((await searchParams)?.onglet) {
     case 'animationsCollectives':
       onglet = 'ANIMATIONS_COLLECTIVES'
       break
     case 'sessionsImilo':
       onglet = 'SESSIONS_IMILO'
+      break
+    case 'archivage':
+      onglet = 'ARCHIVAGE'
       break
   }
 

@@ -28,12 +28,12 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
       // When
       const promise = GET(new Request('https://www.perdu.com'), {
-        params: { numeroDossier: '123456' },
+        params: Promise.resolve({ numeroDossier: '123456' }),
       })
 
       // Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })
@@ -57,12 +57,12 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
         // When
         const promise = GET(new Request('https://www.perdu.com'), {
-          params: { numeroDossier: '123456' },
+          params: Promise.resolve({ numeroDossier: '123456' }),
         })
 
         // Then
         await expect(promise).rejects.toEqual(
-          new Error('NEXT REDIRECT /mes-jeunes/id-jeune')
+          new Error('NEXT_REDIRECT /mes-jeunes/id-jeune')
         )
         expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', undefined)
         expect(redirect).toHaveBeenCalledWith('/mes-jeunes/id-jeune')
@@ -86,12 +86,12 @@ describe('GET /api/milo/[numeroDossier]', () => {
 
         // When
         const promise = GET(new Request('https://www.perdu.com'), {
-          params: { numeroDossier: '123456' },
+          params: Promise.resolve({ numeroDossier: '123456' }),
         })
 
         // Then
         await expect(promise).rejects.toEqual(
-          new Error('NEXT REDIRECT /mes-jeunes')
+          new Error('NEXT_REDIRECT /mes-jeunes')
         )
         expect(getIdJeuneMilo).toHaveBeenCalledWith('123456', undefined)
         expect(redirect).toHaveBeenCalledWith('/mes-jeunes')

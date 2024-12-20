@@ -9,11 +9,14 @@ import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import {
+  BaseBeneficiaire,
+  BeneficiaireEtChat,
+  extractBaseBeneficiaire,
+} from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   getMessageImportant,
@@ -375,8 +378,7 @@ describe('<ChatRoom />', () => {
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
             onOuvertureMenu={() => {}}
-          />,
-          {}
+          />
         ))
       })
     })
@@ -394,7 +396,7 @@ describe('<ChatRoom />', () => {
     it('affiche les alertes sur petit écran', () => {
       expect(AlerteDisplayer).toHaveBeenCalledWith(
         { hideOnLargeScreen: true },
-        {}
+        undefined
       )
     })
 
@@ -471,8 +473,7 @@ describe('<ChatRoom />', () => {
             onAccesConversation={() => {}}
             onAccesListesDiffusion={() => {}}
             onOuvertureMenu={() => {}}
-          />,
-          {}
+          />
         ))
       })
 
@@ -501,8 +502,7 @@ describe('<ChatRoom />', () => {
           onAccesConversation={() => {}}
           onAccesListesDiffusion={() => {}}
           onOuvertureMenu={() => {}}
-        />,
-        {}
+        />
       )
 
       // When

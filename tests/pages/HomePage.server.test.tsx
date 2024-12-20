@@ -45,17 +45,19 @@ describe('HomePage server side', () => {
 
       //Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })
 
     it('redirige vers l’url renseignée', async () => {
       // When
-      const promise = Home({ searchParams: { redirectUrl: '/agenda' } })
+      const promise = Home({
+        searchParams: Promise.resolve({ redirectUrl: '/agenda' }),
+      })
 
       //Then
-      await expect(promise).rejects.toEqual(new Error('NEXT REDIRECT /agenda'))
+      await expect(promise).rejects.toEqual(new Error('NEXT_REDIRECT /agenda'))
       expect(redirect).toHaveBeenCalledWith('/agenda')
     })
   })
@@ -81,7 +83,7 @@ describe('HomePage server side', () => {
           afficherModaleOnboarding: false,
           redirectUrl: '/mes-jeunes',
         },
-        {}
+        undefined
       )
     })
   })
@@ -100,7 +102,11 @@ describe('HomePage server side', () => {
       )
 
       // When
-      render(await Home({ searchParams: { redirectUrl: '/agenda' } }))
+      render(
+        await Home({
+          searchParams: Promise.resolve({ redirectUrl: '/agenda' }),
+        })
+      )
 
       // Then
       expect(HomePage).toHaveBeenCalledWith(
@@ -111,7 +117,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/agenda',
           referentielAgences: uneListeDAgencesFranceTravail(),
         },
-        {}
+        undefined
       )
     })
   })
@@ -144,7 +150,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/mes-jeunes',
           referentielAgences: undefined,
         },
-        {}
+        undefined
       )
     })
   })
@@ -162,7 +168,10 @@ describe('HomePage server side', () => {
       // When
       render(
         await Home({
-          searchParams: { onboarding: true, redirectUrl: '/agenda' },
+          searchParams: Promise.resolve({
+            onboarding: true,
+            redirectUrl: '/agenda',
+          }),
         })
       )
 
@@ -175,7 +184,7 @@ describe('HomePage server side', () => {
           redirectUrl: '/agenda',
           referentielAgences: uneListeDAgencesFranceTravail(),
         },
-        {}
+        undefined
       )
     })
   })
@@ -198,7 +207,7 @@ describe('HomePage server side', () => {
 
       //Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /consentement-cgu')
+        new Error('NEXT_REDIRECT /consentement-cgu')
       )
       expect(redirect).toHaveBeenCalledWith('/consentement-cgu')
     })

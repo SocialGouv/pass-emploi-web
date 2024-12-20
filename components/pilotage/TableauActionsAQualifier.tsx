@@ -24,7 +24,7 @@ import { TriActionsAQualifier } from 'services/actions.service'
 type TableauActionsConseillerProps = {
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: ActionPilotage[]
-  tri: TriActionsAQualifier | undefined
+  tri: TriActionsAQualifier
   onTri: (tri: TriActionsAQualifier) => void
   onFiltres: (categories: string[]) => void
   onLienExterne: (label: string) => void
@@ -69,7 +69,19 @@ export default function TableauActionsAQualifier({
     plusieursBeneficiairesSelectionnes
 
   function inverserTriBeneficiaires() {
-    const nouvelOrdre = tri === 'ALPHABETIQUE' ? 'INVERSE' : 'ALPHABETIQUE'
+    const nouvelOrdre =
+      tri === 'BENEFICIAIRE_ALPHABETIQUE'
+        ? 'BENEFICIAIRE_INVERSE'
+        : 'BENEFICIAIRE_ALPHABETIQUE'
+    onTri(nouvelOrdre)
+    setActionsSelectionnees([])
+  }
+
+  function inverserTriDateRealisation() {
+    const nouvelOrdre =
+      tri === 'REALISATION_CHRONOLOGIQUE'
+        ? 'REALISATION_ANTICHRONOLOGIQUE'
+        : 'REALISATION_CHRONOLOGIQUE'
     onTri(nouvelOrdre)
     setActionsSelectionnees([])
   }
@@ -246,18 +258,21 @@ export default function TableauActionsAQualifier({
                 <button
                   className='flex border-none items-center w-full h-full p-4'
                   onClick={inverserTriBeneficiaires}
-                  aria-label={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
-                    tri === 'ALPHABETIQUE' ? 'inversé' : ''
+                  aria-label={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
+                    tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
                   }`}
-                  title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
-                    tri === 'ALPHABETIQUE' ? 'inversé' : ''
+                  title={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
+                    tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
                   }`}
                   type='button'
                 >
                   Bénéficiaire
                   <SortIcon
-                    isSorted={tri !== undefined}
-                    isDesc={tri === 'INVERSE'}
+                    isSorted={
+                      tri === 'BENEFICIAIRE_ALPHABETIQUE' ||
+                      tri === 'BENEFICIAIRE_INVERSE'
+                    }
+                    isDesc={tri === 'BENEFICIAIRE_INVERSE'}
                   />
                 </button>
               </TH>
@@ -271,7 +286,32 @@ export default function TableauActionsAQualifier({
                   onFiltres={filtrerActionsParCategorie}
                 />
               </TH>
-              <TH>Date de réalisation</TH>
+              <TH estCliquable={true}>
+                <button
+                  className='flex border-none items-center w-full h-full p-4'
+                  onClick={inverserTriDateRealisation}
+                  aria-label={`Afficher la liste des actions triées par date de réalisation ${
+                    tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                      ? 'croissante'
+                      : 'décroissante'
+                  }`}
+                  title={`Afficher la liste des actions triées par date de réalisation ${
+                    tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                      ? 'croissante'
+                      : 'décroissante'
+                  }`}
+                  type='button'
+                >
+                  Date de réalisation
+                  <SortIcon
+                    isSorted={
+                      tri === 'REALISATION_CHRONOLOGIQUE' ||
+                      tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                    }
+                    isDesc={tri === 'REALISATION_ANTICHRONOLOGIQUE'}
+                  />
+                </button>
+              </TH>
               <TH>Voir le détail</TH>
             </TR>
           </thead>

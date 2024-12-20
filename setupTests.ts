@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { toHaveNoViolations } from 'jest-axe'
+
 expect.extend(toHaveNoViolations)
 
 global.fetch = jest.fn(async () => new Response())
@@ -17,18 +18,13 @@ jest.mock('next/navigation', () => ({
     throw new Error('NEXT NOT_FOUND')
   }),
   redirect: jest.fn((destination) => {
-    throw new Error('NEXT REDIRECT ' + destination)
+    throw new Error('NEXT_REDIRECT ' + destination)
   }),
   useRouter: jest.fn(),
   usePathname: jest.fn(),
   useSearchParams: jest.fn(),
 }))
 jest.mock('next/headers', () => ({ headers: jest.fn() }))
-jest.mock('next/dist/client/components/redirect', () => ({
-  isRedirectError: jest.fn(({ message }) =>
-    message.startsWith('NEXT REDIRECT')
-  ),
-}))
 
 jest.mock('next-auth/react', () => ({
   getSession: async () => ({

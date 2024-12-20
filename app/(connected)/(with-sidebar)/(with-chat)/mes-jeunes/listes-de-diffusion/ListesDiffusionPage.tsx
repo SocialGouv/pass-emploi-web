@@ -1,7 +1,7 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -151,7 +151,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
   )
 }
 
-function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
+function TitreListe({ liste }: { liste: ListeDeDiffusion }): ReactElement {
   const informationLabel =
     'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
 

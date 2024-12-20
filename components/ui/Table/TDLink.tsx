@@ -25,7 +25,7 @@ export default function TDLink({
       .filter((cellVisibleText) => cellVisibleText !== null)
 
     setLabel(labelPrefix + ' ' + rowVisibleText.join(' '))
-  }, [tdRef.current])
+  }, [])
 
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
   // absolute position in grandparent : https://stackoverflow.com/a/25768682

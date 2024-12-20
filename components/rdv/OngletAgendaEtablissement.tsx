@@ -1,13 +1,12 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useRef, useState } from 'react'
 
-import ResettableTextInput from '../ui/Form/ResettableTextInput'
-
 import EmptyState from 'components/EmptyState'
 import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives, {
   FiltresHandles,
 } from 'components/rdv/FiltresStatutAnimationsCollectives'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -94,7 +93,7 @@ export default function OngletAgendaEtablissement({
           (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
         )
       )
-    } catch (e) {
+    } catch {
       setPeriodeFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })

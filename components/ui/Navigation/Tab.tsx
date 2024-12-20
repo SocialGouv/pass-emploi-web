@@ -1,5 +1,4 @@
-import IconComponent, { IconName } from '../IconComponent'
-
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 
 export interface TabProps {
@@ -7,6 +6,7 @@ export interface TabProps {
   controls: string
   selected: boolean
   onSelectTab: () => void
+  important?: boolean
   count?: number
   iconName?: IconName
   ariaLabel?: string
@@ -20,7 +20,10 @@ export default function Tab({
   count,
   iconName,
   ariaLabel,
+  important,
 }: TabProps) {
+  const accentuer = important && count && count > 0
+
   return (
     <li role='presentation'>
       <button
@@ -30,7 +33,7 @@ export default function Tab({
         aria-controls={controls}
         aria-selected={selected}
         onClick={onSelectTab}
-        className={`text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
+        className={`h-full text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
           selected
             ? 'text-m-bold border-b-4 border-b-primary'
             : 'hover:font-bold'
@@ -41,7 +44,7 @@ export default function Tab({
             name={iconName}
             aria-hidden={true}
             focusable={false}
-            className={`w-4 h-4 mr-2 ${
+            className={`shrink-0 w-4 h-4 mr-2 ${
               selected
                 ? 'fill-primary stroke-primary'
                 : 'fill-grey_800 stroke-grey_800'
@@ -54,9 +57,9 @@ export default function Tab({
             <span className='sr-only'> </span>
             <Badge
               count={count}
-              textColor='primary'
-              bgColor='primary_lighten'
-              style='ml-4'
+              textColor={accentuer ? 'white' : 'primary'}
+              bgColor={accentuer ? 'warning' : 'primary_lighten'}
+              style='shrink-0 ml-4'
               size={6}
             />
             <span className='sr-only'> éléments</span>

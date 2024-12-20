@@ -216,7 +216,7 @@ function PortefeuillePage({
           {jeunesFiltres && (
             <TableauBeneficiaires
               ref={refTableau}
-              beneficiairesFiltres={jeunesFiltres}
+              beneficiaires={jeunesFiltres}
               total={conseillerJeunes.length}
             />
           )}

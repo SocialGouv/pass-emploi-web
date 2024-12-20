@@ -1,16 +1,19 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
 import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
   uneBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { unDossierMilo } from 'fixtures/milo'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  extractBeneficiaireWithActivity,
+  Portefeuille,
+} from 'interfaces/beneficiaire'
 import {
   createCompteJeuneMilo,
   getDossierJeune,
@@ -70,20 +73,24 @@ describe('CreationBeneficiaireMiloPage client side', () => {
   })
 
   describe('quand on a recherché un dossier', () => {
-    let push: Function
-    let refresh: Function
+    let push: () => void
+    let refresh: () => void
     let setAlerte: () => void
-    let setPortefeuille: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+    let setPortefeuille: (updatedBeneficiaires: Portefeuille) => void
     const dossier = unDossierMilo()
-    const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+    const portefeuille = desItemsBeneficiaires().map(
+      extractBeneficiaireWithActivity
+    )
+    const now = DateTime.now()
     beforeEach(async () => {
       // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       ;(getDossierJeune as jest.Mock).mockResolvedValue(dossier)
       ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(
         uneBaseBeneficiaire()
       )
 
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       refresh = jest.fn()
       setAlerte = jest.fn()
       setPortefeuille = jest.fn()
@@ -138,7 +145,12 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseBeneficiaire(),
+        {
+          ...uneBaseBeneficiaire(),
+          creationDate: now.toISO(),
+          isActivated: false,
+          estAArchiver: false,
+        },
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',

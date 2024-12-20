@@ -451,7 +451,7 @@ describe('ActionsApiService', () => {
   })
 
   describe('.getActionsAQualifierClientSide', () => {
-    it('renvoie les actions du conseiller à qualifier', async () => {
+    it('renvoie les actions du conseiller à qualifier triées par bénéficiaire', async () => {
       // GIVEN
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
@@ -463,13 +463,40 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await getActionsAQualifierClientSide('whatever', {
         page: 1,
-        tri: 'ALPHABETIQUE',
+        tri: 'BENEFICIAIRE_ALPHABETIQUE',
         filtres: ['SANTE', 'EMPLOI'],
       })
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE&codesCategories=SANTE&codesCategories=EMPLOI',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: uneListeDActionsAQualifier(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
+      })
+    })
+
+    it('renvoie les actions du conseiller à qualifier triées par date de réalisation', async () => {
+      // GIVEN
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: uneListeDActionsAQualifierJson(),
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await getActionsAQualifierClientSide('whatever', {
+        page: 1,
+        tri: 'REALISATION_ANTICHRONOLOGIQUE',
+        filtres: ['SANTE', 'EMPLOI'],
+      })
+
+      // THEN
+      expect(apiGet).toHaveBeenCalledWith(
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=REALISATION_ANTICHRONOLOGIQUE&codesCategories=SANTE&codesCategories=EMPLOI',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -497,7 +524,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=REALISATION_CHRONOLOGIQUE',
         'accessToken'
       )
       expect(actual).toStrictEqual({

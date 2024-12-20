@@ -19,12 +19,10 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteConseillerModal = dynamic(
-  () => import('components/ConfirmationDeleteConseillerModal'),
-  { ssr: false }
+  () => import('components/ConfirmationDeleteConseillerModal')
 )
 const ConfirmationSuppressionCompteConseillerModal = dynamic(
-  () => import('components/ConfirmationSuppressionCompteConseillerModal'),
-  { ssr: false }
+  () => import('components/ConfirmationSuppressionCompteConseillerModal')
 )
 
 type ProfilProps = {

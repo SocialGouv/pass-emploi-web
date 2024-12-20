@@ -5,10 +5,10 @@ import { getServerSession } from 'next-auth'
 import LayoutWhenConnected, { generateMetadata } from 'app/(connected)/layout'
 import {
   desItemsBeneficiaires,
-  extractBaseBeneficiaire,
+
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import { BeneficiaireFromListe, extractBaseBeneficiaire, extractBeneficiaireWithActivity } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -37,7 +37,7 @@ describe('LayoutWhenConnected', () => {
     const promise = LayoutWhenConnected({ children: <div /> })
 
     // Then
-    await expect(promise).rejects.toEqual(new Error('NEXT REDIRECT /login'))
+    await expect(promise).rejects.toEqual(new Error('NEXT_REDIRECT /login'))
     expect(redirect).toHaveBeenCalledWith('/login')
   })
 
@@ -52,7 +52,7 @@ describe('LayoutWhenConnected', () => {
 
     // Then
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT /api/auth/federated-logout')
+      new Error('NEXT_REDIRECT /api/auth/federated-logout')
     )
     expect(redirect).toHaveBeenCalledWith('/api/auth/federated-logout')
   })
@@ -108,7 +108,7 @@ describe('LayoutWhenConnected', () => {
       )
       expect(ConseillerProvider).toHaveBeenCalledWith(
         expect.objectContaining({ conseiller }),
-        {}
+        undefined
       )
     })
 
@@ -121,10 +121,10 @@ describe('LayoutWhenConnected', () => {
       expect(PortefeuilleProvider).toHaveBeenCalledWith(
         expect.objectContaining({
           portefeuille: [portefeuille[2], portefeuille[0], portefeuille[1]].map(
-            extractBaseBeneficiaire
+            extractBeneficiaireWithActivity
           ),
         }),
-        {}
+        undefined
       )
     })
   })

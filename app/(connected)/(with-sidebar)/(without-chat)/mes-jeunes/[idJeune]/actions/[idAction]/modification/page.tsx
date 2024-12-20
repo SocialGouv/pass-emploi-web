@@ -17,7 +17,7 @@ import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { unsafeRandomId } from 'utils/helpers'
 
-type ModificationActionParams = { idAction: string }
+type ModificationActionParams = Promise<{ idAction: string }>
 
 export async function generateMetadata({
   params,
@@ -25,25 +25,26 @@ export async function generateMetadata({
   params: ModificationActionParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
-  const actionContent = await getAction(params.idAction, accessToken)
+  const { idAction } = await params
+  const actionContent = await getAction(idAction, accessToken)
 
   return {
     title: `Modifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
   }
 }
 
-type ModificationParams = { idAction: string }
 export default async function ModificationAction({
   params,
 }: {
-  params: ModificationParams
+  params: ModificationActionParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) notFound()
 
+  const { idAction } = await params
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
-      getAction(params.idAction, accessToken),
+      getAction(idAction, accessToken),
       getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
       getActionsPredefinies(accessToken),
     ])

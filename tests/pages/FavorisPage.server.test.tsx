@@ -41,8 +41,8 @@ describe('Favoris', () => {
 
     // When
     const params = { idJeune: 'id-jeune' }
-    const metadata = await generateMetadata({ params })
-    render(await Favoris({ params }))
+    const metadata = await generateMetadata({ params: Promise.resolve(params) })
+    render(await Favoris({ params: Promise.resolve(params) }))
 
     // Then
     expect(getOffres).toHaveBeenCalledWith('id-jeune', 'accessToken')
@@ -59,7 +59,7 @@ describe('Favoris', () => {
         recherches,
         lectureSeule: false,
       },
-      {}
+      undefined
     )
   })
 })
@@ -73,12 +73,14 @@ describe('Quand la ressource n’est pas accessible au conseiller', () => {
     )
 
     // When
-    const promise = Favoris({ params: { idJeune: 'id-jeune' } })
+    const promise = Favoris({
+      params: Promise.resolve({ idJeune: 'id-jeune' }),
+    })
 
     // Then
 
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT /mes-jeunes/id-jeune')
+      new Error('NEXT_REDIRECT /mes-jeunes/id-jeune')
     )
     expect(redirect).toHaveBeenCalledWith('/mes-jeunes/id-jeune')
   })

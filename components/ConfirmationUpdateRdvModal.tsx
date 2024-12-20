@@ -1,9 +1,8 @@
 import { useRef } from 'react'
 
-import IconComponent, { IconName } from './ui/IconComponent'
-
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface ConfirmationUpdateRdvModalProps {
   onConfirmation: () => void

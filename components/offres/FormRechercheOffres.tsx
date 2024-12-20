@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, ReactElement, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
@@ -207,34 +207,36 @@ export default function FormRechercheOffres({
           </div>
         </Etape>
 
-        {getRechercheMain()}
-
-        {typeOffre && showFilters && (
-          <>
-            <div className='flex justify-end mb-6'>
-              <button
-                type='button'
-                onClick={() => setShowMoreFilters(!showMoreFilters)}
-                className='mr-12'
-              >
-                Voir {showMoreFilters ? 'moins' : 'plus'} de critères
-                <IconComponent
-                  name={
-                    showMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
-                  }
-                  className='h-4 w-4 fill-primary inline ml-2'
-                  aria-hidden={true}
-                  focusable={false}
-                ></IconComponent>
-              </button>
-            </div>
-
-            {showMoreFilters && getRechercheSecondary()}
-          </>
-        )}
-
         {typeOffre && (
           <>
+            {getRechercheMain(typeOffre)}
+
+            {showFilters && (
+              <>
+                <div className='flex justify-end mb-6'>
+                  <button
+                    type='button'
+                    onClick={() => setShowMoreFilters(!showMoreFilters)}
+                    className='mr-12'
+                  >
+                    Voir {showMoreFilters ? 'moins' : 'plus'} de critères
+                    <IconComponent
+                      name={
+                        showMoreFilters
+                          ? IconName.ChevronUp
+                          : IconName.ChevronDown
+                      }
+                      className='h-4 w-4 fill-primary inline ml-2'
+                      aria-hidden={true}
+                      focusable={false}
+                    ></IconComponent>
+                  </button>
+                </div>
+
+                {showMoreFilters && getRechercheSecondary(typeOffre)}
+              </>
+            )}
+
             <p className='mt-5 mb-4 text-center'>
               [{countCriteres}] filtre{countCriteres > 1 && 's'} sélectionné
               {countCriteres > 1 && 's'}
@@ -252,6 +254,7 @@ export default function FormRechercheOffres({
           </>
         )}
       </div>
+
       {collapsed && (
         <div className='flex mt-4 mb-8 gap-2'>
           {labelTypeOffre && (
@@ -280,8 +283,8 @@ export default function FormRechercheOffres({
     </form>
   )
 
-  function getRechercheMain(): JSX.Element | null {
-    switch (typeOffre) {
+  function getRechercheMain(forType: TypeOffre): ReactElement {
+    switch (forType) {
       case TypeOffre.EMPLOI:
         return (
           <RechercheOffresEmploiPrincipale
@@ -323,13 +326,11 @@ export default function FormRechercheOffres({
             onQueryUpdate={updateQueryImmersion}
           />
         )
-      case undefined:
-        return null
     }
   }
 
-  function getRechercheSecondary(): JSX.Element | null {
-    switch (typeOffre) {
+  function getRechercheSecondary(forType: TypeOffre): ReactElement {
+    switch (forType) {
       case TypeOffre.EMPLOI:
         return (
           <RechercheOffresEmploiSecondaire
@@ -366,8 +367,6 @@ export default function FormRechercheOffres({
             onQueryUpdate={updateQueryImmersion}
           />
         )
-      case undefined:
-        return null
     }
   }
 }

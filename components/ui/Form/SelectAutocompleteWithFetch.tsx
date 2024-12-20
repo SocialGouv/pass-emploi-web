@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { InputError } from 'components/ui/Form/InputError'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { useDebounce } from 'utils/hooks/useDebounce'
 
 type WithSimplifiedLabel<T> = T & { upperCaseAlphaLabel: string }
+
+type PickStringFields<T> = {
+  [P in keyof T as T[P] extends string ? P : never]: T[P]
+}
 type SelectAutocompleteWithFetchProps<T> = {
   id: string
   fetch: (search: string) => Promise<T[]>
-  fieldNames: { id: string; value: string }
+  fieldNames: {
+    id: keyof PickStringFields<T>
+    value: keyof PickStringFields<T>
+  }
   onUpdateSelected: (value: { selected?: T; hasError: boolean }) => void
   errorMessage: string
   defaultValue?: string
@@ -25,10 +32,12 @@ export default function SelectAutocompleteWithFetch<T>({
   required,
   disabled = false,
 }: SelectAutocompleteWithFetchProps<T>) {
+  const isFirstRender = useRef<boolean>(true)
+
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
   const options: Array<{ id: string; value: string }> = entites.map(
     (entite) => ({
-      id: (entite as any)[fieldNames.id],
+      id: entite[fieldNames.id] as string,
       value: entite.upperCaseAlphaLabel,
     })
   )
@@ -67,12 +76,16 @@ export default function SelectAutocompleteWithFetch<T>({
   }
 
   useEffect(() => {
+    if (isFirstRender.current) return
+
     if (debouncedInput) {
       fetch(debouncedInput).then((newEntites) => {
         const simplifiedEntities: WithSimplifiedLabel<T>[] = newEntites.map(
           (e) => ({
             ...e,
-            upperCaseAlphaLabel: toUpperCaseAlpha((e as any)[fieldNames.value]),
+            upperCaseAlphaLabel: toUpperCaseAlpha(
+              e[fieldNames.value] as string
+            ),
           })
         )
         setEntites(simplifiedEntities)
@@ -84,6 +97,13 @@ export default function SelectAutocompleteWithFetch<T>({
       onUpdateSelected({ hasError: Boolean(required) })
     }
   }, [debouncedInput])
+
+  useEffect(() => {
+    isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
+  }, [])
 
   return (
     <>

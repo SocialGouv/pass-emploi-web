@@ -1,4 +1,9 @@
-import React, { useRef } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -8,19 +13,19 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneInactifModalProps {
-  jeune: BaseBeneficiaire
+  beneficiaire: BaseBeneficiaire
   onClose: () => void
   onDelete: () => Promise<void>
 }
 
-export default function DeleteJeuneInactifModal({
-  jeune,
-  onClose,
-  onDelete,
-}: DeleteJeuneInactifModalProps) {
+function DeleteBeneficiaireInactifModal(
+  { beneficiaire, onClose, onDelete }: DeleteJeuneInactifModalProps,
+  ref: ForwardedRef<ModalHandles>
+) {
   const [portefeuille] = usePortefeuille()
 
   const modalRef = useRef<ModalHandles>(null)
+  useImperativeHandle(ref, () => modalRef.current!)
 
   useMatomo(
     'Détail Jeune - Pop-in confirmation suppression',
@@ -30,7 +35,7 @@ export default function DeleteJeuneInactifModal({
   return (
     <Modal
       ref={modalRef}
-      title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
+      title={`Suppression du compte bénéficiaire ${beneficiaire.prenom} ${beneficiaire.nom}`}
       onClose={onClose}
       titleIllustration={IllustrationName.Delete}
     >
@@ -58,3 +63,4 @@ export default function DeleteJeuneInactifModal({
     </Modal>
   )
 }
+export default forwardRef(DeleteBeneficiaireInactifModal)

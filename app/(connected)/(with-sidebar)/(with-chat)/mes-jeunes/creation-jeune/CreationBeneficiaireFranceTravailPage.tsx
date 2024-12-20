@@ -1,6 +1,7 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
@@ -38,7 +39,14 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
         email: nouveauBeneficiaire.email,
       })
 
-      setPortefeuille(portefeuille.concat(beneficiaireCree))
+      setPortefeuille(
+        portefeuille.concat({
+          ...beneficiaireCree,
+          creationDate: DateTime.now().toISO(),
+          isActivated: false,
+          estAArchiver: false,
+        })
+      )
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
     } catch (error) {

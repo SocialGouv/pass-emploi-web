@@ -63,7 +63,7 @@ export default function OngletAgendaConseiller({
     try {
       const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
       setEvenements(evenementsPeriode)
-    } catch (e) {
+    } catch {
       setFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })

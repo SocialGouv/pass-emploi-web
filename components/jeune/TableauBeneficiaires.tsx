@@ -4,6 +4,7 @@ import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import SortIcon from 'components/ui/SortIcon'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
@@ -12,38 +13,64 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
 const TableauBeneficiairesMilo = dynamic(
-  () => import('components/jeune/TableauBeneficiairesMilo'),
-  { ssr: false }
+  () => import('components/jeune/TableauBeneficiairesMilo')
 )
 const TableauBeneficiairesPasMilo = dynamic(
-  () => import('components/jeune/TableauBeneficiairesPasMilo'),
-  { ssr: false }
+  () => import('components/jeune/TableauBeneficiairesPasMilo')
 )
 
 type TableauBeneficiairesProps = {
-  beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
+  beneficiaires: BeneficiaireAvecInfosComplementaires[]
   total: number
 }
 
 function TableauBeneficiaires(
-  { beneficiairesFiltres, total }: TableauBeneficiairesProps,
+  { beneficiaires, total }: TableauBeneficiairesProps,
   ref: ForwardedRef<HTMLTableElement>
 ) {
   const [conseiller] = useConseiller()
 
-  const nombrePages = Math.ceil(beneficiairesFiltres.length / 10)
+  const nombrePages = Math.ceil(beneficiaires.length / 10)
   const [page, setPage] = useState<number>(1)
 
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
+  const [
+    triDerniereActiviteChronologique,
+    setTriDerniereActiviteChronologique,
+  ] = useState(false)
+  const [beneficiairesTries, setBeneficiairesTries] = useState(
+    trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
+  )
+
+  function trierParDerniereActivite(
+    beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
+    ordreChronologique: boolean
+  ): BeneficiaireAvecInfosComplementaires[] {
+    return beneficiairesATrier.toSorted((a, b) => {
+      if (!a.isActivated || !b.isActivated)
+        return Number(b.isActivated) - Number(a.isActivated)
+
+      const dateA = DateTime.fromISO(a.lastActivity!)
+      const dateB = DateTime.fromISO(b.lastActivity!)
+      const diff = dateA.toMillis() - dateB.toMillis()
+      return ordreChronologique ? diff : -diff
+    })
+  }
 
   useEffect(() => {
     setPage(1)
-  }, [beneficiairesFiltres])
+  }, [beneficiaires])
+
+  useEffect(() => {
+    setBeneficiairesTries(
+      trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
+    )
+  }, [beneficiaires, triDerniereActiviteChronologique])
 
   return (
     <>
-      {beneficiairesFiltres.length === 0 && (
+      {beneficiaires.length === 0 && (
         <EmptyState
           shouldFocus={true}
           illustrationName={IllustrationName.People}
@@ -52,24 +79,47 @@ function TableauBeneficiaires(
         />
       )}
 
-      {beneficiairesFiltres.length > 0 && (
+      {beneficiaires.length > 0 && (
         <>
           <h2 className='text-m-bold mb-2 text-center text-grey_800'>
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
             {toShortDate(FIN_PERIODE)}
           </h2>
 
+          <button
+            onClick={() => {
+              setTriDerniereActiviteChronologique(
+                !triDerniereActiviteChronologique
+              )
+            }}
+            className='flex float-right mt-4 mb-4 text-s-regular text-right'
+            title={
+              triDerniereActiviteChronologique
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
+            }
+            aria-label={
+              triDerniereActiviteChronologique
+                ? 'Trier par dernière activité ordre antichronologique'
+                : 'Trier par dernière activité ordre chronologique'
+            }
+            type='button'
+          >
+            Trier par dernière activité
+            <SortIcon isDesc={!triDerniereActiviteChronologique} />
+          </button>
+
           <Table
             ref={ref}
             caption={{
               text: 'Liste des bénéficiaires',
-              count: total === beneficiairesFiltres.length ? total : undefined,
+              count: total === beneficiaires.length ? total : undefined,
               visible: true,
             }}
           >
             {estMilo(conseiller) && (
               <TableauBeneficiairesMilo
-                beneficiairesFiltres={beneficiairesFiltres}
+                beneficiaires={beneficiairesTries}
                 page={page}
                 total={total}
               />
@@ -77,7 +127,7 @@ function TableauBeneficiaires(
 
             {!estMilo(conseiller) && (
               <TableauBeneficiairesPasMilo
-                beneficiairesFiltres={beneficiairesFiltres}
+                beneficiaires={beneficiairesTries}
                 page={page}
                 total={total}
               />

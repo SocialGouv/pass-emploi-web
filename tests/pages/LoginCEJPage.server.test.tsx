@@ -15,12 +15,12 @@ describe('LoginCEJPage server side', () => {
 
     // When
     const promise = LoginCEJ({
-      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+      searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
     // Then
     await expect(promise).rejects.toEqual(
-      new Error('NEXT REDIRECT vers-linfini-et-au-dela')
+      new Error('NEXT_REDIRECT vers-linfini-et-au-dela')
     )
     expect(redirect).toHaveBeenCalledWith('vers-linfini-et-au-dela')
   })
@@ -30,13 +30,17 @@ describe('LoginCEJPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue(null)
 
     // When
-    render(await LoginCEJ({ searchParams: { source: 'notif-mail' } }))
+    render(
+      await LoginCEJ({
+        searchParams: Promise.resolve({ source: 'notif-mail' }),
+      })
+    )
 
     // Then
     expect(metadata).toEqual({
       title:
         "Connexion dans l'espace conseiller - Outil du Contrat d’Engagement Jeune",
     })
-    expect(LoginCEJPage).toHaveBeenCalledWith({}, {})
+    expect(LoginCEJPage).toHaveBeenCalledWith({}, undefined)
   })
 })

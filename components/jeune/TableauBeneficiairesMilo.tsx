@@ -17,13 +17,13 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
 
 interface TableauBeneficiairesMiloProps {
-  beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
+  beneficiaires: BeneficiaireAvecInfosComplementaires[]
   page: number
   total: number
 }
 
 export default function TableauBeneficiairesMilo({
-  beneficiairesFiltres,
+  beneficiaires,
   page,
   total,
 }: TableauBeneficiairesMiloProps) {
@@ -38,21 +38,9 @@ export default function TableauBeneficiairesMilo({
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
 
-  function getRowLabel(beneficiaire: BeneficiaireAvecInfosComplementaires) {
-    const labelFiche = `Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`
-    const labelActivite = beneficiaire.isActivated
-      ? `dernière activité ${toRelativeDateTime(beneficiaire.lastActivity!)}`
-      : 'non activé'
-    const labelMessages = `${beneficiaire.messagesNonLus} messages non lus`
-
-    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
-  }
-
   useEffect(() => {
-    setBeneficiairesAffiches(
-      beneficiairesFiltres.slice(10 * (page - 1), 10 * page)
-    )
-  }, [beneficiairesFiltres, page])
+    setBeneficiairesAffiches(beneficiaires.slice(10 * (page - 1), 10 * page))
+  }, [beneficiaires, page])
 
   useMatomo('Mes jeunes', total > 0)
 

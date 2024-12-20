@@ -51,14 +51,14 @@ describe('EmargementRdvPage server side', () => {
     it('prépare la page', async () => {
       // When
       const metadata = await generateMetadata({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'ac' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'ac' }),
       })
 
       render(
         await EmargementRdv({
-          params: { idEvenement: 'id-evenement' },
-          searchParams: { type: 'ac' },
+          params: Promise.resolve({ idEvenement: 'id-evenement' }),
+          searchParams: Promise.resolve({ type: 'ac' }),
         })
       )
 
@@ -72,7 +72,7 @@ describe('EmargementRdvPage server side', () => {
           evenement: acAEmarger,
           agence: 'Montastruc-la-Conseillère',
         },
-        {}
+        undefined
       )
     })
   })
@@ -81,14 +81,14 @@ describe('EmargementRdvPage server side', () => {
     it('prépare la page', async () => {
       // When
       const metadata = await generateMetadata({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'session' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'session' }),
       })
 
       render(
         await EmargementRdv({
-          params: { idEvenement: 'id-evenement' },
-          searchParams: { type: 'session' },
+          params: Promise.resolve({ idEvenement: 'id-evenement' }),
+          searchParams: Promise.resolve({ type: 'session' }),
         })
       )
 
@@ -102,7 +102,7 @@ describe('EmargementRdvPage server side', () => {
           evenement: sessionAEmarger,
           agence: 'Montastruc-la-Conseillère',
         },
-        {}
+        undefined
       )
     })
   })
@@ -120,13 +120,13 @@ describe('EmargementRdvPage server side', () => {
 
       // When
       const promise = EmargementRdv({
-        params: { idEvenement: 'id-evenement' },
-        searchParams: { type: 'ac' },
+        params: Promise.resolve({ idEvenement: 'id-evenement' }),
+        searchParams: Promise.resolve({ type: 'ac' }),
       })
 
       //Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })

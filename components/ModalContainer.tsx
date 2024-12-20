@@ -15,7 +15,7 @@ import styles from 'styles/components/Modal.module.css'
 
 export type ModalHandles = {
   focusClose: () => void
-  closeModal: (e: KeyboardEvent | MouseEvent) => void
+  closeModal: (e?: KeyboardEvent | MouseEvent) => void
 }
 export type ModalContainerProps = {
   onClose: () => void
@@ -34,12 +34,9 @@ function ModalContainer(
   }))
   const [isRendered, setIsRendered] = useState(false)
   const previousFocusedElement = useRef<HTMLElement | null>(null)
-  const keyListeners = useRef(
-    new Map([
-      ['Tab', handleTabKey],
-      ['Escape', handleClose],
-    ])
-  )
+  const keyListeners = useRef<{
+    [key: string]: (e: KeyboardEvent) => void
+  }>({ Tab: handleTabKey, Escape: handleClose })
 
   function focusClose() {
     if (!previousFocusedElement.current)
@@ -71,14 +68,14 @@ function ModalContainer(
     }
   }
 
-  function handleClose(e: KeyboardEvent | MouseEvent) {
-    e.preventDefault()
+  function handleClose(e?: KeyboardEvent | MouseEvent) {
+    e?.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
     onClose()
   }
 
   function keyListener(e: KeyboardEvent) {
-    const listener = keyListeners.current.get(e.key)
+    const listener = keyListeners.current[e.key]
     return listener && listener(e)
   }
 
@@ -114,7 +111,7 @@ function ModalContainer(
   }
 }
 
-function isExternal(title: { id: string } | any): title is { id: string } {
+function isExternal(title: { id: string } | object): title is { id: string } {
   return Object.prototype.hasOwnProperty.call(title, 'id')
 }
 

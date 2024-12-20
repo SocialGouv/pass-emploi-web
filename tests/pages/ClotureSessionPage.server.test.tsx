@@ -83,8 +83,8 @@ describe('Cloture Session server side', () => {
       // When
       render(
         await ClotureSession({
-          params: params,
-          searchParams: searchParams,
+          params: Promise.resolve(params),
+          searchParams: Promise.resolve(searchParams),
         })
       )
 
@@ -102,7 +102,7 @@ describe('Cloture Session server side', () => {
           inscriptionsInitiales: inscriptionsInitiales,
           returnTo: `/agenda/sessions/session-1?redirectUrl=redirectUrl`,
         },
-        {}
+        undefined
       )
     })
 
@@ -112,8 +112,8 @@ describe('Cloture Session server side', () => {
 
       // When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
@@ -143,8 +143,8 @@ describe('Cloture Session server side', () => {
 
       //When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
@@ -165,13 +165,13 @@ describe('Cloture Session server side', () => {
 
       //When
       const promise = ClotureSession({
-        params: params,
-        searchParams: searchParams,
+        params: Promise.resolve(params),
+        searchParams: Promise.resolve(searchParams),
       })
 
       // Then
       await expect(promise).rejects.toEqual(
-        new Error('NEXT REDIRECT /mes-jeunes')
+        new Error('NEXT_REDIRECT /mes-jeunes')
       )
       expect(redirect).toHaveBeenCalledWith('/mes-jeunes')
     })

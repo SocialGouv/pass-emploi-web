@@ -72,7 +72,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     }
 
     function provideDescription(): string | undefined {
-      let descriptions = []
+      const descriptions = []
       if (invalid) descriptions.push(id + '--error')
       if (maxLength) descriptions.push(id + '--length')
       return descriptions.length ? descriptions.join(' ') : undefined

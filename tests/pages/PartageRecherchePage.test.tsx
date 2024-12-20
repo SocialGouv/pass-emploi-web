@@ -39,7 +39,7 @@ describe('Partage Recherche', () => {
   describe('pour tous les partages de recherche', () => {
     beforeEach(() => {
       alerteSetter = jest.fn()
-      push = jest.fn(() => Promise.resolve())
+      push = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
       ;({ container } = renderWithContexts(
         <PartageRecherchePage

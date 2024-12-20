@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC, SVGProps } from 'react'
 
 import AddIcon from 'assets/icons/actions/add.svg'
 import ArrowForwardIcon from 'assets/icons/actions/arrow_forward.svg'
@@ -158,7 +158,7 @@ export enum IconName {
   Warning = 'Warning',
 }
 
-const iconsByName: { [key in IconName]: any } = {
+const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.AccountCircleFill]: AccountCircleFillIcon,
   [IconName.AccountCircleOutline]: AccountCircleOutlineIcon,
   [IconName.ArrowBackward]: ArrowBackwardIcon,
