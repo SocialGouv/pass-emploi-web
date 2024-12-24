@@ -5071,9 +5071,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.9.0":
-  version: 4.9.0
-  resolution: "elastic-apm-node@npm:4.9.0"
+"elastic-apm-node@npm:4.10.0":
+  version: 4.10.0
+  resolution: "elastic-apm-node@npm:4.10.0"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -5112,7 +5112,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 10c0/041160225dfa88b9e1cbf2338df85d0d4a506c311b915088d1997f8304ec93c2fb8d0836d4ffc7edff96eacd6bb34252e37d7a1dce4d12c179a3a9619d264d00
+  checksum: 10c0/64225d942b2f899bc9cc41a8454330c3243e1e8184e0b7eb396dcfffd0fcd4617e686778931f80f7c2857063a5a75708a35c13a0eb0b219dd96ce8e91aaa0e95
   languageName: node
   linkType: hard
 
@@ -8982,7 +8982,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^7.1.2"
     dotenv: "npm:16.4.7"
-    elastic-apm-node: "npm:4.9.0"
+    elastic-apm-node: "npm:4.10.0"
     eslint: "npm:^9.17.0"
     eslint-config-next: "npm:^15.1.2"
     eslint-config-prettier: "npm:^9.1.0"
