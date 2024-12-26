@@ -35,13 +35,24 @@ function TableauBeneficiaires(
 
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
-  const [
-    triDerniereActiviteChronologique,
-    setTriDerniereActiviteChronologique,
-  ] = useState(false)
+  const [triActif, setTriActif] = useState<{
+    type: 'nom' | 'activite'
+    ordreCroissant: boolean
+  }>({ type: 'nom', ordreCroissant: true })
+
   const [beneficiairesTries, setBeneficiairesTries] = useState(
-    trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
+    trierParNom(beneficiaires, true)
   )
+
+  function trierParNom(
+    beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
+    ordreAlphabetique: boolean
+  ): BeneficiaireAvecInfosComplementaires[] {
+    return beneficiairesATrier.toSorted((a, b) => {
+      const diff = a.nom.localeCompare(b.nom)
+      return ordreAlphabetique ? diff : -diff
+    })
+  }
 
   function trierParDerniereActivite(
     beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
@@ -63,10 +74,26 @@ function TableauBeneficiaires(
   }, [beneficiaires])
 
   useEffect(() => {
-    setBeneficiairesTries(
-      trierParDerniereActivite(beneficiaires, triDerniereActiviteChronologique)
-    )
-  }, [beneficiaires, triDerniereActiviteChronologique])
+    if (triActif.type === 'nom') {
+      setBeneficiairesTries(trierParNom(beneficiaires, triActif.ordreCroissant))
+    } else if (triActif.type === 'activite') {
+      setBeneficiairesTries(
+        trierParDerniereActivite(beneficiaires, triActif.ordreCroissant)
+      )
+    }
+  }, [beneficiaires, triActif])
+
+  const handleTriNom = () =>
+    setTriActif({
+      type: 'nom',
+      ordreCroissant: triActif.type === 'nom' ? !triActif.ordreCroissant : true,
+    })
+  const handleTriActivite = () =>
+    setTriActif({
+      type: 'activite',
+      ordreCroissant:
+        triActif.type === 'activite' ? !triActif.ordreCroissant : false,
+    })
 
   return (
     <>
@@ -87,26 +114,46 @@ function TableauBeneficiaires(
           </h2>
 
           <button
-            onClick={() => {
-              setTriDerniereActiviteChronologique(
-                !triDerniereActiviteChronologique
-              )
-            }}
-            className='flex float-right mt-4 mb-4 text-s-regular text-right'
+            onClick={handleTriActivite}
+            className='flex float-right mt-4 mb-4 ml-4 text-s-regular text-right'
             title={
-              triDerniereActiviteChronologique
+              triActif.type === 'activite' && triActif.ordreCroissant
                 ? 'Trier par dernière activité ordre antichronologique'
                 : 'Trier par dernière activité ordre chronologique'
             }
             aria-label={
-              triDerniereActiviteChronologique
+              triActif.type === 'activite' && triActif.ordreCroissant
                 ? 'Trier par dernière activité ordre antichronologique'
                 : 'Trier par dernière activité ordre chronologique'
             }
             type='button'
           >
             Trier par dernière activité
-            <SortIcon isDesc={!triDerniereActiviteChronologique} />
+            <SortIcon
+              isSorted={triActif.type === 'activite'}
+              isDesc={!triActif.ordreCroissant}
+            />
+          </button>
+          <button
+            onClick={handleTriNom}
+            className='flex float-right mt-4 mb-4 text-s-regular text-right'
+            title={
+              triActif.type === 'nom' && triActif.ordreCroissant
+                ? 'Trier par nom ordre alphabétique'
+                : 'Trier par nom ordre alphabétique inversé'
+            }
+            aria-label={
+              triActif.type === 'nom' && triActif.ordreCroissant
+                ? 'Trier par nom ordre alphabétique'
+                : 'Trier par nom ordre alphabétique inversé'
+            }
+            type='button'
+          >
+            Trier par nom
+            <SortIcon
+              isSorted={triActif.type === 'nom'}
+              isDesc={!triActif.ordreCroissant}
+            />
           </button>
 
           <Table

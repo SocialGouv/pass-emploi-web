@@ -255,7 +255,26 @@ describe('PortefeuillePage client side', () => {
         screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
       ).toBeInTheDocument()
     })
-    it('parmet de trier bénéficiaire par dernière activité ', async () => {
+    it('permet de trier bénéficiaire par nom', async () => {
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par nom/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par nom ordre alphabétique'
+      )
+
+      await userEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par nom ordre alphabétique inversé'
+      )
+    })
+    it('permet de trier bénéficiaire par dernière activité ', async () => {
       //when
       const button = screen.getByRole('button', {
         name: /Trier par dernière activité/i,
@@ -271,7 +290,7 @@ describe('PortefeuillePage client side', () => {
 
       expect(button).toHaveAttribute(
         'title',
-        'Trier par dernière activité ordre antichronologique'
+        'Trier par dernière activité ordre chronologique'
       )
     })
 
