@@ -2,22 +2,14 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
-import React, {
-  FormEvent,
-  ForwardedRef,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
+import ChoixConseiller from 'app/components/ChoixConseiller'
 import RadioBox from 'components/action/RadioBox'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ReaffectationVerificationMissionLocaleModal from 'components/ReaffectationVerificationMissionLocaleModal'
+import Button from 'components/ui/Button/Button'
 import Etape, { NumeroEtape } from 'components/ui/Form/Etape'
-import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
-import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
@@ -29,17 +21,13 @@ import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { StructureReaffectation } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-
-type StructureReaffectation =
-  | StructureConseiller.POLE_EMPLOI
-  | StructureConseiller.POLE_EMPLOI_BRSA
-  | StructureConseiller.POLE_EMPLOI_AIJ
 
 const ConseillerIntrouvableSuggestionModal = dynamic(
   () => import('components/ConseillerIntrouvableSuggestionModal')
@@ -72,7 +60,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   const [conseillerInitial, setConseillerInitial] =
     useState<StateChoixConseiller>({ value: undefined })
-  const conseillerInitialDebounced = useDebounce<BaseConseiller | undefined>(
+  const conseillerInitialDebounced = useDebounce<SimpleConseiller | undefined>(
     conseillerInitial.value,
     1000
   )
@@ -98,6 +86,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
+  const [onConfirmationReaffectation, setOnConfirmationReaffectation] =
+    useState<() => void>()
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
@@ -166,7 +156,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   }
 
   function choixConseillerDestination(
-    conseiller: ValueWithError<BaseConseiller | undefined>
+    conseiller: ValueWithError<SimpleConseiller | undefined>
   ) {
     if (conseiller.value?.id === conseillerInitial.value?.id) {
       setConseillerDestination({
@@ -205,7 +195,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
-  async function fetchListeBeneficiaires(conseiller: BaseConseiller) {
+  async function fetchListeBeneficiaires(conseiller: SimpleConseiller) {
     setRecuperationBeneficiairesEnCours(true)
 
     try {
@@ -285,7 +275,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     return isFormValid
   }
 
-  async function reaffecterBeneficiaires(e: FormEvent) {
+  async function preparerReaffectationBeneficiaires(e: FormEvent) {
     e.preventDefault()
     if (isReaffectationEnCours) return
     if (!formIsValid()) {
@@ -293,6 +283,23 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
       return
     }
 
+    if (
+      beneficiaires!
+        .filter(({ id }) => idsBeneficiairesSelected.value.includes(id))
+        .some(
+          ({ structureMilo }) =>
+            structureMilo?.id !== conseillerDestination.value!.idStructureMilo
+        )
+    ) {
+      setOnConfirmationReaffectation(
+        () => async () => reaffecterBeneficiaires()
+      )
+    } else {
+      await reaffecterBeneficiaires()
+    }
+  }
+
+  async function reaffecterBeneficiaires() {
     setReaffectationEnCours(true)
     try {
       const { reaffecter } = await import('services/beneficiaires.service')
@@ -387,7 +394,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         Tous les champs sont obligatoires
       </p>
 
-      <form onSubmit={reaffecterBeneficiaires} className='grow'>
+      <form onSubmit={preparerReaffectationBeneficiaires} className='grow'>
         {estSuperviseurResponsable && (
           <Etape numero={1} titre='Choisissez un accompagnement'>
             {structureReaffectation.error && (
@@ -628,6 +635,13 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
           onClose={() => setShowModalConseillerIntrouvable(false)}
         />
       )}
+
+      {onConfirmationReaffectation && (
+        <ReaffectationVerificationMissionLocaleModal
+          onClose={() => setOnConfirmationReaffectation(undefined)}
+          onReaffectation={onConfirmationReaffectation}
+        />
+      )}
     </>
   )
 }
@@ -638,193 +652,7 @@ export default withTransaction(
 )(ReaffectationPage)
 
 type StateChoixConseiller = {
-  value: BaseConseiller | undefined
+  value: SimpleConseiller | undefined
   errorInput?: string
   errorChoice?: string
 }
-type ChoixConseillerProps = {
-  name: string
-  onInput: () => void
-  onChoixConseiller: (conseiller: BaseConseiller) => void
-  idConseillerSelectionne?: string
-  structureReaffectation?: StructureReaffectation
-  errorInput?: string
-  errorChoice?: string
-}
-const ChoixConseiller = forwardRef(
-  (
-    {
-      idConseillerSelectionne,
-      structureReaffectation,
-      name,
-      onChoixConseiller,
-      onInput,
-      errorInput,
-      errorChoice,
-    }: ChoixConseillerProps,
-    ref: ForwardedRef<{
-      resetRechercheConseiller: () => void
-    }>
-  ) => {
-    const id = 'conseiller-' + name
-
-    const inputRef = useRef<HTMLInputElement>(null)
-    const listeRef = useRef<HTMLFieldSetElement>(null)
-
-    const [queryConseiller, setQueryConseiller] = useState<ValueWithError>({
-      value: '',
-    })
-    const [choixConseillers, setChoixConseillers] = useState<
-      BaseConseiller[] | undefined
-    >()
-
-    const [rechercheConseillerEnCours, setRechercheConseillerEnCours] =
-      useState<boolean>(false)
-
-    function handleInputQuery(value: string) {
-      setChoixConseillers(undefined)
-      setQueryConseiller({ value })
-      onInput()
-    }
-
-    useImperativeHandle(ref, () => ({
-      resetRechercheConseiller: resetRechercheConseiller,
-    }))
-
-    function resetRechercheConseiller() {
-      inputRef.current!.value = ''
-      setChoixConseillers(undefined)
-      setQueryConseiller({ value: '' })
-    }
-
-    async function rechercherConseiller() {
-      if (queryConseiller.value.length < 2) return
-      if (choixConseillers) return
-
-      const { getConseillers } = await import('services/conseiller.service')
-      setRechercheConseillerEnCours(true)
-      const conseillers = await getConseillers(
-        queryConseiller.value,
-        structureReaffectation
-      )
-      if (conseillers.length) setChoixConseillers(conseillers)
-      else {
-        setQueryConseiller({
-          ...queryConseiller,
-          error: 'Aucun conseiller ne correspond',
-        })
-      }
-      setRechercheConseillerEnCours(false)
-    }
-
-    function choisirConseiller(conseiller: BaseConseiller): void {
-      if (conseiller.id !== idConseillerSelectionne) {
-        onChoixConseiller(conseiller)
-      }
-    }
-
-    useEffect(() => {
-      if (queryConseiller.error) inputRef.current!.focus()
-      else if (choixConseillers?.length) {
-        listeRef.current!.setAttribute('tabIndex', '-1')
-        listeRef.current!.focus()
-      }
-    }, [choixConseillers, queryConseiller.error])
-
-    return (
-      <>
-        <Label htmlFor={id}>E-mail ou nom et prénom du conseiller</Label>
-        {queryConseiller.error && (
-          <InputError id={id + '--error'} className='mb-2'>
-            {queryConseiller.error}
-          </InputError>
-        )}
-        {errorInput && (
-          <InputError id={id + '--error'} className='mb-2'>
-            {errorInput}
-          </InputError>
-        )}
-
-        <div className='flex'>
-          <Input
-            type='search'
-            id={id}
-            onChange={handleInputQuery}
-            required={true}
-            invalid={Boolean(queryConseiller.error || errorInput)}
-            ref={inputRef}
-          />
-
-          <Button
-            className='ml-4 shrink-0'
-            label={'Rechercher un conseiller ' + name}
-            style={ButtonStyle.SECONDARY}
-            disabled={queryConseiller.value.length < 2}
-            type='button'
-            onClick={rechercherConseiller}
-            isLoading={rechercheConseillerEnCours}
-          >
-            <IconComponent
-              name={IconName.Search}
-              focusable={false}
-              aria-hidden={true}
-              className='w-6 h-6'
-            />
-            Rechercher un conseiller
-          </Button>
-        </div>
-
-        {choixConseillers && choixConseillers.length > 0 && (
-          <>
-            {errorChoice && (
-              <InputError
-                ref={(e) => e?.focus()}
-                id={'choix-' + name + '--error'}
-                className='mb-2'
-              >
-                {errorChoice}
-              </InputError>
-            )}
-            <fieldset
-              ref={listeRef}
-              className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
-            >
-              <legend className='sr-only'>Choix du conseiller {name}</legend>
-              {choixConseillers.map((conseiller) => (
-                <label
-                  key={conseiller.id}
-                  className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
-                >
-                  <input
-                    type='radio'
-                    name={'choix-' + name}
-                    checked={idConseillerSelectionne === conseiller.id}
-                    required={true}
-                    onChange={() => choisirConseiller(conseiller)}
-                    aria-describedby={
-                      errorChoice ? 'choix-' + name + '--error' : undefined
-                    }
-                  />
-
-                  <span className='text-base-bold'>
-                    {conseiller.firstName} {conseiller.lastName}
-                  </span>
-                  {conseiller.email && (
-                    <>
-                      <span className='sr-only'>, e-mail : </span>
-                      {conseiller.email}
-                    </>
-                  )}
-                  {!conseiller.email && (
-                    <span aria-label='e-mail non renseignée'>-</span>
-                  )}
-                </label>
-              ))}
-            </fieldset>
-          </>
-        )}
-      </>
-    )
-  }
-)
-ChoixConseiller.displayName = 'ChoixConseiller'

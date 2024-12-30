@@ -16,14 +16,11 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import {
-  estMilo,
-  estPassEmploi,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { estMilo, estPassEmploi } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { getUrlContact, getUrlSiteRessource } from 'utils/faq'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export default function AidePage() {
@@ -48,33 +45,8 @@ export default function AidePage() {
     ? process.env.NEXT_PUBLIC_PLAY_STORE_PASS_EMPLOI
     : process.env.NEXT_PUBLIC_PLAY_STORE_CEJ
 
-  const urlSiteRessource = ((): string => {
-    switch (conseiller.structure) {
-      case StructureConseiller.MILO:
-        return process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK as string
-      case StructureConseiller.POLE_EMPLOI:
-        return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK as string
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-      case StructureConseiller.POLE_EMPLOI_AIJ:
-      case StructureConseiller.AVENIR_PRO:
-        return process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string
-      case StructureConseiller.CONSEIL_DEPT:
-        return process.env.NEXT_PUBLIC_FAQ_CD_BRSA_EXTERNAL_LINK as string
-    }
-  })()
-
-  const urlNousContacter = ((): string => {
-    switch (conseiller.structure) {
-      case StructureConseiller.MILO:
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-      case StructureConseiller.POLE_EMPLOI_AIJ:
-      case StructureConseiller.CONSEIL_DEPT:
-      case StructureConseiller.AVENIR_PRO:
-        return urlSiteRessource + 'assistance/'
-      case StructureConseiller.POLE_EMPLOI:
-        return urlSiteRessource + 'formuler-une-demande/'
-    }
-  })()
+  const urlSiteRessource = getUrlSiteRessource(conseiller.structure)
+  const urlNousContacter = getUrlContact(conseiller.structure)
 
   const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstPassEmploi ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
 
