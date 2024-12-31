@@ -565,6 +565,16 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                           className='mr-4 ml-6'
                         />
                         {getNomBeneficiaireComplet(beneficiaire)}
+                        {conseillerDestination?.value &&
+                          beneficiaire.structureMilo?.id &&
+                          beneficiaire.structureMilo.id !==
+                            conseillerDestination.value?.idStructureMilo && (
+                            <span className='text-warning text-xs ml-2'>
+                              Mission Locale différente de{' '}
+                              {conseillerDestination.value.firstName}{' '}
+                              {conseillerDestination.value.lastName}
+                            </span>
+                          )}
                       </label>
                     </li>
                   ))}

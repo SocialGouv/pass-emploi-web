@@ -50,7 +50,7 @@ export default function ReaffectationVerificationMissionLocaleModal({
         Pour garantir le suivi du bénéficiaire, demandez au conseiller actuel du
         bénéficiaire d’archiver ce dernier dans son portefeuille. Une fois le
         bénéficiaire archivé, le nouveau conseiller pourra le recréer depuis son
-        portail CEJ.
+        portail.
       </p>
 
       <p className='mt-4'>
