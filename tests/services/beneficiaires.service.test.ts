@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
   desConseillersBeneficiaire,
   desConseillersBeneficiaireJson,
@@ -348,7 +348,7 @@ describe('JeunesApiService', () => {
       await modifierIdentifiantPartenaire(idJeune, idPartenaire)
 
       // Then
-      expect(apiPut).toHaveBeenCalledWith(
+      expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/idConseiller/jeunes/' + idJeune,
         { idPartenaire: idPartenaire },
         'accessToken'

@@ -1,33 +1,33 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
   BaseBeneficiaire,
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   ConseillerHistorique,
+  Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
-  Demarche,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
   BeneficiaireEtablissementJson,
+  DemarcheJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
   jsonToBaseBeneficiaire,
   jsonToBeneficiaireEtablissement,
+  jsonToDemarche,
   jsonToDetailBeneficiaire,
   jsonToIndicateursSemaine,
   jsonToItemBeneficiaire,
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
   SuppressionBeneficiaireFormData,
-  jsonToDemarche,
-  DemarcheJson,
 } from 'interfaces/json/beneficiaire'
 import {
   ConseillerHistoriqueJson,
@@ -215,7 +215,7 @@ export async function modifierIdentifiantPartenaire(
   const session = await getSession()
   const idConseiller = session?.user.id
 
-  return apiPut(
+  return apiPatch(
     `/conseillers/${idConseiller}/jeunes/${idJeune}`,
     { idPartenaire },
     session!.accessToken
@@ -276,7 +276,7 @@ export async function getBeneficiairesDeLaStructureMilo(
 ): Promise<{
   beneficiaires: BeneficiaireEtablissement[]
 }> {
-  let url = `/structures-milo/${idStructureMilo}/jeunes`
+  const url = `/structures-milo/${idStructureMilo}/jeunes`
 
   const {
     content: { resultats },
