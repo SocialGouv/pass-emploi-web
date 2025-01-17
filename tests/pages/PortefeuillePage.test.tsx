@@ -102,7 +102,7 @@ describe('PortefeuillePage client side', () => {
     describe("affiche le statut d'activation du compte d'un jeune", () => {
       it("si le compte n'a pas été activé", () => {
         const row = screen.getByRole('cell', {
-          name: 'Sanfamiye Nadia Sans situation',
+          name: 'Sanfamiye Nadia CEJ Sans situation',
         }).parentElement!
 
         //THEN
@@ -113,7 +113,7 @@ describe('PortefeuillePage client side', () => {
 
       it('si le compte a été activé', () => {
         const row = screen.getByRole('cell', {
-          name: 'Jirac Kenji Sans situation',
+          name: 'Jirac Kenji CEJ Sans situation',
         }).parentElement!
 
         //THEN
@@ -127,14 +127,14 @@ describe('PortefeuillePage client side', () => {
       it('si le compte a été réaffecté temporairement', () => {
         expect(
           screen.getByRole('cell', {
-            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria Sans situation",
+            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria CEJ Sans situation",
           })
         ).toBeInTheDocument()
       })
 
       it("si le compte n'a pas été réaffecté temporairement", () => {
         const row = screen.getByRole('cell', {
-          name: 'Sanfamiye Nadia Sans situation',
+          name: 'Sanfamiye Nadia CEJ Sans situation',
         }).parentElement!
 
         //THEN

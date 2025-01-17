@@ -105,10 +105,7 @@ export default function DetailsJeune({
         )}
 
         <BlocInformationJeuneFicheBeneficiaire
-          idBeneficiaire={jeune.id}
-          dateFinCEJ={jeune.dateFinCEJ}
-          email={jeune.email}
-          situations={jeune.situations}
+          beneficiaire={jeune}
           conseiller={conseiller}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
           identifiantPartenaire={identifiantPartenaire}

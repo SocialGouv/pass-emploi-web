@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
+import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagDate } from 'components/ui/Indicateurs/Tag'
@@ -111,36 +112,45 @@ export default function TableauBeneficiairesMilo({
                   )}
                   {getNomBeneficiaireComplet(beneficiaire)}
                 </div>
-                <SituationTag situation={beneficiaire.situationCourante} />
+                <div className='mt-2 flex gap-2'>
+                  <DispositifTag dispositif={beneficiaire.dispositif} />
+                  <SituationTag situation={beneficiaire.situationCourante} />
+                </div>
               </TD>
 
               <TD className='relative h-full !p-2 after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
-                <div
-                  className='text-s-regular text-grey_800'
-                  aria-hidden={true}
-                >
-                  {dateFinCEJColumn}
-                </div>
-
-                {beneficiaire.dateFinCEJ && (
-                  <TagDate
-                    label={toLongMonthDate(
-                      DateTime.fromISO(beneficiaire.dateFinCEJ)
-                    )}
-                  />
-                )}
-
-                {!beneficiaire.dateFinCEJ && (
+                {beneficiaire.dispositif === 'CEJ' && (
                   <>
-                    --
-                    <span className='sr-only'>information non disponible</span>
+                    <div
+                      className='text-s-regular text-grey_800 mb-2'
+                      aria-hidden={true}
+                    >
+                      {dateFinCEJColumn}
+                    </div>
+
+                    {beneficiaire.dateFinCEJ && (
+                      <TagDate
+                        label={toLongMonthDate(
+                          DateTime.fromISO(beneficiaire.dateFinCEJ)
+                        )}
+                      />
+                    )}
+
+                    {!beneficiaire.dateFinCEJ && (
+                      <>
+                        --
+                        <span className='sr-only'>
+                          information non disponible
+                        </span>
+                      </>
+                    )}
                   </>
                 )}
               </TD>
 
               <TD className='h-full !p-2'>
                 <div
-                  className='text-s-regular text-grey_800'
+                  className='text-s-regular text-grey_800 mb-2'
                   aria-hidden={true}
                 >
                   {actionsColumn}
@@ -152,7 +162,7 @@ export default function TableauBeneficiairesMilo({
 
               <TD className='h-full !p-2'>
                 <div
-                  className='text-s-regular text-grey_800'
+                  className='text-s-regular text-grey_800 mb-2'
                   aria-hidden={true}
                 >
                   {rdvColumn}
@@ -164,7 +174,7 @@ export default function TableauBeneficiairesMilo({
                 {beneficiaire.isActivated && (
                   <>
                     <span
-                      className='text-xs-regular text-grey_800'
+                      className='text-xs-regular text-grey_800 mb-2'
                       aria-hidden={true}
                     >
                       {derniereActiviteColumn}

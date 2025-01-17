@@ -63,6 +63,7 @@ export const unDetailBeneficiaire = (
     situations: [],
     idConseiller: 'id-conseiller',
     estAArchiver: false,
+    dispositif: 'CEJ',
   }
   return { ...defaults, ...overrides }
 }
@@ -120,6 +121,7 @@ export const unItemBeneficiaire = (
     ...unBeneficiaireWithActivity(),
     isReaffectationTemporaire: false,
     situationCourante: CategorieSituation.SANS_SITUATION,
+    dispositif: 'CEJ',
   }
   return { ...defaults, ...overrides }
 }
@@ -168,6 +170,7 @@ export const unDetailBeneficiaireJson = (
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2023-04-12T05:42:07.756Z',
     conseiller: { id: 'id-conseiller' },
+    dispositif: 'CEJ',
   }
   return { ...defaults, ...overrides }
 }
@@ -184,6 +187,7 @@ export const unItemBeneficiaireJson = (
     isReaffectationTemporaire: false,
     creationDate: '2020-04-12T05:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
+    dispositif: 'CEJ',
   }
   return { ...defaults, ...overrides }
 }

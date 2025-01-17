@@ -7,9 +7,10 @@ import {
   IdentifiantPartenaire,
   InformationNonDisponible,
 } from 'components/jeune/BlocInformationJeune'
+import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
+import { CategorieSituation, DetailBeneficiaire } from 'interfaces/beneficiaire'
 import {
   Conseiller,
   estConseilDepartemental,
@@ -18,15 +19,8 @@ import {
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
+  beneficiaire: DetailBeneficiaire
   conseiller: Conseiller
-  idBeneficiaire: string
-  dateFinCEJ?: string
-  email?: string
-  situations?: Array<{
-    etat?: EtatSituation
-    categorie: CategorieSituation
-    dateFin?: string
-  }>
   urlDossier?: string
   onIdentifiantPartenaireCopie?: () => void
   identifiantPartenaire?: string
@@ -34,11 +28,8 @@ interface BlocInformationJeuneFicheBeneficiaireProps {
 }
 
 export function BlocInformationJeuneFicheBeneficiaire({
+  beneficiaire,
   conseiller,
-  dateFinCEJ,
-  email,
-  idBeneficiaire,
-  situations,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
@@ -49,25 +40,33 @@ export function BlocInformationJeuneFicheBeneficiaire({
   const conseillerEstMilo = estMilo(conseiller)
   const aIdentifiantFT =
     !conseillerEstMilo && !estConseilDepartemental(conseiller)
+  const { situations, dateFinCEJ, email, id, dispositif } = beneficiaire
+
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold text-grey_800 mb-2'>Informations</h2>
 
-      {conseillerEstMilo && (
-        <>
-          {!situations?.length && (
-            <div className='mb-3'>
-              <SituationTag situation={CategorieSituation.SANS_SITUATION} />
-            </div>
-          )}
+      <dl>
+        {conseillerEstMilo && (
+          <div className='flex gap-2 mb-4'>
+            <dt className='sr-only'>Dispositif</dt>
+            <dd>
+              <DispositifTag dispositif={dispositif} />
+            </dd>
 
-          {Boolean(situations?.length) && (
-            <SituationTag situation={situations![0].categorie} />
-          )}
-        </>
-      )}
+            <dt className='sr-only'>Situation</dt>
+            <dd>
+              {!situations?.length && (
+                <SituationTag situation={CategorieSituation.SANS_SITUATION} />
+              )}
 
-      <dl className='flex flex-col'>
+              {Boolean(situations?.length) && (
+                <SituationTag situation={situations[0].categorie} />
+              )}
+            </dd>
+          </div>
+        )}
+
         {conseillerEstMilo && (
           <div className='flex'>
             <dt className='text-base-regular'>Date de fin du CEJ :</dt>
@@ -94,10 +93,7 @@ export function BlocInformationJeuneFicheBeneficiaire({
           )}
       </dl>
 
-      <LienVersInformations
-        idBeneficiaire={idBeneficiaire}
-        pathPrefix={pathPrefix}
-      />
+      <LienVersInformations idBeneficiaire={id} pathPrefix={pathPrefix} />
     </div>
   )
 }
