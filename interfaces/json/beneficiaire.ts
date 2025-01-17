@@ -284,5 +284,6 @@ export interface BeneficiaireMiloFormData {
   idDossier: string
   nom: string
   prenom: string
+  dispositif: 'CEJ' | 'PACEA'
   email?: string
 }

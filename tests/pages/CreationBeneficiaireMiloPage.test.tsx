@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -125,7 +125,25 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       expect(results).toHaveNoViolations()
     })
 
+    it('demande la sélection d’un dispositif', async () => {
+      // Given
+      const section = screen.getByRole('group', {
+        name: 'Sélectionner le dispositif (champ obligatoire)',
+      })
+
+      // Then
+      expect(
+        within(section).getByRole('radio', { name: /CEJ/ })
+      ).toBeInTheDocument()
+      expect(
+        within(section).getByRole('radio', { name: /PACEA/ })
+      ).toBeInTheDocument()
+    })
+
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
+      // Given
+      await userEvent.click(screen.getByRole('radio', { name: /PACEA/ }))
+
       // When
       const createCompteButton = screen.getByRole('button', {
         name: 'Créer le compte',
@@ -139,8 +157,9 @@ describe('CreationBeneficiaireMiloPage client side', () => {
           idDossier: '1234',
           nom: 'GIRAC',
           prenom: 'Kenji',
+          dispositif: 'PACEA',
         },
-        undefined
+        { surcharge: false }
       )
 
       expect(setPortefeuille).toHaveBeenCalledWith([
@@ -161,6 +180,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
+      await userEvent.click(screen.getByRole('radio', { name: /PACEA/ }))
       ;(createCompteJeuneMilo as jest.Mock).mockRejectedValue({
         message: "un message d'erreur",
       })
@@ -180,6 +200,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
     describe('quand le bénéficiaire est rattaché à une autre Mission Locale', () => {
       beforeEach(async () => {
         // Given
+        await userEvent.click(screen.getByRole('radio', { name: /PACEA/ }))
         ;(createCompteJeuneMilo as jest.Mock).mockRejectedValue(
           new ApiError(
             422,
@@ -194,6 +215,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
 
         await userEvent.click(createCompteButton)
       })
+
       it('devrait afficher une de confirmation de création de compte bénéficiaire', async () => {
         // Then
         expect(createCompteJeuneMilo).toHaveBeenCalledTimes(1)
@@ -224,8 +246,9 @@ describe('CreationBeneficiaireMiloPage client side', () => {
               idDossier: '1234',
               nom: 'GIRAC',
               prenom: 'Kenji',
+              dispositif: 'PACEA',
             },
-            true
+            { surcharge: true }
           )
         })
       })
