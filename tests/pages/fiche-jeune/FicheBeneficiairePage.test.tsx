@@ -15,11 +15,11 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { Demarche, MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { CategorieSituation, Demarche } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Offre, Recherche } from 'interfaces/favoris'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { CurrentConversation } from 'utils/chat/currentConversationContext'
 
@@ -133,48 +133,35 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers Milo', () => {
-    let container: HTMLElement
-
     it('a11y', async () => {
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={true}
-            beneficiaire={unDetailBeneficiaire()}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            ongletInitial='agenda'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.MILO },
-          }
-        ))
-      })
-
+      const container = await renderFicheJeuneMilo()
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
 
+    it('affiche la situation du bénéficiaire', async () => {
+      // When
+      await renderFicheJeuneMilo({
+        situation: CategorieSituation.CONTRAT_DE_VOLONTARIAT_BENEVOLAT,
+      })
+
+      // Then
+      expect(getByDescriptionTerm('Situation')).toHaveTextContent(
+        'Contrat de volontariat - bénévolat'
+      )
+    })
+
+    it('affiche le dispositif du bénéficiaire', async () => {
+      // When
+      await renderFicheJeuneMilo()
+
+      // Then
+      expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('CEJ')
+    })
+
     it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
       // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={true}
-            beneficiaire={unDetailBeneficiaire()}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            ongletInitial='agenda'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.MILO },
-          }
-        )
-      })
+      await renderFicheJeuneMilo()
 
       // Then
       expect(
@@ -187,22 +174,7 @@ describe('FicheBeneficiairePage client side', () => {
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
       it('affiche un message', async () => {
         // When
-        await act(async () => {
-          renderWithContexts(
-            <FicheBeneficiairePage
-              estMilo={true}
-              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              categoriesActions={desCategories()}
-              ongletInitial='agenda'
-              lectureSeule={false}
-            />,
-            {
-              customConseiller: { structure: StructureConseiller.MILO },
-            }
-          )
-        })
+        await renderFicheJeuneMilo({ isActivated: false })
 
         // Then
         expect(
@@ -221,27 +193,7 @@ describe('FicheBeneficiairePage client side', () => {
     describe('quand la structure du bénéficiaire est différente du conseiller', () => {
       it('affiche un message', async () => {
         // When
-        await act(async () => {
-          renderWithContexts(
-            <FicheBeneficiairePage
-              estMilo={true}
-              beneficiaire={unDetailBeneficiaire({
-                structureMilo: { id: '2' },
-              })}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              categoriesActions={desCategories()}
-              ongletInitial='agenda'
-              lectureSeule={false}
-            />,
-            {
-              customConseiller: {
-                structure: StructureConseiller.MILO,
-                structureMilo: { nom: 'Mission locale', id: '1' },
-              },
-            }
-          )
-        })
+        await renderFicheJeuneMilo({ structureDifferente: true })
 
         // Then
         expect(
@@ -254,17 +206,9 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non Milo', () => {
-    const favorisOffres = uneListeDOffres()
-    const favorisRecherches = uneListeDeRecherches()
-    const metadonneesFavoris = uneMetadonneeFavoris()
-
     it('a11y', async () => {
       let results: AxeResults
-      const container = await renderFicheJeuneNonMilo({
-        metadonneesFavoris,
-        favorisOffres,
-        favorisRecherches,
-      })
+      const container = await renderFicheJeuneNonMilo()
 
       await act(async () => {
         results = await axe(container)
@@ -275,11 +219,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeuneNonMilo({
-        metadonneesFavoris,
-        favorisOffres,
-        favorisRecherches,
-      })
+      await renderFicheJeuneNonMilo()
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -289,11 +229,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeuneNonMilo({
-        metadonneesFavoris,
-        favorisOffres,
-        favorisRecherches,
-      })
+      await renderFicheJeuneNonMilo()
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -301,14 +237,9 @@ describe('FicheBeneficiairePage client side', () => {
     })
 
     it('affiche le récapitulatif des favoris si le bénéficiaire a refusé le partage', async () => {
-      // Given
-      metadonneesFavoris.autoriseLePartage = false
-
       //When
       await renderFicheJeuneNonMilo({
-        metadonneesFavoris,
-        favorisOffres,
-        favorisRecherches,
+        autorisePartageFavoris: false,
         ongletInitial: 'favoris',
       })
 
@@ -356,9 +287,6 @@ describe('FicheBeneficiairePage client side', () => {
     it('affiche le tableau des démarches', async () => {
       // When
       await renderFicheJeuneNonMilo({
-        metadonneesFavoris: uneMetadonneeFavoris({ autoriseLePartage: false }),
-        favorisOffres: uneListeDOffres(),
-        favorisRecherches: uneListeDeRecherches(),
         demarches: { data: [uneDemarche()], isStale: false },
         structure: StructureConseiller.CONSEIL_DEPT,
         ongletInitial: 'demarches',
@@ -381,9 +309,6 @@ describe('FicheBeneficiairePage client side', () => {
     it('affiche un message pour des démarches pas fraiches', async () => {
       //When
       await renderFicheJeuneNonMilo({
-        metadonneesFavoris: uneMetadonneeFavoris(),
-        favorisOffres: uneListeDOffres(),
-        favorisRecherches: uneListeDeRecherches(),
         structure: StructureConseiller.CONSEIL_DEPT,
         demarches: { data: uneListeDeDemarches(), isStale: true },
       })
@@ -404,9 +329,6 @@ describe('FicheBeneficiairePage client side', () => {
     it('affiche un message pour des démarches en erreur', async () => {
       //When
       await renderFicheJeuneNonMilo({
-        metadonneesFavoris: uneMetadonneeFavoris(),
-        favorisOffres: uneListeDOffres(),
-        favorisRecherches: uneListeDeRecherches(),
         structure: StructureConseiller.CONSEIL_DEPT,
         demarches: null,
       })
@@ -426,23 +348,60 @@ describe('FicheBeneficiairePage client side', () => {
   })
 })
 
+async function renderFicheJeuneMilo({
+  isActivated,
+  structureDifferente,
+  situation,
+}: {
+  isActivated?: boolean
+  structureDifferente?: boolean
+  situation?: CategorieSituation
+} = {}): Promise<HTMLElement> {
+  let container: HTMLElement
+  await act(async () => {
+    const beneficiaire = unDetailBeneficiaire({
+      isActivated: isActivated ?? true,
+      situations: situation ? [{ categorie: situation }] : [],
+    })
+
+    ;({ container } = renderWithContexts(
+      <FicheBeneficiairePage
+        estMilo={true}
+        beneficiaire={beneficiaire}
+        rdvs={[]}
+        actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
+        ongletInitial='agenda'
+        lectureSeule={false}
+      />,
+      {
+        customConseiller: {
+          structure: StructureConseiller.MILO,
+          structureMilo: structureDifferente
+            ? {
+                nom: 'Mission locale',
+                id: 'id-structure-differente',
+              }
+            : undefined,
+        },
+      }
+    ))
+  })
+
+  return container!
+}
+
 async function renderFicheJeuneNonMilo({
-  lectureSeule,
-  metadonneesFavoris,
-  favorisOffres,
-  favorisRecherches,
+  autorisePartageFavoris,
   structure,
   demarches,
   ongletInitial,
 }: {
-  metadonneesFavoris: MetadonneesFavoris
-  favorisOffres: Offre[]
-  favorisRecherches: Recherche[]
-  lectureSeule?: boolean
+  autorisePartageFavoris?: boolean
   demarches?: { data: Demarche[]; isStale: boolean } | null
   structure?: StructureConseiller
   ongletInitial?: string
-}): Promise<HTMLElement> {
+} = {}): Promise<HTMLElement> {
   let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
@@ -450,10 +409,12 @@ async function renderFicheJeuneNonMilo({
         estMilo={false}
         beneficiaire={unDetailBeneficiaire()}
         ongletInitial={ongletInitial ?? 'offres'}
-        lectureSeule={lectureSeule ?? false}
-        metadonneesFavoris={metadonneesFavoris}
-        favorisOffres={favorisOffres}
-        favorisRecherches={favorisRecherches}
+        lectureSeule={false}
+        metadonneesFavoris={uneMetadonneeFavoris({
+          autoriseLePartage: autorisePartageFavoris ?? true,
+        })}
+        favorisOffres={uneListeDOffres()}
+        favorisRecherches={uneListeDeRecherches()}
         demarches={demarches}
       />,
       {

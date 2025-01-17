@@ -38,12 +38,13 @@ export type BeneficiaireWithActivity = BaseBeneficiaire & {
 
 export type BeneficiaireFromListe = BeneficiaireWithActivity & {
   isReaffectationTemporaire: boolean
+  situationCourante: CategorieSituation
+  dispositif: string
   conseillerPrecedent?: {
     nom: string
     prenom: string
     email?: string
   }
-  situationCourante: CategorieSituation
   structureMilo?: { id: string }
 }
 
@@ -58,6 +59,7 @@ export type DetailBeneficiaire = BaseBeneficiaire & {
     dateFin?: string
   }>
   estAArchiver: boolean
+  dispositif: string
   lastActivity?: string
   email?: string
   urlDossier?: string
