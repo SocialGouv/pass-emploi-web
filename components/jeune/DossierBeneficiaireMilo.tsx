@@ -22,7 +22,7 @@ interface DossierBeneficiaireMiloProps {
   dossier: DossierMilo
   onCreateCompte: (
     data: BeneficiaireMiloFormData,
-    surcharge?: boolean
+    options?: { surcharge: boolean }
   ) => Promise<void>
   onRefresh: () => void
   onRetour: () => void
@@ -44,6 +44,9 @@ function DossierBeneficiaireMilo(
   ref: ForwardedRef<{ focusRetour: () => void }>
 ) {
   const [portefeuille] = usePortefeuille()
+
+  const [dispositif, setDispositif] = useState<'CEJ' | 'PACEA'>()
+  const [erreurDispositif, setErreurDispositif] = useState<string>()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
   const retourButtonRef = useRef<HTMLButtonElement>(null)
@@ -58,17 +61,28 @@ function DossierBeneficiaireMilo(
   )
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function addBeneficiaire(surcharge?: boolean) {
+  function choisirDispositif(dispositifChoisi: 'CEJ' | 'PACEA') {
+    setErreurDispositif(undefined)
+    setDispositif(dispositifChoisi)
+  }
+
+  async function addBeneficiaire(options?: { surcharge: boolean }) {
+    if (!dispositif) {
+      setErreurDispositif('Veuillez choisir un dispositif.')
+      return
+    }
+
     if (!creationEnCours) {
       const newBeneficiaire = {
         idDossier: dossier.id,
         nom: dossier.nom,
         prenom: dossier.prenom,
+        dispositif,
         email: dossier.email ?? undefined,
       }
 
       setCreationEnCours(true)
-      onCreateCompte(newBeneficiaire, surcharge).finally(() => {
+      onCreateCompte(newBeneficiaire, options).finally(() => {
         setCreationEnCours(false)
       })
     }
@@ -85,60 +99,98 @@ function DossierBeneficiaireMilo(
 
   return (
     <>
-      <div className='border border-primary_lighten rounded-base p-6'>
-        <dl className='text-primary_darken'>
-          <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1'>Prénom :</dt>
+      <div className='mt-6 border border-primary_lighten rounded-base p-4'>
+        <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+        <dl>
+          <div className='flex items-center mb-1 gap-1'>
+            <dt className='text-base-regular'>Prénom :</dt>
             <dd className='text-base-medium'> {dossier.prenom}</dd>
           </div>
 
-          <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1'>Nom :</dt>
+          <div className='flex items-center mb-1 gap-1'>
+            <dt className='text-base-regular'>Nom :</dt>
             <dd className='text-base-medium'> {dossier.nom}</dd>
           </div>
 
-          <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1'>Date de naissance :</dt>
+          <div className='flex items-center mb-1 gap-1'>
+            <dt className='text-base-regular'>Date de naissance :</dt>
             <dd className='text-base-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
-          <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1'>Code postal :</dt>
+          <div className='flex items-center mb-1 gap-1'>
+            <dt className='text-base-regular'>Code postal :</dt>
             <dd className='text-base-medium'> {dossier.codePostal}</dd>
           </div>
-          <div className='flex items-center mb-3'>
+
+          <div className='flex items-center mb-1 gap-1'>
             <dt
               className={
                 dossier.email
-                  ? 'text-base-regular mr-1'
+                  ? 'text-base-regular'
                   : 'text-base-regular text-warning'
               }
             >
               E-mail :
             </dt>
-
             <dd className='text-base-medium'>{dossier.email || ''}</dd>
           </div>
-          {!dossier.email && (
-            <>
-              <p className='text-base-bold text-warning mb-2'>
-                L&apos;e-mail du bénéficiaire n&apos;est peut-être pas renseigné
-              </p>
-              <ol className='text-base-regular text-warning'>
-                <li className='mb-3.5'>
-                  1. Renseignez l&apos;e-mail du bénéficiaire sur son profil
-                  i-milo
-                </li>
-                <li className='mb-3.5'>
-                  2. Rafraîchissez ensuite cette page ou saisissez à nouveau le
-                  numéro de dossier du bénéficiaire pour créer le compte
-                  application CEJ
-                </li>
-              </ol>
-            </>
-          )}
         </dl>
       </div>
+
+      <form className='mt-6 border border-primary_lighten rounded-base p-4'>
+        <h2 className='text-m-bold text-grey_800 mb-4'>Dispositif</h2>
+        <fieldset>
+          {erreurDispositif && (
+            <InputError id='dispositif--error' ref={(e) => e?.focus()}>
+              {erreurDispositif}
+            </InputError>
+          )}
+
+          <legend className='mb-4 text-base-bold'>
+            Sélectionner le dispositif (champ obligatoire)
+          </legend>
+
+          <label htmlFor='dispositif-cej' className='block py-2'>
+            <input
+              type='radio'
+              name='dispositif'
+              id='dispositif-cej'
+              className='mr-2'
+              onClick={() => choisirDispositif('CEJ')}
+            />
+            Contrat d’Engagement Jeune (CEJ)
+          </label>
+          <label htmlFor='dispositif-pacea' className='block py-2'>
+            <input
+              type='radio'
+              name='dispositif'
+              id='dispositif-pacea'
+              className='mr-2'
+              onClick={() => choisirDispositif('PACEA')}
+            />
+            Parcours contractualisé d’accompagnement vers l’emploi et
+            l’autonomie (PACEA)
+          </label>
+        </fieldset>
+      </form>
+
+      {!dossier.email && (
+        <>
+          <p className='text-base-bold text-warning mb-2'>
+            L&apos;e-mail du bénéficiaire n&apos;est peut-être pas renseigné
+          </p>
+          <ol className='text-base-regular text-warning'>
+            <li className='mb-3.5'>
+              1. Renseignez l&apos;e-mail du bénéficiaire sur son profil i-milo
+            </li>
+            <li className='mb-3.5'>
+              2. Rafraîchissez ensuite cette page ou saisissez à nouveau le
+              numéro de dossier du bénéficiaire pour créer le compte application
+              CEJ
+            </li>
+          </ol>
+        </>
+      )}
 
       {dossier.email && (
         <div className='mt-4'>
@@ -215,7 +267,7 @@ function DossierBeneficiaireMilo(
           adresseMailBeneficiaire={dossier.email!}
           onClose={onAnnulationCreerCompte}
           onConfirmation={() => {
-            addBeneficiaire(true)
+            addBeneficiaire({ surcharge: true })
           }}
         />
       )}
