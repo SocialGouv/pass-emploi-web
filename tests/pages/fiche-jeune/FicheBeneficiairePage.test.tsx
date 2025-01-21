@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import React, { Dispatch, SetStateAction } from 'react'
@@ -18,13 +19,17 @@ import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { CategorieSituation, Demarche } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import {
+  getIndicateursJeuneAlleges,
+  modifierDispositif,
+} from 'services/beneficiaires.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { CurrentConversation } from 'utils/chat/currentConversationContext'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
+jest.mock('components/ModalContainer')
 
 describe('FicheBeneficiairePage client side', () => {
   beforeEach(async () => {
@@ -157,6 +162,79 @@ describe('FicheBeneficiairePage client side', () => {
 
       // Then
       expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('CEJ')
+      expect(
+        screen.getByRole('button', {
+          name: 'Changer le bénéficiaire de dispositif',
+        })
+      ).toBeInTheDocument()
+    })
+
+    describe('changement de dispositif', () => {
+      beforeEach(async () => {
+        // Given
+        await renderFicheJeuneMilo()
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Changer le bénéficiaire de dispositif',
+          })
+        )
+      })
+
+      it('informe de l’usage attendu', async () => {
+        // Then
+        expect(
+          screen.getByText(
+            'Confirmation du changement de dispositif (passage en PACEA)'
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            'Attention, cette modification ne doit être utilisée que pour corriger une erreur dans le choix du dispositif lors de la création du compte.'
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('oblige la validation de l’usage', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Confirmer le passage du bénéficiaire en PACEA',
+          })
+        )
+
+        // Then
+        expect(
+          screen.getByText('Cet élément est obligatoire.')
+        ).toBeInTheDocument()
+        expect(modifierDispositif).not.toHaveBeenCalled()
+        expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('CEJ')
+      })
+
+      it('permet de changer le dispositif du bénéficiaire', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('checkbox', {
+            name: 'Je confirme que le passage en PACEA de ce bénéficiaire est lié à une erreur lors de la création du compte (obligatoire)',
+          })
+        )
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Confirmer le passage du bénéficiaire en PACEA',
+          })
+        )
+
+        // Then
+        expect(modifierDispositif).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          'PACEA'
+        )
+        expect(() =>
+          screen.getByText(/Confirmation du changement de dispositif/)
+        ).toThrow()
+        expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('PACEA')
+      })
     })
 
     it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
