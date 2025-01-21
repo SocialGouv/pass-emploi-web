@@ -1,7 +1,14 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
+import FiltresDispositifs from 'components/action/FiltresDispositifs'
 import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
@@ -35,14 +42,50 @@ function TableauBeneficiaires(
 
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
+
+  const filtresDispositifsRef = useRef<HTMLButtonElement>(null)
+  const [filtreDispositif, setFiltreDispositif] = useState<string>()
   const [triActif, setTriActif] = useState<{
     type: 'nom' | 'activite'
     ordreCroissant: boolean
   }>({ type: 'nom', ordreCroissant: true })
 
-  const [beneficiairesTries, setBeneficiairesTries] = useState(
-    trierParNom(beneficiaires, true)
-  )
+  const [beneficiairesFiltres, setBeneficiairesFiltres] = useState<
+    BeneficiaireAvecInfosComplementaires[]
+  >(trierParNom(beneficiaires, true))
+  const [beneficiairesTries, setBeneficiairesTries] = useState<
+    BeneficiaireAvecInfosComplementaires[]
+  >(trierParNom(beneficiaires, true))
+
+  function handleFiltreDispositif(dispositif?: string) {
+    setFiltreDispositif(dispositif)
+    filtresDispositifsRef.current!.focus()
+  }
+
+  function handleTriNom() {
+    setTriActif({
+      type: 'nom',
+      ordreCroissant: triActif.type === 'nom' ? !triActif.ordreCroissant : true,
+    })
+  }
+
+  function handleTriActivite() {
+    setTriActif({
+      type: 'activite',
+      ordreCroissant:
+        triActif.type === 'activite' ? !triActif.ordreCroissant : false,
+    })
+  }
+
+  function filtrerParDispositifs(
+    beneficiairesAFiltrer: BeneficiaireAvecInfosComplementaires[],
+    dispositifAFiltrer?: string
+  ) {
+    if (!dispositifAFiltrer) return beneficiairesAFiltrer
+    return beneficiairesAFiltrer.filter(
+      ({ dispositif }) => dispositif === dispositifAFiltrer
+    )
+  }
 
   function trierParNom(
     beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
@@ -74,26 +117,22 @@ function TableauBeneficiaires(
   }, [beneficiaires])
 
   useEffect(() => {
+    setBeneficiairesFiltres(
+      filtrerParDispositifs(beneficiaires, filtreDispositif)
+    )
+  }, [beneficiaires, filtreDispositif])
+
+  useEffect(() => {
     if (triActif.type === 'nom') {
-      setBeneficiairesTries(trierParNom(beneficiaires, triActif.ordreCroissant))
+      setBeneficiairesTries(
+        trierParNom(beneficiairesFiltres, triActif.ordreCroissant)
+      )
     } else if (triActif.type === 'activite') {
       setBeneficiairesTries(
-        trierParDerniereActivite(beneficiaires, triActif.ordreCroissant)
+        trierParDerniereActivite(beneficiairesFiltres, triActif.ordreCroissant)
       )
     }
-  }, [beneficiaires, triActif])
-
-  const handleTriNom = () =>
-    setTriActif({
-      type: 'nom',
-      ordreCroissant: triActif.type === 'nom' ? !triActif.ordreCroissant : true,
-    })
-  const handleTriActivite = () =>
-    setTriActif({
-      type: 'activite',
-      ordreCroissant:
-        triActif.type === 'activite' ? !triActif.ordreCroissant : false,
-    })
+  }, [beneficiairesFiltres, triActif])
 
   return (
     <>
@@ -113,48 +152,60 @@ function TableauBeneficiaires(
             {toShortDate(FIN_PERIODE)}
           </h2>
 
-          <button
-            onClick={handleTriActivite}
-            className='flex float-right mt-4 mb-4 ml-4 text-s-regular text-right'
-            title={
-              triActif.type === 'activite' && triActif.ordreCroissant
-                ? 'Trier par dernière activité ordre antichronologique'
-                : 'Trier par dernière activité ordre chronologique'
-            }
-            aria-label={
-              triActif.type === 'activite' && triActif.ordreCroissant
-                ? 'Trier par dernière activité ordre antichronologique'
-                : 'Trier par dernière activité ordre chronologique'
-            }
-            type='button'
-          >
-            Trier par dernière activité
-            <SortIcon
-              isSorted={triActif.type === 'activite'}
-              isDesc={!triActif.ordreCroissant}
-            />
-          </button>
-          <button
-            onClick={handleTriNom}
-            className='flex float-right mt-4 mb-4 text-s-regular text-right'
-            title={
-              triActif.type === 'nom' && triActif.ordreCroissant
-                ? 'Trier par nom ordre alphabétique'
-                : 'Trier par nom ordre alphabétique inversé'
-            }
-            aria-label={
-              triActif.type === 'nom' && triActif.ordreCroissant
-                ? 'Trier par nom ordre alphabétique'
-                : 'Trier par nom ordre alphabétique inversé'
-            }
-            type='button'
-          >
-            Trier par nom
-            <SortIcon
-              isSorted={triActif.type === 'nom'}
-              isDesc={!triActif.ordreCroissant}
-            />
-          </button>
+          <div className='my-4 flex justify-end gap-6'>
+            {estMilo(conseiller) && (
+              <FiltresDispositifs
+                ref={filtresDispositifsRef}
+                defaultValue={filtreDispositif}
+                dispositifs={['CEJ', 'PACEA']}
+                onFiltres={handleFiltreDispositif}
+              />
+            )}
+
+            <button
+              onClick={handleTriNom}
+              className='flex text-s-regular'
+              title={
+                triActif.type === 'nom' && triActif.ordreCroissant
+                  ? 'Trier par nom ordre alphabétique'
+                  : 'Trier par nom ordre alphabétique inversé'
+              }
+              aria-label={
+                triActif.type === 'nom' && triActif.ordreCroissant
+                  ? 'Trier par nom ordre alphabétique'
+                  : 'Trier par nom ordre alphabétique inversé'
+              }
+              type='button'
+            >
+              Trier par nom
+              <SortIcon
+                isSorted={triActif.type === 'nom'}
+                isDesc={!triActif.ordreCroissant}
+              />
+            </button>
+
+            <button
+              onClick={handleTriActivite}
+              className='flex text-s-regular'
+              title={
+                triActif.type === 'activite' && triActif.ordreCroissant
+                  ? 'Trier par dernière activité ordre antichronologique'
+                  : 'Trier par dernière activité ordre chronologique'
+              }
+              aria-label={
+                triActif.type === 'activite' && triActif.ordreCroissant
+                  ? 'Trier par dernière activité ordre antichronologique'
+                  : 'Trier par dernière activité ordre chronologique'
+              }
+              type='button'
+            >
+              Trier par dernière activité
+              <SortIcon
+                isSorted={triActif.type === 'activite'}
+                isDesc={!triActif.ordreCroissant}
+              />
+            </button>
+          </div>
 
           <Table
             ref={ref}
