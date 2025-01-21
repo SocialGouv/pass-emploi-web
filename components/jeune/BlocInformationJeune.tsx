@@ -1,99 +1,123 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 
+import ChangementDispositifBeneficiaireModal from 'components/ChangementDispositifBeneficiaireModal' // FIXME should use dynamic(() => import() but issue with jest
+import DispositifTag from 'components/jeune/DispositifTag'
+import { ModalHandles } from 'components/Modal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
-import { toShortDate } from 'utils/date'
+import { toLongMonthDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
+  beneficiaire: DetailBeneficiaire
   conseiller: Conseiller
-  creationDate: string
-  onDossierMiloClick: () => void
-  dateFinCEJ?: string
-  email?: string
-  urlDossier?: string
   onIdentifiantPartenaireCopie?: () => void
   identifiantPartenaire?: string
   onIdentifiantPartenaireClick?: () => void
 }
 
-export function BlocInformationJeune({
+export default function BlocInformationJeune({
+  beneficiaire,
   conseiller,
-  creationDate,
-  dateFinCEJ,
-  email,
-  urlDossier,
-  onDossierMiloClick,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
 }: BlocInformationJeuneProps) {
+  const { creationDate, dateFinCEJ, email, urlDossier, dispositif } =
+    beneficiaire
   const conseillerEstMilo = estMilo(conseiller)
 
-  return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100 mb-3'>
-      <h2 className='text-m-bold text-grey_800 mb-2'>Bénéficiaire</h2>
+  const [dispositifActuel, setDispositifActuel] = useState<string>(dispositif)
+  const [afficherChangementDispositif, setAfficherChangementDispositif] =
+    useState<boolean>(false)
+  const modalRef = useRef<ModalHandles>(null)
 
-      <dl>
+  async function changerDispositif(nouveauDispositif: string): Promise<void> {
+    const { modifierDispositif } = await import(
+      'services/beneficiaires.service'
+    )
+    await modifierDispositif(beneficiaire.id, nouveauDispositif)
+    setDispositifActuel(nouveauDispositif)
+    modalRef.current!.closeModal()
+  }
+
+  return (
+    <>
+      <div className='border border-solid rounded-base w-full p-4 border-grey_100 mb-3'>
+        <h2 className='text-m-bold text-grey_800 mb-2'>Bénéficiaire</h2>
+
         {conseillerEstMilo && (
-          <div className='flex'>
-            <dt className='text-base-regular'>Ajouté le :</dt>
-            <dd className='text-base-bold ml-1'>
-              {creationDate ? (
-                toShortDate(creationDate)
-              ) : (
-                <InformationNonDisponible />
-              )}
-            </dd>
-          </div>
+          <BoutonChangementDispositif
+            onClick={() => setAfficherChangementDispositif(true)}
+          />
         )}
 
-        {email && <Email email={email} />}
+        {urlDossier && <DossierExterne href={urlDossier} />}
 
-        {!conseillerEstMilo &&
-          onIdentifiantPartenaireCopie &&
-          onIdentifiantPartenaireClick && (
-            <IdentifiantPartenaire
-              identifiantPartenaire={identifiantPartenaire}
-              onCopy={onIdentifiantPartenaireCopie}
-              onClick={onIdentifiantPartenaireClick}
-            />
+        <dl className='mt-4'>
+          {conseillerEstMilo && (
+            <>
+              <div className='flex gap-1'>
+                <dt>Ajouté le :</dt>
+                <dd className='text-base-bold'>
+                  {creationDate ? (
+                    toLongMonthDate(creationDate)
+                  ) : (
+                    <InformationNonDisponible />
+                  )}
+                </dd>
+              </div>
+
+              <div className='flex gap-1'>
+                <dt>Dispositif :</dt>
+                <dd>
+                  <DispositifTag dispositif={dispositifActuel} />
+                </dd>
+              </div>
+            </>
           )}
 
-        {urlDossier && (
-          <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
-        )}
+          {email && (
+            <div className='flex gap-1'>
+              <dt>Email :</dt>
+              <dd className='text-base-bold'>{email}</dd>
+            </div>
+          )}
 
-        {conseillerEstMilo && (
-          <div className='flex'>
-            <dt className='text-base-regular'>Date de fin du CEJ :</dt>
-            <dd className='text-base-bold ml-1'>
-              {dateFinCEJ ? (
-                toShortDate(dateFinCEJ)
-              ) : (
-                <InformationNonDisponible />
-              )}
-            </dd>
-          </div>
-        )}
-      </dl>
-    </div>
-  )
-}
+          {!conseillerEstMilo &&
+            onIdentifiantPartenaireCopie &&
+            onIdentifiantPartenaireClick && (
+              <IdentifiantPartenaire
+                identifiantPartenaire={identifiantPartenaire}
+                onCopy={onIdentifiantPartenaireCopie}
+                onClick={onIdentifiantPartenaireClick}
+              />
+            )}
 
-export function Email({ email }: { email: string }) {
-  return (
-    <div className='flex items-center'>
-      <dt>
-        <IconComponent
-          name={IconName.Mail}
-          role='img'
-          aria-label='e-mail'
-          focusable={false}
-          className='w-4 h-4 fill-primary mr-2'
+          {conseillerEstMilo && estCEJ(beneficiaire) && (
+            <div className='flex gap-1'>
+              <dt>Date de fin du CEJ :</dt>
+              <dd className='text-base-bold ml-1'>
+                {dateFinCEJ ? (
+                  toLongMonthDate(dateFinCEJ)
+                ) : (
+                  <InformationNonDisponible />
+                )}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </div>
+
+      {afficherChangementDispositif && (
+        <ChangementDispositifBeneficiaireModal
+          ref={modalRef}
+          dispositif={dispositifActuel}
+          onConfirm={changerDispositif}
+          onCancel={() => setAfficherChangementDispositif(false)}
         />
-      </dt>
-      <dd className='text-primary'>{email}</dd>
-    </div>
+      )}
+    </>
   )
 }
 
@@ -103,8 +127,8 @@ export function IdentifiantPartenaire(props: {
   onClick: () => void
 }) {
   return (
-    <div className='flex'>
-      <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
+    <div className='flex gap-1'>
+      <dt>Identifiant France Travail :</dt>
       <dd className='text-base-bold' onCopy={props.onCopy}>
         {props.identifiantPartenaire ?? (
           <>
@@ -134,47 +158,53 @@ export function IdentifiantPartenaire(props: {
   )
 }
 
-function DossierExterne({
-  href,
-  onClick,
-}: {
-  href: string
-  onClick: () => void
-}) {
+function BoutonChangementDispositif({ onClick }: { onClick: () => void }) {
   return (
-    <>
-      <dt className='sr-only'>Dossier externe</dt>
-      <dd className='mt-2'>
-        <a
-          className='underline text-primary hover:text-primary_darken flex items-center'
-          href={href}
-          target='_blank'
-          onClick={onClick}
-          rel='noopener noreferrer'
-        >
-          Dossier jeune i-milo{' '}
-          <span id='nouvelle-fenetre' className='sr-only'>
-            (nouvelle fenêtre)
-          </span>
-          <IconComponent
-            name={IconName.OpenInNew}
-            focusable={false}
-            role='img'
-            title='(nouvelle fenêtre)'
-            aria-labelledby='nouvelle-fenetre'
-            className='ml-2 w-4 h-4 fill-current'
-          />
-        </a>
-      </dd>
-    </>
+    <button
+      type='button'
+      onClick={onClick}
+      className='flex items-center underline hover:text-primary'
+    >
+      Changer le bénéficiaire de dispositif
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-current'
+        aria-hidden={true}
+        focusable={false}
+      />
+    </button>
   )
 }
 
-export function InformationNonDisponible() {
+function DossierExterne({ href }: { href: string }) {
+  return (
+    <a
+      className='mt-2 flex items-center underline hover:text-primary'
+      href={href}
+      target='_blank'
+      rel='noopener noreferrer'
+    >
+      Dossier jeune i-milo{' '}
+      <span id='nouvelle-fenetre' className='sr-only'>
+        (nouvelle fenêtre)
+      </span>
+      <IconComponent
+        name={IconName.OpenInNew}
+        focusable={false}
+        role='img'
+        title='(nouvelle fenêtre)'
+        aria-labelledby='nouvelle-fenetre'
+        className='ml-2 w-4 h-4 fill-current'
+      />
+    </a>
+  )
+}
+
+function InformationNonDisponible() {
   return (
     <>
       --
-      <span className='sr-only'>information non disponible</span>
+      <span className='sr-only'> information non disponible</span>
     </>
   )
 }

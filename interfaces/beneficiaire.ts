@@ -162,6 +162,10 @@ export type Demarche = {
   sousTitre?: string
 }
 
+export function estCEJ({ dispositif }: { dispositif: string }): boolean {
+  return dispositif === 'CEJ'
+}
+
 export function compareBeneficiairesByNom(
   beneficiaire1: BaseBeneficiaire,
   beneficiaire2: BaseBeneficiaire

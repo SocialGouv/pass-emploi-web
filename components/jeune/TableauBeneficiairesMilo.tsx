@@ -11,6 +11,7 @@ import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireAvecInfosComplementaires,
+  estCEJ,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -119,7 +120,7 @@ export default function TableauBeneficiairesMilo({
               </TD>
 
               <TD className='relative h-full !p-2 after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
-                {beneficiaire.dispositif === 'CEJ' && (
+                {estCEJ(beneficiaire) && (
                   <>
                     <div
                       className='text-s-regular text-grey_800 mb-2'
