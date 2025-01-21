@@ -208,6 +208,20 @@ export async function getMetadonneesFavorisJeune(
   }
 }
 
+export async function modifierDispositif(
+  idJeune: string,
+  dispositif: string
+): Promise<void> {
+  const session = await getSession()
+  const idConseiller = session?.user.id
+
+  return apiPatch(
+    `/conseillers/${idConseiller}/jeunes/${idJeune}`,
+    { dispositif },
+    session!.accessToken
+  )
+}
+
 export async function modifierIdentifiantPartenaire(
   idJeune: string,
   idPartenaire: string

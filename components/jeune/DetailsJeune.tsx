@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
+import BlocInformationJeuneFicheBeneficiaire from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
 import { ResumeDemarchesBeneficiaire } from 'components/jeune/ResumeDemarchesBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import {
