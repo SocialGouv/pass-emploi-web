@@ -77,22 +77,16 @@ export default function TableauActionsJeune({
     setAReinitialiseLesFiltres(true)
   }
 
-  function getIsSortedByDateEcheance(): boolean {
-    return (
-      tri === TRI.dateEcheanceCroissante || tri === TRI.dateEcheanceDecroissante
-    )
-  }
-
   function getIsSortedDesc(): boolean {
-    return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
+    return tri === TRI.dateEcheanceDecroissante
   }
 
   function trierParDateEcheance() {
-    let nouveauTri: TRI = TRI.dateEcheanceDecroissante
-    if (getIsSortedByDateEcheance() && getIsSortedDesc()) {
-      nouveauTri = TRI.dateEcheanceCroissante
-    }
-    onTri(nouveauTri)
+    onTri(
+      getIsSortedDesc()
+        ? TRI.dateEcheanceCroissante
+        : TRI.dateEcheanceDecroissante
+    )
   }
 
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
@@ -271,10 +265,7 @@ export default function TableauActionsJeune({
                     type='button'
                   >
                     Date de l’action
-                    <SortIcon
-                      isSorted={getIsSortedByDateEcheance()}
-                      isDesc={getIsSortedDesc()}
-                    />
+                    <SortIcon isSorted={true} isDesc={getIsSortedDesc()} />
                   </button>
                 </TH>
                 <TH estCliquable={true}>

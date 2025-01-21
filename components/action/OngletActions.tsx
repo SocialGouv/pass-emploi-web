@@ -36,8 +36,6 @@ interface OngletActionsProps {
 }
 
 export enum TRI {
-  dateDecroissante = 'date_decroissante',
-  dateCroissante = 'date_croissante',
   dateEcheanceDecroissante = 'date_echeance_decroissante',
   dateEcheanceCroissante = 'date_echeance_croissante',
 }
