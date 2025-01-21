@@ -42,6 +42,7 @@ import {
   getJeunesDuConseillerParId,
   getMetadonneesFavorisJeune,
   getMotifsSuppression,
+  modifierDispositif,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
@@ -350,7 +351,25 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/idConseiller/jeunes/' + idJeune,
-        { idPartenaire: idPartenaire },
+        { idPartenaire },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.modifierDispositif', () => {
+    it('modifie le dispositif d’un jeune', async function () {
+      // Given
+      const idJeune = 'idJeune'
+      const dispositif = 'PACEA'
+
+      // When
+      await modifierDispositif(idJeune, dispositif)
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/jeunes/' + idJeune,
+        { dispositif },
         'accessToken'
       )
     })

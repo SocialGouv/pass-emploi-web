@@ -72,7 +72,7 @@ function Modal(
             name={titleIllustration}
             focusable={false}
             aria-hidden={true}
-            className='w-1/3 m-auto fill-primary mb-8'
+            className='w-1/3 m-auto fill-primary [--secondary-fill:theme(colors.primary\_lighten)] mb-8'
           />
         )}
         {titleImageSrc && (
@@ -83,6 +83,7 @@ function Modal(
             className='m-auto mb-8'
           />
         )}
+
         <h2
           id='modal-title'
           className='text-l-bold text-primary text-center flex-auto mb-4 whitespace-pre-line'
