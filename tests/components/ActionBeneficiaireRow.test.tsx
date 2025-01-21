@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React, { ReactElement } from 'react'
 
-import ActionRow from 'components/action/ActionRow'
+import ActionBeneficiaireRow from 'components/action/ActionBeneficiaireRow'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 
@@ -17,11 +17,10 @@ describe('<ActionRow/>', () => {
   it("devrait afficher les informations des actions d'un jeune", () => {
     const action = uneAction()
     renderInTable(
-      <ActionRow
+      <ActionBeneficiaireRow
         action={action}
         jeuneId='1'
-        isChecked={false}
-        onSelection={() => {}}
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
     expect(
@@ -37,11 +36,10 @@ describe('<ActionRow/>', () => {
       dateEcheance: DateTime.now().plus({ day: 1 }).toISO(),
     })
     renderInTable(
-      <ActionRow
+      <ActionBeneficiaireRow
         action={actionCommencee}
         jeuneId='1'
-        isChecked={false}
-        onSelection={() => {}}
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
     expect(screen.getByText('À faire')).toBeInTheDocument()
@@ -50,11 +48,10 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
     const actionTerminee = uneAction({ status: StatutAction.Terminee })
     renderInTable(
-      <ActionRow
+      <ActionBeneficiaireRow
         action={actionTerminee}
         jeuneId='1'
-        isChecked={false}
-        onSelection={() => {}}
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
     expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
@@ -63,11 +60,10 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'En retard' quand la date d’échéance de l’action est dépassée", () => {
     const action = uneAction()
     renderInTable(
-      <ActionRow
+      <ActionBeneficiaireRow
         action={action}
         jeuneId='1'
-        isChecked={false}
-        onSelection={() => {}}
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
     expect(screen.getByText('En retard')).toBeInTheDocument()
@@ -77,11 +73,10 @@ describe('<ActionRow/>', () => {
     it('affiche une checkbox non cochée', async () => {
       // When
       renderInTable(
-        <ActionRow
+        <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.Terminee })}
           jeuneId='1'
-          isChecked={false}
-          onSelection={() => {}}
+          avecQualification={{ isChecked: false, onSelection: () => {} }}
         />
       )
 
@@ -96,11 +91,10 @@ describe('<ActionRow/>', () => {
     it('affiche une checkbox cochée', async () => {
       // When
       renderInTable(
-        <ActionRow
+        <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.Terminee })}
           jeuneId='1'
-          isChecked={true}
-          onSelection={() => {}}
+          avecQualification={{ isChecked: true, onSelection: () => {} }}
         />
       )
 
@@ -115,11 +109,10 @@ describe('<ActionRow/>', () => {
     it('n’affiche pas de checkbox', async () => {
       // When
       renderInTable(
-        <ActionRow
+        <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.AFaire })}
           jeuneId='1'
-          isChecked={true}
-          onSelection={() => {}}
+          avecQualification={{ isChecked: true, onSelection: () => {} }}
         />
       )
 
@@ -132,11 +125,10 @@ describe('<ActionRow/>', () => {
       const onSelection = jest.fn()
       const actionTerminee = uneAction({ status: StatutAction.Terminee })
       renderInTable(
-        <ActionRow
+        <ActionBeneficiaireRow
           action={actionTerminee}
           jeuneId='1'
-          isChecked={false}
-          onSelection={onSelection}
+          avecQualification={{ isChecked: false, onSelection }}
         />
       )
 

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
 import { TRI } from 'components/action/OngletActions'
-import TableauActionsJeune from 'components/action/TableauActionsJeune'
+import TableauActionsBeneficiaire from 'components/action/TableauActionsBeneficiaire'
 import { desCategories, uneAction, uneListeDActions } from 'fixtures/action'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { Action, StatutAction } from 'interfaces/action'
@@ -45,7 +45,7 @@ describe('TableauActionsJeune', () => {
 
     await act(async () =>
       renderWithContexts(
-        <TableauActionsJeune
+        <TableauActionsBeneficiaire
           jeune={jeune}
           actionsFiltrees={[
             ...actions,
@@ -56,9 +56,11 @@ describe('TableauActionsJeune', () => {
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}
-          onLienExterne={jest.fn()}
-          onQualification={jest.fn()}
-          tri={TRI.dateDecroissante}
+          avecQualification={{
+            onLienExterne: jest.fn(),
+            onQualification: jest.fn(),
+          }}
+          tri={TRI.dateEcheanceDecroissante}
         />
       )
     )
