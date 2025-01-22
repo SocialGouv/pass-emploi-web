@@ -21,7 +21,7 @@
     "@next/bundle-analyzer": "15.1.2",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.7",
-    "elastic-apm-node": "4.9.0",
+    "elastic-apm-node": "4.11.0",
     "firebase": "11.1.0",
     "html-react-parser": "5.2.1",
     "jsonwebtoken": "9.0.2",
