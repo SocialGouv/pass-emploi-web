@@ -5071,9 +5071,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.9.0":
-  version: 4.9.0
-  resolution: "elastic-apm-node@npm:4.9.0"
+"elastic-apm-node@npm:4.11.0":
+  version: 4.11.0
+  resolution: "elastic-apm-node@npm:4.11.0"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -5093,7 +5093,7 @@ __metadata:
     fast-safe-stringify: "npm:^2.0.7"
     fast-stream-to-buffer: "npm:^1.0.0"
     http-headers: "npm:^3.0.2"
-    import-in-the-middle: "npm:1.11.3"
+    import-in-the-middle: "npm:1.12.0"
     json-bigint: "npm:^1.0.0"
     lru-cache: "npm:10.2.0"
     measured-reporting: "npm:^1.51.1"
@@ -5112,7 +5112,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 10c0/041160225dfa88b9e1cbf2338df85d0d4a506c311b915088d1997f8304ec93c2fb8d0836d4ffc7edff96eacd6bb34252e37d7a1dce4d12c179a3a9619d264d00
+  checksum: 10c0/6b794ca093a1647045ec218839aec8d145a96ae2ce2032e2feff6cd66698c20f5aaac19fdef55864aee7d2a828d8baa858ee03ae86ba0f8e7df52976f59b5c98
   languageName: node
   linkType: hard
 
@@ -6571,15 +6571,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.11.3":
-  version: 1.11.3
-  resolution: "import-in-the-middle@npm:1.11.3"
+"import-in-the-middle@npm:1.12.0":
+  version: 1.12.0
+  resolution: "import-in-the-middle@npm:1.12.0"
   dependencies:
     acorn: "npm:^8.8.2"
     acorn-import-attributes: "npm:^1.9.5"
     cjs-module-lexer: "npm:^1.2.2"
     module-details-from-path: "npm:^1.0.3"
-  checksum: 10c0/1eac3b485dfa747224fd0542ade60197d2af5e76c1dc2e3628f41066c90ccd3f02cc0f0115a2741e2bd6f12456dcea270853954c54a04626b5bf5fb1cfd035d6
+  checksum: 10c0/e0f92bd27b9ef15099494ef0e8ba0b6fa6f0e643a3ff1d41b52530b6e4ff2a502099fff345f3ffb7c75f78cb189903b8d2d92fab5f8123badbc9e790cc19bbe7
   languageName: node
   linkType: hard
 
@@ -8982,7 +8982,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^7.1.2"
     dotenv: "npm:16.4.7"
-    elastic-apm-node: "npm:4.9.0"
+    elastic-apm-node: "npm:4.11.0"
     eslint: "npm:^9.17.0"
     eslint-config-next: "npm:^15.1.2"
     eslint-config-prettier: "npm:^9.1.0"
