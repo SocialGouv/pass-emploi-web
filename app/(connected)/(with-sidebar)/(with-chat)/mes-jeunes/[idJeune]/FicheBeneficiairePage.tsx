@@ -48,7 +48,8 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [portefeuille] = usePortefeuille()
   const chats = useChats()
-  const [currentConversation, setCurrentConversation] = useCurrentConversation()
+  const [chatIsLoaded, setChatIsLoaded] = useState<boolean>(Boolean(chats))
+  const [_, setCurrentConversation] = useCurrentConversation()
   const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
 
@@ -101,14 +102,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
-    if (!lectureSeule && chats && !currentConversation) {
-      const conversation = chats.find(({ id }) => id === beneficiaire.id)
-      if (conversation)
-        setCurrentConversation({ conversation, shouldFocusOnRender: false })
-    }
-  }, [beneficiaire, lectureSeule, chats])
-
-  useEffect(() => {
     if (estBeneficiaireMilo) {
       getIndicateursJeuneAlleges(
         conseiller.id,
@@ -118,6 +111,18 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       ).then(setIndicateursSemaine)
     }
   }, [])
+
+  useEffect(() => {
+    if (!chatIsLoaded && chats) setChatIsLoaded(true)
+  }, [chats])
+
+  useEffect(() => {
+    if (chatIsLoaded && !lectureSeule) {
+      const conversation = chats!.find(({ id }) => id === beneficiaire.id)
+      if (conversation)
+        setCurrentConversation({ conversation, shouldFocusOnRender: false })
+    }
+  }, [chatIsLoaded])
 
   return (
     <>
