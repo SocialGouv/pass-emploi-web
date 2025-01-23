@@ -35,229 +35,142 @@ describe('ActionsApiService', () => {
     it('renvoie une action non commencée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.AFaire })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url.includes(action.id))
-          return {
-            content: {
-              ...uneActionJson({ id: action.id, status: 'not_started' }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({ id: action.id, status: 'not_started' }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
-      })
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('renvoie une action commencée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.AFaire })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url.includes(action.id))
-          return {
-            content: {
-              ...uneActionJson({ id: action.id, status: 'in_progress' }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({ id: action.id, status: 'in_progress' }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
-      })
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('renvoie une action terminée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.Terminee })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/actions/${action.id}`)
-          return {
-            content: {
-              ...uneActionJson({ id: action.id, status: 'done' }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({ id: action.id, status: 'done' }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
+    })
+
+    it('renvoie une action à qualifier', async () => {
+      // GIVEN
+      const action = uneAction({ status: StatutAction.TermineeAQualifier })
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({
+          id: action.id,
+          status: 'done',
+          etat: 'A_QUALIFIER',
+        }),
       })
+
+      // WHEN
+      const actual = await getAction(action.id, 'accessToken')
+
+      // THEN
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('renvoie une action annulée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.Annulee })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/actions/${action.id}`)
-          return {
-            content: {
-              ...uneActionJson({ id: action.id, status: 'canceled' }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({ id: action.id, status: 'canceled' }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
-      })
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('renvoie une action qualifiée en SNP', async () => {
       // GIVEN
       const action = uneAction({
-        status: StatutAction.Qualifiee,
+        status: StatutAction.TermineeQualifiee,
         qualification: {
           libelle: 'Santé',
           code: 'SANTE',
           isSituationNonProfessionnelle: true,
         },
       })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/actions/${action.id}`)
-          return {
-            content: {
-              ...uneActionJson({
-                id: action.id,
-                status: 'done',
-                qualification: {
-                  libelle: 'Santé',
-                  code: 'SANTE',
-                  heures: 5,
-                },
-              }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({
+          id: action.id,
+          status: 'done',
+          etat: 'QUALIFIEE',
+          qualification: {
+            libelle: 'Santé',
+            code: 'SANTE',
+            heures: 5,
+          },
+        }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
-      })
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('renvoie une action qualifiée en NON SNP', async () => {
       // GIVEN
       const action = uneAction({
-        status: StatutAction.Qualifiee,
+        status: StatutAction.TermineeQualifiee,
         qualification: {
           libelle: 'Situation pas non professionnelle',
           code: 'NON_SNP',
           isSituationNonProfessionnelle: false,
         },
       })
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/actions/${action.id}`)
-          return {
-            content: {
-              ...uneActionJson({
-                id: action.id,
-                status: 'done',
-                qualification: {
-                  libelle: 'Situation pas non professionnelle',
-                  code: 'NON_SNP',
-                  heures: 5,
-                },
-              }),
-              jeune: {
-                id: 'beneficiaire-1',
-                firstName: 'Nadia',
-                lastName: 'Sanfamiye',
-                idConseiller: 'id-conseiller',
-              },
-            },
-          }
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneActionJson({
+          id: action.id,
+          status: 'done',
+          etat: 'QUALIFIEE',
+          qualification: {
+            libelle: 'Situation pas non professionnelle',
+            code: 'NON_SNP',
+            heures: 5,
+          },
+        }),
       })
 
       // WHEN
       const actual = await getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({
-        action,
-        jeune: {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        },
-      })
+      expect(apiGet).toHaveBeenCalledWith('/actions/id-action-1', 'accessToken')
+      expect(actual).toStrictEqual(action)
     })
 
     it('ne renvoie pas une action inexistante', async () => {
@@ -359,7 +272,7 @@ describe('ActionsApiService', () => {
         tri: 'date_decroissante',
         page: 1,
         filtres: {
-          statuts: [StatutAction.Qualifiee],
+          statuts: [StatutAction.TermineeQualifiee],
           categories: [],
         },
       })

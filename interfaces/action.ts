@@ -1,3 +1,5 @@
+import { UserType } from 'interfaces/conseiller'
+
 export interface Action {
   id: string
   titre: string
@@ -10,6 +12,13 @@ export interface Action {
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationAction
+  beneficiaire: {
+    id: string
+    prenom: string
+    nom: string
+    dispositif: string
+    idConseiller: string
+  }
 }
 
 export interface ActionPilotage {
@@ -47,7 +56,8 @@ export interface CompteurActionsPeriode {
 export enum StatutAction {
   AFaire = 'AFaire',
   Terminee = 'Terminee',
-  Qualifiee = 'Qualifiee',
+  TermineeAQualifier = 'TermineeAQualifier',
+  TermineeQualifiee = 'TermineeQualifiee',
   Annulee = 'Annulee',
 }
 
@@ -56,4 +66,21 @@ export type SituationNonProfessionnelle = { code: string; label: string }
 export type ActionPredefinie = {
   id: string
   titre: string
+}
+
+export function estTermine(statut: Action['status']): boolean {
+  return (
+    statut === StatutAction.Terminee ||
+    statut === StatutAction.TermineeAQualifier ||
+    statut === StatutAction.TermineeQualifiee
+  )
+}
+
+export function estSupprimable({
+  creatorType,
+  status,
+}: Pick<Action, 'creatorType' | 'status'>): boolean {
+  return (
+    creatorType === UserType.CONSEILLER.toLowerCase() && !estTermine(status)
+  )
 }

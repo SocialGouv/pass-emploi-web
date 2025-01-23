@@ -16,36 +16,34 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Action, StatutAction } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { estMilo, UserType } from 'interfaces/conseiller'
+import {
+  Action,
+  estSupprimable,
+  estTermine,
+  StatutAction,
+} from 'interfaces/action'
+import { estCEJ } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate } from 'utils/date'
 import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export type DetailActionProps = {
   action: Action
-  jeune: BaseBeneficiaire
   lectureSeule: boolean
   from: 'pilotage' | 'beneficiaire'
 }
 
-function DetailActionPage({
-  action,
-  jeune,
-  lectureSeule,
-  from,
-}: DetailActionProps) {
+function DetailActionPage({ action, lectureSeule, from }: DetailActionProps) {
+  const { beneficiaire } = action
+
   const router = useRouter()
-  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [alerte, _] = useAlerte()
 
-  const [statut, setStatut] = useState<StatutAction>(action.status)
+  const [statutAJour, setStatutAJour] = useState<StatutAction>(action.status)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
   const [showSuppression, setShowSuppression] = useState<boolean>(false)
 
@@ -53,23 +51,17 @@ function DetailActionPage({
     lectureSeule ? ' - hors portefeuille' : ''
   }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const conseillerEstMilo = estMilo(conseiller)
-  const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
-  const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
-
-  const afficherSuppressionAction =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    action.status !== StatutAction.Terminee &&
-    action.status !== StatutAction.Qualifiee
+  const estAQualifier = statutAJour === StatutAction.TermineeAQualifier
+  const qualifiee = statutAJour === StatutAction.TermineeQualifiee
 
   const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')
     await modifierAction(action.id, { statut: statutChoisi })
-    setStatut(statutChoisi)
+    setStatutAJour(statutChoisi)
 
-    if (statutChoisi === StatutAction.Terminee)
+    if (estTermine(statutChoisi))
       action.dateFinReelle = DateTime.now().toISODate()
   }
 
@@ -78,7 +70,7 @@ function DetailActionPage({
     try {
       await deleteAction(action.id)
       setTrackingTitle(`${initialTracking} - Suppression action`)
-      router.push('/mes-jeunes/' + jeune.id)
+      router.push('/mes-jeunes/' + beneficiaire.id)
     } catch (error) {
       setShowEchecMessage(true)
       console.log('Erreur lors de la suppression de l action', error)
@@ -101,7 +93,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}&misc=${random}`}
+              href={`/mes-jeunes/${beneficiaire.id}/actions/${action.id}/qualification?liste=${from}&misc=${random}`}
             >
               Qualifier l’action
               <IconComponent
@@ -112,7 +104,8 @@ function DetailActionPage({
               />
             </ButtonLink>
           )}
-          {afficherSuppressionAction && !lectureSeule && (
+
+          {estSupprimable(action) && !lectureSeule && (
             <Button
               label="Supprimer l'action"
               onClick={() => setShowSuppression(true)}
@@ -169,8 +162,9 @@ function DetailActionPage({
 
       <StatutActionForm
         updateStatutAction={updateStatutAction}
-        statutCourant={statut}
+        statutCourant={statutAJour}
         lectureSeule={lectureSeule}
+        avecQualification={estCEJ(beneficiaire)}
       />
 
       <div className='border-b-2 border-primary_lighten mt-8'>
@@ -180,7 +174,7 @@ function DetailActionPage({
           </h2>
           {!qualifiee && (
             <ButtonLink
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification?misc=${random}`}
+              href={`/mes-jeunes/${beneficiaire.id}/actions/${action.id}/modification?misc=${random}`}
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent
@@ -229,8 +223,8 @@ function DetailActionPage({
           <dd className='text-base-regular pl-6'>
             {toLongMonthDate(action.dateEcheance)}
           </dd>
-          {(statut === StatutAction.Terminee ||
-            statut === StatutAction.Qualifiee) && (
+
+          {estTermine(statutAJour) && (
             <>
               <dt className='text-base-bold pb-6'>
                 <span>Date de réalisation :</span>
@@ -243,11 +237,7 @@ function DetailActionPage({
         </dl>
       </div>
 
-      <CommentaireAction
-        action={action}
-        beneficiaire={jeune}
-        initiallyOpened={!action.comment}
-      />
+      <CommentaireAction action={action} initiallyOpened={!action.comment} />
 
       <HistoriqueAction action={action} />
 

@@ -30,7 +30,7 @@ describe('TableauActionsJeune', () => {
     actionAvecCategorie = uneAction({
       id: 'id-action-avec-categorie',
       titre: 'Cueillir des champignons avec Petit Ours',
-      status: StatutAction.Terminee,
+      status: StatutAction.TermineeAQualifier,
       qualification: {
         code: 'SANTE',
         libelle: 'Santé',
@@ -193,7 +193,7 @@ describe('TableauActionsJeune', () => {
             screen.getByRole('checkbox', {
               name: /Sélection Cueillir des champignons avec Petit Ours/,
             })
-          ).toBeChecked
+          ).toBeChecked()
           expect(
             screen.getByText(
               '1 action sélectionnée. S’agit-il de SNP ou de non SNP ?'

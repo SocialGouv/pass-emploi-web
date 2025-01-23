@@ -41,7 +41,7 @@ describe('Actions dans la fiche jeune', () => {
     uneAction({
       id: 'id-action-5',
       titre: 'Action 5',
-      status: StatutAction.Terminee,
+      status: StatutAction.TermineeAQualifier,
       qualification: {
         libelle: 'Santé',
         code: 'SANTE',
@@ -51,7 +51,7 @@ describe('Actions dans la fiche jeune', () => {
     uneAction({
       id: 'id-action-6',
       titre: 'Action 6',
-      status: StatutAction.Qualifiee,
+      status: StatutAction.TermineeQualifiee,
       qualification: {
         libelle: 'Emploi',
         code: 'EMPLOI',
@@ -101,12 +101,10 @@ describe('Actions dans la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller Milo", () => {
-    let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      setIdJeune = jest.fn()
       ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
@@ -282,6 +280,7 @@ describe('Actions dans la fiche jeune', () => {
             })
           )
         })
+
         it('Qualifie les actions', () => {
           //Then
           expect(qualifierActions).toHaveBeenCalledWith(

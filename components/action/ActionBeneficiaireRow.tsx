@@ -12,7 +12,6 @@ import { toLongMonthDate } from 'utils/date'
 
 type ActionBeneficiaireRowProps = {
   action: Action
-  jeuneId: string
   avecQualification?: {
     isChecked: boolean
     onSelection: (action: Action) => void
@@ -21,7 +20,6 @@ type ActionBeneficiaireRowProps = {
 
 export default function ActionBeneficiaireRow({
   action,
-  jeuneId,
   avecQualification,
 }: ActionBeneficiaireRowProps) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -32,7 +30,7 @@ export default function ActionBeneficiaireRow({
     DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
     action.status === StatutAction.AFaire
 
-  const actionEstTerminee = action.status === StatutAction.Terminee
+  const actionAQualifier = action.status === StatutAction.TermineeAQualifier
 
   const dateEcheance = toLongMonthDate(action.dateEcheance)
 
@@ -40,7 +38,7 @@ export default function ActionBeneficiaireRow({
     <TR isSelected={avecQualification?.isChecked}>
       {avecQualification && (
         <TD className='relative'>
-          {actionEstTerminee && (
+          {actionAQualifier && (
             <label className='absolute inset-0 z-20 cursor-pointer p-4'>
               <span className='sr-only'>
                 Sélection {action.titre} {action.qualification?.libelle}
@@ -82,7 +80,7 @@ export default function ActionBeneficiaireRow({
         </p>
       </TD>
       <TDLink
-        href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
+        href={`${pathPrefix}/${action.beneficiaire.id}/actions/${action.id}`}
         labelPrefix='Voir le détail de l’action'
       />
     </TR>

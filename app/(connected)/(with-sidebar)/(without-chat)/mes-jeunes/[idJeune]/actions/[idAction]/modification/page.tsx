@@ -26,10 +26,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
   const { idAction } = await params
-  const actionContent = await getAction(idAction, accessToken)
+  const action = await getAction(idAction, accessToken)
 
   return {
-    title: `Modifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
+    title: `Modifier l’action ${action?.titre} - ${action?.beneficiaire.prenom} ${action?.beneficiaire.nom}`,
   }
 }
 
@@ -42,19 +42,18 @@ export default async function ModificationAction({
   if (!estUserMilo(user)) notFound()
 
   const { idAction } = await params
-  const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
+  const [action, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
       getAction(idAction, accessToken),
       getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
       getActionsPredefinies(accessToken),
     ])
-  if (!actionContent) notFound()
+  if (!action) notFound()
 
-  const { action, jeune } = actionContent
-  if (action.status === StatutAction.Qualifiee) notFound()
+  if (action.status === StatutAction.TermineeQualifiee) notFound()
 
   // FIXME : dirty fix, problème de rafraichissement de l’action
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${unsafeRandomId()}`
+  const returnTo = `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}?misc=${unsafeRandomId()}`
   return (
     <>
       <PageHeaderPortal header='Modifier l’action' />
@@ -63,7 +62,6 @@ export default async function ModificationAction({
       <ModificationPage
         action={action}
         actionsPredefinies={actionsPredefinies}
-        idBeneficiaire={jeune.id}
         situationsNonProfessionnelles={situationsNonProfessionnelles}
         returnTo={returnTo}
       />

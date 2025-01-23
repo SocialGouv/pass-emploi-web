@@ -10,7 +10,6 @@ import {
   desCategories,
   uneAction,
 } from 'fixtures/action'
-import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -31,7 +30,6 @@ jest.mock(
 
 describe('ModificationActionPage server side', () => {
   describe('pour un conseiller Milo', () => {
-    const jeune = uneBaseBeneficiaire()
     const actionsPredefinies = desActionsPredefinies()
     const categories = desCategories()
     const params = { idAction: 'id-action' }
@@ -51,7 +49,7 @@ describe('ModificationActionPage server side', () => {
 
     it('prépare la page', async () => {
       const action = uneAction()
-      ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
+      ;(getAction as jest.Mock).mockResolvedValue(action)
 
       // When
       const metadata = await generateMetadata({
@@ -68,7 +66,6 @@ describe('ModificationActionPage server side', () => {
         {
           action,
           actionsPredefinies,
-          idBeneficiaire: jeune.id,
           situationsNonProfessionnelles: categories,
           returnTo: expect.stringMatching(
             '/mes-jeunes/beneficiaire-1/actions/id-action-1'
@@ -92,10 +89,9 @@ describe('ModificationActionPage server side', () => {
 
     it('la page n’existe pas pour une action qualifiee', async () => {
       // Given
-      ;(getAction as jest.Mock).mockResolvedValue({
-        action: uneAction({ status: StatutAction.Qualifiee }),
-        jeune,
-      })
+      ;(getAction as jest.Mock).mockResolvedValue(
+        uneAction({ status: StatutAction.TermineeQualifiee })
+      )
 
       // When
       const promise = ModificationAction({ params: Promise.resolve(params) })

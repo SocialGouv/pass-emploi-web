@@ -6,7 +6,6 @@ import { DateTime } from 'luxon'
 
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
-import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import {
   Action,
   SituationNonProfessionnelle,
@@ -20,28 +19,17 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/actions.service')
 
 describe('QualificationPage client side', () => {
-  let action: Action & { jeune: { id: string } }
+  let action: Action
   let categories: SituationNonProfessionnelle[]
   let container: HTMLElement
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   beforeEach(() => {
     // Given
-    action = {
-      id: 'id-action-1',
-      titre: 'Identifier ses atouts et ses compétences',
-      comment: 'Je suis un beau commentaire',
-      creationDate: '2022-02-15T15:50:46.000+01:00',
-      lastUpdate: '2022-02-16T15:50:46.000+01:00',
-      creator: 'Nils',
-      creatorType: 'conseiller',
-      status: StatutAction.AFaire,
-      dateEcheance: '2022-02-20T14:50:46.000Z',
+    action = uneAction({
+      status: StatutAction.TermineeAQualifier,
       dateFinReelle: '2022-09-02T11:00:00.000Z',
-      jeune: {
-        id: 'beneficiaire-1',
-      },
-    }
+    })
     categories = desCategoriesAvecNONSNP()
 
     alerteSetter = jest.fn()
@@ -312,11 +300,7 @@ describe('QualificationPage client side', () => {
     })
 
     describe('formulaire', () => {
-      let actionAQualifier: Action
       beforeEach(async () => {
-        actionAQualifier = uneAction({
-          status: StatutAction.Terminee,
-        })
         // When
         const submit = screen.getByRole('button', {
           name: /Enregistrer/,
@@ -336,7 +320,7 @@ describe('QualificationPage client side', () => {
 
       it("qualifie l'action en NON SNP", () => {
         expect(qualifier).toHaveBeenCalledWith(
-          actionAQualifier.id,
+          action.id,
           CODE_QUALIFICATION_NON_SNP,
           {
             dateFinModifiee: DateTime.fromISO(action.dateEcheance),

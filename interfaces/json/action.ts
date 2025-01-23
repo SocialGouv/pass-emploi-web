@@ -3,12 +3,11 @@ import { DateTime } from 'luxon'
 import {
   Action,
   ActionPilotage,
+  estTermine,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-
-type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 
 export interface ActionJson {
   id: string
@@ -16,12 +15,20 @@ export interface ActionJson {
   comment: string
   creationDate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
   lastUpdate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
-  status: ActionStatusJson
+  status: string
+  etat: string
   creator: string
   creatorType: string
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationActionJson
+  jeune: {
+    id: string
+    lastName: string
+    firstName: string
+    idConseiller: string
+    dispositif: string
+  }
 }
 
 export interface ActionPilotageJson {
@@ -92,6 +99,13 @@ export function jsonToAction(json: ActionJson): Action {
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
+    beneficiaire: {
+      id: json.jeune.id,
+      prenom: json.jeune.firstName,
+      nom: json.jeune.lastName,
+      dispositif: json.jeune.dispositif,
+      idConseiller: json.jeune.idConseiller,
+    },
   }
 
   if (json.dateFinReelle) {
@@ -138,16 +152,14 @@ export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
   }
 }
 
-export function jsonToActionStatus({
-  status,
-  qualification,
-}: ActionJson): StatutAction {
+export function jsonToActionStatus({ status, etat }: ActionJson): StatutAction {
   switch (status) {
     case 'not_started':
     case 'in_progress':
       return StatutAction.AFaire
     case 'done':
-      if (qualification?.heures !== undefined) return StatutAction.Qualifiee
+      if (etat === 'A_QUALIFIER') return StatutAction.TermineeAQualifier
+      if (etat === 'QUALIFIEE') return StatutAction.TermineeQualifiee
       return StatutAction.Terminee
     case 'canceled':
       return StatutAction.Annulee
@@ -157,28 +169,22 @@ export function jsonToActionStatus({
   }
 }
 
-export function actionStatusToJson(status: StatutAction): ActionStatusJson {
-  switch (status) {
-    case StatutAction.Terminee:
-    case StatutAction.Qualifiee:
-      return 'done'
-    case StatutAction.Annulee:
-      return 'canceled'
-    case StatutAction.AFaire:
-    default:
-      return 'in_progress'
-  }
+export function actionStatusToJson(statut: StatutAction): string {
+  if (estTermine(statut)) return 'done'
+  return 'in_progress'
 }
 
-export function actionStatusToFiltre(status: StatutAction): string {
+export function statutActionToFiltres(status: StatutAction): string {
   switch (status) {
     case StatutAction.AFaire:
       return '&statuts=in_progress&statuts=not_started'
     case StatutAction.Terminee:
-      return '&statuts=done&etats=A_QUALIFIER'
+      return '&statuts=done'
     case StatutAction.Annulee:
       return '&statuts=canceled'
-    case StatutAction.Qualifiee:
+    case StatutAction.TermineeAQualifier:
+      return '&statuts=done&etats=A_QUALIFIER'
+    case StatutAction.TermineeQualifiee:
       return '&statuts=done&etats=QUALIFIEE'
   }
 }

@@ -19,7 +19,6 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={action}
-        jeuneId='1'
         avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
@@ -38,7 +37,6 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={actionCommencee}
-        jeuneId='1'
         avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
@@ -50,11 +48,36 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={actionTerminee}
-        jeuneId='1'
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
+      />
+    )
+    expect(screen.getByText('Terminée')).toBeInTheDocument()
+  })
+
+  it("devrait afficher un badge 'Terminée - À qualifier' quand l'action est à qualifier", () => {
+    const actionAQualifier = uneAction({
+      status: StatutAction.TermineeAQualifier,
+    })
+    renderInTable(
+      <ActionBeneficiaireRow
+        action={actionAQualifier}
         avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
     expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
+  })
+
+  it("devrait afficher un badge 'Qualifiée' quand l'action est qualifiée", () => {
+    const actionQualifiee = uneAction({
+      status: StatutAction.TermineeQualifiee,
+    })
+    renderInTable(
+      <ActionBeneficiaireRow
+        action={actionQualifiee}
+        avecQualification={{ isChecked: false, onSelection: () => {} }}
+      />
+    )
+    expect(screen.getByText('Qualifiée')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'En retard' quand la date d’échéance de l’action est dépassée", () => {
@@ -62,7 +85,6 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={action}
-        jeuneId='1'
         avecQualification={{ isChecked: false, onSelection: () => {} }}
       />
     )
@@ -74,8 +96,7 @@ describe('<ActionRow/>', () => {
       // When
       renderInTable(
         <ActionBeneficiaireRow
-          action={uneAction({ status: StatutAction.Terminee })}
-          jeuneId='1'
+          action={uneAction({ status: StatutAction.TermineeAQualifier })}
           avecQualification={{ isChecked: false, onSelection: () => {} }}
         />
       )
@@ -92,8 +113,7 @@ describe('<ActionRow/>', () => {
       // When
       renderInTable(
         <ActionBeneficiaireRow
-          action={uneAction({ status: StatutAction.Terminee })}
-          jeuneId='1'
+          action={uneAction({ status: StatutAction.TermineeAQualifier })}
           avecQualification={{ isChecked: true, onSelection: () => {} }}
         />
       )
@@ -111,7 +131,6 @@ describe('<ActionRow/>', () => {
       renderInTable(
         <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.AFaire })}
-          jeuneId='1'
           avecQualification={{ isChecked: true, onSelection: () => {} }}
         />
       )
@@ -120,14 +139,15 @@ describe('<ActionRow/>', () => {
       expect(() => screen.getByRole('checkbox')).toThrow()
     })
 
-    it('permet de cocher la checkbox d’une action terminée', async () => {
+    it('permet de cocher la checkbox d’une action à qualifier', async () => {
       // Given
       const onSelection = jest.fn()
-      const actionTerminee = uneAction({ status: StatutAction.Terminee })
+      const actionAQualifier = uneAction({
+        status: StatutAction.TermineeAQualifier,
+      })
       renderInTable(
         <ActionBeneficiaireRow
-          action={actionTerminee}
-          jeuneId='1'
+          action={actionAQualifier}
           avecQualification={{ isChecked: false, onSelection }}
         />
       )
@@ -136,7 +156,7 @@ describe('<ActionRow/>', () => {
       await userEvent.click(screen.getByRole('checkbox'))
 
       // Then
-      expect(onSelection).toHaveBeenCalledWith(actionTerminee)
+      expect(onSelection).toHaveBeenCalledWith(actionAQualifier)
     })
   })
 })

@@ -2,10 +2,8 @@ import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
 import { uneListeDActionsJson } from 'fixtures/action'
-import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDEvenementJson } from 'fixtures/evenement'
 import { uneListeDESessionsMiloJson } from 'fixtures/session'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
 
 jest.mock('clients/api.client')
@@ -87,14 +85,14 @@ describe('AgendaService', () => {
           {
             id: 'id-action-3',
             date: DateTime.fromISO('2022-02-21T14:50:46.000Z'),
-            statut: 'Terminee',
+            statut: 'TermineeAQualifier',
             titre: 'Chercher une formation',
             type: 'action',
           },
           {
             id: 'id-action-4',
             date: DateTime.fromISO('2022-02-22T14:50:46.000Z'),
-            statut: 'Terminee',
+            statut: 'TermineeAQualifier',
             titre: "Consulter les offres d'emploi",
             type: 'action',
           },

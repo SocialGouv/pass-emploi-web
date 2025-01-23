@@ -77,7 +77,6 @@ type PartageOffre = {
 
 type PartageAction = {
   action: Action
-  idDestinataire: string
   cleChiffrement: string
   message: string
 }
@@ -457,7 +456,6 @@ export async function partagerOffre({
 
 export async function commenterAction({
   cleChiffrement,
-  idDestinataire,
   message,
   action,
 }: PartageAction): Promise<void> {
@@ -471,7 +469,11 @@ export async function commenterAction({
     date: now,
   }
 
-  await envoyerCommentaireAction(idDestinataire, nouveauMessage, session!)
+  await envoyerCommentaireAction(
+    action.beneficiaire.id,
+    nouveauMessage,
+    session!
+  )
 }
 
 export async function modifierMessage(
