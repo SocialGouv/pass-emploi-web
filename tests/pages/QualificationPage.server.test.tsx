@@ -6,7 +6,6 @@ import Qualification, {
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
-import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import {
   getAction,
@@ -66,14 +65,7 @@ describe('QualificationPage server side', () => {
 
     describe("quand l'action n'est pas terminée", () => {
       it('renvoie une 404', async () => {
-        ;(getAction as jest.Mock).mockResolvedValue({
-          action: uneAction(),
-          jeune: {
-            id: 'beneficiaire-1',
-            prenom: 'Nadia',
-            nom: 'Sanfamiye',
-          },
-        })
+        ;(getAction as jest.Mock).mockResolvedValue(uneAction())
 
         // When
         const promise = Qualification({
@@ -88,21 +80,16 @@ describe('QualificationPage server side', () => {
 
     describe("quand l'action est qualifiée", () => {
       it('renvoie une 404', async () => {
-        ;(getAction as jest.Mock).mockResolvedValue({
-          action: uneAction({
-            status: StatutAction.Qualifiee,
+        ;(getAction as jest.Mock).mockResolvedValue(
+          uneAction({
+            status: StatutAction.TermineeQualifiee,
             qualification: {
               libelle: 'Santé',
               isSituationNonProfessionnelle: true,
               code: 'SANTE',
             },
-          }),
-          jeune: {
-            id: 'beneficiaire-1',
-            prenom: 'Nadia',
-            nom: 'Sanfamiye',
-          },
-        })
+          })
+        )
 
         // When
         const promise = Qualification({
@@ -115,17 +102,13 @@ describe('QualificationPage server side', () => {
       })
     })
 
-    describe("quand l'action est terminée", () => {
+    describe("quand l'action est à qualifier", () => {
       it('récupère la liste des situations non professionnelles', async () => {
         // Given
-        const action = uneAction({ status: StatutAction.Terminee })
-        const beneficiaire = uneBaseBeneficiaire()
+        const action = uneAction({ status: StatutAction.TermineeAQualifier })
         const situationsNonProfessionnelles = desCategoriesAvecNONSNP()
         const params = Promise.resolve({ idAction: 'id-action' })
-        ;(getAction as jest.Mock).mockResolvedValue({
-          action,
-          jeune: beneficiaire,
-        })
+        ;(getAction as jest.Mock).mockResolvedValue(action)
         ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
           situationsNonProfessionnelles
         )
@@ -142,7 +125,7 @@ describe('QualificationPage server side', () => {
         // Then
         expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
         expect(metadata).toEqual({
-          title: `Qualifier l’action ${action.titre} - ${beneficiaire.prenom} ${beneficiaire.prenom}`,
+          title: `Qualifier l’action ${action.titre} - ${action.beneficiaire.prenom} ${action.beneficiaire.prenom}`,
         })
         expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
           { avecNonSNP: true },

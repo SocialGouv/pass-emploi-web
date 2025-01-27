@@ -7,18 +7,15 @@ import Textarea from 'components/ui/Form/Textarea'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { Action } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { commenterAction as _commenterAction } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 
 interface CommentaireActionProps {
-  beneficiaire: BaseBeneficiaire
   action: Action
   initiallyOpened: boolean
 }
 
 export default function CommentaireAction({
-  beneficiaire,
   action,
   initiallyOpened,
 }: CommentaireActionProps) {
@@ -47,7 +44,6 @@ export default function CommentaireAction({
     try {
       setEnvoiEnCours(true)
       await _commenterAction({
-        idDestinataire: beneficiaire.id,
         action,
         message: message.value,
         cleChiffrement: chatCredentials!.cleChiffrement,

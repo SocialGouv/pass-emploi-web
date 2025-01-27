@@ -682,7 +682,6 @@ describe('MessagesFirebaseAndApiService', () => {
 
       await commenterAction({
         action,
-        idDestinataire: 'idBeneficiaire',
         message: newMessage,
         cleChiffrement,
       })
@@ -692,7 +691,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(getChatDuBeneficiaire).toHaveBeenCalledWith(
         'idConseiller',
-        'idBeneficiaire'
+        'beneficiaire-1'
       )
     })
 
@@ -725,7 +724,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(apiPost).toHaveBeenCalledWith(
         `/conseillers/idConseiller/jeunes/notify-messages`,
-        { idsJeunes: ['idBeneficiaire'] },
+        { idsJeunes: ['beneficiaire-1'] },
         accessToken
       )
     })

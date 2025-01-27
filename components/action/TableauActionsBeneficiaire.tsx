@@ -58,6 +58,18 @@ export default function TableauActionsBeneficiaire({
   const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
+
+  const statutsSansQualification = [
+    StatutAction.AFaire,
+    StatutAction.Terminee,
+    StatutAction.Annulee,
+  ]
+  const statutsAvecQualification = [
+    StatutAction.AFaire,
+    StatutAction.TermineeAQualifier,
+    StatutAction.TermineeQualifiee,
+    StatutAction.Annulee,
+  ]
   const [statutsValides, setStatutsValides] = useState<string[]>([])
   const [categoriesValidees, setCategoriesValidees] = useState<Categorie[]>([])
   const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
@@ -68,9 +80,7 @@ export default function TableauActionsBeneficiaire({
   >([])
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
-
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
-
   const boutonsDisabled =
     actionsSelectionnees.length === 0 || actionSansCategorieSelectionnee
 
@@ -123,7 +133,7 @@ export default function TableauActionsBeneficiaire({
     if (actionsSelectionnees.length === 0) {
       setActionsSelectionnees(
         actionsFiltrees
-          .filter((action) => action.status === StatutAction.Terminee)
+          .filter((action) => action.status === StatutAction.TermineeAQualifier)
           .map(({ id, qualification }) => {
             return {
               idAction: id,
@@ -166,15 +176,15 @@ export default function TableauActionsBeneficiaire({
   useEffect(() => {
     if (!avecQualification || !actionsFiltrees.length) return
 
-    const nbActionsTerminees = actionsFiltrees.filter(
-      ({ status }) => status === StatutAction.Terminee
+    const nbActionsAQualifier = actionsFiltrees.filter(
+      ({ status }) => status === StatutAction.TermineeAQualifier
     ).length
 
     const tailleSelection = actionsSelectionnees.length
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === nbActionsTerminees
+    const isChecked = tailleSelection === nbActionsAQualifier
     const isIndeterminate =
-      tailleSelection !== nbActionsTerminees && tailleSelection > 0
+      tailleSelection !== nbActionsAQualifier && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -293,7 +303,11 @@ export default function TableauActionsBeneficiaire({
                     ref={filtresStatutRef}
                     defaultValue={statutsValides}
                     onFiltres={filtrerActionsParStatuts}
-                    statuts={Object.keys(StatutAction)}
+                    statuts={
+                      avecQualification
+                        ? statutsAvecQualification
+                        : statutsSansQualification
+                    }
                     entites='actions'
                     propsStatuts={propsStatutsActions}
                   />
@@ -307,7 +321,6 @@ export default function TableauActionsBeneficiaire({
                 <ActionBeneficiaireRow
                   key={action.id}
                   action={action}
-                  jeuneId={jeune.id}
                   avecQualification={
                     avecQualification && {
                       isChecked: selectionContientId(action.id),

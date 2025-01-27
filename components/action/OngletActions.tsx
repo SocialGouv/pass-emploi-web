@@ -139,7 +139,7 @@ export default function OngletActions({
             return affichee
           return {
             ...affichee,
-            status: StatutAction.Qualifiee,
+            status: StatutAction.TermineeQualifiee,
             qualification: qualificationSNP
               ? affichee.qualification
               : {

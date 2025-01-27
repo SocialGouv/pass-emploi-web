@@ -9,6 +9,7 @@ import { desActionsPredefinies, desCategories } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
+  StatutAction,
 } from 'interfaces/action'
 import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -325,7 +326,7 @@ describe('NouvelleActionPage client side', () => {
             description: 'Description action',
             dateEcheance: '2023-12-20',
             dateFinReelle: '2023-12-20',
-            statut: 'Terminee',
+            statut: StatutAction.Terminee,
           },
           'id-beneficiaire'
         )

@@ -40,6 +40,7 @@ function NouvelleActionPage({
 
   const initialTracking = 'Actions jeune – Création action'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
   async function creerAction(action: ActionFormData) {
     setConfirmBeforeLeaving(false)
 

@@ -7,17 +7,13 @@ import DetailAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/page'
 import { uneAction } from 'fixtures/action'
-import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { getAction } from 'services/actions.service'
-import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock('services/actions.service')
-jest.mock('services/beneficiaires.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 )
@@ -55,14 +51,7 @@ describe('ActionPage server side', () => {
 
     it("récupère les info de l'action et du jeune", async () => {
       const action = uneAction()
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
-      ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
-      ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
+      ;(getAction as jest.Mock).mockResolvedValue(action)
 
       // When
       const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
@@ -74,12 +63,11 @@ describe('ActionPage server side', () => {
       // Then
       expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
       expect(metadata).toEqual({
-        title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
+        title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - Portefeuille`,
       })
       expect(DetailActionPage).toHaveBeenCalledWith(
         {
           action,
-          jeune,
           lectureSeule: false,
           from: 'beneficiaire',
         },
@@ -90,16 +78,7 @@ describe('ActionPage server side', () => {
     describe('quand le conseiller vient de pilotage', () => {
       it('prépare la page', async () => {
         const action = uneAction()
-        const jeune: BaseBeneficiaire & { idConseiller: string } = {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        }
-        ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
-        ;(getJeuneDetails as jest.Mock).mockResolvedValue(
-          unDetailBeneficiaire()
-        )
+        ;(getAction as jest.Mock).mockResolvedValue(action)
         ;(headers as jest.Mock).mockReturnValue(
           new Map([['referer', '/pilotage']])
         )
@@ -114,12 +93,11 @@ describe('ActionPage server side', () => {
         // Then
         expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
         expect(metadata).toEqual({
-          title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - Portefeuille`,
+          title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - Portefeuille`,
         })
         expect(DetailActionPage).toHaveBeenCalledWith(
           {
             action,
-            jeune,
             lectureSeule: false,
             from: 'pilotage',
           },
@@ -147,18 +125,12 @@ describe('ActionPage server side', () => {
     describe("quand l'action n'appartient pas au jeune", () => {
       it('renvoie une 404', async () => {
         const action = uneAction()
-        const jeune: BaseBeneficiaire & { idConseiller: string } = {
-          id: 'beneficiaire-1',
-          prenom: 'Nadia',
-          nom: 'Sanfamiye',
-          idConseiller: 'id-conseiller',
-        }
-        ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
+        ;(getAction as jest.Mock).mockResolvedValue(action)
 
         // When
         const promise = DetailAction({
           params: Promise.resolve({
-            idJeune: 'id-jeune',
+            idJeune: 'id-autre-jeune',
             idAction: 'id-action',
           }),
         })

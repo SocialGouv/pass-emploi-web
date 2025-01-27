@@ -21,10 +21,10 @@ export async function generateMetadata({
 }: {
   params: DetailActionParams
 }): Promise<Metadata> {
-  const { action, jeune, lectureSeule } = await buildProps(params)
+  const { action, lectureSeule } = await buildProps(params)
 
   return {
-    title: `${action.titre} - Actions de ${jeune.prenom} ${jeune.nom} - ${
+    title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - ${
       lectureSeule ? 'Etablissement' : 'Portefeuille'
     }`,
   }
@@ -58,12 +58,11 @@ async function buildProps(
   if (!estUserMilo(user)) notFound()
   const { idJeune, idAction } = await params
 
-  const actionEtJeune = await getAction(idAction, accessToken)
-  if (!actionEtJeune) notFound()
-  if (idJeune !== actionEtJeune.jeune.id) notFound()
+  const action = await getAction(idAction, accessToken)
+  if (!action) notFound()
+  if (idJeune !== action.beneficiaire.id) notFound()
 
-  const { action, jeune } = actionEtJeune
-  const lectureSeule = jeune.idConseiller !== user.id
+  const lectureSeule = action.beneficiaire.idConseiller !== user.id
 
-  return { action, jeune, lectureSeule }
+  return { action, lectureSeule }
 }
