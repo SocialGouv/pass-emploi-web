@@ -126,15 +126,6 @@ export default function ChatContainer({
 
       {!messagerieFullScreen && (
         <>
-          {currentConversation && (
-            <ConversationBeneficiaire
-              onBack={() => afficherConversation(undefined)}
-              beneficiaireChat={currentConversation.conversation}
-              shouldFocusOnFirstRender={currentConversation.shouldFocusOnRender}
-              conseillers={conseillers}
-            />
-          )}
-
           {showRubriqueListesDeDiffusion && (
             <RubriqueListesDeDiffusion
               listesDeDiffusion={listesDeDiffusion}
@@ -143,7 +134,16 @@ export default function ChatContainer({
             />
           )}
 
-          {!currentConversation && !showRubriqueListesDeDiffusion && (
+          {!showRubriqueListesDeDiffusion && currentConversation && (
+            <ConversationBeneficiaire
+              onBack={() => afficherConversation(undefined)}
+              beneficiaireChat={currentConversation.conversation}
+              shouldFocusOnFirstRender={currentConversation.shouldFocusOnRender}
+              conseillers={conseillers}
+            />
+          )}
+
+          {!showRubriqueListesDeDiffusion && !currentConversation && (
             <ChatRoom
               ref={chatRoomRef}
               beneficiairesChats={chats}
