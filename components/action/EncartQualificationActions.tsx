@@ -50,7 +50,7 @@ export default function EncartQualificationActions({
       <div className='flex items-center bg-primary_lighten rounded-base p-4 justify-between'>
         <p className='whitespace-pre-wrap'>
           {nombreActionsSelectionnees === 0 &&
-            'Sélectionnez au moins un élément ci-dessous \npour commencer à qualifier'}
+            'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'}
           {nombreActionsSelectionnees === 1 &&
             '1 action sélectionnée. \nS’agit-il de SNP ou de non SNP ?'}
           {nombreActionsSelectionnees > 1 &&
