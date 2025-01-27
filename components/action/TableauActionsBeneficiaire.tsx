@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import ActionRow from 'components/action/ActionRow'
+import ActionBeneficiaireRow from 'components/action/ActionBeneficiaireRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategories, {
   Categorie,
@@ -25,32 +25,36 @@ import {
 } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
-interface TableauActionsJeuneProps {
+interface TableauActionsBeneficiaireProps {
   jeune: BaseBeneficiaire
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean
   onFiltres: (filtres: Record<'categories' | 'statuts', string[]>) => void
-  onLienExterne: (label: string) => void
-  onTri: (tri: TRI) => void
-  onQualification: (
-    qualificationSNP: boolean,
-    actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
-  ) => Promise<void>
   tri: TRI
+  onTri: (tri: TRI) => void
+  avecQualification?: {
+    onQualification: (
+      qualificationSNP: boolean,
+      actionsSelectionnees: Array<{
+        idAction: string
+        codeQualification: string
+      }>
+    ) => Promise<void>
+    onLienExterne: (label: string) => void
+  }
 }
 
-export default function TableauActionsJeune({
+export default function TableauActionsBeneficiaire({
   jeune,
   categories,
   actionsFiltrees,
   isLoading,
   onFiltres,
-  onLienExterne,
   onTri,
-  onQualification,
   tri,
-}: TableauActionsJeuneProps) {
+  avecQualification,
+}: TableauActionsBeneficiaireProps) {
   const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
@@ -77,22 +81,16 @@ export default function TableauActionsJeune({
     setAReinitialiseLesFiltres(true)
   }
 
-  function getIsSortedByDateEcheance(): boolean {
-    return (
-      tri === TRI.dateEcheanceCroissante || tri === TRI.dateEcheanceDecroissante
-    )
-  }
-
   function getIsSortedDesc(): boolean {
-    return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
+    return tri === TRI.dateEcheanceDecroissante
   }
 
   function trierParDateEcheance() {
-    let nouveauTri: TRI = TRI.dateEcheanceDecroissante
-    if (getIsSortedByDateEcheance() && getIsSortedDesc()) {
-      nouveauTri = TRI.dateEcheanceCroissante
-    }
-    onTri(nouveauTri)
+    onTri(
+      getIsSortedDesc()
+        ? TRI.dateEcheanceCroissante
+        : TRI.dateEcheanceDecroissante
+    )
   }
 
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
@@ -166,7 +164,8 @@ export default function TableauActionsJeune({
   }, [actionsSelectionnees])
 
   useEffect(() => {
-    if (!actionsFiltrees.length) return
+    if (!avecQualification || !actionsFiltrees.length) return
+
     const nbActionsTerminees = actionsFiltrees.filter(
       ({ status }) => status === StatutAction.Terminee
     ).length
@@ -217,29 +216,33 @@ export default function TableauActionsJeune({
 
       {actionsFiltrees.length > 0 && (
         <>
-          <EncartQualificationActions
-            actionsSelectionnees={actionsSelectionnees}
-            boutonsDisabled={boutonsDisabled}
-            jeune={jeune}
-            nombreActionsSelectionnees={actionsSelectionnees.length}
-            onLienExterne={onLienExterne}
-            onQualification={onQualification}
-          />
-
-          <div className='mt-4'>
-            {actionSansCategorieSelectionnee && (
-              <FailureAlert
-                label='Qualification impossible.'
-                sub={
-                  <p>
-                    Vous ne pouvez pas qualifier une ou plusieurs actions sans
-                    catégorie. Cliquez sur l’action pour pouvoir la modifier et
-                    lui ajouter une catégorie.
-                  </p>
-                }
+          {avecQualification && (
+            <>
+              <EncartQualificationActions
+                actionsSelectionnees={actionsSelectionnees}
+                boutonsDisabled={boutonsDisabled}
+                jeune={jeune}
+                nombreActionsSelectionnees={actionsSelectionnees.length}
+                onLienExterne={avecQualification.onLienExterne}
+                onQualification={avecQualification.onQualification}
               />
-            )}
-          </div>
+
+              <div className='mt-4'>
+                {actionSansCategorieSelectionnee && (
+                  <FailureAlert
+                    label='Qualification impossible.'
+                    sub={
+                      <p>
+                        Vous ne pouvez pas qualifier une ou plusieurs actions
+                        sans catégorie. Cliquez sur l’action pour pouvoir la
+                        modifier et lui ajouter une catégorie.
+                      </p>
+                    }
+                  />
+                )}
+              </div>
+            </>
+          )}
 
           <Table
             ref={listeActionsRef}
@@ -249,18 +252,20 @@ export default function TableauActionsJeune({
           >
             <thead>
               <TR isHeader={true}>
-                <TH estCliquable={true}>
-                  <label className='cursor-pointer p-4'>
-                    <span className='sr-only'>Tout sélectionner</span>
-                    <input
-                      type='checkbox'
-                      title='Tout sélectionner'
-                      onChange={selectionnerToutesLesActions}
-                      className='w-4 h-4 p-4'
-                      ref={toutSelectionnerCheckboxRef}
-                    />
-                  </label>
-                </TH>
+                {avecQualification && (
+                  <TH estCliquable={true}>
+                    <label className='cursor-pointer p-4'>
+                      <span className='sr-only'>Tout sélectionner</span>
+                      <input
+                        type='checkbox'
+                        title='Tout sélectionner'
+                        onChange={selectionnerToutesLesActions}
+                        className='w-4 h-4 p-4'
+                        ref={toutSelectionnerCheckboxRef}
+                      />
+                    </label>
+                  </TH>
+                )}
                 <TH>Titre de l’action</TH>
                 <TH estCliquable={true}>
                   <button
@@ -271,10 +276,7 @@ export default function TableauActionsJeune({
                     type='button'
                   >
                     Date de l’action
-                    <SortIcon
-                      isSorted={getIsSortedByDateEcheance()}
-                      isDesc={getIsSortedDesc()}
-                    />
+                    <SortIcon isSorted={true} isDesc={getIsSortedDesc()} />
                   </button>
                 </TH>
                 <TH estCliquable={true}>
@@ -302,12 +304,16 @@ export default function TableauActionsJeune({
 
             <tbody>
               {actionsFiltrees.map((action: Action) => (
-                <ActionRow
+                <ActionBeneficiaireRow
                   key={action.id}
                   action={action}
                   jeuneId={jeune.id}
-                  onSelection={selectionnerAction}
-                  isChecked={selectionContientId(action.id)}
+                  avecQualification={
+                    avecQualification && {
+                      isChecked: selectionContientId(action.id),
+                      onSelection: selectionnerAction,
+                    }
+                  }
                 />
               ))}
             </tbody>
