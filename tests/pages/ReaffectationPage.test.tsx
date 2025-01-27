@@ -520,7 +520,7 @@ describe('Reaffectation', () => {
 
           // WHEN
           await userEvent.click(
-            screen.getByRole('button', { name: 'Valider mon choix' })
+            screen.getByRole('button', { name: 'Valider la réaffectation' })
           )
         })
 
@@ -556,7 +556,7 @@ describe('Reaffectation', () => {
 
           // WHEN
           await userEvent.click(
-            screen.getByRole('button', { name: 'Valider mon choix' })
+            screen.getByRole('button', { name: 'Valider la réaffectation' })
           )
         })
 
@@ -592,7 +592,7 @@ describe('Reaffectation', () => {
 
           // WHEN
           await userEvent.click(
-            screen.getByRole('button', { name: 'Valider mon choix' })
+            screen.getByRole('button', { name: 'Valider la réaffectation' })
           )
         })
 
@@ -614,7 +614,9 @@ describe('Reaffectation', () => {
         it('déclenche la réaffectation', async () => {
           // WHEN
           await userEvent.click(
-            screen.getByRole('button', { name: 'Continuer le réaffectation' })
+            screen.getAllByRole('button', {
+              name: 'Valider la réaffectation',
+            })[1]
           )
 
           // WHEN
