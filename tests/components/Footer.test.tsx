@@ -15,7 +15,7 @@ describe('<Footer/>', () => {
     // THEN
     expect(
       screen.getByRole('link', {
-        name: "Niveau d'accessibilité: non conforme (nouvelle fenêtre)",
+        name: "Niveau d'accessibilité: partiellement conforme (nouvelle fenêtre)",
       })
     ).toHaveAttribute(
       'href',
@@ -65,7 +65,7 @@ describe('<Footer/>', () => {
     //THEN
     expect(
       screen.getByRole('link', {
-        name: "Niveau d'accessibilité: non conforme (nouvelle fenêtre)",
+        name: "Niveau d'accessibilité: partiellement conforme (nouvelle fenêtre)",
       })
     ).toHaveAttribute(
       'href',
