@@ -516,7 +516,7 @@ function DetailsSessionPage({
               <ButtonLink
                 style={ButtonStyle.PRIMARY}
                 href={`/emargement/${session.session.id}?type=session`}
-                externalLink={true}
+                externalIcon={IconName.Download}
                 label='Exporter la liste des inscrits'
                 onClick={trackExport}
               ></ButtonLink>
