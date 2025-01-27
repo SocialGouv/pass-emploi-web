@@ -60,7 +60,7 @@ export default function TexteAvecLien({
               target='_blank'
               rel='noreferrer noopener'
               aria-label={`${lien} (nouvelle fenêtre)`}
-              className={`flex items-center underline ${
+              className={`flex items-center underline [word-break:_break-word] ${
                 lighten
                   ? 'text-white hover:text-primary_lighten'
                   : 'text-content_color hover:text-primary'
