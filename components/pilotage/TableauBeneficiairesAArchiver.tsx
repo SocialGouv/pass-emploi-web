@@ -132,6 +132,7 @@ export default function TableauBeneficiairesAArchiver({
           onSuccess={() => setBeneficiaireAArchiver(undefined)}
           onClose={() => setBeneficiaireAArchiver(undefined)}
           onError={() => setShowSuppressionCompteBeneficiaireError(true)}
+          labelSuccess='C’est compris'
         />
       )}
     </>
