@@ -64,7 +64,7 @@ function Modal(
             name={titleIcon}
             focusable={false}
             aria-hidden={true}
-            className='w-20 h-20 m-auto fill-primary mb-8'
+            className='w-16 h-16 m-auto fill-primary mb-8'
           />
         )}
         {titleIllustration && (
@@ -72,7 +72,7 @@ function Modal(
             name={titleIllustration}
             focusable={false}
             aria-hidden={true}
-            className='w-1/3 m-auto fill-primary [--secondary-fill:theme(colors.primary\_lighten)] mb-8'
+            className='w-1/4 m-auto fill-primary [--secondary-fill:theme(colors.primary\_lighten)] mb-8'
           />
         )}
         {titleImageSrc && (
