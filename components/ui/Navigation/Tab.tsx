@@ -33,9 +33,9 @@ export default function Tab({
         aria-controls={controls}
         aria-selected={selected}
         onClick={onSelectTab}
-        className={`h-full text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
+        className={`h-full text-base-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
           selected
-            ? 'text-m-bold border-b-4 border-b-primary'
+            ? 'text-base-bold border-b-4 border-b-primary'
             : 'hover:font-bold'
         }`}
       >
