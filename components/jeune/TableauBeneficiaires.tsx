@@ -49,6 +49,11 @@ function TableauBeneficiaires(
     type: 'nom' | 'activite'
     ordreCroissant: boolean
   }>({ type: 'nom', ordreCroissant: true })
+  const afficherFiltres =
+    estMilo(conseiller) &&
+    beneficiaires.some(
+      (beneficiaire) => beneficiaire.dispositif !== beneficiaires[0].dispositif
+    )
 
   const [beneficiairesFiltres, setBeneficiairesFiltres] = useState<
     BeneficiaireAvecInfosComplementaires[]
@@ -153,7 +158,7 @@ function TableauBeneficiaires(
           </h2>
 
           <div className='my-4 flex justify-end gap-6'>
-            {estMilo(conseiller) && (
+            {afficherFiltres && (
               <FiltresDispositifs
                 ref={filtresDispositifsRef}
                 defaultValue={filtreDispositif}
