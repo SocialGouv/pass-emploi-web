@@ -26,10 +26,10 @@ export async function generateMetadata({
 
   const { getAction } = await import('services/actions.service')
   const { idAction } = await params
-  const actionContent = await getAction(idAction, accessToken)
+  const action = await getAction(idAction, accessToken)
 
   return {
-    title: `Qualifier l’action ${actionContent?.action.titre} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
+    title: `Qualifier l’action ${action?.titre} - ${action?.beneficiaire.prenom} ${action?.beneficiaire.prenom}`,
   }
 }
 export default async function Qualification({
@@ -43,22 +43,21 @@ export default async function Qualification({
     'services/actions.service'
   )
   const { idAction } = await params
-  const [actionContent, categories] = await Promise.all([
+  const [action, categories] = await Promise.all([
     getAction(idAction, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: true }, accessToken),
   ])
-  if (!actionContent) notFound()
+  if (!action) notFound()
 
-  const { action, jeune } = actionContent
-  if (action.status !== StatutAction.Terminee) notFound()
+  if (action.status !== StatutAction.TermineeAQualifier) notFound()
 
   // FIXME : dirty fix, problème de l’action
   const { liste } = (await searchParams) ?? {}
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${unsafeRandomId()}`
+  const returnTo = `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}?misc=${unsafeRandomId()}`
   const returnToListe =
     liste === 'pilotage'
       ? '/pilotage'
-      : `/mes-jeunes/${jeune.id}?onglet=actions`
+      : `/mes-jeunes/${action.beneficiaire.id}?onglet=actions`
 
   return (
     <>

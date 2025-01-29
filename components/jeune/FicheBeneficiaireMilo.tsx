@@ -222,7 +222,7 @@ export default function FicheBeneficiaireMilo({
           className='mt-8 pb-8'
         >
           <OngletActions
-            jeune={beneficiaire}
+            beneficiaire={beneficiaire}
             categories={categoriesActions}
             actionsInitiales={actionsInitiales}
             lectureSeule={lectureSeule}

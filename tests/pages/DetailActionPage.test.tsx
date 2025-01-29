@@ -8,7 +8,6 @@ import React from 'react'
 import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
@@ -23,14 +22,8 @@ jest.mock('components/PageActionsPortal')
 describe('ActionPage client side', () => {
   let container: HTMLElement
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let routerPush: Function
+  let routerPush: () => void
   const action = uneAction()
-  const jeune: BaseBeneficiaire & { idConseiller: string } = {
-    id: 'beneficiaire-1',
-    prenom: 'Nadia',
-    nom: 'Sanfamiye',
-    idConseiller: 'id-conseiller',
-  }
 
   beforeEach(() => {
     alerteSetter = jest.fn()
@@ -49,7 +42,6 @@ describe('ActionPage client side', () => {
       ;({ container } = renderWithContexts(
         <DetailActionPage
           action={action}
-          jeune={jeune}
           lectureSeule={false}
           from='beneficiaire'
         />,
@@ -191,7 +183,6 @@ describe('ActionPage client side', () => {
           // Then
           expect(commenterAction).toHaveBeenCalledWith({
             cleChiffrement: 'cleChiffrement',
-            idDestinataire: jeune.id,
             message: 'Peux tu me détailler quelles recherches tu as fait stp ?',
             action,
           })
@@ -224,7 +215,6 @@ describe('ActionPage client side', () => {
       ;({ container } = renderWithContexts(
         <DetailActionPage
           action={action}
-          jeune={jeune}
           lectureSeule={true}
           from='beneficiaire'
         />,
@@ -272,19 +262,30 @@ describe('ActionPage client side', () => {
   })
 
   describe("quand l'action est terminée et non qualifiée", () => {
-    describe('quand le conseiller est MiLo', () => {
+    describe('quand le bénéficiaire est CEJ', () => {
       const actionAQualifier = uneAction({
-        status: StatutAction.Terminee,
+        status: StatutAction.TermineeAQualifier,
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
 
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+      })
+
+      it('ne permet pas de supprimer l’action', async () => {
+        //When
+        renderWithContexts(
+          <DetailActionPage
+            action={actionAQualifier}
+            lectureSeule={false}
+            from='beneficiaire'
+          />,
+          { customAlerte: { setter: alerteSetter } }
+        )
+
+        //Then
+        expect(() =>
+          screen.getByRole('link', { name: 'Supprimer l’action' })
+        ).toThrow()
       })
 
       it("affiche un lien pour qualifier l'action", async () => {
@@ -292,16 +293,10 @@ describe('ActionPage client side', () => {
         renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
-            jeune={jeune}
             lectureSeule={false}
             from='beneficiaire'
           />,
-          {
-            customConseiller: {
-              structure: StructureConseiller.MILO,
-            },
-            customAlerte: { setter: alerteSetter },
-          }
+          { customAlerte: { setter: alerteSetter } }
         )
 
         //Then
@@ -319,16 +314,10 @@ describe('ActionPage client side', () => {
         ;({ container } = renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
-            jeune={jeune}
             lectureSeule={false}
             from='beneficiaire'
           />,
-          {
-            customConseiller: {
-              structure: StructureConseiller.MILO,
-            },
-            customAlerte: { setter: alerteSetter },
-          }
+          { customAlerte: { setter: alerteSetter } }
         ))
 
         await act(async () => {
@@ -344,16 +333,10 @@ describe('ActionPage client side', () => {
           renderWithContexts(
             <DetailActionPage
               action={actionAQualifier}
-              jeune={jeune}
               lectureSeule={false}
               from='pilotage'
             />,
-            {
-              customConseiller: {
-                structure: StructureConseiller.MILO,
-              },
-              customAlerte: { setter: alerteSetter },
-            }
+            { customAlerte: { setter: alerteSetter } }
           )
 
           //Then
@@ -368,63 +351,46 @@ describe('ActionPage client side', () => {
       })
     })
 
-    describe("quand le conseiller n'est pas MiLo", () => {
-      const actionAQualifier = uneAction({
+    describe('quand le bénéficiaire n’est pas CEJ', () => {
+      const actionTerminee = uneAction({
         status: StatutAction.Terminee,
       })
-      const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'beneficiaire-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-        idConseiller: 'id-conseiller',
-      }
+      actionTerminee.beneficiaire.dispositif = 'PACEA'
+
       beforeEach(async () => {
         renderWithContexts(
           <DetailActionPage
-            action={actionAQualifier}
-            jeune={jeune}
+            action={actionTerminee}
             lectureSeule={false}
             from='beneficiaire'
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-          }
+          />
         )
       })
 
-      it('ne permet pas de supprimer l’action', () => {
+      it('ne permet pas de qualifier l’action', () => {
         expect(
-          screen.queryByRole('button', { name: 'Supprimer l’action' })
+          screen.queryByRole('button', { name: 'Qualifier l’action' })
         ).not.toBeInTheDocument()
       })
     })
   })
 
-  describe("quand l'action qualifiée", () => {
-    const jeune: BaseBeneficiaire & { idConseiller: string } = {
-      id: 'beneficiaire-1',
-      prenom: 'Nadia',
-      nom: 'Sanfamiye',
-      idConseiller: 'id-conseiller',
-    }
+  describe("quand l'action est qualifiée", () => {
     describe('qualifiée en SNP', () => {
-      //Given
-      const actionAQualifier = uneAction({
-        status: StatutAction.Qualifiee,
-        qualification: {
-          libelle: 'Emploi',
-          code: 'EMPLOI',
-          isSituationNonProfessionnelle: true,
-        },
-      })
-
-      //When
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+        const actionQualifiee = uneAction({
+          status: StatutAction.TermineeQualifiee,
+          qualification: {
+            libelle: 'Emploi',
+            code: 'EMPLOI',
+            isSituationNonProfessionnelle: true,
+          },
+        })
         ;({ container } = renderWithContexts(
           <DetailActionPage
-            action={actionAQualifier}
-            jeune={jeune}
+            action={actionQualifiee}
             lectureSeule={false}
             from='beneficiaire'
           />,
@@ -459,23 +425,20 @@ describe('ActionPage client side', () => {
     })
 
     describe('non qualifiée en SNP', () => {
-      //Given
-      const actionAQualifier = uneAction({
-        status: StatutAction.Qualifiee,
-        qualification: {
-          libelle: 'Non SNP',
-          code: 'NON_SNP',
-          isSituationNonProfessionnelle: false,
-        },
-      })
-
-      //When
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+        const actionQualifiee = uneAction({
+          status: StatutAction.TermineeQualifiee,
+          qualification: {
+            libelle: 'Non SNP',
+            code: 'NON_SNP',
+            isSituationNonProfessionnelle: false,
+          },
+        })
         ;({ container } = renderWithContexts(
           <DetailActionPage
-            action={actionAQualifier}
-            jeune={jeune}
+            action={actionQualifiee}
             lectureSeule={false}
             from='beneficiaire'
           />,

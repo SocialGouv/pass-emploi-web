@@ -614,15 +614,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               </Etape>
 
               <div className='w-full flex justify-center gap-2'>
-                <Button type='submit'>
-                  <IconComponent
-                    name={IconName.Send}
-                    focusable={false}
-                    aria-hidden={true}
-                    className={`w-6 h-6 mr-2 fill-white`}
-                  />
-                  Valider mon choix
-                </Button>
+                <Button type='submit'>Valider la réaffectation</Button>
 
                 {erreurReaffectation && (
                   <div className='absolute flex mt-3'>

@@ -10,12 +10,10 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
-  actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
   CompteursPortefeuilleJson,
@@ -24,34 +22,21 @@ import {
   jsonToQualification,
   MetadonneesActionsJson,
   QualificationActionJson,
+  statutActionToFiltres,
 } from 'interfaces/json/action'
-import {
-  BaseBeneficiaireJson,
-  jsonToBaseBeneficiaire,
-} from 'interfaces/json/beneficiaire'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export async function getAction(
   idAction: string,
   accessToken: string
-): Promise<
-  | { action: Action; jeune: BaseBeneficiaire & { idConseiller: string } }
-  | undefined
-> {
+): Promise<Action | undefined> {
   try {
-    const {
-      content: { jeune, ...actionJson },
-    } = await apiGet<
-      ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
-    >(`/actions/${idAction}`, accessToken)
-    return {
-      action: jsonToAction(actionJson),
-      jeune: {
-        ...jsonToBaseBeneficiaire(jeune),
-        idConseiller: jeune.idConseiller,
-      },
-    }
+    const { content: actionJson } = await apiGet<ActionJson>(
+      `/actions/${idAction}`,
+      accessToken
+    )
+    return jsonToAction(actionJson)
   } catch (e) {
     if (e instanceof ApiError) return undefined
     throw e
@@ -88,10 +73,7 @@ export async function getActionsBeneficiaireClientSide(
   idJeune: string,
   options: {
     page: number
-    filtres: {
-      statuts: StatutAction[]
-      categories: string[]
-    }
+    filtres: { statuts: StatutAction[]; categories: string[] }
     tri?: string
   }
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
@@ -250,18 +232,14 @@ async function getActionsBeneficiaire(
     page,
   }: {
     page: number
-    filtres: {
-      statuts: StatutAction[]
-      categories: string[]
-    }
-
+    filtres: { statuts: StatutAction[]; categories: string[] }
     tri?: string
   },
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
   const triActions = tri ?? 'date_echeance_decroissante'
   const filtresStatuts = filtres.statuts
-    .map((statut) => actionStatusToFiltre(statut))
+    .map((statut) => statutActionToFiltres(statut))
     .join('')
   const filtresCategories = filtres.categories
     .map((categorie) => '&categories=' + categorie)

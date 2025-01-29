@@ -58,7 +58,7 @@ export function ConversationTile({
         <span className='text-base-medium text-primary_darken mb-2 max-w-[90%] flex justify-between'>
           {beneficiaireFullname}
         </span>
-        <span className='text-s-regular text-grey_800 mb-[8px]'>
+        <span className='text-s-regular text-grey_800 mb-2 [word-break:_break-word]'>
           {' '}
           {beneficiaireChat.lastMessageSentBy ===
           UserType.CONSEILLER.toLowerCase()

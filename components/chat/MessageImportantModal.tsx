@@ -155,6 +155,7 @@ export default function MessageImportantModal({
             Ce message ainsi que la période apparaitront en bandeau informatif
             au niveau de la messagerie
           </p>
+
           <p className='text-base-bold'>Tous les champs sont obligatoires</p>
 
           <form onSubmit={modifierMessageImportant}>
@@ -204,6 +205,8 @@ export default function MessageImportantModal({
                 {{
                   main: 'Message',
                   helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
+                  precision:
+                    'Si votre message contient un lien, n’hésitez pas à le raccourcir pour une meilleure lisibilité (avec par exemple https://urlr.me/ )',
                 }}
               </Label>
               {message.error && (

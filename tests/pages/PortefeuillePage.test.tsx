@@ -12,10 +12,6 @@ import {
   unBeneficiaireAvecActionsNonTerminees,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import {
-  BeneficiaireAvecCompteursActionsRdvs,
-  CategorieSituation,
-} from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
@@ -79,6 +75,46 @@ describe('PortefeuillePage client side', () => {
       expect(() => screen.getByText(/transférés temporairement/)).toThrow()
     })
 
+    it('permet de trier bénéficiaire par nom', async () => {
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par nom/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par nom ordre alphabétique'
+      )
+
+      await userEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par nom ordre alphabétique inversé'
+      )
+    })
+
+    it('permet de trier bénéficiaire par dernière activité ', async () => {
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par dernière activité/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par dernière activité ordre chronologique'
+      )
+
+      await userEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par dernière activité ordre chronologique'
+      )
+    })
+
     it('affiche la date de fin du CEJ', () => {
       jeunes.forEach((jeune) => {
         const nomBeneficiaire = `${jeune.nom} ${jeune.prenom}`
@@ -102,7 +138,7 @@ describe('PortefeuillePage client side', () => {
     describe("affiche le statut d'activation du compte d'un jeune", () => {
       it("si le compte n'a pas été activé", () => {
         const row = screen.getByRole('cell', {
-          name: 'Sanfamiye Nadia Sans situation',
+          name: 'Sanfamiye Nadia CEJ Sans situation',
         }).parentElement!
 
         //THEN
@@ -113,7 +149,7 @@ describe('PortefeuillePage client side', () => {
 
       it('si le compte a été activé', () => {
         const row = screen.getByRole('cell', {
-          name: 'Jirac Kenji Sans situation',
+          name: 'Jirac Kenji CEJ Sans situation',
         }).parentElement!
 
         //THEN
@@ -127,14 +163,14 @@ describe('PortefeuillePage client side', () => {
       it('si le compte a été réaffecté temporairement', () => {
         expect(
           screen.getByRole('cell', {
-            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria Sans situation",
+            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria CEJ Sans situation",
           })
         ).toBeInTheDocument()
       })
 
       it("si le compte n'a pas été réaffecté temporairement", () => {
         const row = screen.getByRole('cell', {
-          name: 'Sanfamiye Nadia Sans situation',
+          name: 'Sanfamiye Nadia CEJ Sans situation',
         }).parentElement!
 
         //THEN
@@ -196,26 +232,22 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: BeneficiaireAvecCompteursActionsRdvs
-    let beneficiaireAvecStructureDifferente: BeneficiaireAvecCompteursActionsRdvs
+    const beneficiaireAvecStructureDifferente =
+      unBeneficiaireAvecActionsNonTerminees({
+        prenom: 'Aline',
+        id: 'beneficiaire-autre-structure',
+        structureMilo: { id: '2' },
+        dispositif: 'PACEA',
+      })
     jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2024-01-01'))
 
     beforeEach(async () => {
       //GIVEN
-      jeune = unBeneficiaireAvecActionsNonTerminees({
-        situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
-      })
-      beneficiaireAvecStructureDifferente =
-        unBeneficiaireAvecActionsNonTerminees({
-          prenom: 'Aline',
-          id: 'beneficiaire-2',
-          structureMilo: { id: '2' },
-        })
 
       await act(async () => {
         ;({ container } = renderWithContexts(
           <PortefeuillePage
-            conseillerJeunes={[jeune, beneficiaireAvecStructureDifferente]}
+            conseillerJeunes={[...jeunes, beneficiaireAvecStructureDifferente]}
             isFromEmail
           />,
           {
@@ -255,43 +287,55 @@ describe('PortefeuillePage client side', () => {
         screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
       ).toBeInTheDocument()
     })
-    it('permet de trier bénéficiaire par nom', async () => {
-      //when
-      const button = screen.getByRole('button', {
-        name: /Trier par nom/i,
+
+    it('permet de filtrer bénéficiaires par dispositif', async () => {
+      // Given
+      const buttonFiltres = screen.getByRole('button', {
+        name: 'Filtrer par dispositifs',
       })
 
-      //then
-      expect(button).toHaveAttribute(
-        'title',
-        'Trier par nom ordre alphabétique'
+      // When
+      await userEvent.click(buttonFiltres)
+      await userEvent.click(screen.getByRole('radio', { name: 'CEJ' }))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Valider la sélection du dispositif',
+        })
       )
 
-      await userEvent.click(button)
+      // Then
+      let portefeuille = screen.getByRole('table')
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(3 + 1)
+      expect(() => within(portefeuille).getByText('PACEA')).toThrow()
 
-      expect(button).toHaveAttribute(
-        'title',
-        'Trier par nom ordre alphabétique inversé'
-      )
-    })
-    it('permet de trier bénéficiaire par dernière activité ', async () => {
-      //when
-      const button = screen.getByRole('button', {
-        name: /Trier par dernière activité/i,
-      })
-
-      //then
-      expect(button).toHaveAttribute(
-        'title',
-        'Trier par dernière activité ordre chronologique'
+      // When
+      await userEvent.click(buttonFiltres)
+      await userEvent.click(screen.getByRole('radio', { name: 'PACEA' }))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Valider la sélection du dispositif',
+        })
       )
 
-      await userEvent.click(button)
+      // Then
+      portefeuille = screen.getByRole('table')
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(1 + 1)
+      expect(() => within(portefeuille).getByText('CEJ')).toThrow()
 
-      expect(button).toHaveAttribute(
-        'title',
-        'Trier par dernière activité ordre chronologique'
+      // When
+      await userEvent.click(buttonFiltres)
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Tous les dispositifs' })
       )
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Valider la sélection du dispositif',
+        })
+      )
+
+      // Then
+      portefeuille = screen.getByRole('table')
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(4 + 1)
     })
 
     it("affiche la colonne nombre d'actions des bénéficiaires", () => {
@@ -321,11 +365,9 @@ describe('PortefeuillePage client side', () => {
   describe('quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       //GIVEN
-      const jeune = unBeneficiaireAvecActionsNonTerminees()
-
       await act(async () => {
         ;({ container } = renderWithContexts(
-          <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
+          <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }

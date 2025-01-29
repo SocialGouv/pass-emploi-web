@@ -1,15 +1,18 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { useRef, useState } from 'react'
 
-import {
-  Email,
-  IdentifiantPartenaire,
-  InformationNonDisponible,
-} from 'components/jeune/BlocInformationJeune'
+import ChangementDispositifBeneficiaireModal from 'components/ChangementDispositifBeneficiaireModal' // FIXME should use dynamic(() => import() but issue with jest
+import { IdentifiantPartenaire } from 'components/jeune/BlocInformationJeune'
+import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
+import { ModalHandles } from 'components/Modal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
+import {
+  CategorieSituation,
+  DetailBeneficiaire,
+  estCEJ,
+} from 'interfaces/beneficiaire'
 import {
   Conseiller,
   estConseilDepartemental,
@@ -18,27 +21,16 @@ import {
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
+  beneficiaire: DetailBeneficiaire
   conseiller: Conseiller
-  idBeneficiaire: string
-  dateFinCEJ?: string
-  email?: string
-  situations?: Array<{
-    etat?: EtatSituation
-    categorie: CategorieSituation
-    dateFin?: string
-  }>
-  urlDossier?: string
   onIdentifiantPartenaireCopie?: () => void
   identifiantPartenaire?: string
   onIdentifiantPartenaireClick?: () => void
 }
 
-export function BlocInformationJeuneFicheBeneficiaire({
+export default function BlocInformationJeuneFicheBeneficiaire({
+  beneficiaire,
   conseiller,
-  dateFinCEJ,
-  email,
-  idBeneficiaire,
-  situations,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
@@ -49,56 +41,114 @@ export function BlocInformationJeuneFicheBeneficiaire({
   const conseillerEstMilo = estMilo(conseiller)
   const aIdentifiantFT =
     !conseillerEstMilo && !estConseilDepartemental(conseiller)
-  return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-2'>Informations</h2>
+  const { situations, dateFinCEJ, email, id, dispositif } = beneficiaire
 
-      {conseillerEstMilo && (
-        <>
-          {!situations?.length && (
-            <div className='mb-3'>
-              <SituationTag situation={CategorieSituation.SANS_SITUATION} />
+  const [dispositifActuel, setDispositifActuel] = useState<string>(dispositif)
+  const [afficherChangementDispositif, setAfficherChangementDispositif] =
+    useState<boolean>(false)
+  const modalRef = useRef<ModalHandles>(null)
+
+  async function changerDispositif(nouveauDispositif: string): Promise<void> {
+    const { modifierDispositif } = await import(
+      'services/beneficiaires.service'
+    )
+    await modifierDispositif(beneficiaire.id, nouveauDispositif)
+    setDispositifActuel(nouveauDispositif)
+    modalRef.current!.closeModal()
+  }
+
+  return (
+    <>
+      <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
+        <h2 className='text-m-bold text-grey_800 mb-2'>Informations</h2>
+        <dl className='mb-2'>
+          {conseillerEstMilo && (
+            <div className='flex gap-2 mb-4'>
+              <dt className='sr-only'>Dispositif</dt>
+              <dd>
+                <DispositifTag dispositif={dispositifActuel} />
+              </dd>
+
+              <dt className='sr-only'>Situation</dt>
+              <dd>
+                {!situations?.length && (
+                  <SituationTag situation={CategorieSituation.SANS_SITUATION} />
+                )}
+
+                {Boolean(situations?.length) && (
+                  <SituationTag situation={situations[0].categorie} />
+                )}
+              </dd>
             </div>
           )}
 
-          {Boolean(situations?.length) && (
-            <SituationTag situation={situations![0].categorie} />
+          {conseillerEstMilo && estCEJ(beneficiaire) && (
+            <div className='flex'>
+              <dt className='text-base-regular'>Date de fin du CEJ :</dt>
+              <dd className='text-base-bold ml-1'>
+                {dateFinCEJ ? (
+                  toShortDate(dateFinCEJ)
+                ) : (
+                  <>
+                    --
+                    <span className='sr-only'>information non disponible</span>
+                  </>
+                )}
+              </dd>
+            </div>
           )}
-        </>
+
+          {email && (
+            <div className='flex gap-1'>
+              <dt>Email :</dt>
+              <dd className='text-base-bold'>{email}</dd>
+            </div>
+          )}
+
+          {aIdentifiantFT &&
+            onIdentifiantPartenaireCopie &&
+            onIdentifiantPartenaireClick && (
+              <IdentifiantPartenaire
+                identifiantPartenaire={identifiantPartenaire}
+                onCopy={onIdentifiantPartenaireCopie}
+                onClick={onIdentifiantPartenaireClick}
+              />
+            )}
+        </dl>
+
+        <BoutonChangementDispositif
+          onClick={() => setAfficherChangementDispositif(true)}
+        />
+        <LienVersInformations idBeneficiaire={id} pathPrefix={pathPrefix} />
+      </div>
+
+      {afficherChangementDispositif && (
+        <ChangementDispositifBeneficiaireModal
+          ref={modalRef}
+          dispositif={dispositifActuel}
+          onConfirm={changerDispositif}
+          onCancel={() => setAfficherChangementDispositif(false)}
+        />
       )}
+    </>
+  )
+}
 
-      <dl className='flex flex-col'>
-        {conseillerEstMilo && (
-          <div className='flex'>
-            <dt className='text-base-regular'>Date de fin du CEJ :</dt>
-            <dd className='text-base-bold ml-1'>
-              {dateFinCEJ ? (
-                toShortDate(dateFinCEJ)
-              ) : (
-                <InformationNonDisponible />
-              )}
-            </dd>
-          </div>
-        )}
-
-        {email && <Email email={email} />}
-
-        {aIdentifiantFT &&
-          onIdentifiantPartenaireCopie &&
-          onIdentifiantPartenaireClick && (
-            <IdentifiantPartenaire
-              identifiantPartenaire={identifiantPartenaire}
-              onCopy={onIdentifiantPartenaireCopie}
-              onClick={onIdentifiantPartenaireClick}
-            />
-          )}
-      </dl>
-
-      <LienVersInformations
-        idBeneficiaire={idBeneficiaire}
-        pathPrefix={pathPrefix}
+function BoutonChangementDispositif({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type='button'
+      onClick={onClick}
+      className='flex items-center underline hover:text-primary'
+    >
+      Changer le bénéficiaire de dispositif
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-current'
+        aria-hidden={true}
+        focusable={false}
       />
-    </div>
+    </button>
   )
 }
 
@@ -112,12 +162,12 @@ function LienVersInformations({
   return (
     <Link
       href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=informations`}
-      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+      className='flex items-center underline hover:text-primary'
     >
       Voir plus d’informations
       <IconComponent
         name={IconName.ChevronRight}
-        className='w-4 h-5 fill-[inherit]'
+        className='w-4 h-5 fill-current'
         aria-hidden={true}
         focusable={false}
       />

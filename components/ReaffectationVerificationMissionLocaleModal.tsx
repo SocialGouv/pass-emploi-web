@@ -73,7 +73,7 @@ export default function ReaffectationVerificationMissionLocaleModal({
           Annuler
         </Button>
         <Button type='button' style={ButtonStyle.PRIMARY} onClick={reaffecter}>
-          Continuer le réaffectation
+          Valider la réaffectation
         </Button>
       </div>
     </Modal>

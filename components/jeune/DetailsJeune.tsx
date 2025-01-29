@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
+import BlocInformationJeuneFicheBeneficiaire from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
 import { ResumeDemarchesBeneficiaire } from 'components/jeune/ResumeDemarchesBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import {
@@ -105,10 +105,7 @@ export default function DetailsJeune({
         )}
 
         <BlocInformationJeuneFicheBeneficiaire
-          idBeneficiaire={jeune.id}
-          dateFinCEJ={jeune.dateFinCEJ}
-          email={jeune.email}
-          situations={jeune.situations}
+          beneficiaire={jeune}
           conseiller={conseiller}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
           identifiantPartenaire={identifiantPartenaire}

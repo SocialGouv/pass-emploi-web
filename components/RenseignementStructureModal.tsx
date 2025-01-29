@@ -3,6 +3,7 @@ import React from 'react'
 import Modal from 'components/Modal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface RenseignementStructureModalProps {
@@ -35,7 +36,7 @@ export default function RenseignementStructureModal({
         <ButtonLink
           href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
           onClick={onContacterSupport}
-          externalLink={true}
+          externalIcon={IconName.OpenInNew}
           style={ButtonStyle.TERTIARY}
           label='Contacter le support'
         />
@@ -43,7 +44,7 @@ export default function RenseignementStructureModal({
         <ButtonLink
           href={process.env.NEXT_PUBLIC_IMILO_URL as string}
           onClick={onAccederImilo}
-          externalLink={true}
+          externalIcon={IconName.OpenInNew}
           style={ButtonStyle.PRIMARY}
           label='Accéder à i-milo'
         />

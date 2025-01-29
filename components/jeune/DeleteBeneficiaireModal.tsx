@@ -24,7 +24,7 @@ type DeleteBeneficiaireModalProps = {
   onSuccess: () => void
   onClose: () => void
   onError: () => void
-  labelSuccess?: string
+  labelSuccess: string
 }
 
 export default function DeleteBeneficiaireModal({
@@ -123,16 +123,14 @@ export default function DeleteBeneficiaireModal({
           onClose={() => removeBeneficiaireFromPortefeuille(beneficiaire.id)}
           titleIllustration={IllustrationName.Check}
         >
-          {labelSuccess && (
-            <Button
-              type='button'
-              style={ButtonStyle.PRIMARY}
-              className='block m-auto'
-              onClick={() => modalRef.current!.closeModal()}
-            >
-              {labelSuccess}
-            </Button>
-          )}
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            className='block m-auto'
+            onClick={() => modalRef.current!.closeModal()}
+          >
+            {labelSuccess}
+          </Button>
         </Modal>
       )}
     </>

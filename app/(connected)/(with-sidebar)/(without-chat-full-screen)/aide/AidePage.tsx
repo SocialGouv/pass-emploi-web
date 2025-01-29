@@ -117,7 +117,7 @@ export default function AidePage() {
             <ButtonLink
               href={urlNousContacter}
               style={ButtonStyle.PRIMARY}
-              externalLink={true}
+              externalIcon={IconName.OpenInNew}
               className='mt-8 w-fit self-center'
               label='Nous contacter'
               onClick={() => trackEventAideEtRessources('Demande support')}
@@ -139,7 +139,7 @@ export default function AidePage() {
             <ButtonLink
               href={urlClubsTestsUtilisateurs}
               style={ButtonStyle.PRIMARY}
-              externalLink={true}
+              externalIcon={IconName.OpenInNew}
               label='En savoir plus'
               className='mt-8 w-fit self-center'
               onClick={() =>
@@ -166,7 +166,7 @@ export default function AidePage() {
                 <ButtonLink
                   href={urlEmbarquerBeneficiaires}
                   style={ButtonStyle.PRIMARY}
-                  externalLink={true}
+                  externalIcon={IconName.OpenInNew}
                   label='Voir les ressources'
                   className='mt-8 w-fit'
                   onClick={() =>
@@ -277,7 +277,7 @@ export default function AidePage() {
             <ButtonLink
               href={urlGuideRessources}
               style={ButtonStyle.PRIMARY}
-              externalLink={true}
+              externalIcon={IconName.OpenInNew}
               label='Voir le guide'
               className='mt-8 w-fit self-center'
               onClick={() =>
@@ -296,7 +296,7 @@ export default function AidePage() {
             <ButtonLink
               href={urlVideos}
               style={ButtonStyle.PRIMARY}
-              externalLink={true}
+              externalIcon={IconName.OpenInNew}
               label='Voir les vidéos'
               className='mt-8 w-fit self-center'
               onClick={() =>
@@ -312,7 +312,7 @@ export default function AidePage() {
             <ButtonLink
               href={urlFAQ}
               style={ButtonStyle.PRIMARY}
-              externalLink={true}
+              externalIcon={IconName.OpenInNew}
               label='Voir les FAQ'
               className='mt-8 w-fit self-center'
               onClick={() => trackEventAideEtRessources('Voir les FAQ')}

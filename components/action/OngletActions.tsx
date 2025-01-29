@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import TableauActionsJeune from 'components/action/TableauActionsJeune'
+import TableauActionsBeneficiaire from 'components/action/TableauActionsBeneficiaire'
 import EmptyState from 'components/EmptyState'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
@@ -11,16 +11,15 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsProps {
-  jeune: BaseBeneficiaire
+  beneficiaire: DetailBeneficiaire
   categories: SituationNonProfessionnelle[]
-
   actionsInitiales: {
     actions: Action[]
     page: number
@@ -36,8 +35,6 @@ interface OngletActionsProps {
 }
 
 export enum TRI {
-  dateDecroissante = 'date_decroissante',
-  dateCroissante = 'date_croissante',
   dateEcheanceDecroissante = 'date_echeance_decroissante',
   dateEcheanceCroissante = 'date_echeance_croissante',
 }
@@ -46,7 +43,7 @@ export default function OngletActions({
   categories,
   actionsInitiales,
   getActions,
-  jeune,
+  beneficiaire,
   onLienExterne,
   lectureSeule,
 }: OngletActionsProps) {
@@ -142,7 +139,7 @@ export default function OngletActions({
             return affichee
           return {
             ...affichee,
-            status: StatutAction.Qualifiee,
+            status: StatutAction.TermineeQualifiee,
             qualification: qualificationSNP
               ? affichee.qualification
               : {
@@ -179,9 +176,9 @@ export default function OngletActions({
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             illustrationName={IllustrationName.Checklist}
-            titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+            titre={`Aucune action prévue pour ${beneficiaire.prenom} ${beneficiaire.nom}.`}
             lien={{
-              href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
+              href: `/mes-jeunes/${beneficiaire.id}/actions/nouvelle-action`,
               label: 'Créer une action',
               iconName: IconName.Add,
             }}
@@ -192,7 +189,7 @@ export default function OngletActions({
       {actionsInitiales.metadonnees.nombreTotal === 0 && lectureSeule && (
         <EmptyState
           illustrationName={IllustrationName.Checklist}
-          titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+          titre={`Aucune action prévue pour ${beneficiaire.prenom} ${beneficiaire.nom}.`}
         />
       )}
 
@@ -205,17 +202,24 @@ export default function OngletActions({
 
       {actionsInitiales.metadonnees.nombreTotal > 0 && (
         <>
-          <TableauActionsJeune
-            jeune={jeune}
+          <TableauActionsBeneficiaire
+            jeune={beneficiaire}
             categories={categories}
             actionsFiltrees={actionsAffichees}
             isLoading={isLoading}
             onFiltres={filtrerActions}
-            onLienExterne={onLienExterne}
+            avecQualification={
+              estCEJ(beneficiaire)
+                ? {
+                    onLienExterne,
+                    onQualification: qualifierActions,
+                  }
+                : undefined
+            }
             onTri={trierActions}
-            onQualification={qualifierActions}
             tri={tri}
           />
+
           {nombrePages > 1 && (
             <div className='mt-6'>
               <Pagination

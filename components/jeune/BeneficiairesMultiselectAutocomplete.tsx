@@ -313,7 +313,7 @@ export default function BeneficiairesMultiselectAutocomplete({
           <ButtonLink
             style={ButtonStyle.PRIMARY}
             href={lienExport}
-            externalLink={true}
+            externalIcon={IconName.OpenInNew}
             label='Exporter la liste des inscrits'
             onClick={trackExport}
           ></ButtonLink>

@@ -19,6 +19,13 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     creatorType: 'conseiller',
     status: StatutAction.AFaire,
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    beneficiaire: {
+      id: 'beneficiaire-1',
+      prenom: 'Kenji',
+      nom: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   }
 
   return { ...defaults, ...overrides }
@@ -36,6 +43,13 @@ export const uneListeDActions = (): Action[] => [
     creatorType: 'conseiller',
     status: StatutAction.AFaire,
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    beneficiaire: {
+      id: 'beneficiaire-1',
+      prenom: 'Kenji',
+      nom: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   },
   {
     id: 'id-action-3',
@@ -45,9 +59,16 @@ export const uneListeDActions = (): Action[] => [
     lastUpdate: '2022-02-20T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.Terminee,
+    status: StatutAction.TermineeAQualifier,
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    beneficiaire: {
+      id: 'beneficiaire-1',
+      prenom: 'Kenji',
+      nom: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   },
   {
     id: 'id-action-4',
@@ -57,13 +78,20 @@ export const uneListeDActions = (): Action[] => [
     lastUpdate: '2022-03-22T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.Terminee,
+    status: StatutAction.TermineeAQualifier,
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
     qualification: {
       libelle: 'Non SNP',
       code: 'NON_SNP',
       isSituationNonProfessionnelle: false,
+    },
+    beneficiaire: {
+      id: 'beneficiaire-1',
+      prenom: 'Kenji',
+      nom: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
     },
   },
 ]
@@ -80,7 +108,15 @@ export const uneActionJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'not_started',
+    etat: 'NON_QUALIFIABLE',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    jeune: {
+      id: 'beneficiaire-1',
+      firstName: 'Kenji',
+      lastName: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   }
 
   return { ...defaults, ...overrides }
@@ -248,7 +284,15 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'not_started',
+    etat: 'NON_QUALIFIABLE',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    jeune: {
+      id: 'beneficiaire-1',
+      firstName: 'Kenji',
+      lastName: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   },
   {
     id: 'id-action-2',
@@ -259,7 +303,15 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'in_progress',
+    etat: 'NON_QUALIFIABLE',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    jeune: {
+      id: 'beneficiaire-1',
+      firstName: 'Kenji',
+      lastName: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   },
   {
     id: 'id-action-3',
@@ -270,8 +322,16 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
+    etat: 'A_QUALIFIER',
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    jeune: {
+      id: 'beneficiaire-1',
+      firstName: 'Kenji',
+      lastName: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
+    },
   },
   {
     id: 'id-action-4',
@@ -282,11 +342,19 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
+    etat: 'A_QUALIFIER',
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
     qualification: {
       libelle: 'Non SNP',
       code: 'NON_SNP',
+    },
+    jeune: {
+      id: 'beneficiaire-1',
+      firstName: 'Kenji',
+      lastName: 'Jirac',
+      dispositif: 'CEJ',
+      idConseiller: 'id-conseiller',
     },
   },
   ...supplementaryActions,

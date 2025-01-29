@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { BlocIndicateurs } from 'components/jeune/BlocIndicateur'
-import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
+import BlocInformationJeune from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
@@ -149,11 +149,7 @@ function InformationsPage({
           className='mt-8 pb-8'
         >
           <BlocInformationJeune
-            creationDate={beneficiaire.creationDate}
-            dateFinCEJ={beneficiaire.dateFinCEJ}
-            email={beneficiaire.email}
-            urlDossier={beneficiaire.urlDossier}
-            onDossierMiloClick={() => {}}
+            beneficiaire={beneficiaire}
             conseiller={conseiller}
           />
 

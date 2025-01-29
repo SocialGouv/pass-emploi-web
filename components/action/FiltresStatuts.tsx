@@ -46,7 +46,7 @@ function FiltresStatuts(
           type='radio'
           value={statut}
           id={id}
-          name={propsStatuts[statut].label}
+          name='filtres-statuts--option'
           className='h-5 w-5 shrink-0'
           checked={statutsSelectionnes.includes(statut)}
           onChange={actionnerStatut}
@@ -79,7 +79,7 @@ function FiltresStatuts(
         aria-controls='filtres-statut'
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
-        title={`Filter les ${entites} par statut`}
+        title={`Filtrer les ${entites} par statut`}
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
       >
@@ -110,9 +110,7 @@ function FiltresStatuts(
           onSubmit={filtrer}
         >
           <fieldset className='flex flex-col p-2'>
-            <legend className='sr-only'>
-              Choisir un ou plusieurs statuts à filtrer
-            </legend>
+            <legend className='sr-only'>Choisir un statut à filtrer</legend>
             <label
               key='statut-tout-selectionner'
               htmlFor='statut-tout-selectionner'
@@ -123,7 +121,7 @@ function FiltresStatuts(
                 value='Tout sélectionner'
                 id='statut-tout-selectionner'
                 className='h-5 w-5 shrink-0'
-                name='Tout sélectionner'
+                name='filtres-statuts--option'
                 checked={statutsSelectionnes.length === 0}
                 onChange={actionnerStatut}
               />

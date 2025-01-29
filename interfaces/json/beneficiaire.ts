@@ -34,6 +34,7 @@ export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   estAArchiver: boolean
+  dispositif: string
   lastActivity?: string
   situationCourante?: Situation
   dateFinCEJ?: string
@@ -44,6 +45,7 @@ export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   conseiller: { id: string }
+  dispositif: string
   lastActivity?: string
   email?: string
   urlDossier?: string
@@ -284,5 +286,6 @@ export interface BeneficiaireMiloFormData {
   idDossier: string
   nom: string
   prenom: string
+  dispositif: 'CEJ' | 'PACEA'
   email?: string
 }

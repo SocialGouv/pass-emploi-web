@@ -36,7 +36,6 @@ describe('ModificationActionPage client side', () => {
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
-          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />
@@ -242,7 +241,7 @@ describe('ModificationActionPage client side', () => {
               })
             ).toHaveAttribute(
               'href',
-              '/mes-jeunes/id-beneficiaire?onglet=actions'
+              '/mes-jeunes/beneficiaire-1?onglet=actions'
             )
           })
         })
@@ -261,7 +260,6 @@ describe('ModificationActionPage client side', () => {
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
-          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />

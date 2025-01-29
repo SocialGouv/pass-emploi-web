@@ -28,7 +28,7 @@ describe('FiltresStatuts', () => {
     // Then
     expect(
       screen.getByRole('group', {
-        name: 'Choisir un ou plusieurs statuts à filtrer',
+        name: 'Choisir un statut à filtrer',
       })
     ).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'À faire' })).toBeInTheDocument()
@@ -46,7 +46,7 @@ describe('FiltresStatuts', () => {
     // Then
     expect(() =>
       screen.getByRole('group', {
-        name: 'Choisir un ou plusieurs statuts à filtrer',
+        name: 'Choisir un statut à filtrer',
       })
     ).toThrow()
   })

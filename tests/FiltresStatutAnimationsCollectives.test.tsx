@@ -45,7 +45,7 @@ describe('FiltresStatutAnimationsCollectives', () => {
     // Then
     expect(() =>
       screen.getByRole('group', {
-        name: 'Choisir un ou plusieurs états de qualification à filtrer',
+        name: 'Choisir un ou plusieurs statuts à filtrer',
       })
     ).toThrow()
   })

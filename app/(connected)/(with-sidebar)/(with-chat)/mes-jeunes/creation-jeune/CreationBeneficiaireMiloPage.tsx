@@ -46,7 +46,7 @@ function CreationBeneficiaireMiloPage() {
 
   async function creerCompteJeune(
     beneficiaireData: BeneficiaireMiloFormData,
-    surcharge?: boolean
+    options: { surcharge: boolean } = { surcharge: false }
   ) {
     setErreurCreation(undefined)
     setCompteBeneficiaireExisteDeja(false)
@@ -57,7 +57,7 @@ function CreationBeneficiaireMiloPage() {
       )
       const beneficiaireCree = await createCompteJeuneMilo(
         beneficiaireData,
-        surcharge
+        options
       )
 
       setPortefeuille(

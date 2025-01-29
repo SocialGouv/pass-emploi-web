@@ -18,11 +18,16 @@ const propsStatutsActions: {
     altColor: 'accent_3_lighten',
   },
   Terminee: {
+    label: 'Terminée',
+    color: 'primary_darken',
+    altColor: 'accent_3_lighten',
+  },
+  TermineeAQualifier: {
     label: 'Terminée - À qualifier',
     color: 'primary_darken',
     altColor: 'accent_3_lighten',
   },
-  Qualifiee: {
+  TermineeQualifiee: {
     label: 'Qualifiée',
     color: 'success',
     altColor: 'success_lighten',

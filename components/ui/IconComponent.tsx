@@ -248,5 +248,5 @@ export default function IconComponent({
   ...props
 }: IconComponentProps) {
   const Icon = iconsByName[name]
-  return <Icon className={className + ' z-50'} {...props} />
+  return <Icon className={className} {...props} />
 }

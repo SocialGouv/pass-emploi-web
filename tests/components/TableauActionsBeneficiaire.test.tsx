@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
 import { TRI } from 'components/action/OngletActions'
-import TableauActionsJeune from 'components/action/TableauActionsJeune'
+import TableauActionsBeneficiaire from 'components/action/TableauActionsBeneficiaire'
 import { desCategories, uneAction, uneListeDActions } from 'fixtures/action'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { Action, StatutAction } from 'interfaces/action'
@@ -30,7 +30,7 @@ describe('TableauActionsJeune', () => {
     actionAvecCategorie = uneAction({
       id: 'id-action-avec-categorie',
       titre: 'Cueillir des champignons avec Petit Ours',
-      status: StatutAction.Terminee,
+      status: StatutAction.TermineeAQualifier,
       qualification: {
         code: 'SANTE',
         libelle: 'Santé',
@@ -45,7 +45,7 @@ describe('TableauActionsJeune', () => {
 
     await act(async () =>
       renderWithContexts(
-        <TableauActionsJeune
+        <TableauActionsBeneficiaire
           jeune={jeune}
           actionsFiltrees={[
             ...actions,
@@ -56,9 +56,11 @@ describe('TableauActionsJeune', () => {
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}
-          onLienExterne={jest.fn()}
-          onQualification={jest.fn()}
-          tri={TRI.dateDecroissante}
+          avecQualification={{
+            onLienExterne: jest.fn(),
+            onQualification: jest.fn(),
+          }}
+          tri={TRI.dateEcheanceDecroissante}
         />
       )
     )
@@ -191,7 +193,7 @@ describe('TableauActionsJeune', () => {
             screen.getByRole('checkbox', {
               name: /Sélection Cueillir des champignons avec Petit Ours/,
             })
-          ).toBeChecked
+          ).toBeChecked()
           expect(
             screen.getByText(
               '1 action sélectionnée. S’agit-il de SNP ou de non SNP ?'

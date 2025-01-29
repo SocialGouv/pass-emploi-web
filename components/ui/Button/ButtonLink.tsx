@@ -7,7 +7,7 @@ import styles from 'styles/components/Button.module.css'
 
 interface Props {
   href: string
-  externalLink?: boolean
+  externalIcon?: IconName
   children?: ReactNode
   label?: string
   style?: ButtonStyle
@@ -19,14 +19,14 @@ export default function ButtonLink({
   children,
   href,
   className,
-  externalLink,
+  externalIcon,
   label,
   style = ButtonStyle.PRIMARY,
   onClick = () => {},
 }: Props) {
   return (
     <>
-      {!externalLink && (
+      {!externalIcon && (
         <Link
           href={href}
           className={`${
@@ -40,7 +40,7 @@ export default function ButtonLink({
         </Link>
       )}
 
-      {externalLink && (
+      {externalIcon && (
         <a
           href={href}
           target='_blank'
@@ -54,7 +54,7 @@ export default function ButtonLink({
           onClick={onClick}
         >
           <IconComponent
-            name={IconName.Download}
+            name={externalIcon}
             className='mr-2 w-4 h-4 fill-current'
             focusable={false}
             aria-hidden={true}

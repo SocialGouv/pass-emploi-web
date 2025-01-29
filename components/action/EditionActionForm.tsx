@@ -20,13 +20,14 @@ import { ValueWithError } from 'components/ValueWithError'
 import {
   Action,
   ActionPredefinie,
+  estTermine,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
 import { ActionFormData } from 'interfaces/json/action'
 import { dateIsInInterval, toShortDate, toWeekday } from 'utils/date'
 
-interface EditionRdvFormProps {
+interface EditionActionFormProps {
   actionsPredefinies: ActionPredefinie[]
   categories: SituationNonProfessionnelle[]
   returnTo: string
@@ -39,7 +40,7 @@ export function EditionActionForm({
   categories,
   returnTo,
   soumettreAction,
-}: EditionRdvFormProps) {
+}: EditionActionFormProps) {
   const TITRE_AUTRE = 'Autre'
   const [codeCategorie, setCodeCategorie] = useState<
     ValueWithError<string | undefined>
@@ -161,9 +162,10 @@ export function EditionActionForm({
   }
 
   function validerDateAction() {
+    if (estTermine(statut)) return true
+
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (statut === StatutAction.Terminee) return true
 
     if (!dateAction.value) {
       setDateAction({
@@ -191,9 +193,10 @@ export function EditionActionForm({
   }
 
   function validerDateRealisation() {
+    if (statut === StatutAction.AFaire) return true
+
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (statut === StatutAction.AFaire) return true
 
     if (!dateRealisation.value) {
       setDateRealisation({
@@ -278,10 +281,9 @@ export function EditionActionForm({
       codeCategorie: codeCategorie.value!,
       titre:
         titre.value !== TITRE_AUTRE ? titre.value! : titrePersonnalise.value!,
-      dateEcheance:
-        statut === StatutAction.Terminee
-          ? dateRealisation.value!
-          : dateAction.value!,
+      dateEcheance: estTermine(statut)
+        ? dateRealisation.value!
+        : dateAction.value!,
       dateFinReelle: dateRealisation.value,
       description,
       statut,
@@ -412,7 +414,7 @@ export function EditionActionForm({
               />
               <RadioBox
                 id='statut-action-terminee'
-                isSelected={statut === StatutAction.Terminee}
+                isSelected={estTermine(statut)}
                 label='Terminée'
                 name='statut-action'
                 onChange={() => modifierStatut(StatutAction.Terminee)}
@@ -468,7 +470,7 @@ export function EditionActionForm({
             </>
           )}
 
-          {statut === StatutAction.Terminee && (
+          {estTermine(statut) && (
             <>
               <Label htmlFor='date-realisation' inputRequired={true}>
                 Date de réalisation

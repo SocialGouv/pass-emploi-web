@@ -10,19 +10,18 @@ import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
 
-type ActionRowProps = {
+type ActionBeneficiaireRowProps = {
   action: Action
-  jeuneId: string
-  isChecked: boolean
-  onSelection: (action: Action) => void
+  avecQualification?: {
+    isChecked: boolean
+    onSelection: (action: Action) => void
+  }
 }
 
-export default function ActionRow({
+export default function ActionBeneficiaireRow({
   action,
-  jeuneId,
-  isChecked,
-  onSelection,
-}: ActionRowProps) {
+  avecQualification,
+}: ActionBeneficiaireRowProps) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
@@ -31,33 +30,35 @@ export default function ActionRow({
     DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
     action.status === StatutAction.AFaire
 
-  const actionEstTerminee = action.status === StatutAction.Terminee
+  const actionAQualifier = action.status === StatutAction.TermineeAQualifier
 
   const dateEcheance = toLongMonthDate(action.dateEcheance)
 
   return (
-    <TR isSelected={isChecked}>
-      <TD className='relative'>
-        {actionEstTerminee && (
-          <label className='absolute inset-0 z-20 cursor-pointer p-4'>
-            <span className='sr-only'>
-              Sélection {action.titre} {action.qualification?.libelle}
-            </span>
-            <input
-              type='checkbox'
-              checked={isChecked}
-              title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-                action.titre
-              }`}
-              className='w-4 h-4 cursor-pointer'
-              onChange={() => onSelection(action)}
-            />
-          </label>
-        )}
-      </TD>
+    <TR isSelected={avecQualification?.isChecked}>
+      {avecQualification && (
+        <TD className='relative'>
+          {actionAQualifier && (
+            <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+              <span className='sr-only'>
+                Sélection {action.titre} {action.qualification?.libelle}
+              </span>
+              <input
+                type='checkbox'
+                checked={avecQualification.isChecked}
+                title={`${avecQualification.isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+                  action.titre
+                }`}
+                className='w-4 h-4 cursor-pointer'
+                onChange={() => avecQualification.onSelection(action)}
+              />
+            </label>
+          )}
+        </TD>
+      )}
       <TD className='rounded-l-base max-w-[400px]'>
         <span
-          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${isChecked ? 'text-base-bold' : ''}`}
+          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${avecQualification?.isChecked ? 'text-base-bold' : ''}`}
         >
           {action.titre}
         </span>
@@ -79,7 +80,7 @@ export default function ActionRow({
         </p>
       </TD>
       <TDLink
-        href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
+        href={`${pathPrefix}/${action.beneficiaire.id}/actions/${action.id}`}
         labelPrefix='Voir le détail de l’action'
       />
     </TR>

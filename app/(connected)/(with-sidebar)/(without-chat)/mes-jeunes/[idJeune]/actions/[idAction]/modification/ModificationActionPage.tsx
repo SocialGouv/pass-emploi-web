@@ -17,10 +17,9 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   Action,
   ActionPredefinie,
+  estSupprimable,
   SituationNonProfessionnelle,
-  StatutAction,
 } from 'interfaces/action'
-import { UserType } from 'interfaces/conseiller'
 import { ActionFormData } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -28,7 +27,6 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 type ModificationProps = {
   action: Action
   actionsPredefinies: ActionPredefinie[]
-  idBeneficiaire: string
   situationsNonProfessionnelles: SituationNonProfessionnelle[]
   returnTo: string
 }
@@ -36,7 +34,6 @@ type ModificationProps = {
 function ModificationPage({
   action,
   actionsPredefinies,
-  idBeneficiaire,
   situationsNonProfessionnelles,
   returnTo,
 }: ModificationProps) {
@@ -50,11 +47,6 @@ function ModificationPage({
 
   const initialTracking = 'Actions jeune – Modification'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const afficherSuppressionAction =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    action.status !== StatutAction.Terminee &&
-    action.status !== StatutAction.Qualifiee
-
   const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function modifierAction(payload: ActionFormData): Promise<void> {
@@ -73,7 +65,7 @@ function ModificationPage({
     try {
       await deleteAction(action.id)
       setTrackingTitle('Actions jeune – Suppression')
-      router.push('/mes-jeunes/' + idBeneficiaire)
+      router.push('/mes-jeunes/' + action.beneficiaire.id)
     } catch (error) {
       setShowEchecMessage(true)
       console.log('Erreur lors de la suppression de l action', error)
@@ -88,7 +80,7 @@ function ModificationPage({
     <>
       {!succesModification && !showSuppression && (
         <>
-          {afficherSuppressionAction && (
+          {estSupprimable(action) && (
             <PageActionsPortal>
               <Button
                 label="Supprimer l'action"
@@ -139,7 +131,7 @@ function ModificationPage({
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <ButtonLink
-              href={`/mes-jeunes/${idBeneficiaire}?onglet=actions`}
+              href={`/mes-jeunes/${action.beneficiaire.id}?onglet=actions`}
               style={ButtonStyle.PRIMARY}
             >
               Consulter la liste des actions

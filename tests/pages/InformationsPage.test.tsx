@@ -6,7 +6,7 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
+import InformationsPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desConseillersBeneficiaire,
@@ -22,14 +22,18 @@ import {
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
-import { getByTextContent } from 'tests/querySelector'
+import {
+  getIndicateursJeuneComplets,
+  modifierDispositif,
+} from 'services/beneficiaires.service'
+import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
+jest.mock('components/ModalContainer')
 
-describe('HistoriquePage client side', () => {
+describe('InformationsPage client side', () => {
   let container: HTMLElement
   const listeSituations = [
     {
@@ -50,136 +54,141 @@ describe('HistoriquePage client side', () => {
   })
 
   describe('quand l’utilisateur est un conseiller Mission Locale', () => {
-    describe('pour les Situations', () => {
-      describe('affiche un onglet dédié', () => {
+    describe('pour les Informations', () => {
+      beforeEach(async () => {
+        // Given
+        container = await renderPage(
+          listeSituations,
+          [],
+          StructureConseiller.MILO,
+          jeune
+        )
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results!).toHaveNoViolations()
+      })
+
+      it('affiche l’onglet sélectionné', () => {
+        // Then
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Informations')
+      })
+
+      it('affiche les informations du bénéficiaires', () => {
+        //Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'Bénéficiaire' })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', {
+            name: 'Dossier jeune i-milo (nouvelle fenêtre)',
+          })
+        ).toHaveAttribute('href', 'https://dossier-milo.fr')
+        expect(getByDescriptionTerm('Dispositif :')).toHaveTextContent('CEJ')
+        expect(getByDescriptionTerm('Email :')).toHaveTextContent(
+          'kenji.jirac@email.fr'
+        )
+        expect(getByDescriptionTerm('Ajouté le :')).toHaveTextContent(
+          '7 décembre 2021'
+        )
+        expect(getByDescriptionTerm('Date de fin du CEJ :')).toHaveTextContent(
+          '-- information non disponible'
+        )
+      })
+
+      describe('changement de dispositif', () => {
         beforeEach(async () => {
-          // Given
-          container = await renderHistorique(
-            [],
-            [],
-            StructureConseiller.MILO,
-            jeune
+          // When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Changer le bénéficiaire de dispositif',
+            })
           )
         })
 
-        it('a11y', async () => {
-          let results: AxeResults
-
-          await act(async () => {
-            results = await axe(container)
-          })
-
-          expect(results!).toHaveNoViolations()
-        })
-
-        it('contenu', () => {
+        it('informe de l’usage attendu', async () => {
           // Then
           expect(
-            screen.getByRole('tab', { selected: true })
-          ).toHaveAccessibleName('Informations')
+            screen.getByText(
+              'Confirmation du changement de dispositif (passage en PACEA)'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Attention, cette modification ne doit être utilisée que pour corriger une erreur dans le choix du dispositif lors de la création du compte.'
+            )
+          ).toBeInTheDocument()
         })
-      })
 
-      describe('affiche les informations de la fiche d’un bénéficiaire', () => {
-        beforeEach(async () => {
-          //When
-          container = await renderHistorique(
-            [],
-            [],
-            StructureConseiller.MILO,
-            jeune
+        it('oblige la validation de l’usage', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Confirmer le passage du bénéficiaire en PACEA',
+            })
           )
-        })
 
-        it('a11y', async () => {
-          let results: AxeResults
-
-          await act(async () => {
-            results = await axe(container)
-          })
-
-          expect(results!).toHaveNoViolations()
-        })
-
-        it('contenu', () => {
-          //Then
-          expect(screen.getByText('Bénéficiaire')).toBeInTheDocument()
-          expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
-          expect(screen.getByText('07/12/2021')).toBeInTheDocument()
-          expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
-            'href',
-            'https://dossier-milo.fr'
-          )
-        })
-      })
-
-      describe('quand le jeune n’a aucune situation', () => {
-        beforeEach(async () => {
-          // Given
-          container = await renderHistorique(
-            [],
-            [],
-            StructureConseiller.MILO,
-            jeune
-          )
-        })
-
-        it('a11y', async () => {
-          let results: AxeResults
-
-          await act(async () => {
-            results = await axe(container)
-          })
-
-          expect(results!).toHaveNoViolations()
-        })
-
-        it('affiche les informations concernant la situation du jeune', () => {
           // Then
-          expect(screen.getByText('Sans situation')).toBeInTheDocument()
+          expect(
+            screen.getByText('Cet élément est obligatoire.')
+          ).toBeInTheDocument()
+          expect(modifierDispositif).not.toHaveBeenCalled()
+          expect(getByDescriptionTerm('Dispositif :')).toHaveTextContent('CEJ')
+        })
+
+        it('permet de changer le dispositif du bénéficiaire', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: 'Je confirme que le passage en PACEA de ce bénéficiaire est lié à une erreur lors de la création du compte (obligatoire)',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Confirmer le passage du bénéficiaire en PACEA',
+            })
+          )
+
+          // Then
+          expect(modifierDispositif).toHaveBeenCalledWith(
+            'beneficiaire-1',
+            'PACEA'
+          )
+          expect(() =>
+            screen.getByText(/Confirmation du changement de dispositif/)
+          ).toThrow()
+          expect(getByDescriptionTerm('Dispositif :')).toHaveTextContent('PACEA')
         })
       })
 
-      describe('quand le jeune a une liste de situations', () => {
-        beforeEach(async () => {
-          // Given
-          container = await renderHistorique(
-            listeSituations,
-            [],
-            StructureConseiller.MILO,
-            jeune
-          )
-        })
-
-        it('a11y', async () => {
-          let results: AxeResults
-
-          await act(async () => {
-            results = await axe(container)
+      it('affiche les situations du bénéficiaire', async () => {
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Historique situations',
           })
+        ).toBeInTheDocument()
 
-          expect(results!).toHaveNoViolations()
-        })
-
-        it('affiche les informations concernant la situation du jeune ', async () => {
-          // Then
-          expect(screen.getByText('Emploi')).toBeInTheDocument()
-          expect(screen.getByText('en cours')).toBeInTheDocument()
-          expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
-          expect(screen.getByText('prévue')).toBeInTheDocument()
-        })
+        expect(screen.getByText('Emploi')).toBeInTheDocument()
+        expect(screen.getByText('en cours')).toBeInTheDocument()
+        expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
+        expect(screen.getByText('prévue')).toBeInTheDocument()
       })
     })
 
     describe('pour l’indicateur des conseillers', () => {
       beforeEach(async () => {
         //Given
-        container = await renderHistorique(
-          [],
-          [],
-          StructureConseiller.MILO,
-          jeune
-        )
+        container = await renderPage([], [], StructureConseiller.MILO, jeune)
 
         // When
         const tabIndicateurs = screen.getByRole('tab', {
@@ -264,12 +273,7 @@ describe('HistoriquePage client side', () => {
       describe('affiche un onglet dédié', () => {
         beforeEach(async () => {
           // Given
-          container = await renderHistorique(
-            [],
-            [],
-            StructureConseiller.MILO,
-            jeune
-          )
+          container = await renderPage([], [], StructureConseiller.MILO, jeune)
 
           // When
           const tabConseillers = screen.getByRole('tab', {
@@ -299,7 +303,7 @@ describe('HistoriquePage client side', () => {
       describe('affiche la liste complète des conseillers du jeune', () => {
         beforeEach(async () => {
           //Given
-          container = await renderHistorique(
+          container = await renderPage(
             [],
             listeConseillers,
             StructureConseiller.MILO,
@@ -336,7 +340,7 @@ describe('HistoriquePage client side', () => {
   describe('quand l’utilisateur est un conseiller France Travail', () => {
     beforeEach(async () => {
       // Given
-      container = await renderHistorique(
+      container = await renderPage(
         [],
         [],
         StructureConseiller.POLE_EMPLOI,
@@ -367,7 +371,7 @@ describe('HistoriquePage client side', () => {
   })
 })
 
-async function renderHistorique(
+async function renderPage(
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -386,7 +390,7 @@ async function renderHistorique(
   let container: HTMLElement
   await act(async () => {
     ;({ container } = renderWithContexts(
-      <Historique
+      <InformationsPage
         idBeneficiaire={'id'}
         situations={situations}
         conseillers={conseillers}
