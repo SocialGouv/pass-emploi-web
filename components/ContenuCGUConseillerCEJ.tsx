@@ -79,7 +79,7 @@ export default function ContenuCGUConseillerCEJ() {
         territoriales ;
       </p>
       <p className='mb-4'>
-        «Plateforme » : le back-office du CEJ dédiée aux conseillers France
+        « Plateforme » : le back-office du CEJ dédiée aux conseillers France
         Travail et conseillers des Missions Locales ;
       </p>
       <p className='mb-4'>
@@ -88,7 +88,7 @@ export default function ContenuCGUConseillerCEJ() {
         services ».
       </p>
       <p className='mb-4'>
-        «SNP» : Situation non professionnelle, correspond à une typologie
+        « SNP » : Situation non professionnelle, correspond à une typologie
         d’actions effectuées par l’usager et enregistrées dans son dossier
         i-milo par son conseiller. Selon la catégorie des « situations non
         professionnelles », ces actions sont associées à un certain nombre

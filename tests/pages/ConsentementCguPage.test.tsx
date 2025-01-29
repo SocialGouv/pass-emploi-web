@@ -15,7 +15,7 @@ jest.mock('services/conseiller.service')
 
 describe('ConsentementCGUPage client side', () => {
   let container: HTMLElement
-  let routerPush: Function
+  let routerPush: () => void
 
   beforeEach(async () => {
     routerPush = jest.fn()
@@ -88,7 +88,7 @@ describe('ConsentementCGUPage client side', () => {
         // Then
         expect(
           screen.getByText(
-            /La plateforme CEJ a pour objet de contribuer à la diminution du décrochage des jeunes en accompagnement vers l’emploi./
+            /« Plateforme » : le back-office du CEJ dédiée aux conseillers France Travail et conseillers des Missions Locales ;/
           )
         ).toBeInTheDocument()
         expect(() => screen.getByText('pass emploi')).toThrow()
