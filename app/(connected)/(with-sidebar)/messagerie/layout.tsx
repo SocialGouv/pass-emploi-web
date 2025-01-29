@@ -28,6 +28,7 @@ export default function LayoutPageMessagerie({
         <Footer
           conseiller={{ structure: conseiller.structure }}
           aDesBeneficiaires={portefeuille.length > 0}
+          withPlanDuSite={true}
         />
       </div>
     </>

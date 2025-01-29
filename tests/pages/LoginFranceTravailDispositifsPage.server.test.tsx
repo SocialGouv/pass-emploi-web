@@ -2,21 +2,23 @@ import { render } from '@testing-library/react'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
-import LoginPassEmploi, {
+import LoginFranceTravailDispositifsPage from 'app/(connexion)/login/france-travail/dispositifs/LoginFranceTravailDispositifsPage'
+import LoginFranceTravailDispositifs, {
   metadata,
-} from 'app/(connexion)/login/passemploi/page'
+} from 'app/(connexion)/login/france-travail/dispositifs/page'
 
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
-jest.mock('app/(connexion)/login/passemploi/LoginPassEmploiPage')
+jest.mock(
+  'app/(connexion)/login/france-travail/dispositifs/LoginFranceTravailDispositifsPage'
+)
 
-describe('LoginPassEmploiPage server side', () => {
+describe('LoginFranceTravailDispositifsPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {
     // Given
     ;(getServerSession as jest.Mock).mockResolvedValue({})
 
     // When
-    const promise = LoginPassEmploi({
+    const promise = LoginFranceTravailDispositifs({
       searchParams: Promise.resolve({ redirectUrl: 'vers-linfini-et-au-dela' }),
     })
 
@@ -33,16 +35,17 @@ describe('LoginPassEmploiPage server side', () => {
 
     // When
     render(
-      await LoginPassEmploi({
+      await LoginFranceTravailDispositifs({
         searchParams: Promise.resolve({ source: 'notif-mail' }),
       })
     )
 
     // Then
     expect(metadata).toEqual({
-      title: "Connexion dans l'espace conseiller - Outil du pass emploi",
+      title:
+        'Sélection du dispositif France Travail - Outil du Contrat d’Engagement Jeune et du pass emploi',
     })
-    expect(LoginPassEmploiPage).toHaveBeenCalledWith(
+    expect(LoginFranceTravailDispositifsPage).toHaveBeenCalledWith(
       { ssoAvenirProEstActif: true },
       undefined
     )

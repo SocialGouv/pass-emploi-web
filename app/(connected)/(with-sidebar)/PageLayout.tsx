@@ -36,6 +36,7 @@ export default function PageLayout({
       <Footer
         conseiller={conseiller}
         aDesBeneficiaires={portefeuille.length > 0}
+        withPlanDuSite={true}
       />
     </div>
   )
