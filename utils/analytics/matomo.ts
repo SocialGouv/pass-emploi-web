@@ -68,8 +68,8 @@ export function init({
 }
 
 export function trackPage({
-  structure,
   customTitle,
+  structure,
   aDesBeneficiaires,
 }: TrackPageSettings): void {
   window._paq = window._paq !== null ? window._paq : []

@@ -5,7 +5,7 @@ import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
 
-import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
+import LoginFranceTravailDispositifsPage from 'app/(connexion)/login/france-travail/dispositifs/LoginFranceTravailDispositifsPage'
 import { signin } from 'utils/auth/auth'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
@@ -13,7 +13,7 @@ jest.mock('utils/auth/auth', () => ({
   signin: jest.fn(),
 }))
 
-describe('LoginPassEmploiPage client side', () => {
+describe('LoginFranceTravailDispositifsPage client side', () => {
   let container: HTMLElement
   beforeEach(async () => {
     ;(useSearchParams as jest.Mock).mockReturnValue({
@@ -26,7 +26,7 @@ describe('LoginPassEmploiPage client side', () => {
     beforeEach(async () => {
       ;({ container } = render(
         <LoginErrorMessageProvider state={[undefined, setErrorMsg]}>
-          <LoginPassEmploiPage ssoAvenirProEstActif={true} />
+          <LoginFranceTravailDispositifsPage ssoAvenirProEstActif={true} />
         </LoginErrorMessageProvider>
       ))
     })
@@ -41,47 +41,46 @@ describe('LoginPassEmploiPage client side', () => {
       expect(results!).toHaveNoViolations()
     })
 
-    it('devrait afficher deux titres de niveau 2', () => {
+    it('affiche un titre', () => {
       //GIVEN
-      const headingCEJ = screen.getByRole('heading', {
-        level: 2,
-        name: 'Connexion conseiller RSA',
-      })
-      const headingBRSA = screen.getByRole('heading', {
-        level: 2,
-        name: 'Connexion conseiller AIJ',
-      })
-
-      //THEN
-      expect(headingCEJ).toBeInTheDocument()
-      expect(headingBRSA).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          level: 1,
+          name: 'Connexion conseiller France Travail',
+        })
+      ).toBeInTheDocument()
     })
 
-    it('devrait avoir trois boutons', () => {
-      const franceTravailAIJButton = screen.getByRole('button', {
-        name: 'Connexion France Travail AIJ',
-      })
-      const franceTravailAvenirProButton = screen.getByRole('button', {
-        name: 'Connexion France Travail Avenir Pro',
-      })
-      const franceTravailRSAButton = screen.getByRole('button', {
-        name: 'Connexion France Travail RSA',
-      })
-      const conseillerDeptButton = screen.getByRole('button', {
-        name: 'Connexion Conseil départemental',
+    it('affiche un bouton par dispositif', () => {
+      //THEN
+      expect(
+        screen.getAllByRole('button', {
+          name: /Connexion France Travail/,
+        })
+      ).toHaveLength(4)
+    })
+
+    it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
+      // Given
+      const peBRSAButton = screen.getByRole('button', {
+        name: 'Connexion France Travail Contrat d’engagement jeune',
       })
 
-      //THEN
-      expect(franceTravailAIJButton).toBeInTheDocument()
-      expect(franceTravailAvenirProButton).toBeInTheDocument()
-      expect(franceTravailRSAButton).toBeInTheDocument()
-      expect(conseillerDeptButton).toBeInTheDocument()
+      // When
+      await userEvent.click(peBRSAButton)
+
+      // Then
+      expect(signin).toHaveBeenCalledWith(
+        'pe-conseiller',
+        setErrorMsg,
+        'redirectUrl'
+      )
     })
 
     it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion France Travail RSA',
+        name: 'Connexion France Travail RSA rénové',
       })
 
       // When
@@ -98,7 +97,7 @@ describe('LoginPassEmploiPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
-        name: 'Connexion France Travail AIJ',
+        name: 'Connexion France Travail Accompagnement intensif jeunes',
       })
 
       // When
@@ -115,7 +114,7 @@ describe('LoginPassEmploiPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT Avenir Pro", async () => {
       // Given
       const button = screen.getByRole('button', {
-        name: 'Connexion France Travail Avenir Pro',
+        name: 'Connexion France Travail Avenir pro',
       })
 
       // When
@@ -124,23 +123,6 @@ describe('LoginPassEmploiPage client side', () => {
       // Then
       expect(signin).toHaveBeenCalledWith(
         'avenirpro-conseiller',
-        setErrorMsg,
-        'redirectUrl'
-      )
-    })
-
-    it("permet de s'identifier en tant que conseiller dept", async () => {
-      // Given
-      const cdButton = screen.getByRole('button', {
-        name: 'Connexion Conseil départemental',
-      })
-
-      // When
-      await userEvent.click(cdButton)
-
-      // Then
-      expect(signin).toHaveBeenCalledWith(
-        'conseildepartemental-conseiller',
         setErrorMsg,
         'redirectUrl'
       )
