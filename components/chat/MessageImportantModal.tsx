@@ -11,7 +11,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
@@ -156,18 +155,6 @@ export default function MessageImportantModal({
             Ce message ainsi que la période apparaitront en bandeau informatif
             au niveau de la messagerie
           </p>
-          <div className='p-6 bg-primary_lighten rounded-base text-primary mb-6'>
-            Si votre message contient un lien, n’hésitez pas à le raccourcir
-            pour une meilleure lisibilité (avec par exemple{' '}
-            <span className='hover:text-primary_darken'>
-              <ExternalLink
-                href='https://urlr.me'
-                label='urlr.me'
-                onClick={() => {}}
-              />
-            </span>
-            )
-          </div>
 
           <p className='text-base-bold'>Tous les champs sont obligatoires</p>
 
@@ -218,6 +205,8 @@ export default function MessageImportantModal({
                 {{
                   main: 'Message',
                   helpText: `${MAX_INPUT_LENGTH} caractères maximum`,
+                  precision:
+                    'Si votre message contient un lien, n’hésitez pas à le raccourcir pour une meilleure lisibilité (avec par exemple https://urlr.me/ )',
                 }}
               </Label>
               {message.error && (

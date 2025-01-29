@@ -1,3 +1,4 @@
+import TexteAvecLien from 'components/chat/TexteAvecLien'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 
 type ComplexLabel = {
@@ -36,7 +37,11 @@ export default function Label({
         )}
       </span>
       {helpText && <span className='text-s-regular ml-2'> {helpText}</span>}
-      {precision && <span className='text-xs-regular ml-2'> {precision}</span>}
+      {precision && (
+        <span className='text-xs-regular ml-2'>
+          <TexteAvecLien texte={precision} />
+        </span>
+      )}
     </label>
   )
 }

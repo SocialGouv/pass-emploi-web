@@ -133,10 +133,12 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
         {isConseillerCourant ? 'Vous' : conseillerNomComplet}
       </p>
 
-      <TexteAvecLien
-        texte={message.content}
-        highlight={highlight?.key === 'content' ? highlight : undefined}
-      />
+      <p className='whitespace-pre-wrap'>
+        <TexteAvecLien
+          texte={message.content}
+          highlight={highlight?.key === 'content' ? highlight : undefined}
+        />
+      </p>
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
         <LienOffre infoOffre={message.infoOffre} isSentByConseiller={true} />

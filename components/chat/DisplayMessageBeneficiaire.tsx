@@ -58,15 +58,17 @@ export default function DisplayMessageBeneficiaire(
               })}
 
             {message.type !== TypeMessage.MESSAGE_PJ && (
-              <TexteAvecLien
-                texte={message.content}
-                lighten={true}
-                highlight={
-                  props.highlight?.key === 'content'
-                    ? props.highlight
-                    : undefined
-                }
-              />
+              <p className='whitespace-pre-wrap'>
+                <TexteAvecLien
+                  texte={message.content}
+                  lighten={true}
+                  highlight={
+                    props.highlight?.key === 'content'
+                      ? props.highlight
+                      : undefined
+                  }
+                />
+              </p>
             )}
 
             {message.type === TypeMessage.MESSAGE_OFFRE &&

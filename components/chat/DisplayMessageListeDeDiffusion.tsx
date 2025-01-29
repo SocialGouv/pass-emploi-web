@@ -30,7 +30,9 @@ export default function DisplayMessageListeDeDiffusion({
           messagerieFullScreen ? 'bg-grey_100' : 'bg-white'
         } mb-1`}
       >
-        <TexteAvecLien texte={message.content} />
+        <p className='whitespace-pre-wrap'>
+          <TexteAvecLien texte={message.content} />
+        </p>
 
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
