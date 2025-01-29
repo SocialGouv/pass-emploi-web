@@ -307,416 +307,129 @@ export default function ContenuCGUConseillerCEJ() {
         <li>Tous les Utilisateurs ont accès à un bouton « Actualités » leur présentant les nouveautés de l’application ;</li>
       </ul>
 
-        
-
-      
-      
-      
-      
-
-
-
-
-
-      
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-      </h4>
-       
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-      </h4>
-       <p className='mb-4'>
-      </p>
-
-
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-      </h4>
-
-      
-
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
-      </h3>
-
-      <ul className='list-disc mb-8 ml-8'>
-        <li>L’usager est sorti du dispositif « CEJ » ;</li>
-        <li>L’usager est radié du dispositif « CEJ » ;</li>
-        <li>Un autre compte existe ou va être créé.</li>
-      </ul>
-      
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-      <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-      <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-       <p className='mb-4'>
-      </p>
-
-      
-      
-
-
-      
-      
-
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 1 – Champ d’application
-      </h2>
+      Suppressions du compte par le conseiller
+       </h2>
       <p className='mb-4'>
-        Tout jeune qui est en situation de décrochage peut créer un compte via
-        l’application « CEJ » et utiliser l’application pour être accompagné
-        dans sa recherche, pour trouver des ressources ou pour être accompagné
-        dans son projet professionnel en général.
+      Les Utilisateurs peuvent supprimer le compte d’un Usager qu’il suit en cliquant sur le bouton « Supprimer » depuis la fiche bénéficiaire de la Plateforme. Cette suppression ne peut survenir que pour 3 motifs :
       </p>
-
-      <h2 className='text-m-bold text-primary mt-10 mb-4'>Article 2 – Objet</h2>
+      <ul className='list-disc mb-8 ml-8'>
+      <li>L’Usager est sorti du dispositif Contrat d’Engagement Jeune ou PACEA;/li>
+      <li>L’Usager est radié du dispositif Contrat d’Engagement Jeune ou PACEA ;</li>
+      <li>Un autre compte existe ou va être créé, par exemple lors d’un changement d’accompagnement./li>
+      </ul>
       <p className='mb-4'>
-        La plateforme CEJ a pour objet de contribuer à la diminution du
-        décrochage des jeunes en accompagnement vers l’emploi. En ce sens, elle
-        cherche à améliorer la mise en relation des jeunes et leur conseiller ou
-        conseillère, force de proposition d’actions et conseils aux jeunes.
+        Un message est envoyé à l’Usager pour l’informer de la suppression de compte et des modalités pour avoir accès à ses informations et données à caractère personnel relatives à l’application. Pour ce faire, chaque Usager devra envoyer un mail à l’adresse indiquée dans le mail en précisant son nom, son prénom et l’adresse de messagerie utilisée pour la réception du mail de suppression.
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 3 – Définitions
+      Réaffectation
       </h2>
       <p className='mb-4'>
-        « Le Conseiller » est tout agent public ou bénévole utilisant
-        l’application CEJ, accompagnant les jeunes dans leur recherche
-        professionnelle, ou dans la création de leur projet.
-      </p>
-      <p className='mb-4'>
-        « L’Usager » est tout jeune en situation de « décrochage », s’étant créé
-        un compte, accompagné dans sa recherche par un Conseiller, souhaitant
-        trouver des ressources ou être accompagné dans son projet professionnel
-        en général. Cette situation de décrochage peut notamment s’exprimer par
-        des difficultés dans la recherche d’emploi ou de formation, dans le
-        suivi, ou le manque de connaissances et de renseignements sur ces
-        sujets.
-      </p>
-      <p className='mb-4'>
-        « Le Superviseur » est un agent ayant un rôle d’encadrement et
-        d’organisation général des Conseillers et de leur prise en charge des
-        Usagers.
-      </p>
-      <p className='mb-4'>
-        Les « Services » sont les fonctionnalités offertes par la plateforme
-        pour répondre à son objet défini à l’article 2.
-      </p>
-      <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 4 – Fonctionnalités
-      </h2>
-      <p className='mb-4'>
-        La création d’un profil est ouverte à tout « Conseiller », souhaitant
-        utiliser la plateforme dans les conditions prévues. En outre, le profil
-        « Superviseur » permet aux agents habilités d’organiser et de modifier
-        l’affectation d’un jeune à un Conseiller déterminé.
-      </p>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        A- Conseiller en Mission Locale
-      </h3>
-      <p className='mb-4'>
-        L’authentification se fait via les identifiants de l’outil professionnel
-        i-Milo : un identifiant et un mot de passe. Si l’utilisateur est déjà
-        authentifié dans son outil i-Milo (également une web app), il accède à
-        son portail CEJ sans écran d’authentification. Si l’utilisateur n’est
-        pas encore authentifié dans son i-Milo, il s’authentifie via la mire de
-        connexion i-Milo.
-      </p>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        B- Conseiller France Travail
-      </h3>
-      <p className='mb-4'>
-        L’authentification se fait via les identifiants métier France Travail
-        (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
-        Conseillers pourront ajouter le numéro France Travail des jeunes suivis.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.2 Création et gestion des actions possibles
-      </h3>
-      <p className='mb-4'>Ces actions se font :</p>
-      <ul className='list-disc mb-8 ml-8'>
-        <li>
-          soit via l’application CEJ pour les « Conseillers Mission Locale » ;
-        </li>
-        <li>
-          soit via l’outil mis à disposition par « France Travail » sur MAP.
-        </li>
-      </ul>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        A – Création, visualisation des actions
-      </h4>
-      <p className='mb-4'>Chaque Conseiller peut, sur son tableau de bord :</p>
-      <ul className='list-disc mb-8 ml-8'>
-        <li>
-          Créer une action que l’Usager aura à faire ; Il devra alors nommer
-          l’action, la décrire et en définir le statut (à réaliser, commencée ou
-          terminée) et renseigner une date d’échéance ;
-        </li>
-        <li>
-          Visualiser toutes les actions concernant les Usagers qu’il accompagne
-          ; Ces actions sont triées selon leur statut ; commenter une action et
-          échanger avec ses Usagers sur les actions à réaliser.
-        </li>
-      </ul>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        B – Questions sur les actions
-      </h4>
-      <p className='mb-4'>
-        A tout moment, l’Usager peut interroger son Conseiller sur l’action
-        qu’il a créé, ou que le Conseiller a créé pour lui. Les questions
-        peuvent notamment permettre une meilleure compréhension de l’action à
-        faire et améliorer la communication sur les difficultés rencontrées.
-      </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        C – Gestion des actions sur i-milo
-      </h4>
-      <p className='mb-4'>
-        Les Conseillers « Missions locales » peuvent intégrer les actions
-        renseignées dans l’application CEJ dans le dossier du jeune sur i-milo.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.3 Prise et organisation de rendez-vous
-      </h3>
-      <p className='mb-4'>
-        Les Conseillers peuvent prendre des rendez-vous avec des « Usagers » et
-        en choisir les modalités (nom de l’Usager, date du rendez-vous,
-        modalités de contact, notes spécifiques à communiquer). Le rendez-vous
-        mentionne toujours la date, l’horaire, le lieu et le moyen de contact.
-        Ils peuvent rechercher un Usager avec lequel ils ont un rendez-vous et
-        supprimer des rendez-vous directement. Cette action sera notifiée à
-        l’Usager.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.4 Réception de notifications
-      </h3>
-      <p className='mb-4'>
-        Les Conseillers peuvent recevoir des notifications dès lors qu’un Usager
-        a interagi avec eux, notamment pour annuler ou confirmer un rendez-vous,
-        ou lorsqu’ils reçoivent un message via le chat.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.5 Ouvrir un chat de discussion direct
-      </h3>
-      <p className='mb-4'>
-        Chaque Conseiller peut rechercher un Usager dont il a la charge et
-        échanger avec lui sur les sujets qui le concernent via un chat.
-        Réciproquement, les Usagers peuvent entrer en discussion directement
-        avec leur Conseiller.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.6 Organisation des affectations
-      </h3>
-      <p className='mb-4'>
-        Les profils Superviseurs peuvent visualiser l’ensemble des « Profil
-        Conseillers » sous leur supervision, ainsi que les profils « Usagers »
-        qu’ils gèrent. Ils peuvent modifier l’affectation d’un jeune via une
-        fonctionnalité qui leur est propre. Le changement d’affectation d’un
-        jeune doit donner lieu à une affectation à un autre Conseiller.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.7 Autres fonctionnalités
-      </h3>
-      <p className='mb-4'>
-        D’autres fonctionnalités sont ouvertes aux Conseillers. Certaines
-        fonctionnalités dépendent des catégories de comptes :
+      Le module de réaffectation permet de réaffecter les bénéficiaires d’un conseiller vers un autre. Cela permet notamment de gérer :
       </p>
       <ul className='list-disc mb-8 ml-8'>
-        <li>
-          Si le jeune ne l’a pas refusé, tous les Conseillers peuvent visualiser
-          les offres et recherches sauvegardées ;
-        </li>
-        <li>
-          Tous les conseillers ont accès à un bouton « Actualités » leur
-          présentant les nouveautés de l’application ;
-        </li>
-        <li>Échanger des pièces jointes ouvrables par les Jeunes.</li>
-      </ul>
-
-      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.8 Suppressions du compte
-      </h3>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        A – Suppression par l’Usager
-      </h4>
-      <p className='mb-4'>
-        Les Usagers peuvent supprimer leur compte sur l’application à tout
-        moment en cliquant sur le bouton « Supprimer ». Il perdra toutes les
-        informations liées au compte. <br />
-        Néanmoins, s’il était suivi par un agent France Travail, ses actions et
-        ses rendez-vous seront conservées dans l’outil France Travail.
-      </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        B – Suppression par le Conseiller
-      </h4>
-      <p className='mb-4'>
-        Les Conseillers peuvent également supprimer le compte d’un usager qu’il
-        suit en cliquant sur le bouton « Supprimer ». Cette suppression ne peut
-        survenir que pour 3 motifs :
-      </p>
-      <ul className='list-disc mb-8 ml-8'>
-        <li>L’usager est sorti du dispositif « CEJ » ;</li>
-        <li>L’usager est radié du dispositif « CEJ » ;</li>
-        <li>Un autre compte existe ou va être créé.</li>
+        <li>les périodes de congés</li>
+        <li>les absences</li>
+        <li>réaffecter le portefeuille d’un conseiller à un autre conseiller si celui-ci n’accompagne plus des bénéficiaires du dispositif CEJ ou PACEA.</li>
       </ul>
       <p className='mb-4'>
-        Un message est envoyé à l’Usager pour le prévenir de la suppression du
-        compte et des modalités pour avoir accès à ses informations et données à
-        caractère personnel relatives à l’application. Pour ce faire chaque
-        Usager devra envoyer un mail à l’adresse indiquée dans le mail en
-        précisant son nom, son prénom et l’adresse e-mail utilisée pour la
-        réception du mail de suppression.
+        Pour les Utilisateurs conseillers France Travail : ce module est attribué à la demande des Superviseurs au sein de chaque agence France Travail.
+      </p>
+      <p className='mb-4'>
+        Pour les Utilisateurs conseillers des Missions Locales : cCe module est attribué à tous les Utilisateurs.
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 5 – Responsabilités
+      Accès à la « Plateforme »
       </h2>
-      <h3 className='text-base-bold text-content_color mb-2'>5.1 L’éditeur</h3>
-      <p className='mb-4'>
-        Les sources des informations diffusées sur la Plateforme sont réputées
-        fiables mais le site ne garantit pas qu’il soit exempt de défauts,
-        d’erreurs ou d’omissions.
+        <p className='mb-4'>
+          La DGEFP se réserve le droit, sans préavis, ni indemnité, de fermer temporairement l’accès à une ou plusieurs fonctionnalités de la Plateforme pour effectuer une mise à jour, des modifications ou changement sur les méthodes opérationnelles, les serveurs et les heures d’accessibilité. Cette liste n’est pas limitative. Dans ce cas, la DGEFP peut indiquer une date de réouverture du compte ou d’accessibilité à une ou plusieurs fonctionnalités.
       </p>
-      <p className='mb-4'>
-        L’éditeur s’autorise à suspendre ou révoquer n’importe quel compte et
-        toutes les actions réalisées par ce biais, s’il estime que l’usage
-        réalisé du service porte préjudice à son image ou ne correspond pas aux
-        exigences de sécurité.
-      </p>
-      <p className='mb-4'>
-        L’éditeur s’engage à la sécurisation de la Plateforme, notamment en
-        prenant toutes les mesures nécessaires permettant de garantir la
-        sécurité et la confidentialité des informations fournies.
-      </p>
-      <p className='mb-4'>
-        L’éditeur fournit les moyens nécessaires et raisonnables pour assurer un
-        accès continu, sans contrepartie financière, à la Plateforme. Il se
-        réserve la liberté de faire évoluer, de modifier ou de suspendre, sans
-        préavis, la plateforme pour des raisons de maintenance ou pour tout
-        autre motif jugé nécessaire.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mb-2'>
-        5.2 Le Conseiller
-      </h3>
-      <p className='mb-4'>
-        Toute information transmise par le Conseiller est de sa seule
-        responsabilité. Il est rappelé que toute personne procédant à une fausse
-        déclaration pour elle-même ou pour autrui s’expose, notamment, aux
-        sanctions prévues à l’article 441-1 du code pénal, prévoyant des peines
-        pouvant aller jusqu’à trois ans d’emprisonnement et 45 000 euros
-        d’amende.
-      </p>
-      <p className='mb-4'>
-        Le Conseiller s’engage à ne pas mettre en ligne de contenus ou
-        informations contraires aux dispositions légales et réglementaires en
-        vigueur. En particulier, il s’engage à ne pas publier de message
-        racistes, sexistes, injurieux, insultants ou contraires à l’ordre
-        public, et à ne pas télécharger de documents contenant des données à
-        caractère personnel sur un système non sécurisé.
-      </p>
-      <p className='mb-4'>
-        Toute question ou propos peut être supprimé s’il contrevient à une
-        disposition des présentes CGU, s’il est contraire à des dispositions
-        légales ou pour n’importe quelle raison jugée opportune par l’équipe de
-        la plateforme, et ce, sans préavis.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mb-2'>
-        5.3 Le Superviseur
-      </h3>
-      <p className='mb-4'>
-        Toute information transmise par le Superviseur est de sa seule
-        responsabilité. Il est rappelé que toute personne procédant à une fausse
-        déclaration pour elle-même ou pour autrui s’expose, notamment, aux
-        sanctions prévues à l’article 441-1 du code pénal, prévoyant des peines
-        pouvant aller jusqu’à trois ans d’emprisonnement et 45 000 euros
-        d’amende.
-      </p>
-      <p className='mb-4'>Le Superviseur s’engage à ne pas :</p>
-      <ul className='list-disc mb-8 ml-8'>
-        <li>
-          ne pas prendre de décision discriminatoire ou manifestement infondée ;
-        </li>
-        <li>
-          mettre en ligne de contenus ou informations contraires aux
-          dispositions légales et réglementaires en vigueur, en particulier à ne
-          pas publier de message racistes, sexistes, injurieux, insultants ou
-          contraires à l’ordre public ;
-        </li>
-      </ul>
-      <p className='mb-4'>
-        Toute question ou propos peut être supprimé s’il contrevient à une
-        disposition des présentes CGU, s’il est contraire à des dispositions
-        légales ou pour n’importe quelle raison jugée opportune par l’équipe de
-        la plateforme, et ce, sans préavis.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mb-2'>5.4 L’Usager</h3>
-      <p className='mb-4'>
-        Toute information transmise par l’Usager est de sa seule responsabilité.
-        Il est rappelé que toute personne procédant à une fausse déclaration
-        pour elle-même ou pour autrui s’expose, notamment, aux sanctions prévues
-        à l’article 441-1 du code pénal, prévoyant des peines pouvant aller
-        jusqu’à trois ans d’emprisonnement et 45 000 euros d’amende.
-      </p>
-      <p className='mb-4'>
-        L’Usager s’engage à ne pas mettre en ligne de contenus ou informations
-        contraires aux dispositions légales et réglementaires en vigueur. En
-        particulier, l’Utilisateur s’engage à ne pas publier dans le champ libre
-        de question, de message racistes, sexistes, injurieux, insultants ou
-        contraires à l’ordre public.
-      </p>
-      <p className='mb-4'>
-        Les pièces jointes déposées par l’Usager ne contiennent pas de données
-        sensibles dès lors qu’elles ne sont pas strictement nécessaires à
-        l’accompagnement réalisé, particulièrement des données relatives à ses
-        opinions philosophiques, politiques, à sa religion, à sa santé ou à son
-        orientation sexuelle ou sur sa vie sexuelle.
-      </p>
-      <p className='mb-4'>
-        Toute question ou propos peut être supprimé s’il contrevient à une
-        disposition des présentes CGU, s’il est contraire à des dispositions
-        légales ou pour n’importe quelle raison jugée opportune par l’équipe de
-        la plateforme, et ce, sans préavis.
+       <p className='mb-4'>
+         En cas d’impossibilité d’accéder et/ou d’utiliser la Plateforme, l’Utilisateur peut toujours s’adresser à la DGEFP pour obtenir des informations via l’adresse suivante : <a href='support@pass-emploi.beta.gouv.fr'>support@pass-emploi.beta.gouv.fr</a>
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
-        Article 6 – Mise à jour des conditions d’utilisation
+      Confidentialité/sécurité
       </h2>
       <p className='mb-4'>
-        Les termes des CGU doivent être acceptés au moment de la connexion.
-        Toute modification des CGU réalisée en fonction des modifications
-        apportées au site, de l’évolution de la législation ou pour tout autre
-        motif jugé nécessaire, nécessite votre consentement.
+      La DGEFP met en place les moyens nécessaires pour assurer le bon fonctionnement de la Plateforme et pour assurer la sécurité et la confidentialité des données des utilisateurs.
       </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Exclusion de responsabilité du Ministère
+      </h2>
+      <p className='mb-4'>
+      La DGEFP ne saurait être responsable :
+      </p>
+      <ul className='list-disc mb-8 ml-8'>
+        <li>En raison d’une interruption du service quelle que soit la durée ou la fréquence de cette interruption et quelle qu’en soit la cause, notamment en raison d’une maintenance nécessaire au fonctionnement, de pannes éventuelles, d’aléas techniques liés à la nature du réseau Internet, d’actes de malveillance ou de toute atteinte portée au fonctionnement de la Plateforme ;</li>
+        <li>Sauf faute ou négligence prouvée de la DGEFP, des atteintes à la confidentialité des données personnelles de l’Utilisateur résultant de l’utilisation de son identifiant</li>
+        <li>Des conséquences provoquées par le caractère erroné ou frauduleux des informations fournies par un Utilisateur ;</li>
+        <li>Des dommages directs ou indirects résultant de l’attitude, de la conduite ou du comportement d’un autre Utilisateur ;</li>
+        <li>Des atteintes à la sécurité du système d’information, ainsi qu’aux données, pouvant causer des dommages aux matériels informatiques des Utilisateurs et à leurs données dès lors que le fait ne lui est pas imputable.</li>
+      </ul>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Responsabilité des Utilisateurs
+      </h2>
+      <p className='mb-4'>
+      Dans le cadre de l’utilisation de la Plateforme, l’Utilisateur s’engage à : 
+      </p>
+      <ul className='list-disc mb-8 ml-8'>
+        <li>Se conformer aux stipulations décrites dans les Conditions Générales d'Utilisation et aux dispositions des lois et règlements en vigueur, et à respecter les droits des tiers ;</li>
+        <li>Ne créer qu'un seul compte utilisateur et ne communiquer que des informations, fichiers et autres contenus conformes à la réalité, honnêtes et loyaux ;</li>
+        <li>Ne pas divulguer via la Plateforme des propos ou des contenus illicites, et notamment tous contenus contrefaits, diffamatoires, injurieux, insultants, obscènes, offensants, discriminatoires, violents, xénophobes, incitant à la haine raciale ou faisant l'apologie du terrorisme, ou tout autre contenu contraire à la législation et réglementation applicable ainsi qu'aux bonnes mœurs et aux règles de bienséance ;</li>
+        <li>Ne pas intégrer et diffuser via la Plateforme du contenu qui serait contraire à la finalité de celle-ci ;</li>
+        <li>Ne pas communiquer ou envoyer, par l'intermédiaire de la plateforme, du contenu, quel qu'il soit, qui comprendrait des liens pointant vers des sites internet illicites, offensants ou incompatibles avec la finalité du Site ;</li>
+        <li>En outre, l'Utilisateur garantit expressément la véracité et la réalité des informations qu'il communique sur la Plateforme ;</li>
+        <li>En cas de manquement à une ou plusieurs de ces obligations, la DGEFP se réserve le droit de suspendre l’accès et/ou de supprimer le compte de l'Utilisateur responsable.</li>
+      </ul>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Utilisation des zones de commentaires libres
+      </h2>
+      <p className='mb-4'>
+      Les zones de commentaires libres, également appelées “zones bloc-notes”, sont mises à disposition pour permettre aux utilisateurs d’échanger des informations. L’Utilisateur s’engage à respecter les règles suivantes : 
+      </p>
+      <ul className='list-disc mb-8 ml-8'>
+        <li>Respect de la vie privée : L’Utilisateur évite de transmettre des données personnelles sensibles dans les commentaires. L’Utilisateur ne partage pas d’informations confidentielles, telles que des numéros de téléphone, des adresses électroniques, des mots de passe, etc. ;</li>
+        <li>Contenu approprié : Les commentaires doivent rester respectueux, pertinents et non offensants. Évitez tout contenu illégal, diffamatoire, discriminatoire ou contraire à nos valeurs.</li>
+      </ul>
+      <p className='mb-4'>
+      L’Utilisateur est informé que la DGEFP se réserve le droit de modérer les commentaires et de supprimer tout contenu inapproprié. La DGEFP encourage l’Utilisateur à signaler tout commentaire problématique.
+      </p>
+
+       <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Propriété intellectuelle
+      </h2>
+        <p className='mb-4'>
+          La Plateforme et tous les éléments qui le composent notamment les programmes, données, textes, images, sons, dessins, graphismes etc. sont la propriété de la DGEFP ou font l'objet d'une concession accordée à son profit. Toute copie, reproduction, représentation, adaptation, diffusion, intégrale ou partielle de la Plateforme, par quelque procédé que ce soit et sur quelque support que ce soit est soumise à l’accord préalable écrit de la DGEFP, sous réserve des exceptions prévues par le Code de propriété intellectuelle.
+      </p>
+        <p className='mb-4'>
+          Toute utilisation non autorisée des contenus ou informations de la Plateforme, notamment à des fins d’exploitation commerciale, pourra faire l’objet de poursuites sur la base d’une action en contrefaçon et/ou d’une action en concurrence déloyale et/ou parasitisme de la part de la DGEFP.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Protection des données personnelles
+      </h2>
+      <p className='mb-4'>
+          Les données à caractère personnel sont traitées par la DGEFP et les utilisateurs dans le respect des dispositions de la Loi n° 78-17 du 6 janvier 1978 relative à l’informatique, aux fichiers et aux libertés, dans sa version en vigueur, ainsi qu’au Règlement Général sur les Données Personnelles (RGPD). 
+      </p>
+      <p className='mb-4'>
+          Conformément à l’article L322-2 du code entre le public et l’administration, la réutilisation éventuelle d'informations publiques comportant des données à caractère personnel est subordonnée au respect des dispositions de la loi n° 78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés.
+      </p>
+      <p className='mb-4'>
+        L’Utilisateur s’engage à ne faire figurer aucune donnée sensible ou perçue comme sensible au sens de l’article 9 et 10 du RGPD qui ne seraient pas nécessaires au traitement.
+      </p>
+
+      <h2 className='text-m-bold text-primary mt-10 mb-4'>
+      Droit applicable et attribution de compétence
+      </h2>
+        <p className='mb-4'>
+          Les Conditions Générales d'Utilisation sont régies par le droit français. Toute difficulté relative à la validité, l'application ou l'interprétation des Conditions Générales d'Utilisation seront soumises, à défaut d'accord amiable, à la compétence du Tribunal Administratif de Paris, auquel les parties attribuent compétence territoriale, quel que soit le lieu d'exécution de la Plateforme ou le domicile du défendeur. Cette attribution de compétence s'applique également en cas de procédure en référé, de pluralité de défendeurs ou d'appel en garantie.
+          </p>
     </>
   )
 }
