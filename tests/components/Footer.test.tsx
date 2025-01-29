@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/dom'
-import { render, RenderResult } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import React from 'react'
 
 import Footer from 'components/layouts/Footer'
@@ -65,7 +65,7 @@ describe('<Footer/>', () => {
     //THEN
     expect(
       screen.getByRole('link', {
-        name: "Niveau d'accessibilité: partiellement conforme (nouvelle fenêtre)",
+        name: "Niveau d'accessibilité: non conforme (nouvelle fenêtre)",
       })
     ).toHaveAttribute(
       'href',

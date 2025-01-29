@@ -19,7 +19,7 @@ export const liensFooterCEJ = [
 export const liensFooterPassEmploi = [
   {
     url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_accessibilite/',
-    label: "Niveau d'accessibilité: partiellement conforme",
+    label: "Niveau d'accessibilité: non conforme",
   },
   {
     url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_conditions_generales',
