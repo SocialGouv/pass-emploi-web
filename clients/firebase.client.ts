@@ -676,7 +676,7 @@ function createFirebaseMessage(
     | CreateFirebaseMessageCommentaireAction
 ): FirebaseMessage {
   const type: TypeMessage = TypeMessage.MESSAGE
-  let { encryptedText, iv } = data.message
+  const { encryptedText, iv } = data.message
   const firebaseMessage: FirebaseMessage = {
     content: encryptedText,
     iv,
@@ -716,7 +716,7 @@ function createFirebaseMessage(
 function createFirebaseMessageImportant(
   data: CreateFirebaseMessageImportant
 ): FirebaseMessageImportant {
-  let { encryptedText, iv } = data.message
+  const { encryptedText, iv } = data.message
   return {
     content: encryptedText,
     iv,

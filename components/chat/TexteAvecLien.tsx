@@ -30,7 +30,7 @@ export default function TexteAvecLien({
 }
 
 function formateTexteAvecLien(texteAFormater: string, lighten?: boolean) {
-  const messageFormate = texteAFormater.split(/\r?\n|\s+/).map((mot) => {
+  const messageFormate = texteAFormater.split(/(\r?\n|\s+)/).map((mot) => {
     if (detecteLien(mot)) {
       return (
         `<a id="lienExterne">` +
@@ -73,7 +73,7 @@ function formateTexteAvecLien(texteAFormater: string, lighten?: boolean) {
     },
   }
 
-  return parse(messageFormate.join(' '), options)
+  return parse(messageFormate.join(''), options)
 }
 
 function confirmationRedirectionLienExterne(
