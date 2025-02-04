@@ -19,7 +19,7 @@ describe('LogoutPage server side', () => {
       render(await Logout())
 
       // Then
-      expect(LogoutPage).toHaveBeenCalledWith({ callbackUrl: '/login/cej' }, undefined)
+      expect(LogoutPage).toHaveBeenCalledWith({ callbackUrl: '/login' }, undefined)
     })
   })
 
@@ -35,7 +35,7 @@ describe('LogoutPage server side', () => {
 
       // Then
       expect(LogoutPage).toHaveBeenCalledWith(
-        { callbackUrl: '/login/passemploi' },
+        { callbackUrl: '/login/france-travail/dispositifs' },
         undefined
       )
     })

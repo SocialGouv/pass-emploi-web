@@ -7,8 +7,8 @@ import React from 'react'
 import LoginHubPage from 'app/(connexion)/login/LoginHubPage'
 import { LoginErrorMessageProvider } from 'utils/auth/loginErrorMessageContext'
 
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
+jest.mock('utils/auth/auth', () => ({
+  signin: jest.fn(),
 }))
 
 describe('LoginHubPage client side', () => {
@@ -38,26 +38,31 @@ describe('LoginHubPage client side', () => {
       expect(results!).toHaveNoViolations()
     })
 
-    it('devrait afficher un titre de niveau 1', () => {
+    it('affiche un titre de niveau 1', () => {
       expect(
         screen.getByRole('heading', {
           level: 1,
-          name: "Connectez-vous à l'espace conseiller",
+          name: 'Bienvenue sur le portail CEJ et Pass emploi',
         })
       ).toBeInTheDocument()
     })
 
-    it('devrait avoir 2 liens', () => {
-      const lienCEJ = screen.getByRole('link', {
-        name: 'Se connecter à l’application du contrat d’engagement jeune',
-      })
-      const lienPassEmploi = screen.getByRole('link', {
-        name: 'Se connecter à l’application pass emploi',
-      })
-
-      //THEN
-      expect(lienCEJ).toHaveAttribute('href', '/login/cej')
-      expect(lienPassEmploi).toHaveAttribute('href', '/login/passemploi')
+    it('a 2 boutons et un lien', () => {
+      expect(
+        screen.getByRole('button', {
+          name: 'Connexion Mission locale',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', {
+          name: 'Connexion Conseil départemental',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: 'Connexion France Travail',
+        })
+      ).toHaveAttribute('href', '/login/france-travail/dispositifs')
     })
   })
 })

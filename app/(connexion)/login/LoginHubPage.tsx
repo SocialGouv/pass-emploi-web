@@ -1,65 +1,63 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import React from 'react'
 
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import LoginHeader from 'components/LoginHeader'
+import LoginButton from 'components/ui/Button/LoginButton'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
 function LoginHubPage() {
-  const [errorMsg] = useLoginErrorMessage()
+  const [errorMsg, setErrorMsg] = useLoginErrorMessage()
+  const searchParams = useSearchParams()
+
+  async function handleSignin(provider: string) {
+    await signin(
+      provider,
+      setErrorMsg,
+      searchParams.get('redirectUrl') ?? undefined
+    )
+  }
 
   return (
-    <div className='grow flex flex-col justify-center bg-primary_lighten'>
-      <div className='bg-white rounded-l shadow-m px-12 py-12 mx-auto relative'>
-        <header role='banner' className='mb-6'>
-          <h1 className='text-xl-bold text-primary_darken text-center mb-6'>
-            Connectez-vous à l&apos;espace conseiller
-          </h1>
-          <p className='text-m-regular text-primary_darken text-center'>
-            Sélectionnez votre application
-          </p>
-        </header>
+    <>
+      <LoginHeader
+        title='Bienvenue sur le portail CEJ et Pass emploi'
+        subtitle='À quelle structure appartenez-vous ?'
+      />
 
-        <main role='main' className='flex flex-col gap-4'>
-          {errorMsg && <FailureAlert label={errorMsg} />}
+      <main role='main'>
+        {errorMsg && <FailureAlert label={errorMsg} />}
 
-          <Link
-            className='flex items-center justify-center border-2 border-primary p-2 rounded-base shadow-base hover:bg-primary_lighten'
-            href='/login/cej'
-          >
-            <span className='sr-only'>
-              Se connecter à l’application du contrat d’engagement jeune
-            </span>
-            <IllustrationComponent
-              name={IllustrationName.LogoCEJ}
-              className='m-auto h-[90px] fill-primary_darken'
-              focusable={false}
-              aria-hidden={true}
+        <ul className='m-auto flex flex-col gap-8 max-w-[320px]'>
+          <li>
+            <LoginButton
+              label='Mission locale'
+              illustrationName={IllustrationName.LogoMilo}
+              onClick={() => handleSignin('similo-conseiller')}
             />
-          </Link>
-
-          <Link
-            className='flex items-center justify-center border-2 border-primary p-2 rounded-base shadow-base hover:bg-primary_lighten'
-            href='/login/passemploi'
-          >
-            <span className='sr-only'>
-              Se connecter à l’application pass emploi
-            </span>
-            <IllustrationComponent
-              name={IllustrationName.LogoPassemploi}
-              className='m-auto h-[90px] fill-primary_darken'
-              focusable={false}
-              aria-hidden={true}
+          </li>
+          <li>
+            <LoginButton
+              label='France Travail'
+              illustrationName={IllustrationName.LogoFT}
+              href='/login/france-travail/dispositifs'
             />
-          </Link>
-        </main>
-      </div>
-    </div>
+          </li>
+          <li>
+            <LoginButton
+              label='Conseil départemental'
+              illustrationName={IllustrationName.LogoCD}
+              onClick={() => handleSignin('conseildepartemental-conseiller')}
+            />
+          </li>
+        </ul>
+      </main>
+    </>
   )
 }
 

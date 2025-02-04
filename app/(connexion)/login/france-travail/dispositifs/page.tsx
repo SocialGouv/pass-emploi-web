@@ -1,17 +1,18 @@
 import { Metadata } from 'next'
 import React from 'react'
 
+import LoginFranceTravailDispositifsPage from 'app/(connexion)/login/france-travail/dispositifs/LoginFranceTravailDispositifsPage'
 import {
   LoginSearchParams,
   redirectIfAlreadyConnected,
 } from 'app/(connexion)/login/layout'
-import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
 
 export const metadata: Metadata = {
-  title: "Connexion dans l'espace conseiller - Outil du pass emploi",
+  title:
+    'Sélection du dispositif France Travail - Outil du Contrat d’Engagement Jeune et du pass emploi',
 }
 
-export default async function LoginPassEmploi({
+export default async function LoginFranceTravailDispositifs({
   searchParams,
 }: {
   searchParams?: Promise<LoginSearchParams>
@@ -19,7 +20,7 @@ export default async function LoginPassEmploi({
   await redirectIfAlreadyConnected(await searchParams)
 
   return (
-    <LoginPassEmploiPage
+    <LoginFranceTravailDispositifsPage
       ssoAvenirProEstActif={
         process.env.NEXT_PUBLIC_ENABLE_AVENIR_PRO_SSO === 'true'
       }
