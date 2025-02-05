@@ -8,6 +8,7 @@ export type Session = {
     lieu: string
     nbPlacesDisponibles?: number
     estVisible: boolean
+    autoinscription: boolean
     animateur?: string
     commentaire?: string
     statut: string
