@@ -6,8 +6,8 @@ import ButtonLink from '../../components/ui/Button/ButtonLink'
 
 type AuthErrorPageProps = {
   erreur: string
-  codeErreur: string | undefined
-  lienFormulaire: string | undefined
+  codeErreur?: string
+  lienFormulaire?: string
 }
 function AuthErrorPage({
   erreur,
