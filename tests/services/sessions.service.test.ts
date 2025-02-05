@@ -40,6 +40,7 @@ describe('SessionsApiService', () => {
           dateHeureDebut: dateDebut.toISO(),
           dateHeureFin: dateFin.toISO(),
           estVisible: true,
+          autoinscription: true,
           type: {
             code: 'COLLECTIVE_INFORMATION',
             label: 'info coll i-milo',
@@ -54,6 +55,7 @@ describe('SessionsApiService', () => {
           dateHeureDebut: dateDebut.toISO(),
           dateHeureFin: dateFin.toISO(),
           estVisible: false,
+          autoinscription: false,
           type: {
             code: 'WORKSHOP',
             label: 'Atelier i-milo',
@@ -88,7 +90,7 @@ describe('SessionsApiService', () => {
           type: 'info coll i-milo',
           statut: StatutAnimationCollective.Close,
           isSession: true,
-          estCache: false,
+          etatVisibilite: 'auto-inscription',
           nombreParticipants: 2,
         },
         {
@@ -100,7 +102,7 @@ describe('SessionsApiService', () => {
           type: 'Atelier i-milo',
           statut: StatutAnimationCollective.AVenir,
           isSession: true,
-          estCache: true,
+          etatVisibilite: 'non-visible',
           nombreParticipants: 4,
         },
       ]
