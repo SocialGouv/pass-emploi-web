@@ -12,16 +12,15 @@ type BeneficiaireItemListProps = {
     statut: string
     commentaire?: string
   }
-  dateLimiteDepassee: boolean
-  onDesinscrire: (id: string) => void
-  onReinscrire: (id: string) => void
+  actions?: {
+    onDesinscrire: (id: string) => void
+    onReinscrire: (id: string) => void
+  }
 }
 
 export default function BeneficiaireItemList({
   beneficiaire,
-  dateLimiteDepassee,
-  onDesinscrire,
-  onReinscrire,
+  actions,
 }: BeneficiaireItemListProps) {
   const beneficiaireEstInscrit = beneficiaire.statut === 'INSCRIT'
   const beneficiaireEstPresent = beneficiaire.statut === 'PRESENT'
@@ -64,14 +63,14 @@ export default function BeneficiaireItemList({
         </div>
       </div>
 
-      {!dateLimiteDepassee && (
+      {actions && (
         <>
           {beneficiaireEstInscrit && (
             <Button
               style={ButtonStyle.SECONDARY}
               label={`Désinscrire ${beneficiaire.value}`}
               type='button'
-              onClick={() => onDesinscrire(beneficiaire.id)}
+              onClick={() => actions.onDesinscrire(beneficiaire.id)}
             >
               Désinscrire
             </Button>
@@ -82,7 +81,7 @@ export default function BeneficiaireItemList({
               style={ButtonStyle.TERTIARY}
               label={`Réinscrire ${beneficiaire.value}`}
               type='button'
-              onClick={() => onReinscrire(beneficiaire.id)}
+              onClick={() => actions.onReinscrire(beneficiaire.id)}
             >
               Réinscrire
             </Button>

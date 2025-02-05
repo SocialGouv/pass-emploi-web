@@ -67,8 +67,12 @@ function DetailsSessionPage({
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
   )
-  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
+  const [autoinscriptionSession, setAutoinscriptionSession] = useState<boolean>(
+    session.session.autoinscription
+  )
+  const [loadingChangerConfiguration, setLoadingChangerConfiguration] =
     useState<boolean>(false)
+
   const [nbPlacesDisponibles, setNbPlacesDisponibles] = useState<
     ValueWithError<number | undefined>
   >({
@@ -111,7 +115,7 @@ function DetailsSessionPage({
   }
 
   async function handleChangerVisibiliteSession() {
-    setLoadingChangerVisibilite(true)
+    setLoadingChangerConfiguration(true)
 
     const { changerVisibiliteSession } = await import(
       'services/sessions.service'
@@ -119,12 +123,37 @@ function DetailsSessionPage({
     await changerVisibiliteSession(session.session.id, !visibiliteSession)
 
     setVisibiliteSession(!visibiliteSession)
-    setLoadingChangerVisibilite(false)
+    setLoadingChangerConfiguration(false)
 
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Session i-milo',
-      action: 'clic visibilité agenda',
+      action: 'clic visibilité',
+      nom: '',
+      aDesBeneficiaires,
+    })
+  }
+
+  async function handleChangerAutoinscriptionSession() {
+    setLoadingChangerConfiguration(true)
+    const nouvelleAutoinscription = !autoinscriptionSession
+
+    const { changerAutoinscriptionSession } = await import(
+      'services/sessions.service'
+    )
+    await changerAutoinscriptionSession(
+      session.session.id,
+      nouvelleAutoinscription
+    )
+
+    setAutoinscriptionSession(nouvelleAutoinscription)
+    if (nouvelleAutoinscription) setVisibiliteSession(true)
+    setLoadingChangerConfiguration(false)
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Session i-milo',
+      action: 'clic autoinscription',
       nom: '',
       aDesBeneficiaires,
     })
@@ -445,8 +474,8 @@ function DetailsSessionPage({
       </section>
 
       <form>
-        <Etape numero={1} titre='Gérez la visibilité'>
-          <div className='flex items-center gap-1'>
+        <Etape numero={1} titre='Configurez la session'>
+          <div className='grid grid-cols-[1fr,auto] auto-rows-fr items-center'>
             <Label htmlFor='visibilite-session'>
               Rendre visible la session aux bénéficiaires de la Mission Locale
             </Label>
@@ -454,7 +483,18 @@ function DetailsSessionPage({
               id='visibilite-session'
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
-              disabled={loadingChangerVisibilite}
+              disabled={loadingChangerConfiguration}
+            />
+
+            <Label htmlFor='autoinscription-session'>
+              Les bénéficiaires peuvent s’inscrire en autonomie à cette session
+              (dans la limite du nombre maximum de participants)
+            </Label>
+            <Switch
+              id='autoinscription-session'
+              checked={autoinscriptionSession}
+              onChange={handleChangerAutoinscriptionSession}
+              disabled={loadingChangerConfiguration}
             />
           </div>
         </Etape>
@@ -525,7 +565,7 @@ function DetailsSessionPage({
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul
-              aria-label='Bénéficiaires sélectionnés'
+              aria-label='Bénéficiaires inscrits'
               id='selected-beneficiaires'
               className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
             >
@@ -537,9 +577,14 @@ function DetailsSessionPage({
                 >
                   <BeneficiaireItemList
                     beneficiaire={beneficiaire}
-                    dateLimiteDepassee={dateLimiteInscriptionDepassee}
-                    onDesinscrire={desinscrireBeneficiaire}
-                    onReinscrire={reinscrireBeneficiaire}
+                    actions={
+                      !dateLimiteInscriptionDepassee
+                        ? {
+                            onDesinscrire: desinscrireBeneficiaire,
+                            onReinscrire: reinscrireBeneficiaire,
+                          }
+                        : undefined
+                    }
                   />
                 </li>
               ))}

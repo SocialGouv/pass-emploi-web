@@ -50,7 +50,7 @@ export function AnimationCollectiveRow({
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Session i-milo',
-      action: 'clic visibilité',
+      action: 'clic visibilité agenda',
       nom: '',
       aDesBeneficiaires: portefeuille.length > 0,
     })

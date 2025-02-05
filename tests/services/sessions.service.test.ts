@@ -13,6 +13,7 @@ import {
   SessionMiloJson,
 } from 'interfaces/json/session'
 import {
+  changerAutoinscriptionSession,
   changerInscriptionsSession,
   changerVisibiliteSession,
   cloreSession,
@@ -275,6 +276,32 @@ describe('SessionsApiService', () => {
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
         { estVisible: true },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.changerAutoinscriptionSession', () => {
+    it('modifie l’autoinscription à la session et sa visibilité', async () => {
+      // When
+      await changerAutoinscriptionSession('idSession', true)
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        { autoinscription: true, visibilite: true },
+        'accessToken'
+      )
+    })
+
+    it('enlève l’autoinscription à la session mais pas sa visibilité', async () => {
+      // When
+      await changerAutoinscriptionSession('idSession', false)
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        { autoinscription: false, visibilite: undefined },
         'accessToken'
       )
     })

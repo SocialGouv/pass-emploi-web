@@ -49,6 +49,7 @@ export type DetailsSessionJson = {
     lieu: string
     nbPlacesDisponibles?: number
     estVisible: boolean
+    autoinscription: boolean
     animateur?: string
     commentaire?: string
     statut: StatutAnimationCollectiveJson

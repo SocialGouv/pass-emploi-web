@@ -118,9 +118,24 @@ export async function changerVisibiliteSession(
   const session = await getSession()
   const accessToken = session!.accessToken
   const idConseiller = session!.user.id
-  const payload = {
-    estVisible: estVisible,
-  }
+  const payload = { estVisible }
+
+  return modifierInformationsSession(
+    idConseiller,
+    idSession,
+    payload,
+    accessToken
+  )
+}
+
+export async function changerAutoinscriptionSession(
+  idSession: string,
+  autoinscription: boolean
+): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+  const payload = { autoinscription, visibilite: autoinscription || undefined }
 
   return modifierInformationsSession(
     idConseiller,
@@ -193,6 +208,7 @@ async function modifierInformationsSession(
   idSession: string,
   payload: {
     estVisible?: boolean
+    autoinscription?: boolean
     inscriptions?: InformationBeneficiaireSession[]
   },
   accessToken: string
@@ -229,6 +245,7 @@ function jsonToSession(json: DetailsSessionJson): Session {
       dateHeureFin: json.session.dateHeureFin,
       lieu: json.session.lieu,
       estVisible: json.session.estVisible,
+      autoinscription: json.session.autoinscription,
       statut: jsonToStatutSession(json.session.statut),
     },
     offre: {
