@@ -12,6 +12,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -40,6 +41,9 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
 
   const router = useRouter()
   const [alerte] = useAlerte()
+
+  const [showNewsAutoinscription, setShowNewsAutoinscription] =
+    useState<boolean>(true)
 
   const ongletProps: {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -184,7 +188,18 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
         )}
       </PageActionsPortal>
 
-      <TabList label='Vos agendas' className='mb-6'>
+      {showNewsAutoinscription && (
+        <InformationMessage
+          label='Nouveauté : les sessions i-milo sont ouvertes à l’auto-inscription pour les bénéficiaires !'
+          iconName={IconName.Celebration}
+          onAcknowledge={() => setShowNewsAutoinscription(false)}
+        />
+      )}
+
+      <TabList
+        label='Vos agendas'
+        className={`mb-6 ${showNewsAutoinscription ? 'mt-6' : ''}`}
+      >
         <Tab
           label={
             'Agenda ' +
