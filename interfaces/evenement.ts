@@ -13,6 +13,7 @@ export enum StatutAnimationCollective {
   Close = 'Close',
 }
 
+export type EtatVisibilite = 'visible' | 'non-visible' | 'auto-inscription'
 export type AnimationCollective = {
   id: string
   type: string
@@ -20,9 +21,9 @@ export type AnimationCollective = {
   date: DateTime
   duree: number
   statut: StatutAnimationCollective
+  etatVisibilite: EtatVisibilite
   sousTitre?: string
   isSession?: boolean
-  estCache?: boolean
   nombreParticipants: number
   nombreMaxParticipants?: number
 }
