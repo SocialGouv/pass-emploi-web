@@ -155,6 +155,7 @@ export function uneAnimationCollective(
     statut: StatutAnimationCollective.AVenir,
     nombreParticipants: 1,
     nombreMaxParticipants: 10,
+    etatVisibilite: 'visible',
   }
   return { ...defaults, ...overrides }
 }
