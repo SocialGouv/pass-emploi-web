@@ -45,7 +45,7 @@ function LoginHubPage() {
             <LoginButton
               label='France Travail'
               illustrationName={IllustrationName.LogoFT}
-              href='/login/france-travail/dispositifs'
+              href='/login/france-travail'
             />
           </li>
           <li>

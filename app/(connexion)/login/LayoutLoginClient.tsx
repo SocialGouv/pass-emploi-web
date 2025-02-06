@@ -63,7 +63,7 @@ export default function LayoutLoginClient({
             <div className='max-w-[1020px] bg-white rounded-l p-16 mx-auto relative'>
               {!pageEstHubLogin && (
                 <Link
-                  href='/login'
+                  href='/login' // FIXME
                   className='flex items-center text-s-regular text-content_color underline hover:text-primary'
                 >
                   <IconComponent
