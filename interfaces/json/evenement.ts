@@ -148,6 +148,7 @@ export function jsonToAnimationCollective(
     duree: json.duration,
     statut: jsonToStatutAnimationCollective(json.statut),
     nombreParticipants: json.jeunes.length,
+    etatVisibilite: 'visible',
   }
 
   if (json.nombreMaxParticipants)

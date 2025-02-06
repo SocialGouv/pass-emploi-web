@@ -16,6 +16,7 @@ import { modifierAgence } from 'services/conseiller.service'
 import { getRendezVousEtablissement } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import {
+  changerAutoinscriptionSession,
   changerVisibiliteSession,
   getSessionsMissionLocaleClientSide,
 } from 'services/sessions.service'
@@ -79,9 +80,8 @@ describe('Agenda - Onglet établissement', () => {
         titre: 'Titre offre session milo',
         sousTitre: 'Nom session',
         isSession: true,
-        estCache: false,
+        etatVisibilite: 'visible',
       }),
-
       uneAnimationCollective({
         id: 'id-session-2',
         type: 'Atelier i-milo 2',
@@ -90,7 +90,17 @@ describe('Agenda - Onglet établissement', () => {
         titre: 'Titre offre session milo 2',
         sousTitre: 'Nom session',
         isSession: true,
-        estCache: true,
+        etatVisibilite: 'non-visible',
+      }),
+      uneAnimationCollective({
+        id: 'id-session-3',
+        type: 'Atelier i-milo 3',
+        date: SEPTEMBRE_1_14H.plus({ day: 5 }),
+        duree: 60,
+        titre: 'Titre offre session milo 3',
+        sousTitre: 'Nom session',
+        isSession: true,
+        etatVisibilite: 'auto-inscription',
       }),
     ])
     ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
@@ -140,7 +150,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -314,7 +324,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -368,7 +378,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -395,12 +405,12 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
     })
 
-    it('affiche si une session n’est pas visible', async () => {
+    it('affiche la visibilité des sessions', async () => {
       //Then
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -424,18 +434,29 @@ describe('Agenda - Onglet établissement', () => {
           name: 'Visibilité de l’événement Titre offre session milo 2',
         })
       ).toHaveTextContent('Non visible')
+
+      expect(
+        within(
+          screen.getByRole('row', {
+            name: /Titre offre session milo 3 Nom session/,
+          })
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo 3',
+        })
+      ).toHaveTextContent('Auto-inscription')
     })
 
     it('permet de modifier la visibilité d’une session', async () => {
-      //Then
+      // Given
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
 
+      // When
       await userEvent.selectOptions(
         within(
           screen.getByRole('row', {
@@ -447,6 +468,7 @@ describe('Agenda - Onglet établissement', () => {
         'Non visible'
       )
 
+      // Then
       expect(
         within(
           screen.getByRole('row', {
@@ -456,11 +478,49 @@ describe('Agenda - Onglet établissement', () => {
           name: 'Visibilité de l’événement Titre offre session milo',
         })
       ).toHaveTextContent('Non visible')
-
       expect(changerVisibiliteSession).toHaveBeenCalledWith(
         'id-session-1',
         false
       )
+    })
+
+    it('permet de modifier l’autoinscription à une session', async () => {
+      // Given
+      await waitFor(() => {
+        expect(
+          screen.getByRole('table', {
+            name: '6 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+          })
+        ).toBeInTheDocument()
+      })
+
+      // When
+      await userEvent.selectOptions(
+        within(
+          screen.getByRole('row', {
+            name: /Titre offre session milo Nom session/,
+          })
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        }),
+        'Auto-inscription'
+      )
+
+      // Then
+      expect(
+        within(
+          screen.getByRole('row', {
+            name: /Titre offre session milo Nom session/,
+          })
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
+      ).toHaveTextContent('Auto-inscription')
+      expect(changerAutoinscriptionSession).toHaveBeenCalledWith(
+        'id-session-1',
+        true
+      )
+      expect(changerVisibiliteSession).not.toHaveBeenCalled()
     })
 
     it('permet de changer de période de 7 jours', async () => {
