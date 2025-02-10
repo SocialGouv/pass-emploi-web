@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
         destination: '/',
         permanent: true,
       },
+      { source: '/login/cej', destination: '/login', permanent: true },
+      { source: '/login/passemploi', destination: '/login', permanent: true },
       {
         source: '/mes-jeunes/milo',
         destination: '/mes-jeunes',
