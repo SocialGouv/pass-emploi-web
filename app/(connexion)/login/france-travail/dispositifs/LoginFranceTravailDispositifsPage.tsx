@@ -32,7 +32,7 @@ function LoginFranceTravailDispositifsPage({
     <>
       <LoginHeader
         title='Connexion conseiller France Travail'
-        subtitle='Choisissez le dispositif auquel vous êtes rattaché'
+        subtitle='Choisissez votre dispositif'
       />
 
       <main role='main'>
