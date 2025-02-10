@@ -29,7 +29,7 @@ function LoginFranceTravailPage() {
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <div className='grid grid-cols-2'>
+        <div className='grid grid-cols-2 gap-2'>
           <div className='p-14 pb-20 rounded-l border border-primary_lighten text-center'>
             <span
               id='connexion-unique--description'
