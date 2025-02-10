@@ -41,7 +41,7 @@ function LoginFranceTravailDispositifsPage({
         <ul className='grid grid-cols-3 auto-rows-fr gap-8'>
           <li>
             <LoginButton
-              label='Contrat d’engagement jeune'
+              label='CEJ'
               prefix='France Travail'
               onClick={() => handleSignin('pe-conseiller')}
             />
@@ -55,7 +55,7 @@ function LoginFranceTravailDispositifsPage({
           </li>
           <li>
             <LoginButton
-              label='Accompagnement intensif jeunes'
+              label='AIJ'
               prefix='France Travail'
               onClick={() => handleSignin('pe-aij-conseiller')}
             />
