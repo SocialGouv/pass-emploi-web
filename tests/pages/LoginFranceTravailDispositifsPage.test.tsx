@@ -63,7 +63,7 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion France Travail Contrat d’engagement jeune',
+        name: 'Connexion France Travail CEJ',
       })
 
       // When
@@ -97,7 +97,7 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
-        name: 'Connexion France Travail Accompagnement intensif jeunes',
+        name: 'Connexion France Travail AIJ',
       })
 
       // When
