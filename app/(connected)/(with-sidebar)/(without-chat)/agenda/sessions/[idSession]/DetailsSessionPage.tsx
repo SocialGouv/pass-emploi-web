@@ -115,6 +115,7 @@ function DetailsSessionPage({
   }
 
   async function handleChangerVisibiliteSession() {
+    if (autoinscriptionSession) return
     setLoadingChangerConfiguration(true)
 
     const { changerVisibiliteSession } = await import(
@@ -483,7 +484,7 @@ function DetailsSessionPage({
               id='visibilite-session'
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
-              disabled={loadingChangerConfiguration}
+              disabled={loadingChangerConfiguration || autoinscriptionSession}
             />
 
             <Label htmlFor='autoinscription-session'>

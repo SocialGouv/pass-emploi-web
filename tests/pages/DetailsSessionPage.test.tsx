@@ -123,6 +123,7 @@ describe('Détails Session Page Client', () => {
       session: {
         ...unDetailSession().session,
         estVisible: false,
+        autoinscription: false,
       },
     })
 
@@ -177,6 +178,33 @@ describe('Détails Session Page Client', () => {
 
         // Then
         expect(changerVisibiliteSession).toHaveBeenCalledWith('session-1', true)
+        expect(toggleVisibiliteSession).toBeChecked()
+      })
+
+      it('ne change pas la visibilité si l’autoinscription est activée', async () => {
+        // Given
+        ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+        renderWithContexts(
+          <DetailsSessionPage
+            session={{
+              ...sessionInvisible,
+              session: {
+                ...sessionInvisible.session,
+                estVisible: true,
+                autoinscription: true,
+              },
+            }}
+            beneficiairesStructureMilo={[]}
+            returnTo='whatever'
+          />
+        )
+        const toggleVisibiliteSession = getToggleVisibiliteSession()
+
+        // When
+        await userEvent.click(toggleVisibiliteSession)
+
+        // Then
+        expect(changerVisibiliteSession).toHaveBeenCalledTimes(0)
         expect(toggleVisibiliteSession).toBeChecked()
       })
     })
