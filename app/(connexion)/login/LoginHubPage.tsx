@@ -33,7 +33,7 @@ function LoginHubPage() {
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <ul className='m-auto flex flex-col gap-8 max-w-[320px]'>
+        <ul className='m-auto flex flex-col gap-8 max-w-[400px]'>
           <li>
             <LoginButton
               label='Mission locale'

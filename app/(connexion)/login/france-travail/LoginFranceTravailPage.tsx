@@ -29,8 +29,8 @@ function LoginFranceTravailPage() {
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <div className='grid grid-cols-2 gap-2'>
-          <div className='p-14 pb-20 rounded-l border border-primary_lighten text-center'>
+        <div className='flex flex-wrap gap-2'>
+          <div className='flex-[1_1_0px] p-14 pb-20 rounded-l border border-primary_lighten text-center'>
             <span
               id='connexion-unique--description'
               className='text-m-regular text-primary_darken'
@@ -48,12 +48,12 @@ function LoginFranceTravailPage() {
             </button>
           </div>
 
-          <div className='grow rounded-l border border-primary_lighten flex justify-center items-center'>
+          <div className='flex-[1_1_0px] rounded-l border border-primary_lighten flex justify-center items-center'>
             <Link
               href='/login/france-travail/dispositifs'
               className='text-m-regular underline text-primary_darken'
             >
-              Première visite ?
+              Première visite&nbsp;?
             </Link>
           </div>
         </div>

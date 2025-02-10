@@ -63,7 +63,7 @@ describe('LoginFranceTravailPage client side', () => {
     it('affiche un lien pour une première visite', () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Première visite ?' })
+        screen.getByRole('link', { name: 'Première visite ?' })
       ).toHaveAttribute('href', '/login/france-travail/dispositifs')
     })
 
