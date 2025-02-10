@@ -37,6 +37,7 @@ function LoginFranceTravailDispositifsPage({
 
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
+
         <ul className='grid grid-cols-3 auto-rows-fr gap-8'>
           <li>
             <LoginButton

@@ -10,8 +10,7 @@ export default async function Logout() {
   let callbackUrl = '/login'
 
   const session = await getSessionServerSide()
-  if (session && estUserFT(session.user))
-    callbackUrl += '/france-travail/dispositifs'
+  if (session && estUserFT(session.user)) callbackUrl += '/france-travail'
 
   return <LogoutPage callbackUrl={callbackUrl} />
 }

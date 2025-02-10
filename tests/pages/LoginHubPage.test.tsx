@@ -62,7 +62,7 @@ describe('LoginHubPage client side', () => {
         screen.getByRole('link', {
           name: 'Connexion France Travail',
         })
-      ).toHaveAttribute('href', '/login/france-travail/dispositifs')
+      ).toHaveAttribute('href', '/login/france-travail')
     })
   })
 })
