@@ -11,10 +11,12 @@ import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
 type LoginFranceTravailDispositifsPageProps = {
-  ssoAvenirProEstActif?: boolean
+  ssoAccompagnementsIntensifsSontActifs: boolean
+  ssoAvenirProEstActif: boolean
 }
 
 function LoginFranceTravailDispositifsPage({
+  ssoAccompagnementsIntensifsSontActifs,
   ssoAvenirProEstActif,
 }: LoginFranceTravailDispositifsPageProps) {
   const [errorMsg, setErrorMsg] = useLoginErrorMessage()
@@ -60,6 +62,37 @@ function LoginFranceTravailDispositifsPage({
               onClick={() => handleSignin('pe-aij-conseiller')}
             />
           </li>
+          {ssoAccompagnementsIntensifsSontActifs && (
+            <>
+              <li>
+                <LoginButton
+                  label='Accompagnement intensif'
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-accompagnement-intensif-conseiller')
+                  }
+                />
+              </li>
+              <li>
+                <LoginButton
+                  label='Accompagnement global'
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-accompagnement-global-conseiller')
+                  }
+                />
+              </li>
+              <li>
+                <LoginButton
+                  label='Equip’emploi / Equip’recrut'
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-equip-emploi-recrut-conseiller')
+                  }
+                />
+              </li>
+            </>
+          )}
           {ssoAvenirProEstActif && (
             <li>
               <LoginButton

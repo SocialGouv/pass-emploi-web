@@ -58,7 +58,7 @@ function extraireEtiquettes(
     .map((tag) => ({ id: tag.id, nom: tag.name, couleur: tag.description }))
 }
 
-function getUrlActualites(structure: StructureConseiller) {
+function getUrlActualites(structure: StructureConseiller): string {
   switch (structure) {
     case StructureConseiller.MILO:
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_MILO_LINK as string
@@ -72,5 +72,9 @@ function getUrlActualites(structure: StructureConseiller) {
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CD_LINK as string
     case StructureConseiller.AVENIR_PRO:
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_AVENIR_PRO_LINK as string
+    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
+    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
+    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+      return '' // TODO
   }
 }

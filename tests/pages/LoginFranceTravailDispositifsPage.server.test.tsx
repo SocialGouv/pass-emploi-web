@@ -46,7 +46,10 @@ describe('LoginFranceTravailDispositifsPage server side', () => {
         'Sélection du dispositif France Travail - Outil du Contrat d’Engagement Jeune et du pass emploi',
     })
     expect(LoginFranceTravailDispositifsPage).toHaveBeenCalledWith(
-      { ssoAvenirProEstActif: true },
+      {
+        ssoAccompagnementsIntensifsSontActifs: true,
+        ssoAvenirProEstActif: true,
+      },
       undefined
     )
   })

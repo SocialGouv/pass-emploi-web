@@ -26,7 +26,10 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
     beforeEach(async () => {
       ;({ container } = render(
         <LoginErrorMessageProvider state={[undefined, setErrorMsg]}>
-          <LoginFranceTravailDispositifsPage ssoAvenirProEstActif={true} />
+          <LoginFranceTravailDispositifsPage
+            ssoAccompagnementsIntensifsSontActifs={true}
+            ssoAvenirProEstActif={true}
+          />
         </LoginErrorMessageProvider>
       ))
     })
@@ -57,7 +60,7 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
         screen.getAllByRole('button', {
           name: /Connexion France Travail/,
         })
-      ).toHaveLength(4)
+      ).toHaveLength(7)
     })
 
     it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
@@ -123,6 +126,57 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
       // Then
       expect(signin).toHaveBeenCalledWith(
         'avenirpro-conseiller',
+        setErrorMsg,
+        'redirectUrl'
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller FT Accompagnement intensif", async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Connexion France Travail Accompagnement intensif',
+      })
+
+      // When
+      await userEvent.click(button)
+
+      // Then
+      expect(signin).toHaveBeenCalledWith(
+        'ft-accompagnement-intensif-conseiller',
+        setErrorMsg,
+        'redirectUrl'
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller FT Accompagnement global", async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Connexion France Travail Accompagnement global',
+      })
+
+      // When
+      await userEvent.click(button)
+
+      // Then
+      expect(signin).toHaveBeenCalledWith(
+        'ft-accompagnement-global-conseiller',
+        setErrorMsg,
+        'redirectUrl'
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller FT Equip’emploi Equip’recrut", async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Connexion France Travail Equip’emploi / Equip’recrut',
+      })
+
+      // When
+      await userEvent.click(button)
+
+      // Then
+      expect(signin).toHaveBeenCalledWith(
+        'ft-equip-emploi-recrut-conseiller',
         setErrorMsg,
         'redirectUrl'
       )
