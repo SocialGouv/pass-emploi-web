@@ -98,7 +98,7 @@ export function trackPage({
     push([
       'setCustomDimension',
       numeroDimensionAvecBeneficiaires,
-      avecBeneficiairesDimencsionString(aDesBeneficiaires),
+      avecBeneficiairesDimensionString(aDesBeneficiaires),
     ])
 
     push(['setDocumentTitle', customTitle || document.title])
@@ -120,7 +120,7 @@ export function trackEvent(trackEventSettings: TrackEventSettings): void {
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(trackEventSettings.aDesBeneficiaires),
+    avecBeneficiairesDimensionString(trackEventSettings.aDesBeneficiaires),
   ])
 
   push([
@@ -143,7 +143,7 @@ export function trackEventBeneficiaire(
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(null),
+    avecBeneficiairesDimensionString(null),
   ])
 
   push([
@@ -184,7 +184,7 @@ export function trackSSR({
     urlref: refererUrl,
     dimension1: 'conseiller',
     dimension2: userStructureDimensionString(structure),
-    dimension3: avecBeneficiairesDimencsionString(aDesBeneficiaires),
+    dimension3: avecBeneficiairesDimensionString(aDesBeneficiaires),
   })
 }
 
@@ -204,12 +204,18 @@ function userStructureDimensionString(
       return 'Conseiller départemental'
     case StructureConseiller.AVENIR_PRO:
       return 'Avenir Pro'
+    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
+      return 'France Travail Accompagnement intensif'
+    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
+      return 'France Travail Accompagnement global'
+    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+      return 'France Travail Equip’emploi / Equip’recrut'
     case null:
       return 'visiteur'
   }
 }
 
-function avecBeneficiairesDimencsionString(
+function avecBeneficiairesDimensionString(
   aDesBeneficiaires: boolean | null
 ): 'oui' | 'non' | 'non applicable' {
   if (aDesBeneficiaires === null) return 'non applicable'

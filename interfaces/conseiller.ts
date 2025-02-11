@@ -8,6 +8,9 @@ export enum StructureConseiller {
   POLE_EMPLOI_AIJ = 'POLE_EMPLOI_AIJ',
   CONSEIL_DEPT = 'CONSEIL_DEPT',
   AVENIR_PRO = 'AVENIR_PRO',
+  FT_ACCOMPAGNEMENT_INTENSIF = 'FT_ACCOMPAGNEMENT_INTENSIF',
+  FT_ACCOMPAGNEMENT_GLOBAL = 'FT_ACCOMPAGNEMENT_GLOBAL',
+  FT_EQUIP_EMPLOI_RECRUT = 'FT_EQUIP_EMPLOI_RECRUT',
 }
 
 export enum UserType {
@@ -62,6 +65,9 @@ export function estPassEmploi(
     StructureConseiller.POLE_EMPLOI_AIJ,
     StructureConseiller.CONSEIL_DEPT,
     StructureConseiller.AVENIR_PRO,
+    StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF,
+    StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL,
+    StructureConseiller.FT_EQUIP_EMPLOI_RECRUT,
   ].includes(conseiller.structure)
 }
 
@@ -86,7 +92,10 @@ export function estUserPassEmploi(user: Session.HydratedUser): boolean {
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     user.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
     user.structure === StructureConseiller.CONSEIL_DEPT ||
-    user.structure === StructureConseiller.AVENIR_PRO
+    user.structure === StructureConseiller.AVENIR_PRO ||
+    user.structure === StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF ||
+    user.structure === StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL ||
+    user.structure === StructureConseiller.FT_EQUIP_EMPLOI_RECRUT
   )
 }
 
@@ -95,7 +104,10 @@ export function estUserFT(user: Session.HydratedUser): boolean {
     user.structure === StructureConseiller.POLE_EMPLOI ||
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     user.structure === StructureConseiller.POLE_EMPLOI_AIJ ||
-    user.structure === StructureConseiller.AVENIR_PRO
+    user.structure === StructureConseiller.AVENIR_PRO ||
+    user.structure === StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF ||
+    user.structure === StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL ||
+    user.structure === StructureConseiller.FT_EQUIP_EMPLOI_RECRUT
   )
 }
 

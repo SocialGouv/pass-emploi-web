@@ -124,7 +124,9 @@ function erreurConseiller(
   }
 }
 
-function lienFormulaireConseiller(structureUtilisateur: string) {
+function lienFormulaireConseiller(
+  structureUtilisateur: string
+): string | undefined {
   switch (structureUtilisateur) {
     case StructureConseiller.MILO:
       return (
@@ -140,6 +142,9 @@ function lienFormulaireConseiller(structureUtilisateur: string) {
     case StructureConseiller.POLE_EMPLOI_AIJ:
     case StructureConseiller.CONSEIL_DEPT:
     case StructureConseiller.AVENIR_PRO:
+    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
+    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
+    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
       return (
         (process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string) +
         'assistance/'
@@ -150,15 +155,18 @@ function lienFormulaireConseiller(structureUtilisateur: string) {
 function erreurIdp(structureUtilisateur?: string) {
   const idpName = (() => {
     switch (structureUtilisateur) {
-      case 'MILO':
+      case StructureConseiller.MILO:
         return 'i-Milo'
-      case 'POLE_EMPLOI':
-      case 'POLE_EMPLOI_BRSA':
-      case 'POLE_EMPLOI_AIJ':
+      case StructureConseiller.POLE_EMPLOI:
+      case StructureConseiller.POLE_EMPLOI_BRSA:
+      case StructureConseiller.POLE_EMPLOI_AIJ:
+      case StructureConseiller.AVENIR_PRO:
+      case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
+      case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
+      case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
       case 'FRANCE_TRAVAIL':
-      case 'AVENIR_PRO':
         return 'France Travail Connect'
-      case 'CONSEIL_DEPT':
+      case StructureConseiller.CONSEIL_DEPT:
       default:
         return 'du fournisseur d’identité'
     }

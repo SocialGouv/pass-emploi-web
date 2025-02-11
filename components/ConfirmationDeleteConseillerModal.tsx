@@ -30,6 +30,12 @@ export default function ConfirmationDeleteConseillerModal({
         return 'BRSA'
       case StructureConseiller.POLE_EMPLOI_AIJ:
         return 'AIJ'
+      case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
+        return 'Accompagnement intensif'
+      case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
+        return 'Accompagnement global'
+      case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+        return 'Equip’emploi / Equip’recrut'
       case StructureConseiller.MILO:
       case StructureConseiller.POLE_EMPLOI:
         return 'CEJ'
