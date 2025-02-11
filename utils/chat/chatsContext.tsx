@@ -14,6 +14,7 @@ import {
   BeneficiaireEtChat,
   compareBeneficiaireChat,
 } from 'interfaces/beneficiaire'
+import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 import { observeConseillerChats } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -34,7 +35,6 @@ export function ChatsProvider({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
   const pathname = usePathname()
-  const userStructure = conseiller.structure
 
   const [titleBackup, setTitleBackup] = useState<string | undefined>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
@@ -104,7 +104,7 @@ export function ChatsProvider({
 
     if (hasMessageNonLu && titleBackup === undefined) {
       setTitleBackup(document.title)
-      displayNotificationInBrowserTab(userStructure)
+      displayNotificationInBrowserTab(conseiller)
     }
   }, [hasMessageNonLu, titleBackup])
 
@@ -125,13 +125,13 @@ function aUnNouveauMessage(
   )
 }
 
-function displayNotificationInBrowserTab(userStructure: string) {
+function displayNotificationInBrowserTab(conseiller: Conseiller) {
   const siteTitle = document.title.split(' - ').at(-1)
   document.title = 'Nouveau(x) message(s) - ' + siteTitle
   const faviconLink: HTMLLinkElement =
     document.querySelector("link[rel='icon']")!
 
-  if (userStructure === 'POLE_EMPLOI_BRSA') {
+  if (estPassEmploi(conseiller)) {
     faviconLink.href = '/pass-emploi-favicon-notif.png'
   } else {
     faviconLink.href = '/cej-favicon-notif.png'
