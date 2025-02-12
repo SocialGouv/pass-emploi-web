@@ -63,6 +63,9 @@ function erreurBeneficiaire(
       case 'UTILISATEUR_DEJA_PE_AIJ':
       case 'UTILISATEUR_DEJA_CONSEIL_DEPT':
       case 'UTILISATEUR_DEJA_AVENIR_PRO':
+      case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_INTENSIF':
+      case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_GLOBAL':
+      case 'UTILISATEUR_DEJA_EQUIP_EMPLOI_RECRUT':
         return "Veuillez vous connecter en choisissant France Travail sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
       case 'Callback':
         return erreurIdp(structureUtilisateur)
@@ -109,6 +112,24 @@ function erreurConseiller(
       return {
         erreur:
           "Votre compte est déjà associé à l'accompagnement France Travail Avenir pro.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Avenir pro pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
+    case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_INTENSIF':
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Accompagnement intensif.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Accompagnement intensif pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
+    case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_GLOBAL':
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Accompagnement global.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Accompagnement global pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
+    case 'UTILISATEUR_DEJA_EQUIP_EMPLOI_RECRUT':
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Equip’Emploi / Equip’recrut.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Equip’Emploi / Equip’recrut pour le supprimer ou contactez le support.",
         withTuto: true,
       }
     case 'Callback':
