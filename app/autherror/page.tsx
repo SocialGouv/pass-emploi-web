@@ -20,11 +20,21 @@ export default async function AuthError({
     (await searchParams) ?? {}
 
   if (typeUtilisateur === 'CONSEILLER') {
+    const { erreur, withTuto } = erreurConseiller(reason, structureUtilisateur)
+
     return (
       <AuthErrorPage
-        erreur={erreurConseiller(reason, structureUtilisateur)}
+        erreur={erreur}
         codeErreur={reason}
-        lienFormulaire={lienFormulaireConseiller(structureUtilisateur)}
+        withStructure={
+          structureUtilisateur
+            ? {
+                structure: structureUtilisateur as StructureConseiller,
+                lienFormulaire: lienFormulaireConseiller(structureUtilisateur),
+                withTuto,
+              }
+            : undefined
+        }
       />
     )
   }
@@ -66,31 +76,55 @@ function erreurBeneficiaire(
 function erreurConseiller(
   reason?: string,
   structureUtilisateur?: string
-): string {
+): { erreur: string; withTuto?: boolean } {
   switch (reason) {
     case 'UTILISATEUR_INEXISTANT':
       redirect('/login/france-travail/dispositifs')
       break
     case 'UTILISATEUR_DEJA_MILO':
-      return "Veuillez vous connecter en choisissant l'accompagnement Mission Locale. Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement Mission Locale.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement Mission Locale pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
     case 'UTILISATEUR_DEJA_PE':
-      return "Veuillez vous connecter en choisissant l'accompagnement France Travail Contrat d'engagement jeune. Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Contrat d'engagement jeune.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Contrat d'engagement jeune pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
     case 'UTILISATEUR_DEJA_PE_BRSA':
-      return "Veuillez vous connecter en choisissant l'accompagnement France Travail RSA rénové. Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail RSA rénové.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail RSA rénové pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
     case 'UTILISATEUR_DEJA_PE_AIJ':
-      return "Veuillez vous connecter en choisissant l'accompagnement France Travail Accompagnement intensif jeunes. Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Accompagnement intensif jeunes.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Accompagnement intensif jeunes pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
     case 'UTILISATEUR_DEJA_AVENIR_PRO':
-      return "Veuillez vous connecter en choisissant l'accompagnement France Travail Avenir pro. Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+      return {
+        erreur:
+          "Votre compte est déjà associé à l'accompagnement France Travail Avenir pro.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail Avenir pro pour le supprimer ou contactez le support.",
+        withTuto: true,
+      }
     case 'Callback':
-      return erreurIdp(structureUtilisateur)
+      return { erreur: erreurIdp(structureUtilisateur) }
     case 'VerificationConseillerDepartemental':
-      return `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`
+      return {
+        erreur: `Vous n'êtes pas autorisé à vous connecter. Veuiller contacter le support.`,
+      }
     default:
-      return `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur.`
+      return {
+        erreur: `Une erreur est survenue, veuillez fermer cette page et retenter de vous connecter.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur.`,
+      }
   }
 }
 
-function lienFormulaireConseiller(structureUtilisateur?: string) {
+function lienFormulaireConseiller(structureUtilisateur: string) {
   switch (structureUtilisateur) {
     case StructureConseiller.MILO:
       return (

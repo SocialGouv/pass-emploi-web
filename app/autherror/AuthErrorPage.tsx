@@ -1,19 +1,49 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import React from 'react'
 
-import ButtonLink from '../../components/ui/Button/ButtonLink'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { trackEvent } from 'utils/analytics/matomo'
 
 type AuthErrorPageProps = {
   erreur: string
   codeErreur?: string
-  lienFormulaire?: string
+  withStructure?: {
+    structure: StructureConseiller
+    lienFormulaire?: string
+    withTuto?: boolean
+  }
 }
 function AuthErrorPage({
   erreur,
   codeErreur,
-  lienFormulaire,
+  withStructure,
 }: AuthErrorPageProps) {
+  function trackTutoSuppression() {
+    trackEvent({
+      structure: withStructure!.structure,
+      categorie: 'Tutoriel',
+      action: 'Suppression compte',
+      nom: '',
+      aDesBeneficiaires: null,
+    })
+  }
+
+  function trackContactSupport() {
+    trackEvent({
+      structure: withStructure!.structure,
+      categorie: 'Contact Support',
+      action: 'Connexion',
+      nom: '',
+      aDesBeneficiaires: null,
+    })
+  }
+
   return (
     <>
       <header>
@@ -36,10 +66,26 @@ function AuthErrorPage({
               </span>
             ))}
             {codeErreur && <p className='text-xs mt-6'>code : {codeErreur}</p>}
-            {lienFormulaire && (
-              <ButtonLink className='mt-6' href={lienFormulaire}>
-                Contacter le support
-              </ButtonLink>
+
+            {withStructure?.withTuto && (
+              <div className='mt-4'>
+                <ExternalLink
+                  href='https://doc.pass-emploi.beta.gouv.fr/suppression-de-compte/'
+                  label='Visionnez le tuto de suppression de compte'
+                  onClick={trackTutoSuppression}
+                />
+              </div>
+            )}
+
+            {withStructure?.lienFormulaire && (
+              <ButtonLink
+                href={withStructure.lienFormulaire}
+                style={ButtonStyle.PRIMARY}
+                externalIcon={IconName.OpenInNew}
+                label='Contacter le support'
+                className='m-auto w-fit mt-4'
+                onClick={trackContactSupport}
+              />
             )}
           </div>
 
