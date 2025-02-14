@@ -7,7 +7,7 @@ import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
 import {
   Conseiller,
   SimpleConseiller,
-  StructureConseiller,
+  structuresReaffectation,
 } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
@@ -28,10 +28,8 @@ export async function getConseillerServerSide(
   return jsonToConseiller(conseillerJson, user)
 }
 
-export type StructureReaffectation =
-  | StructureConseiller.POLE_EMPLOI
-  | StructureConseiller.POLE_EMPLOI_BRSA
-  | StructureConseiller.POLE_EMPLOI_AIJ
+export type StructureReaffectation = (typeof structuresReaffectation)[number]
+
 export async function getConseillers(
   recherche: string,
   structure?: StructureReaffectation

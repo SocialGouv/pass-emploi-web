@@ -79,6 +79,17 @@ describe('Reaffectation', () => {
         expect(
           within(etape).getByRole('radio', { name: 'BRSA' })
         ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', { name: 'Accompagnement intensif' })
+        ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', { name: 'Accompagnement global' })
+        ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', {
+            name: 'Equip’emploi / Equip’recrut',
+          })
+        ).toBeInTheDocument()
       })
     })
 
