@@ -26,7 +26,7 @@ function StatutActionForm({
   return (
     <div className='border-b-2 border-solid border-primary_lighten pt-5'>
       <h2 className='text-m-bold text-grey_800 pb-6'>Statut</h2>
-      <form className='flex flex-raw mb-10'>
+      <form className='flex flex-raw gap-4 mb-10'>
         <RadioBox
           id='option-statut-afaire'
           isSelected={statutCourant === StatutAction.AFaire}

@@ -404,7 +404,7 @@ export function EditionActionForm({
             <legend className='text-base-regular text-content_color mb-3'>
               <span aria-hidden={true}>*&nbsp;</span>L’action est :
             </legend>
-            <div className='mb-7 flex flex-wrap'>
+            <div className='mb-7 flex flex-wrap gap-4'>
               <RadioBox
                 id='statut-action-afaire'
                 isSelected={statut === StatutAction.AFaire}

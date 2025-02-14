@@ -155,3 +155,12 @@ export function aDeNouvellesActualites(
     DateTime.fromISO(dernierePublication)
   )
 }
+
+export const structuresReaffectation = [
+  StructureConseiller.POLE_EMPLOI,
+  StructureConseiller.POLE_EMPLOI_BRSA,
+  StructureConseiller.POLE_EMPLOI_AIJ,
+  StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF,
+  StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL,
+  StructureConseiller.FT_EQUIP_EMPLOI_RECRUT,
+] as const

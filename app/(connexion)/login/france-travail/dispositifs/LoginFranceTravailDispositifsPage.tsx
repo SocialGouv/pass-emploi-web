@@ -40,7 +40,7 @@ function LoginFranceTravailDispositifsPage({
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <ul className='grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] auto-rows-fr gap-8'>
+        <ul className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] auto-rows-fr gap-8'>
           <li>
             <LoginButton
               label='CEJ'

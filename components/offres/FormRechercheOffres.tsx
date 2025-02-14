@@ -168,7 +168,7 @@ export default function FormRechercheOffres({
           </p>
         )}
         <Etape numero={1} titre='Sélectionner un type d’offre'>
-          <div className='flex flex-wrap'>
+          <div className='flex flex-wrap gap-4'>
             <RadioBox
               id='type-offre-emploi'
               isSelected={typeOffre === TypeOffre.EMPLOI}

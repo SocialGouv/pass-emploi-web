@@ -21,7 +21,10 @@ import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  SimpleConseiller,
+  structuresReaffectation,
+} from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { StructureReaffectation } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -98,10 +101,10 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     : [1, 2, 3, 4]
 
   function handleInputStructureReaffectation(
-    structure: StructureReaffectation
+    structureSelectionnee: StructureReaffectation
   ) {
     setErreurReaffectation(undefined)
-    setStructureReaffectation({ value: structure })
+    setStructureReaffectation({ value: structureSelectionnee })
   }
 
   function handleInputTypeReaffectation(isTemporaire: boolean) {
@@ -326,7 +329,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     const erreurs = []
     if (isReaffectationTemporaire.error)
       erreurs.push({
-        ancre: '#structure-reaffectation--CEJ',
+        ancre: '#structure-reaffectation',
         label: 'Le champ type de réaffectation est vide.',
         titreChamp: 'Type de réaffectation',
       })
@@ -402,51 +405,21 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 {structureReaffectation.error}
               </InputError>
             )}
-            <div className='flex flex-wrap' id='structure-reaffectation--CEJ'>
-              <RadioBox
-                id='structure-reaffectation-FT'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI
-                  )
-                }
-                label='CEJ'
-                name='structure-reaffectation'
-              />
-
-              <RadioBox
-                id='structure-reaffectation-BRSA'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI_BRSA
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI_BRSA
-                  )
-                }
-                label='BRSA'
-                name='structure-reaffectation'
-              />
-
-              <RadioBox
-                id='structure-reaffectation-AIJ'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI_AIJ
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI_AIJ
-                  )
-                }
-                label='AIJ'
-                name='structure-reaffectation'
-              />
+            <div
+              id='structure-reaffectation'
+              className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] auto-rows-fr gap-4'
+            >
+              {structuresReaffectation.map((structure) => (
+                <RadioBox
+                  key={structure}
+                  id={'structure-reaffectation--' + structure}
+                  isSelected={structureReaffectation.value === structure}
+                  onChange={() => handleInputStructureReaffectation(structure)}
+                  label={labelsStructures[structure]}
+                  name='structure-reaffectation'
+                  className='w-full'
+                />
+              ))}
             </div>
           </Etape>
         )}
@@ -460,7 +433,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               {isReaffectationTemporaire.error}
             </InputError>
           )}
-          <div className='flex flex-wrap'>
+          <div className='flex flex-wrap gap-4'>
             <RadioBox
               id='type-reaffectation-temporaire'
               isSelected={isReaffectationTemporaire.value === true}
@@ -657,4 +630,13 @@ type StateChoixConseiller = {
   value: SimpleConseiller | undefined
   errorInput?: string
   errorChoice?: string
+}
+
+const labelsStructures: { [key in StructureReaffectation]: string } = {
+  FT_ACCOMPAGNEMENT_GLOBAL: 'Accompagnement global',
+  FT_ACCOMPAGNEMENT_INTENSIF: 'Accompagnement intensif',
+  FT_EQUIP_EMPLOI_RECRUT: 'Equip’emploi / Equip’recrut',
+  POLE_EMPLOI: 'CEJ',
+  POLE_EMPLOI_AIJ: 'AIJ',
+  POLE_EMPLOI_BRSA: 'BRSA',
 }
