@@ -484,7 +484,8 @@ function DetailsSessionPage({
               id='visibilite-session'
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
-              disabled={loadingChangerConfiguration || autoinscriptionSession}
+              isLoading={loadingChangerConfiguration}
+              disabled={autoinscriptionSession}
             />
 
             <Label htmlFor='autoinscription-session'>
@@ -495,7 +496,7 @@ function DetailsSessionPage({
               id='autoinscription-session'
               checked={autoinscriptionSession}
               onChange={handleChangerAutoinscriptionSession}
-              disabled={loadingChangerConfiguration}
+              isLoading={loadingChangerConfiguration}
             />
           </div>
         </Etape>
