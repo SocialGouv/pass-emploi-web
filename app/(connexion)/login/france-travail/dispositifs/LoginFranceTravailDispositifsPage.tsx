@@ -40,22 +40,22 @@ function LoginFranceTravailDispositifsPage({
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <ul className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] auto-rows-fr gap-8'>
-          <li>
+        <ul className='flex flex-wrap justify-center istems-stretch gap-8'>
+          <li className='min-w-[275px]'>
             <LoginButton
               label='CEJ'
               prefix='France Travail'
               onClick={() => handleSignin('pe-conseiller')}
             />
           </li>
-          <li>
+          <li className='min-w-[275px]'>
             <LoginButton
               label='RSA rénové'
               prefix='France Travail'
               onClick={() => handleSignin('pe-brsa-conseiller')}
             />
           </li>
-          <li>
+          <li className='min-w-[275px]'>
             <LoginButton
               label='AIJ'
               prefix='France Travail'
@@ -64,7 +64,7 @@ function LoginFranceTravailDispositifsPage({
           </li>
           {ssoAccompagnementsIntensifsSontActifs && (
             <>
-              <li>
+              <li className='min-w-[275px]'>
                 <LoginButton
                   label='Accompagnement intensif'
                   prefix='France Travail'
@@ -73,7 +73,7 @@ function LoginFranceTravailDispositifsPage({
                   }
                 />
               </li>
-              <li>
+              <li className='min-w-[275px]'>
                 <LoginButton
                   label='Accompagnement global'
                   prefix='France Travail'
@@ -82,7 +82,7 @@ function LoginFranceTravailDispositifsPage({
                   }
                 />
               </li>
-              <li>
+              <li className='min-w-[275px]'>
                 <LoginButton
                   label='Equip’emploi / Equip’recrut'
                   prefix='France Travail'
@@ -94,7 +94,7 @@ function LoginFranceTravailDispositifsPage({
             </>
           )}
           {ssoAvenirProEstActif && (
-            <li>
+            <li className='min-w-[275px]'>
               <LoginButton
                 label='Avenir pro'
                 prefix='France Travail'
