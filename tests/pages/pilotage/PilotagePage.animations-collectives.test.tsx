@@ -9,11 +9,11 @@ import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/Pilota
 import { desCategories } from 'fixtures/action'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 import { modifierAgence } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -59,7 +59,7 @@ describe('PilotagePage client side - Animations collectives', () => {
           />,
           {
             customConseiller: {
-              structure: StructureConseiller.MILO,
+              structure: structureMilo,
               agence: {
                 nom: 'Mission Locale Aubenas',
                 id: 'id-test',
@@ -196,7 +196,7 @@ describe('PilotagePage client side - Animations collectives', () => {
 
     beforeEach(async () => {
       agences = uneListeDAgencesMILO()
-      ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
+      ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
       ;(
         getAnimationsCollectivesACloreClientSide as jest.Mock
       ).mockImplementation(async (_, page) => ({
@@ -223,7 +223,7 @@ describe('PilotagePage client side - Animations collectives', () => {
             categoriesActions={desCategories()}
           />,
           {
-            customConseiller: { structure: StructureConseiller.MILO },
+            customConseiller: { structure: structureMilo },
           }
         )
       })
@@ -260,9 +260,7 @@ describe('PilotagePage client side - Animations collectives', () => {
       )
 
       // Then
-      expect(getAgencesClientSide).toHaveBeenCalledWith(
-        StructureConseiller.MILO
-      )
+      expect(getMissionsLocalesClientSide).toHaveBeenCalledWith()
       expect(screen.getByRole('combobox')).toBeInTheDocument()
       agences.forEach((agence) =>
         expect(

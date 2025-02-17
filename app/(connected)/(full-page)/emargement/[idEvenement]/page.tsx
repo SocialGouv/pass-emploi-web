@@ -5,9 +5,9 @@ import EmargementRdvPage, {
   EmargementRdvPageProps,
 } from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
 import { Evenement } from 'interfaces/evenement'
 import { Session } from 'interfaces/session'
+import { estMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -48,7 +48,7 @@ async function buildProps({
   searchParams?: EmargementRdvSearchParams
 }): Promise<{ titre: string } & EmargementRdvPageProps> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) redirect('/mes-jeunes')
+  if (!estMilo(user.structure)) redirect('/mes-jeunes')
 
   const { idEvenement } = await params
   const { type } = (await searchParams) ?? {}

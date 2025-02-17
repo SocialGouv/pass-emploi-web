@@ -23,6 +23,11 @@ export type Agence = {
   codeDepartement: string
 }
 
+export type MissionLocale = {
+  id: string
+  nom: string
+}
+
 export type DomaineServiceCivique = {
   code: string
   libelle: string

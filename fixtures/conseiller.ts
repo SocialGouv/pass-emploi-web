@@ -1,5 +1,9 @@
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { SimpleConseillerJson, ConseillerJson } from 'interfaces/json/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import {
+  SimpleConseillerJson,
+  ConseillerJson,
+} from 'interfaces/json/conseiller'
+import { structureMilo } from 'interfaces/structure'
 
 export const unConseiller = (
   overrides: Partial<Conseiller> = {}
@@ -12,7 +16,7 @@ export const unConseiller = (
     aDesBeneficiairesARecuperer: false,
     estSuperviseur: false,
     estSuperviseurResponsable: false,
-    structure: StructureConseiller.MILO,
+    structure: structureMilo,
     dateSignatureCGU: '2023-10-03T00:00:00.000+02:00',
   }
   return { ...defaults, ...overrides }

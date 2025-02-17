@@ -18,7 +18,6 @@ import {
   uneBaseServiceCivique,
 } from 'fixtures/offre'
 import { desCommunes, desLocalites, uneCommune } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
@@ -646,7 +645,7 @@ describe('Page Recherche Offres Service civique', () => {
     it('n’affiche pas la recherche en tant que conseiller FT BRSA', () => {
       rendered = renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          structure: 'POLE_EMPLOI_BRSA',
         }),
       })
       // Then

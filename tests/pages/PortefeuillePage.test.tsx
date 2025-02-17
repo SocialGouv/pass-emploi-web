@@ -12,7 +12,8 @@ import {
   unBeneficiaireAvecActionsNonTerminees,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
@@ -252,7 +253,7 @@ describe('PortefeuillePage client side', () => {
           />,
           {
             customConseiller: {
-              structure: StructureConseiller.MILO,
+              structure: structureMilo,
               structureMilo: { nom: 'Agence', id: '1' },
             },
           }
@@ -369,7 +370,7 @@ describe('PortefeuillePage client side', () => {
         ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
           {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            customConseiller: { structure: structureFTCej },
           }
         ))
       })
@@ -418,7 +419,7 @@ describe('PortefeuillePage client side', () => {
         ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
           {
-            customConseiller: { structure: StructureConseiller.CONSEIL_DEPT },
+            customConseiller: { structure: 'CONSEIL_DEPT' },
           }
         ))
       })

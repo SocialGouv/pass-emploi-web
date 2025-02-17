@@ -8,7 +8,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { unsafeRandomId } from 'utils/helpers'
 
@@ -37,7 +37,7 @@ export default async function Qualification({
   searchParams,
 }: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) notFound()
+  if (!estMilo(user.structure)) notFound()
 
   const { getAction, getSituationsNonProfessionnelles } = await import(
     'services/actions.service'

@@ -8,7 +8,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import {
   getAction,
   getSituationsNonProfessionnelles,
@@ -39,7 +39,7 @@ export default async function ModificationAction({
   params: ModificationActionParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) notFound()
+  if (!estMilo(user.structure)) notFound()
 
   const { idAction } = await params
   const [action, situationsNonProfessionnelles, actionsPredefinies] =

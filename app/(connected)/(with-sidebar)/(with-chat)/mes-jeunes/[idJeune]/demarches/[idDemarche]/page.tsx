@@ -11,7 +11,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { estUserCD } from 'interfaces/conseiller'
+import { estConseilDepartemental } from 'interfaces/structure'
 import {
   getDemarchesBeneficiaire,
   getJeuneDetails,
@@ -56,7 +56,7 @@ async function getDemarcheProps(
   params: DetailDemarcheParams
 ): Promise<DetailDemarcheProps & { beneficiaire: BaseBeneficiaire }> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserCD(user)) notFound()
+  if (!estConseilDepartemental(user.structure)) notFound()
 
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
   const { idJeune, idDemarche } = await params

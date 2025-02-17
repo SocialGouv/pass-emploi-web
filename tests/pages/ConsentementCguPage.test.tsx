@@ -7,7 +7,7 @@ import React from 'react'
 
 import ConsentementCguPage from 'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -27,7 +27,7 @@ describe('ConsentementCGUPage client side', () => {
   describe('Adapte le texte', () => {
     describe('Pour un conseiller BRSA', () => {
       const conseiller = unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI_BRSA,
+        structure: 'POLE_EMPLOI_BRSA',
       })
 
       beforeEach(async () => {
@@ -65,7 +65,7 @@ describe('ConsentementCGUPage client side', () => {
 
     describe('Pour un conseiller CEJ', () => {
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
       })
 
       beforeEach(async () => {

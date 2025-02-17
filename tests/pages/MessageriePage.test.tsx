@@ -9,9 +9,13 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { BaseBeneficiaire, BeneficiaireEtChat, extractBaseBeneficiaire } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
+import {
+  BaseBeneficiaire,
+  BeneficiaireEtChat,
+  extractBaseBeneficiaire,
+} from 'interfaces/beneficiaire'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
+import { structureFTCej } from 'interfaces/structure'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -70,7 +74,7 @@ describe('MessageriePage client side', () => {
       //When
       ;({ container } = renderWithContexts(<MessageriePage />, {
         customConseiller: {
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         },
       }))
     })
@@ -95,7 +99,7 @@ describe('MessageriePage client side', () => {
         await act(async () => {
           ;({ container } = renderWithContexts(<MessageriePage />, {
             customConseiller: {
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             },
             customShowRubriqueListeDeDiffusion: { value: true },
           }))
@@ -123,7 +127,7 @@ describe('MessageriePage client side', () => {
         await act(async () => {
           ;({ container } = renderWithContexts(<MessageriePage />, {
             customConseiller: {
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             },
             customShowRubriqueListeDeDiffusion: { value: true },
             customListeDeDiffusionSelectionnee: {

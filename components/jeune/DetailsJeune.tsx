@@ -10,12 +10,12 @@ import {
   DetailBeneficiaire,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
+import { Conseiller } from 'interfaces/conseiller'
 import {
-  Conseiller,
-  StructureConseiller,
-  estMilo,
   estConseilDepartemental,
-} from 'interfaces/conseiller'
+  estMilo,
+  structureFTCej,
+} from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -76,7 +76,7 @@ export default function DetailsJeune({
 
   function trackEventOnCopieIdentifiantPartenaire() {
     trackEvent({
-      structure: StructureConseiller.POLE_EMPLOI,
+      structure: structureFTCej,
       categorie: 'fiche jeune',
       action: 'copie identifiant pe',
       nom: '',
@@ -87,7 +87,7 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {estMilo(conseiller) && (
+        {estMilo(conseiller.structure) && (
           <ResumeIndicateursJeune
             idBeneficiaire={jeune.id}
             debutDeLaSemaine={debutSemaine}
@@ -96,7 +96,7 @@ export default function DetailsJeune({
           />
         )}
 
-        {estConseilDepartemental(conseiller) && demarches && (
+        {estConseilDepartemental(conseiller.structure) && demarches && (
           <ResumeDemarchesBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}

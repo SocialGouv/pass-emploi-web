@@ -15,7 +15,7 @@ import SortIcon from 'components/ui/SortIcon'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
-import { estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
@@ -50,7 +50,7 @@ function TableauBeneficiaires(
     ordreCroissant: boolean
   }>({ type: 'nom', ordreCroissant: true })
   const afficherFiltres =
-    estMilo(conseiller) &&
+    estMilo(conseiller.structure) &&
     beneficiaires.some(
       (beneficiaire) => beneficiaire.dispositif !== beneficiaires[0].dispositif
     )
@@ -220,7 +220,7 @@ function TableauBeneficiaires(
               visible: true,
             }}
           >
-            {estMilo(conseiller) && (
+            {estMilo(conseiller.structure) && (
               <TableauBeneficiairesMilo
                 beneficiaires={beneficiairesTries}
                 page={page}
@@ -228,7 +228,7 @@ function TableauBeneficiaires(
               />
             )}
 
-            {!estMilo(conseiller) && (
+            {!estMilo(conseiller.structure) && (
               <TableauBeneficiairesPasMilo
                 beneficiaires={beneficiairesTries}
                 page={page}

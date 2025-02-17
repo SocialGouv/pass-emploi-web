@@ -13,11 +13,8 @@ import {
   DetailBeneficiaire,
   estCEJ,
 } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  estConseilDepartemental,
-  estMilo,
-} from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { estFTConnect, estMilo } from 'interfaces/structure'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
@@ -38,9 +35,8 @@ export default function BlocInformationJeuneFicheBeneficiaire({
   const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
-  const conseillerEstMilo = estMilo(conseiller)
-  const aIdentifiantFT =
-    !conseillerEstMilo && !estConseilDepartemental(conseiller)
+  const conseillerEstMilo = estMilo(conseiller.structure)
+  const aIdentifiantFT = estFTConnect(conseiller.structure)
   const { situations, dateFinCEJ, email, id, dispositif } = beneficiaire
 
   const [dispositifActuel, setDispositifActuel] = useState<string>(dispositif)

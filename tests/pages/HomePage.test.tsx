@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 
 import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage'
 import { uneListeDAgencesFranceTravail } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierAgence } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -35,7 +35,7 @@ describe('HomePage client side', () => {
             redirectUrl='/mes-jeunes'
           />,
           {
-            customConseiller: { structure: StructureConseiller.MILO },
+            customConseiller: { structure: structureMilo },
           }
         ))
       })
@@ -92,7 +92,7 @@ describe('HomePage client side', () => {
             redirectUrl='/mes-jeunes'
           />,
           {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            customConseiller: { structure: structureFTCej },
             customAlerte: { setter: alerteSetter },
           }
         ))
@@ -250,7 +250,7 @@ describe('HomePage client side', () => {
             redirectUrl='/mes-jeunes'
           />,
           {
-            customConseiller: { structure: StructureConseiller.MILO },
+            customConseiller: { structure: structureMilo },
           }
         ))
       })
@@ -294,7 +294,7 @@ describe('HomePage client side', () => {
               redirectUrl='/mes-jeunes'
             />,
             {
-              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+              customConseiller: { structure: structureFTCej },
             }
           ))
         })
@@ -360,7 +360,7 @@ describe('HomePage client side', () => {
               redirectUrl='/mes-jeunes'
             />,
             {
-              customConseiller: { structure: StructureConseiller.MILO },
+              customConseiller: { structure: structureMilo },
             }
           ))
         })
@@ -423,7 +423,7 @@ describe('HomePage client side', () => {
       })
     })
 
-    describe('quand le conseiller est BRSA', () => {
+    describe('quand le conseiller est pass emploi', () => {
       beforeEach(async () => {
         // When
         await act(async () => {
@@ -436,7 +436,7 @@ describe('HomePage client side', () => {
             />,
             {
               customConseiller: {
-                structure: StructureConseiller.POLE_EMPLOI_BRSA,
+                structure: 'POLE_EMPLOI_BRSA',
               },
             }
           ))

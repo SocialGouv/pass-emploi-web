@@ -5,7 +5,8 @@ import DispositifTag from 'components/jeune/DispositifTag'
 import { ModalHandles } from 'components/Modal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
-import { Conseiller, estMilo } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { toLongMonthDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
@@ -25,7 +26,7 @@ export default function BlocInformationJeune({
 }: BlocInformationJeuneProps) {
   const { creationDate, dateFinCEJ, email, urlDossier, dispositif } =
     beneficiaire
-  const conseillerEstMilo = estMilo(conseiller)
+  const conseillerEstMilo = estMilo(conseiller.structure)
 
   const [dispositifActuel, setDispositifActuel] = useState<string>(dispositif)
   const [afficherChangementDispositif, setAfficherChangementDispositif] =

@@ -14,7 +14,8 @@ import {
   BeneficiaireEtChat,
   compareBeneficiaireChat,
 } from 'interfaces/beneficiaire'
-import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import { observeConseillerChats } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -131,7 +132,7 @@ function displayNotificationInBrowserTab(conseiller: Conseiller) {
   const faviconLink: HTMLLinkElement =
     document.querySelector("link[rel='icon']")!
 
-  if (estPassEmploi(conseiller)) {
+  if (estPassEmploi(conseiller.structure)) {
     faviconLink.href = '/pass-emploi-favicon-notif.png'
   } else {
     faviconLink.href = '/cej-favicon-notif.png'

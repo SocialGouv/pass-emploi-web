@@ -10,7 +10,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getAction } from 'services/actions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -55,7 +55,7 @@ async function buildProps(
   params: DetailActionParams
 ): Promise<Omit<DetailActionProps, 'from'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) notFound()
+  if (!estMilo(user.structure)) notFound()
   const { idJeune, idAction } = await params
 
   const action = await getAction(idAction, accessToken)

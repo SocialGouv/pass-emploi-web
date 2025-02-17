@@ -8,7 +8,7 @@ import React from 'react'
 
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import {
   getRendezVousConseiller,
   getRendezVousEtablissement,
@@ -42,7 +42,7 @@ describe('AgendaPage client side', () => {
     ;(getSessionsMissionLocaleClientSide as jest.Mock).mockResolvedValue([])
 
     const conseiller = unConseiller({
-      structure: StructureConseiller.MILO,
+      structure: structureMilo,
       agence: {
         nom: 'Mission Locale Aubenas',
         id: 'id-etablissement',

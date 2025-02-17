@@ -10,7 +10,6 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { estUserMilo } from 'interfaces/conseiller'
 import {
   estClos,
   estCreeParSiMILO,
@@ -21,6 +20,7 @@ import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
+import { estMilo } from 'interfaces/structure'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import {
   getDetailsEvenement,
@@ -110,7 +110,7 @@ async function buildProps(
   searchParams?: EditionRdvSearchParams
 ): Promise<Omit<EditionRdvProps, 'returnTo'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) redirect('/mes-jeunes')
+  if (!estMilo(user.structure)) redirect('/mes-jeunes')
 
   const { idRdv, idJeune, type } = (await searchParams) ?? {}
 

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierIdentifiantPartenaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -31,7 +31,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -55,7 +55,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -71,7 +71,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -91,7 +91,7 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+            conseiller={unConseiller({ structure: structureMilo })}
           />
         )
 
@@ -114,7 +114,7 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />
         )
@@ -140,7 +140,7 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />,
           {
@@ -222,7 +222,7 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />,
           {
@@ -304,7 +304,7 @@ describe('<DetailsJeune>', () => {
       renderWithContexts(
         <DetailsJeune
           jeune={jeune}
-          conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+          conseiller={unConseiller({ structure: structureMilo })}
         />
       )
 

@@ -21,12 +21,12 @@ import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
+import { SimpleConseiller } from 'interfaces/conseiller'
 import {
-  SimpleConseiller,
+  StructureReaffectation,
   structuresReaffectation,
-} from 'interfaces/conseiller'
+} from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { StructureReaffectation } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDebounce } from 'utils/hooks/useDebounce'

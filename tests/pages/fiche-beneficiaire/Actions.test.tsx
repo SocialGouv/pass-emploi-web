@@ -19,7 +19,6 @@ import {
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { Action, StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
 import {
   getActionsBeneficiaireClientSide,
   qualifierActions,
@@ -83,7 +82,7 @@ describe('Actions dans la fiche jeune', () => {
           {
             customConseiller: {
               id: 'id-conseiller',
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: 'POLE_EMPLOI',
             },
           }
         )
@@ -663,7 +662,7 @@ async function renderFicheJeuneMILO({
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: 'MILO',
         },
       }
     )

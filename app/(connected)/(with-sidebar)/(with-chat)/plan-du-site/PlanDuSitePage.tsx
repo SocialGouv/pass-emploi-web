@@ -5,7 +5,8 @@ import Link from 'next/link'
 import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estMilo, estSuperviseur } from 'interfaces/conseiller'
+import { estSuperviseur } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -20,7 +21,7 @@ function PlanDuSitePage() {
   function trackExternalLink(label: string) {
     trackPage({
       customTitle: label,
-      structure: conseiller?.structure ?? null,
+      structure: conseiller.structure,
       aDesBeneficiaires: portefeuille.length > 0,
     })
   }
@@ -29,13 +30,13 @@ function PlanDuSitePage() {
 
   return (
     <>
-      {estMilo(conseiller) && (
+      {estMilo(conseiller.structure) && (
         <LiensMilo
           trackExternalLink={trackExternalLink}
           conseillerEstSuperviseur={conseillerEstSuperviseur}
         />
       )}
-      {!estMilo(conseiller) && (
+      {!estMilo(conseiller.structure) && (
         <LiensFT
           trackExternalLink={trackExternalLink}
           conseillerEstSuperviseur={conseillerEstSuperviseur}

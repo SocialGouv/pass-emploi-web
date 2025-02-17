@@ -10,7 +10,7 @@ import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
@@ -165,11 +165,7 @@ export default function OngletAgendaEtablissement({
       {!evenementsAffiches && !periodeFailed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
-          titre={`
-            L’affichage de l’agenda de votre ${
-              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
-            } peut prendre quelques instants.
-          `}
+          titre='L’affichage de l’agenda de votre Mission Locale peut prendre quelques instants.'
           sousTitre='Veuillez patienter pendant le chargement des informations.'
         />
       )}
@@ -178,11 +174,7 @@ export default function OngletAgendaEtablissement({
         <EmptyState
           shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Maintenance}
-          titre={`
-            L’affichage de l’agenda de votre ${
-              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
-            } a échoué.
-          `}
+          titre='L’affichage de l’agenda de votre Mission Locale'
           sousTitre='Si le problème persiste, contactez notre support.'
           bouton={{
             onClick: () =>

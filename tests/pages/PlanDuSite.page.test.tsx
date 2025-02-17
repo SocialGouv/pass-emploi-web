@@ -4,7 +4,7 @@ import { axe } from 'jest-axe'
 import React from 'react'
 
 import PlanDuSitePage from 'app/(connected)/(with-sidebar)/(with-chat)/plan-du-site/PlanDuSitePage'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('PlanDuSite client side', () => {
@@ -14,7 +14,7 @@ describe('PlanDuSite client side', () => {
     //When
     ;({ container } = renderWithContexts(<PlanDuSitePage />, {
       customConseiller: {
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
       },
     }))
 
@@ -31,7 +31,7 @@ describe('PlanDuSite client side', () => {
     //When
     ;({ container } = renderWithContexts(<PlanDuSitePage />, {
       customConseiller: {
-        structure: StructureConseiller.POLE_EMPLOI,
+        structure: structureFTCej,
       },
     }))
 

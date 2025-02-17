@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default async function Agenda({
   searchParams?: AgendaSearchParams
 }) {
   const { user } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) notFound()
+  if (!estMilo(user.structure)) notFound()
 
   const { periodeIndex, onglet } = (await searchParams) ?? {}
   return (

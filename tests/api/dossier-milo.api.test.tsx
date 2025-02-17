@@ -6,7 +6,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { GET } from 'app/api/milo/[numeroDossier]/route'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -23,7 +23,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
     it('redirige vers la liste des jeunes', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+        user: { structure: structureFTCej },
       })
 
       // When
@@ -43,7 +43,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.MILO },
+        user: { structure: structureMilo },
       })
     })
 

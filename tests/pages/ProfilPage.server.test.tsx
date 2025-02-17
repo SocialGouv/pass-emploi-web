@@ -4,7 +4,8 @@ import Profil from 'app/(connected)/(with-sidebar)/(with-chat)/profil/page'
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -21,7 +22,7 @@ describe('ProfilPage server side', () => {
     it('charge la page avec les bonnes props', async () => {
       // Given
       const conseiller = unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI,
+        structure: structureFTCej,
       })
 
       // When
@@ -29,7 +30,10 @@ describe('ProfilPage server side', () => {
 
       // Then
       expect(getAgencesServerSide).not.toHaveBeenCalled()
-      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, undefined)
+      expect(ProfilPage).toHaveBeenCalledWith(
+        { referentielMissionsLocales: [] },
+        undefined
+      )
     })
   })
 
@@ -37,7 +41,7 @@ describe('ProfilPage server side', () => {
     it('charge la page avec les bonnes props sans le référentiel d’agences', async () => {
       // Given
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         agence: { nom: 'MLS3F SAINT-LOUIS' },
       })
 
@@ -45,21 +49,24 @@ describe('ProfilPage server side', () => {
       await renderPageForConseiller(conseiller)
 
       // Then
-      expect(ProfilPage).toHaveBeenCalledWith({ referentielAgences: [] }, undefined)
+      expect(ProfilPage).toHaveBeenCalledWith(
+        { referentielMissionsLocales: [] },
+        undefined
+      )
     })
   })
 
   describe('en tant que Mission Locale sans agence déjà renseignée ', () => {
     it('charge la page avec les bonnes props avec le référentiel d’agences', async () => {
       // Given
-      const conseiller = unConseiller({ structure: StructureConseiller.MILO })
+      const conseiller = unConseiller({ structure: structureMilo })
 
       // When
       await renderPageForConseiller(conseiller)
 
       // Then
       expect(ProfilPage).toHaveBeenCalledWith(
-        { referentielAgences: uneListeDAgencesMILO() },
+        { referentielMissionsLocales: uneListeDAgencesMILO() },
         undefined
       )
     })

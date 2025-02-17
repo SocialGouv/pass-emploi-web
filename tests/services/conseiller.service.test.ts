@@ -7,7 +7,7 @@ import {
   unConseiller,
   unConseillerJson,
 } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import {
   getConseillers,
   getConseillerServerSide,
@@ -30,7 +30,7 @@ describe('ConseillerApiService', () => {
       const user: Session.HydratedUser = {
         id: 'id-user',
         name: 'Albert Durant',
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         email: 'albert.durant@gmail.com',
         estConseiller: true,
         estSuperviseur: false,
@@ -97,12 +97,12 @@ describe('ConseillerApiService', () => {
       // When
       const actual = await getConseillers(
         'conseiller@email.com',
-        StructureConseiller.POLE_EMPLOI_BRSA
+        structureFTCej
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers?q=conseiller@email.com&structure=POLE_EMPLOI_BRSA',
+        '/conseillers?q=conseiller@email.com&structure=POLE_EMPLOI',
         accessToken
       )
       expect(actual).toEqual([

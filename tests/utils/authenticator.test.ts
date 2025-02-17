@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { handleJWTAndRefresh } from 'utils/auth/authenticator'
 import { fetchJson } from 'utils/httpClient'
 
@@ -52,7 +52,7 @@ describe('Authenticator', () => {
           estSuperviseur: true,
           estSuperviseurResponsable: false,
           estConseiller: true,
-          structureConseiller: StructureConseiller.MILO,
+          structureConseiller: structureMilo,
         })
       })
     })
@@ -95,14 +95,14 @@ describe('Authenticator', () => {
           const actual = await handleJWTAndRefresh({
             jwt: {
               ...jwt,
-              structureConseiller: StructureConseiller.MILO,
+              structureConseiller: structureMilo,
             },
           })
 
           // Then
           const jwtMisAjour = {
             ...jwt,
-            structureConseiller: StructureConseiller.MILO,
+            structureConseiller: structureMilo,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
             expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
@@ -116,7 +116,7 @@ describe('Authenticator', () => {
           // Given
           const jwt = {
             ...jwtFixture(),
-            structureConseiller: StructureConseiller.MILO,
+            structureConseiller: structureMilo,
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
             expiresAtTimestamp: now.plus({ second: 13 }).toMillis(),
@@ -142,7 +142,7 @@ describe('Authenticator', () => {
             ...jwt,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
-            structureConseiller: StructureConseiller.MILO,
+            structureConseiller: structureMilo,
             expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
           }
           expect(actual).toEqual(jwtMisAjour)
@@ -193,7 +193,7 @@ describe('Authenticator', () => {
             estSuperviseur: true,
             estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
+            structureConseiller: 'POLE_EMPLOI_AIJ',
           })
         })
 
@@ -222,7 +222,7 @@ describe('Authenticator', () => {
             estSuperviseur: true,
             estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
+            structureConseiller: 'POLE_EMPLOI_AIJ',
           })
         })
       })

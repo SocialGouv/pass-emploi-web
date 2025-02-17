@@ -6,8 +6,8 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { estMilo } from 'interfaces/structure'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -25,7 +25,7 @@ export default async function Cloture({
   searchParams?: ClotureSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) redirect('/mes-jeunes')
+  if (!estMilo(user.structure)) redirect('/mes-jeunes')
 
   const { idEvenement } = await params
   const evenement = await getDetailsEvenement(idEvenement, accessToken)

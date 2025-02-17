@@ -13,7 +13,7 @@ import {
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej } from 'interfaces/structure'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import {
   getDetailsEvenement,
@@ -152,7 +152,7 @@ describe('EditionRdvPage server side', () => {
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
-      expect(notFound).toHaveBeenCalledWith
+      expect(notFound).toHaveBeenCalledWith()
     })
   })
 
@@ -272,7 +272,7 @@ describe('EditionRdvPage server side', () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         user: {
           id: 'id-conseiller',
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         },
         accessToken: 'accessToken',
       })

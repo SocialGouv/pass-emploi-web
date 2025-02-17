@@ -11,7 +11,7 @@ import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
@@ -39,6 +39,7 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
   const [showErrorValidation, setShowErrorValidation] = useState<boolean>(false)
   const router = useRouter()
   const [conseiller] = useConseiller()
+  const estConseillerPassEmploi = estPassEmploi(conseiller.structure)
 
   function mettreAJourConsentement() {
     setADonneSonConsentement({ value: !aDonneSonConsentement.value })
@@ -63,12 +64,12 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
 
   return (
     <>
-      {estPassEmploi(conseiller) && <HeaderCGUConseillerPassEmploi />}
-      {!estPassEmploi(conseiller) && <HeaderCGUConseillerCEJ />}
+      {estConseillerPassEmploi && <HeaderCGUConseillerPassEmploi />}
+      {!estConseillerPassEmploi && <HeaderCGUConseillerCEJ />}
 
       <main role='main'>
-        {estPassEmploi(conseiller) && <ContenuCGUConseillerPassEmploi />}
-        {!estPassEmploi(conseiller) && <ContenuCGUConseillerCEJ />}
+        {estConseillerPassEmploi && <ContenuCGUConseillerPassEmploi />}
+        {!estConseillerPassEmploi && <ContenuCGUConseillerCEJ />}
 
         <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
           <div className='mb-10'>

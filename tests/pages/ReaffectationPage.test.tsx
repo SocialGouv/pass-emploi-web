@@ -6,7 +6,7 @@ import React from 'react'
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller } from 'interfaces/conseiller'
 import {
   getJeunesDuConseillerParId,
   reaffecter,
@@ -124,10 +124,7 @@ describe('Reaffectation', () => {
         )
 
         // Then
-        expect(getConseillers).toHaveBeenCalledWith(
-          'Nils',
-          StructureConseiller.POLE_EMPLOI_BRSA
-        )
+        expect(getConseillers).toHaveBeenCalledWith('Nils', 'POLE_EMPLOI_BRSA')
         const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller initial',
         })
@@ -188,10 +185,7 @@ describe('Reaffectation', () => {
         )
 
         // Then
-        expect(getConseillers).toHaveBeenCalledWith(
-          'Nils',
-          StructureConseiller.POLE_EMPLOI_BRSA
-        )
+        expect(getConseillers).toHaveBeenCalledWith('Nils', 'POLE_EMPLOI_BRSA')
         const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller destinataire',
         })

@@ -11,7 +11,7 @@ import {
   uneAction,
 } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import {
   getAction,
   getSituationsNonProfessionnelles,
@@ -36,7 +36,7 @@ describe('ModificationActionPage server side', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.MILO },
+        user: { structure: structureMilo },
         accessToken: 'accessToken',
       })
       ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
@@ -106,7 +106,7 @@ describe('ModificationActionPage server side', () => {
     it('la page n’existe pas', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+        user: { structure: structureFTCej },
       })
 
       // When

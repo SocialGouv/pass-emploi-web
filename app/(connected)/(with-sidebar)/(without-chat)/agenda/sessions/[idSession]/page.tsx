@@ -7,7 +7,8 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -39,7 +40,7 @@ export default async function DetailsSession({
 }: RouteProps) {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
-  if (!estUserMilo(user)) notFound()
+  if (!estMilo(user.structure)) notFound()
 
   const { idSession } = await params
   const { redirectUrl } = (await searchParams) ?? {}

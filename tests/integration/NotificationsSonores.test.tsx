@@ -97,7 +97,7 @@ async function renderWithNotificationsSonores(notificationsSonores: boolean) {
   await act(async () => {
     renderWithContexts(
       <ChatsProvider>
-        <ProfilPage referentielAgences={[]} />
+        <ProfilPage referentielMissionsLocales={[]} />
       </ChatsProvider>,
       {
         customConseiller: unConseiller({
