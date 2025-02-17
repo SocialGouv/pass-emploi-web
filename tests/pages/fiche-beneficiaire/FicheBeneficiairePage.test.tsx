@@ -17,7 +17,7 @@ import {
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { CategorieSituation, Demarche } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
   getIndicateursJeuneAlleges,
@@ -366,7 +366,7 @@ describe('FicheBeneficiairePage client side', () => {
       // When
       await renderFicheJeuneNonMilo({
         demarches: { data: [uneDemarche()], isStale: false },
-        structure: StructureConseiller.CONSEIL_DEPT,
+        structure: 'CONSEIL_DEPT',
         ongletInitial: 'demarches',
       })
 
@@ -387,7 +387,7 @@ describe('FicheBeneficiairePage client side', () => {
     it('affiche un message pour des démarches pas fraiches', async () => {
       //When
       await renderFicheJeuneNonMilo({
-        structure: StructureConseiller.CONSEIL_DEPT,
+        structure: 'CONSEIL_DEPT',
         demarches: { data: uneListeDeDemarches(), isStale: true },
       })
 
@@ -407,7 +407,7 @@ describe('FicheBeneficiairePage client side', () => {
     it('affiche un message pour des démarches en erreur', async () => {
       //When
       await renderFicheJeuneNonMilo({
-        structure: StructureConseiller.CONSEIL_DEPT,
+        structure: 'CONSEIL_DEPT',
         demarches: null,
       })
 
@@ -454,7 +454,7 @@ async function renderFicheJeuneMilo({
       />,
       {
         customConseiller: {
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           structureMilo: structureDifferente
             ? {
                 nom: 'Mission locale',
@@ -477,7 +477,7 @@ async function renderFicheJeuneNonMilo({
 }: {
   autorisePartageFavoris?: boolean
   demarches?: { data: Demarche[]; isStale: boolean } | null
-  structure?: StructureConseiller
+  structure?: Structure
   ongletInitial?: string
 } = {}): Promise<HTMLElement> {
   let container: HTMLElement
@@ -497,7 +497,7 @@ async function renderFicheJeuneNonMilo({
       />,
       {
         customConseiller: {
-          structure: structure ?? StructureConseiller.POLE_EMPLOI,
+          structure: structure ?? structureFTCej,
         },
       }
     ))

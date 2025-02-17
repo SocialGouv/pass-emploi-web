@@ -9,10 +9,10 @@ import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import {
   aDeNouvellesActualites,
-  estMilo,
   estSuperviseur,
   utiliseChat,
 } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { modifierDateVisionnageActus } from 'services/conseiller.service'
 import { useActualites } from 'utils/actualitesContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -44,6 +44,7 @@ export default function NavLinks({
   const [portefeuille] = usePortefeuille()
   const actualites = useActualites()
 
+  const conseillerEstMilo = estMilo(conseiller.structure)
   const nombreBeneficiairesAArchiver = portefeuille.reduce(
     (count, beneficiaire) => count + Number(beneficiaire.estAArchiver),
     0
@@ -106,7 +107,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Rdvs) && (
+        {conseillerEstMilo && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
@@ -134,7 +135,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Pilotage) && (
+        {conseillerEstMilo && items.includes(NavItem.Pilotage) && (
           <NavLink
             iconName={
               isCurrentRoute('/pilotage')
@@ -153,7 +154,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Etablissement) && (
+        {conseillerEstMilo && items.includes(NavItem.Etablissement) && (
           <NavLink
             iconName={
               isCurrentRoute('/etablissement')
@@ -180,7 +181,7 @@ export default function NavLinks({
             />
           )}
 
-        {!estMilo(conseiller) &&
+        {!conseillerEstMilo &&
           utiliseChat(conseiller) &&
           items.includes(NavItem.Messagerie) && (
             <NavLink

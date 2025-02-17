@@ -5,14 +5,14 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import { RenseignementAgenceMissionLocaleForm } from 'components/RenseignementAgenceMissionLocaleForm'
+import { RenseignementMissionLocaleForm } from 'components/RenseignementMissionLocaleForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { estMilo, structureMilo } from 'interfaces/structure'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -26,15 +26,15 @@ const ConfirmationSuppressionCompteConseillerModal = dynamic(
 )
 
 type ProfilProps = {
-  referentielAgences: Agence[]
+  referentielMissionsLocales: Agence[]
 }
 
-function ProfilPage({ referentielAgences }: ProfilProps) {
+function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const conseillerEstMilo = estMilo(conseiller)
+  const conseillerEstMilo = estMilo(conseiller.structure)
   const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
     useState(false)
   const [
@@ -117,7 +117,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
   function trackAccederAIMilo() {
     trackPage({
       customTitle: 'Accès i-milo',
-      structure: StructureConseiller.MILO,
+      structure: structureMilo,
       aDesBeneficiaires,
     })
   }
@@ -223,9 +223,9 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
             )}
 
             {!conseiller.agence && (
-              <RenseignementAgenceMissionLocaleForm
-                referentielAgences={referentielAgences}
-                onAgenceChoisie={selectAgence}
+              <RenseignementMissionLocaleForm
+                referentielMissionsLocales={referentielMissionsLocales}
+                onMissionLocaleChoisie={selectAgence}
                 onContacterSupport={trackContacterSupportClick}
               />
             )}

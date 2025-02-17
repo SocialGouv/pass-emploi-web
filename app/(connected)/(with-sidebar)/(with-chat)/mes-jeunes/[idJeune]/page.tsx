@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Session } from 'next-auth'
 import { ReactElement } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -17,15 +16,9 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  estConseilDepartemental,
-  estMilo,
-  estUserCD,
-  estUserMilo,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import {
   getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
@@ -77,14 +70,14 @@ export default async function FicheBeneficiaire({
   if (!beneficiaire) notFound()
 
   const { page, onglet } = (await searchParams) ?? {}
-  const ongletInitial = getOngletInitial(onglet, user, metadonneesFavoris)
+  const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
 
   return (
     <>
       <PageFilArianePortal />
       <PageHeaderPortal header={`${beneficiaire.prenom} ${beneficiaire.nom}`} />
 
-      {estMilo(conseiller) &&
+      {estMilo(conseiller.structure) &&
         (await renderFicheMilo(
           conseiller,
           beneficiaire,
@@ -94,7 +87,7 @@ export default async function FicheBeneficiaire({
           metadonneesFavoris
         ))}
 
-      {!estMilo(conseiller) &&
+      {!estMilo(conseiller.structure) &&
         (await renderFichePasMilo(
           conseiller,
           beneficiaire,
@@ -108,7 +101,7 @@ export default async function FicheBeneficiaire({
 
 function getOngletInitial(
   searchParam: string | undefined,
-  user: Session.HydratedUser,
+  conseiller: Conseiller,
   metadonneesFavoris?: MetadonneesFavoris
 ): Onglet {
   if (
@@ -117,8 +110,8 @@ function getOngletInitial(
   )
     return searchParam
 
-  if (estUserMilo(user)) return 'actions'
-  if (estUserCD(user)) return 'demarches'
+  if (estMilo(conseiller.structure)) return 'actions'
+  if (estConseilDepartemental(conseiller.structure)) return 'demarches'
   if (metadonneesFavoris?.autoriseLePartage) return 'offres'
   return 'favoris'
 }
@@ -183,7 +176,7 @@ async function renderFichePasMilo(
   metadonneesFavoris?: MetadonneesFavoris
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
-  const demarches = estConseilDepartemental(conseiller)
+  const demarches = estConseilDepartemental(conseiller.structure)
     ? await getDemarchesBeneficiaire(
         beneficiaire.id,
         trenteJoursAvant,

@@ -9,7 +9,7 @@ import React from 'react'
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { unConseiller } from 'fixtures/conseiller'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { getRendezVousConseiller } from 'services/evenements.service'
 import { getSessionsBeneficiaires } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -92,7 +92,7 @@ describe('Agenda - Onglet conseiller', () => {
     beforeEach(async () => {
       // Given
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         agence: {
           nom: 'Mission Locale Aubenas',
           id: 'id-etablissement',

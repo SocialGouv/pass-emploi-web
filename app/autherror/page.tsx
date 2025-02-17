@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import AuthErrorPage from 'app/autherror/AuthErrorPage'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 
 type AuthErrorSearchParams = Promise<
   Partial<{
@@ -29,7 +29,7 @@ export default async function AuthError({
         withStructure={
           structureUtilisateur
             ? {
-                structure: structureUtilisateur as StructureConseiller,
+                structure: structureUtilisateur as Structure,
                 lienFormulaire: lienFormulaireConseiller(structureUtilisateur),
                 withTuto,
               }
@@ -149,23 +149,23 @@ function lienFormulaireConseiller(
   structureUtilisateur: string
 ): string | undefined {
   switch (structureUtilisateur) {
-    case StructureConseiller.MILO:
+    case 'MILO':
       return (
         (process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK as string) +
         'assistance/'
       )
-    case StructureConseiller.POLE_EMPLOI:
+    case 'POLE_EMPLOI':
       return (
         (process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK as string) +
         'formuler-une-demande/'
       )
-    case StructureConseiller.POLE_EMPLOI_BRSA:
-    case StructureConseiller.POLE_EMPLOI_AIJ:
-    case StructureConseiller.CONSEIL_DEPT:
-    case StructureConseiller.AVENIR_PRO:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
-    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+    case 'POLE_EMPLOI_BRSA':
+    case 'POLE_EMPLOI_AIJ':
+    case 'CONSEIL_DEPT':
+    case 'AVENIR_PRO':
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+    case 'FT_EQUIP_EMPLOI_RECRUT':
       return (
         (process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string) +
         'assistance/'
@@ -176,18 +176,18 @@ function lienFormulaireConseiller(
 function erreurIdp(structureUtilisateur?: string) {
   const idpName = (() => {
     switch (structureUtilisateur) {
-      case StructureConseiller.MILO:
+      case 'MILO':
         return 'i-Milo'
-      case StructureConseiller.POLE_EMPLOI:
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-      case StructureConseiller.POLE_EMPLOI_AIJ:
-      case StructureConseiller.AVENIR_PRO:
-      case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
-      case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
-      case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+      case 'POLE_EMPLOI':
+      case 'POLE_EMPLOI_BRSA':
+      case 'POLE_EMPLOI_AIJ':
+      case 'AVENIR_PRO':
+      case 'FT_ACCOMPAGNEMENT_INTENSIF':
+      case 'FT_ACCOMPAGNEMENT_GLOBAL':
+      case 'FT_EQUIP_EMPLOI_RECRUT':
       case 'FRANCE_TRAVAIL':
         return 'France Travail Connect'
-      case StructureConseiller.CONSEIL_DEPT:
+      case 'CONSEIL_DEPT':
       default:
         return 'du fournisseur d’identité'
     }

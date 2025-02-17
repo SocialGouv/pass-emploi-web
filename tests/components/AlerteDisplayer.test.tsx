@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ID_CONTENU } from 'components/globals'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -262,7 +262,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
         }),
       })
 
@@ -281,7 +281,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         }),
       })
 
@@ -300,7 +300,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         }),
       })
 
@@ -322,7 +322,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         }),
       })
 
@@ -344,7 +344,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         }),
       })
 
@@ -370,7 +370,7 @@ describe('AlerteDisplayer', () => {
           setter: alerteSetter,
         },
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         }),
       }
     )

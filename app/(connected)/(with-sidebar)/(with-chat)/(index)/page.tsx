@@ -3,11 +3,8 @@ import { redirect } from 'next/navigation'
 
 import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import {
-  aEtablissement,
-  doitSignerLesCGU,
-  estMilo,
-} from 'interfaces/conseiller'
+import { aEtablissement, doitSignerLesCGU } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -35,13 +32,13 @@ export default async function Home({
   const targetPage = redirectUrl ?? '/mes-jeunes' + sourceQueryParam
 
   const afficherModaleOnboarding = Boolean(onboarding)
-  const emailEstManquant = estMilo(conseiller) && !conseiller.email
+  const emailEstManquant = estMilo(conseiller.structure) && !conseiller.email
   const agenceEstManquante = !aEtablissement(conseiller)
   if (!afficherModaleOnboarding && !emailEstManquant && !agenceEstManquante)
     redirect(targetPage)
 
   let referentielAgences = undefined
-  if (!estMilo(conseiller)) {
+  if (!estMilo(conseiller.structure)) {
     referentielAgences = await getAgencesServerSide(
       conseiller.structure,
       accessToken

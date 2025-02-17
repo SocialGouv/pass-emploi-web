@@ -3,13 +3,13 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
 import LayoutWhenConnected, { generateMetadata } from 'app/(connected)/layout'
-import {
-  desItemsBeneficiaires,
-
-} from 'fixtures/beneficiaire'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { BeneficiaireFromListe, extractBaseBeneficiaire, extractBeneficiaireWithActivity } from 'interfaces/beneficiaire'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  BeneficiaireFromListe,
+  extractBeneficiaireWithActivity,
+} from 'interfaces/beneficiaire'
+import { Conseiller } from 'interfaces/conseiller'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -60,7 +60,7 @@ describe('LayoutWhenConnected', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue({
       user: {
         estConseiller: true,
-        structure: StructureConseiller.POLE_EMPLOI_BRSA,
+        structure: 'POLE_EMPLOI_BRSA',
       },
       accessToken: 'accessToken',
     })

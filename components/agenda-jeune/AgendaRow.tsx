@@ -9,7 +9,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagStatut } from 'components/ui/Indicateurs/Tag'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 
 interface AgendaRowProps {
   entree: EntreeAgenda
@@ -87,7 +87,8 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
               actionEstEnRetard={determineActionEnRetard()}
             />
           )}
-          {entree.source === StructureConseiller.MILO && (
+
+          {entree.source === structureMilo && (
             <>
               {entree.type === 'session' && entree.typeSession && (
                 <TagStatut
@@ -109,6 +110,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
               )}
             </>
           )}
+
           <IconComponent
             name={IconName.ChevronRight}
             focusable={false}

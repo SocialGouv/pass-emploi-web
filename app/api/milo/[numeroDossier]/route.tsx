@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { estUserMilo, StructureConseiller } from 'interfaces/conseiller'
+import { estMilo, structureMilo } from 'interfaces/structure'
 import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ numeroDossier: string }> }
 ) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (!estUserMilo(user)) redirect('/mes-jeunes')
+  if (!estMilo(user.structure)) redirect('/mes-jeunes')
 
   const { numeroDossier } = await params
   const idJeune = await getIdJeuneMilo(numeroDossier, accessToken)
@@ -19,7 +19,7 @@ export async function GET(
   const refererUrl = (await headers()).get('referer') ?? undefined
 
   trackSSR({
-    structure: StructureConseiller.MILO,
+    structure: structureMilo,
     customTitle: `Détail jeune par numéro dossier${
       !Boolean(idJeune) ? ' en erreur' : ''
     }`,

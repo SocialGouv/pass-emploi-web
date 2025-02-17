@@ -8,92 +8,89 @@ import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { Agence } from 'interfaces/referentiel'
+import { Agence, MissionLocale } from 'interfaces/referentiel'
 import styles from 'styles/components/Button.module.css'
 
-interface RenseignementAgenceMissionLocaleFormProps {
-  referentielAgences: Agence[]
-  onAgenceChoisie: (agence: { id: string; nom: string }) => void
+interface RenseignementMissionLocaleFormProps {
+  referentielMissionsLocales: Agence[]
+  onMissionLocaleChoisie: (missionLocale: MissionLocale) => void
   onContacterSupport: () => void
   isInModal?: boolean
   onClose?: (e: MouseEvent) => void
 }
 
-interface OptionAgence {
+interface Option {
   id: string
   value: string
 }
 
-const AGENCE_PAS_DANS_LA_LISTE_OPTION: OptionAgence = {
-  id: 'agence-pas-dans-la-liste',
+const MILO_PAS_DANS_LA_LISTE_OPTION: Option = {
+  id: 'milo-pas-dans-la-liste',
   value: 'Ma Mission Locale n’apparaît pas dans la liste',
 }
 
-const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
+const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre Mission Locale est absente de la liste. 
   Pour faire une demande d’ajout de votre Mission Locale, vous devez contacter le support.`
 
-export function RenseignementAgenceMissionLocaleForm({
-  referentielAgences,
-  onAgenceChoisie,
+export function RenseignementMissionLocaleForm({
+  referentielMissionsLocales,
+  onMissionLocaleChoisie,
   onContacterSupport,
   onClose = () => {},
   isInModal = false,
-}: RenseignementAgenceMissionLocaleFormProps) {
-  const [departement, setDepartement] = useState<string>('')
-  const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
-    useState<Agence[]>(referentielAgences)
-  const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
+}: RenseignementMissionLocaleFormProps) {
+  const [filtreDepartement, setFiltreFiltreDepartement] = useState<string>('')
+  const [MissionsLocalesFiltrees, setMissionsLocalesFiltrees] = useState<
+    MissionLocale[]
+  >(referentielMissionsLocales)
+  const [idMissionLocaleSelectionnee, setIdMissionLocaleSelectionnee] =
     useState<ValueWithError<string | undefined>>()
 
-  function buildOptions(): OptionAgence[] {
-    return [AGENCE_PAS_DANS_LA_LISTE_OPTION].concat(
-      agencesMiloFiltrees.map(({ id, nom }) => ({ id, value: nom }))
+  function buildOptions(): Option[] {
+    return [MILO_PAS_DANS_LA_LISTE_OPTION].concat(
+      MissionsLocalesFiltrees.map(({ id, nom }) => ({ id, value: nom }))
     )
   }
 
   function selectDepartement(departementSelectionne: string) {
-    setIdAgenceSelectionnee({ value: undefined })
-    setDepartement(departementSelectionne)
+    setIdMissionLocaleSelectionnee({ value: undefined })
+    setFiltreFiltreDepartement(padCodeDepartement(departementSelectionne))
   }
 
-  function agenceEstDansLaListe() {
+  function missionLocaleNestPasDansLaListe() {
     return (
-      idAgenceSelectionnee?.value &&
-      idAgenceSelectionnee.value !== AGENCE_PAS_DANS_LA_LISTE_OPTION.id
+      idMissionLocaleSelectionnee?.value === MILO_PAS_DANS_LA_LISTE_OPTION.id
     )
-  }
-
-  function agenceNestPasDansLaListe() {
-    return idAgenceSelectionnee?.value === AGENCE_PAS_DANS_LA_LISTE_OPTION.id
   }
 
   function submitMissionLocaleSelectionnee(e: FormEvent) {
     e.preventDefault()
-    if (!idAgenceSelectionnee?.value)
-      setIdAgenceSelectionnee({
-        value: idAgenceSelectionnee?.value,
+    if (!idMissionLocaleSelectionnee?.value) {
+      setIdMissionLocaleSelectionnee({
+        value: idMissionLocaleSelectionnee?.value,
         error:
           'Le champ ”Recherchez votre Mission Locale” est vide. Renseignez votre Mission Locale.',
       })
-    if (agenceEstDansLaListe()) {
-      const agence = referentielAgences.find(
-        (uneAgence) => uneAgence.id === idAgenceSelectionnee?.value
-      )
-      onAgenceChoisie(agence!)
+      return
     }
+
+    if (missionLocaleNestPasDansLaListe()) return
+
+    const missionLocale = referentielMissionsLocales.find(
+      ({ id }) => id === idMissionLocaleSelectionnee.value
+    )
+    onMissionLocaleChoisie(missionLocale!)
   }
 
   useEffect(() => {
-    const agencesFiltrees =
-      departement !== ''
-        ? referentielAgences.filter((agence) =>
-            agence.codeDepartement
-              .padStart(2, '0')
-              .startsWith(departement.padStart(2, '0'))
+    const miloFiltrees =
+      filtreDepartement !== ''
+        ? referentielMissionsLocales.filter(({ codeDepartement }) =>
+            padCodeDepartement(codeDepartement).startsWith(filtreDepartement)
           )
-        : referentielAgences
-    setAgencesMiloFiltrees(agencesFiltrees)
-  }, [departement, referentielAgences])
+        : referentielMissionsLocales
+    setMissionsLocalesFiltrees(miloFiltrees)
+  }, [filtreDepartement, referentielMissionsLocales])
 
   return (
     <form
@@ -116,17 +113,16 @@ export function RenseignementAgenceMissionLocaleForm({
           <Label htmlFor='mission-locale' inputRequired={true}>
             Recherchez votre Mission Locale dans la liste suivante
           </Label>
-          {idAgenceSelectionnee?.error && (
+          {idMissionLocaleSelectionnee?.error && (
             <InputError id='mission-locale--error' className='mt-2'>
-              {idAgenceSelectionnee.error}
+              {idMissionLocaleSelectionnee.error}
             </InputError>
           )}
           <Select
             id='mission-locale'
-            key={departement}
             required={true}
-            onChange={(nouvelleAgence) =>
-              setIdAgenceSelectionnee({ value: nouvelleAgence })
+            onChange={(nouvelleMissionLocale) =>
+              setIdMissionLocaleSelectionnee({ value: nouvelleMissionLocale })
             }
           >
             {buildOptions().map(({ id, value }) => (
@@ -138,17 +134,18 @@ export function RenseignementAgenceMissionLocaleForm({
         </div>
       </div>
 
-      {agenceNestPasDansLaListe() && isInModal && (
+      {missionLocaleNestPasDansLaListe() && isInModal && (
         <div className='mt-2'>
           <InformationMessage label={CONTACTER_LE_SUPPORT_LABEL} />
         </div>
       )}
 
-      {agenceNestPasDansLaListe() && !isInModal && (
+      {missionLocaleNestPasDansLaListe() && !isInModal && (
         <div className='mb-4'>
           <p>{CONTACTER_LE_SUPPORT_LABEL}</p>
         </div>
       )}
+
       <div className={isInModal ? 'flex justify-center mt-14' : ''}>
         {isInModal && (
           <Button
@@ -161,13 +158,13 @@ export function RenseignementAgenceMissionLocaleForm({
           </Button>
         )}
 
-        {(!idAgenceSelectionnee?.value || agenceEstDansLaListe()) && (
+        {!missionLocaleNestPasDansLaListe() && (
           <Button type='submit' className='mr-6'>
             Ajouter
           </Button>
         )}
 
-        {agenceNestPasDansLaListe() && (
+        {missionLocaleNestPasDansLaListe() && (
           <a
             className={`w-fit flex items-center justify-center text-s-bold ${styles.button} ${styles.buttonTertiary}`}
             href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
@@ -188,4 +185,8 @@ export function RenseignementAgenceMissionLocaleForm({
       </div>
     </form>
   )
+}
+
+function padCodeDepartement(code: string): string {
+  return code.padStart(2, '0')
 }

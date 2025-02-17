@@ -8,7 +8,7 @@ import React from 'react'
 import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
 import { commenterAction } from 'services/messages.service'
@@ -396,7 +396,7 @@ describe('ActionPage client side', () => {
           />,
           {
             customConseiller: {
-              structure: StructureConseiller.MILO,
+              structure: structureMilo,
             },
             customAlerte: { setter: alerteSetter },
           }
@@ -444,7 +444,7 @@ describe('ActionPage client side', () => {
           />,
           {
             customConseiller: {
-              structure: StructureConseiller.MILO,
+              structure: structureMilo,
             },
             customAlerte: { setter: alerteSetter },
           }

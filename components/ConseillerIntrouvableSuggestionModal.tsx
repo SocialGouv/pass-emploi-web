@@ -4,7 +4,7 @@ import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -40,7 +40,7 @@ export default function ConseillerIntrouvableSuggestionModal({
       <p className='mb-4 text-base-bold text-content_color text-center'>
         La conseillère ou le conseiller en question ne s’est peut-être jamais
         connecté(e) à l’Application{' '}
-        {estPassEmploi(conseiller) ? 'pass emploi' : 'du CEJ'}.
+        {estPassEmploi(conseiller.structure) ? 'pass emploi' : 'du CEJ'}.
       </p>
       <p className='mb-12 text-base-regular text-content_color text-center'>
         Nous l’invitons à effectuer une première connexion pour apparaître dans

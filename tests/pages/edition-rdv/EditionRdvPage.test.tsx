@@ -21,7 +21,6 @@ import {
   BeneficiaireFromListe,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -49,7 +48,7 @@ describe('EditionRdvPage client side', () => {
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let push: Function
+    let push: () => void
     let refresh: jest.Mock
 
     beforeEach(() => {
@@ -333,9 +332,10 @@ describe('EditionRdvPage client side', () => {
             name: 'Étape 5: Définissez la gestion des accès',
           })
         })
+
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Given
-          inputPresenceConseiller = screen.getByLabelText(
+          inputPresenceConseiller = within(etape).getByLabelText(
             /Informer les bénéficiaires qu’un conseiller sera présent à l’événement/i
           )
 
@@ -346,7 +346,7 @@ describe('EditionRdvPage client side', () => {
 
         it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation à l’événement', () => {
           // Given
-          inputEmailInvitation = screen.getByLabelText(
+          inputEmailInvitation = within(etape).getByLabelText(
             /Intégrer cet événement à mon agenda via l’adresse e-mail suivante :/i
           )
 
@@ -358,8 +358,8 @@ describe('EditionRdvPage client side', () => {
         it('indique l’email auquel le conseiller va recevoir son invitation à l’événement', () => {
           // Given
 
-          let getEmailConseiller: HTMLInputElement =
-            screen.getByLabelText(/fake@email.com/i)
+          const getEmailConseiller: HTMLInputElement =
+            within(etape).getByLabelText(/fake@email.com/i)
 
           // Then
 
@@ -368,26 +368,15 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('contient un bouton pour annuler', async () => {
-        // Given
-        const selectType = screen.getByRole('combobox', {
-          name: /Type/,
-        })
-
-        // When
-        await userEvent.selectOptions(selectType, 'Activités extérieures')
-
         // Then
-        const cancelButton = screen.getByText('Annuler')
-        expect(cancelButton).toBeInTheDocument()
+        expect(screen.getByText('Annuler')).toBeInTheDocument()
       })
 
       describe('quand tous les champs ne sont pas remplis', () => {
         let selectBeneficiaires: HTMLInputElement
-        let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHeureDeDebut: HTMLInputElement
-        let inputHeurDeFin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -399,15 +388,9 @@ describe('EditionRdvPage client side', () => {
           selectBeneficiaires = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
           })
-          selectModalite = screen.getByRole('combobox', {
-            name: 'Modalité',
-          })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
           inputHeureDeDebut = screen.getByLabelText(
             '* Heure de début format : hh:mm'
-          )
-          inputHeurDeFin = screen.getByLabelText(
-            '* Heure de fin format : hh:mm'
           )
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
@@ -743,7 +726,7 @@ describe('EditionRdvPage client side', () => {
     describe('événements issus d’i-milo', () => {
       beforeEach(() => {
         // Given
-        const evenement = unEvenement({ source: StructureConseiller.MILO })
+        const evenement = unEvenement({ source: 'MILO' })
 
         // When
         renderWithContexts(
@@ -1422,8 +1405,7 @@ describe('EditionRdvPage client side', () => {
 
     let typesRendezVous: TypeEvenementReferentiel[]
 
-    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let push: Function
+    let push: () => void
     let refresh: jest.Mock
     beforeEach(() => {
       beneficiairesConseiller = desItemsBeneficiaires()
@@ -1454,7 +1436,6 @@ describe('EditionRdvPage client side', () => {
       ).mockResolvedValue(beneficiairesEtablissement)
       typesRendezVous = typesAnimationCollective()
 
-      alerteSetter = jest.fn()
       push = jest.fn()
       refresh = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })

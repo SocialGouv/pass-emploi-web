@@ -7,14 +7,14 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 
 type AuthErrorPageProps = {
   erreur: string
   codeErreur?: string
   withStructure?: {
-    structure: StructureConseiller
+    structure: Structure
     lienFormulaire?: string
     withTuto?: boolean
   }

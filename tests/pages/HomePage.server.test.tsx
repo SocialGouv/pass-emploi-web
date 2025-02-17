@@ -5,10 +5,11 @@ import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePag
 import Home from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/page'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  uneListeDAgencesMILO,
   uneListeDAgencesFranceTravail,
+  uneListeDAgencesMILO,
 } from 'fixtures/referentiel'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -32,7 +33,7 @@ describe('HomePage server side', () => {
       const conseillerAvecAgence: Conseiller = unConseiller({
         structureMilo: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
         email: 'pass.emploi@beta.gouv.fr',
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
       })
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
         conseillerAvecAgence
@@ -67,7 +68,7 @@ describe('HomePage server side', () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         email: 'pass.emploi@beta.gouv.fr',
       })
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
@@ -93,7 +94,7 @@ describe('HomePage server side', () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 
       const conseiller = unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI,
+        structure: structureFTCej,
         email: 'pass.emploi@beta.gouv.fr',
       })
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
@@ -132,7 +133,7 @@ describe('HomePage server side', () => {
           nom: 'Mission Locale Aubenas',
           id: 'id-test',
         },
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         email: undefined,
       })
 
@@ -159,7 +160,7 @@ describe('HomePage server side', () => {
     it('prépare la page avec l’onboarding', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-        unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
+        unConseiller({ structure: structureFTCej })
       )
       ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
         uneListeDAgencesFranceTravail()

@@ -9,7 +9,6 @@ import {
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -92,7 +91,7 @@ async function renderFicheJeune(
         lectureSeule={false}
       />,
       {
-        customConseiller: { structure: StructureConseiller.MILO },
+        customConseiller: { structure: 'MILO' },
       }
     )
   })

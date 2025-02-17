@@ -6,14 +6,14 @@ import React from 'react'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import { unConseiller } from 'fixtures/conseiller'
 import { unMessage } from 'fixtures/message'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { TypeMessage } from 'interfaces/message'
+import { structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DiplayMessageConseiller />', () => {
   const nomConseiller = 'johnny boi'
   const customConseiller = unConseiller({
-    structure: StructureConseiller.MILO,
+    structure: structureMilo,
     firstName: 'johnny',
     lastName: 'boi',
     id: 'id-conseiller',

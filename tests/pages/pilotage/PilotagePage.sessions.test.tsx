@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories } from 'fixtures/action'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -40,7 +40,7 @@ describe('PilotagePage client side - Sessions', () => {
           />,
           {
             customConseiller: {
-              structure: StructureConseiller.MILO,
+              structure: structureMilo,
               agence: {
                 nom: 'Mission Locale Aubenas',
                 id: 'id-test',
@@ -171,7 +171,7 @@ describe('PilotagePage client side - Sessions', () => {
         />,
         {
           customConseiller: {
-            structure: StructureConseiller.MILO,
+            structure: structureMilo,
             agence: {
               nom: 'Mission Locale Aubenas',
               id: 'id-test',

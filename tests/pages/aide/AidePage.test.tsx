@@ -4,7 +4,8 @@ import React from 'react'
 
 import AidePage from 'app/(connected)/(with-sidebar)/(without-chat-full-screen)/aide/AidePage'
 import { unConseiller } from 'fixtures/conseiller'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Aide client side', () => {
@@ -14,7 +15,7 @@ describe('Aide client side', () => {
     beforeEach(async () => {
       conseiller = unConseiller({
         id: 'id-conseiller',
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         agence: { nom: 'Agence', id: 'id-test' },
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
@@ -84,7 +85,7 @@ describe('Aide client side', () => {
   describe('conseiller France Travail', () => {
     beforeEach(async () => {
       ;({ container } = renderWithContexts(<AidePage />, {
-        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customConseiller: { structure: structureFTCej },
       }))
     })
 
@@ -115,7 +116,7 @@ describe('Aide client side', () => {
   describe('conseiller France Travail BRSA', () => {
     beforeEach(async () => {
       ;({ container } = renderWithContexts(<AidePage />, {
-        customConseiller: { structure: StructureConseiller.POLE_EMPLOI_BRSA },
+        customConseiller: { structure: 'POLE_EMPLOI_BRSA' },
       }))
     })
 

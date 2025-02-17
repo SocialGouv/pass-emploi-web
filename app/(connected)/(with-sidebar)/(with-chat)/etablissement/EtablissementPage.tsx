@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import EncartAgenceRequise from 'components/EncartAgenceRequise'
+import EncartMissionLocaleRequise from 'components/EncartMissionLocaleRequise'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -20,8 +20,9 @@ import {
   BeneficiaireEtablissement,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { estMilo, estSuperviseur } from 'interfaces/conseiller'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { estSuperviseur } from 'interfaces/conseiller'
+import { MissionLocale } from 'interfaces/referentiel'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -42,8 +43,6 @@ function EtablissementPage() {
     useState<BeneficiaireEtablissement[]>()
   const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
   const [pageCourante, setPageCourante] = useState<number>()
-
-  const conseillerEstMilo = estMilo(conseiller)
 
   async function rechercherJeunes(input: string, page: number) {
     if (!input) {
@@ -66,10 +65,7 @@ function EtablissementPage() {
     setRecherche(input)
   }
 
-  async function renseignerAgence(agence: {
-    id?: string
-    nom: string
-  }): Promise<void> {
+  async function renseignerMissionLocale(agence: MissionLocale): Promise<void> {
     const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
@@ -108,10 +104,9 @@ function EtablissementPage() {
       )}
 
       {!conseiller.agence && (
-        <EncartAgenceRequise
-          conseiller={conseiller}
-          onAgenceChoisie={renseignerAgence}
-          getAgences={getAgencesClientSide}
+        <EncartMissionLocaleRequise
+          onMissionLocaleChoisie={renseignerMissionLocale}
+          getMissionsLocales={getMissionsLocalesClientSide}
           onChangeAffichageModal={trackAgenceModal}
         />
       )}
@@ -129,7 +124,7 @@ function EtablissementPage() {
             <thead>
               <TR isHeader={true}>
                 <TH>Bénéficiaire</TH>
-                {conseillerEstMilo && <TH>Situation</TH>}
+                <TH>Situation</TH>
                 <TH>Dernière activité</TH>
                 <TH>Conseiller</TH>
                 <TH>Voir le détail</TH>
@@ -139,13 +134,11 @@ function EtablissementPage() {
               {resultatsRecherche!.map((jeune) => (
                 <TR key={jeune.base.id}>
                   <TD isBold>{getNomBeneficiaireComplet(jeune.base)}</TD>
-                  {conseillerEstMilo && (
-                    <TD>
-                      {jeune.situation && (
-                        <SituationTag situation={jeune.situation} />
-                      )}
-                    </TD>
-                  )}
+                  <TD>
+                    {jeune.situation && (
+                      <SituationTag situation={jeune.situation} />
+                    )}
+                  </TD>
                   <TD
                     aria-label={
                       jeune.dateDerniereActivite

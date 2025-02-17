@@ -8,6 +8,7 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
+import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
 type InscriptionSessionJson = {
@@ -115,7 +116,7 @@ export function sessionJsonToEntree(
   return {
     id: session.id,
     date: date,
-    source: 'MILO',
+    source: structureMilo,
     titre,
     sousTitre: session.nomSession,
     type: 'session',

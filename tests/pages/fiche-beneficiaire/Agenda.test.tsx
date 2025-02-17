@@ -15,7 +15,7 @@ import {
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -60,7 +60,7 @@ describe('Agenda de la fiche jeune', () => {
           {
             customConseiller: {
               id: 'id-conseiller',
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             },
           }
         )
@@ -373,7 +373,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: LUNDI_JANVIER_3,
                   type: 'evenement',
                   titre: '15h00 - Rdv du lundi 3',
-                  source: StructureConseiller.MILO,
+                  source: structureMilo,
                 } as EntreeAgenda,
               ],
             })
@@ -473,7 +473,7 @@ async function renderFicheJeuneMILO() {
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
         },
       }
     )

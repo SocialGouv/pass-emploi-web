@@ -8,7 +8,7 @@ import EmargementRdv, {
 import { unConseiller } from 'fixtures/conseiller'
 import { unEvenement } from 'fixtures/evenement'
 import { unDetailSession } from 'fixtures/session'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -32,14 +32,14 @@ describe('EmargementRdvPage server side', () => {
   const sessionAEmarger = unDetailSession()
 
   const conseiller = unConseiller({
-    structure: StructureConseiller.MILO,
+    structure: structureMilo,
     structureMilo: { id: 'id-agence', nom: 'Montastruc-la-Conseillère' },
   })
 
   beforeEach(() => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: StructureConseiller.MILO },
+      user: { id: 'id-conseiller', structure: structureMilo },
       accessToken: 'accessToken',
     })
     ;(getDetailsEvenement as jest.Mock).mockResolvedValue(acAEmarger)
@@ -113,7 +113,7 @@ describe('EmargementRdvPage server side', () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         user: {
           id: 'id-conseiller',
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         },
         accessToken: 'accessToken',
       })

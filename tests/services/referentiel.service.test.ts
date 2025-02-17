@@ -5,24 +5,24 @@ import {
   desLocalites,
   desLocalitesJson,
   desMetiers,
-  uneListeDAgencesMILO,
   uneListeDAgencesFranceTravail,
+  uneListeDAgencesMILO,
 } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import {
   getActionsPredefinies,
-  getAgencesClientSide,
   getAgencesServerSide,
   getCommunes,
   getCommunesEtDepartements,
   getMetiers,
+  getMissionsLocalesClientSide,
 } from 'services/referentiel.service'
 
 jest.mock('clients/api.client')
 
 describe('ReferentielApiService', () => {
   describe('.getAgencesServerSide', () => {
-    let structure: StructureConseiller
+    let structure: Structure
     beforeEach(() => {
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/referentiels/agences?structure=MILO`)
@@ -34,7 +34,7 @@ describe('ReferentielApiService', () => {
 
     it('renvoie le référentiel des agences MILO', async () => {
       // Given
-      structure = StructureConseiller.MILO
+      structure = structureMilo
       // WHEN
       const actual = await getAgencesServerSide(structure, 'accessToken')
 
@@ -44,7 +44,7 @@ describe('ReferentielApiService', () => {
 
     it('renvoie le référentiel des agences France Travail', async () => {
       // Given
-      structure = StructureConseiller.POLE_EMPLOI
+      structure = structureFTCej
       // WHEN
       const actual = await getAgencesServerSide(structure, 'accessToken')
 
@@ -53,35 +53,21 @@ describe('ReferentielApiService', () => {
     })
   })
 
-  describe('.getAgencesClientSide', () => {
-    let structure: StructureConseiller
-    beforeEach(() => {
-      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/referentiels/agences?structure=MILO`)
-          return { content: uneListeDAgencesMILO() }
-        if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
-          return { content: uneListeDAgencesFranceTravail() }
-      })
-    })
-
+  describe('.getMissionsLocalesClientSide', () => {
     it('renvoie le référentiel des agences MILO', async () => {
-      // Given
-      structure = StructureConseiller.MILO
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneListeDAgencesMILO(),
+      })
+
       // WHEN
-      const actual = await getAgencesClientSide(structure)
+      const actual = await getMissionsLocalesClientSide()
 
       // THEN
+      expect(apiGet).toHaveBeenCalledWith(
+        '/referentiels/agences?structure=MILO',
+        'accessToken'
+      )
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
-    })
-
-    it('renvoie le référentiel des agences France Travail', async () => {
-      // Given
-      structure = StructureConseiller.POLE_EMPLOI
-      // WHEN
-      const actual = await getAgencesClientSide(structure)
-
-      // THEN
-      expect(actual).toStrictEqual(uneListeDAgencesFranceTravail())
     })
   })
 

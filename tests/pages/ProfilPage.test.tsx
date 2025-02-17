@@ -8,7 +8,8 @@ import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
 import {
   modifierAgence,
@@ -25,12 +26,12 @@ jest.mock('components/ModalContainer')
 describe('ProfilPage client side', () => {
   let container: HTMLElement
   let jeunes: BeneficiaireFromListe[]
-  let push: Function
+  let push: () => void
 
   describe('contenu', () => {
     const conseiller: Conseiller = unConseiller({
       email: 'nils.tavernier@mail.com',
-      structure: StructureConseiller.POLE_EMPLOI,
+      structure: structureFTCej,
       agence: { nom: 'MLS3F SAINT-LOUIS' },
     })
     beforeEach(async () => {
@@ -39,7 +40,7 @@ describe('ProfilPage client side', () => {
       // When
       await act(async () => {
         ;({ container } = renderWithContexts(
-          <ProfilPage referentielAgences={[]} />,
+          <ProfilPage referentielMissionsLocales={[]} />,
           {
             customConseiller: conseiller,
           }
@@ -82,7 +83,7 @@ describe('ProfilPage client side', () => {
       // When
       await act(async () => {
         ;({ container } = renderWithContexts(
-          <ProfilPage referentielAgences={[]} />
+          <ProfilPage referentielMissionsLocales={[]} />
         ))
       })
     })
@@ -104,14 +105,14 @@ describe('ProfilPage client side', () => {
       beforeEach(async () => {
         // Given
         const conseiller = unConseiller({
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           agence: { nom: 'MLS3F SAINT-LOUIS' },
         })
 
         // When
         await act(async () => {
           ;({ container } = renderWithContexts(
-            <ProfilPage referentielAgences={[]} />,
+            <ProfilPage referentielMissionsLocales={[]} />,
             {
               customConseiller: conseiller,
             }
@@ -146,13 +147,13 @@ describe('ProfilPage client side', () => {
       beforeEach(async () => {
         // Given
         const conseiller = unConseiller({
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
         })
 
         // When
         await act(async () => {
           ;({ container } = renderWithContexts(
-            <ProfilPage referentielAgences={agences} />,
+            <ProfilPage referentielMissionsLocales={agences} />,
             {
               customConseiller: conseiller,
             }
@@ -304,7 +305,7 @@ describe('ProfilPage client side', () => {
     describe('si son adresse email n’est pas encore renseignée', () => {
       const agences = uneListeDAgencesMILO()
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         email: undefined,
       })
 
@@ -312,7 +313,7 @@ describe('ProfilPage client side', () => {
         // When
         await act(async () => {
           ;({ container } = renderWithContexts(
-            <ProfilPage referentielAgences={agences} />,
+            <ProfilPage referentielMissionsLocales={agences} />,
             {
               customConseiller: conseiller,
             }
@@ -346,7 +347,7 @@ describe('ProfilPage client side', () => {
     describe('en tant que conseiller sans bénéficiaires', () => {
       const conseiller = unConseiller({
         email: 'conseiller@pole-emploi.fr',
-        structure: StructureConseiller.POLE_EMPLOI_BRSA,
+        structure: structureFTCej,
       })
       beforeEach(async () => {
         // Given
@@ -359,7 +360,7 @@ describe('ProfilPage client side', () => {
         // When
         await act(async () => {
           ;({ container } = renderWithContexts(
-            <ProfilPage referentielAgences={[]} />,
+            <ProfilPage referentielMissionsLocales={[]} />,
             {
               customConseiller: conseiller,
             }
@@ -412,7 +413,7 @@ describe('ProfilPage client side', () => {
     describe('en tant que conseiller avec bénéficiaires', () => {
       const conseiller = unConseiller({
         email: 'conseiller@milo.fr',
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
       })
       beforeEach(async () => {
         // Given
@@ -424,7 +425,7 @@ describe('ProfilPage client side', () => {
         // When
         await act(async () => {
           ;({ container } = renderWithContexts(
-            <ProfilPage referentielAgences={[]} />,
+            <ProfilPage referentielMissionsLocales={[]} />,
             {
               customConseiller: conseiller,
             }
@@ -463,7 +464,7 @@ describe('ProfilPage client side', () => {
       })
 
       await act(async () => {
-        renderWithContexts(<ProfilPage referentielAgences={[]} />, {
+        renderWithContexts(<ProfilPage referentielMissionsLocales={[]} />, {
           customConseiller: conseiller,
         })
       })

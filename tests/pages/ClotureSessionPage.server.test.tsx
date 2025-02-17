@@ -5,8 +5,8 @@ import ClotureSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/ag
 import ClotureSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/page'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -28,13 +28,13 @@ describe('Cloture Session server side', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: StructureConseiller.MILO },
+        user: { id: 'id-conseiller', structure: structureMilo },
         accessToken: 'accessToken',
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           agence: { nom: 'Agence', id: 'id-test' },
           structureMilo: { nom: 'Agence', id: 'id-test' },
         })
@@ -51,6 +51,7 @@ describe('Cloture Session server side', () => {
             lieu: 'CEJ Paris',
             commentaire: 'bla',
             estVisible: true,
+            autoinscription: true,
             nbPlacesDisponibles: 20,
             statut: StatutAnimationCollective.AClore,
           },
@@ -71,6 +72,7 @@ describe('Cloture Session server side', () => {
           lieu: 'CEJ Paris',
           commentaire: 'bla',
           estVisible: true,
+          autoinscription: true,
           nbPlacesDisponibles: 20,
           statut: StatutAnimationCollective.AClore,
         },
@@ -135,6 +137,7 @@ describe('Cloture Session server side', () => {
             lieu: 'CEJ Paris',
             commentaire: 'bla',
             estVisible: true,
+            autoinscription: true,
             nbPlacesDisponibles: 20,
             statut: StatutAnimationCollective.AVenir,
           },
@@ -157,10 +160,10 @@ describe('Cloture Session server side', () => {
     it('renvoie sur la liste des bénéficiaires', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+        user: { structure: structureFTCej },
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-        unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
+        unConseiller({ structure: structureFTCej })
       )
 
       //When

@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej } from 'interfaces/structure'
 import { getChatCredentials, signIn } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -45,7 +45,7 @@ describe('ChatCredentialsProvider', () => {
       render(
         <ConseillerProvider
           conseiller={unConseiller({
-            structure: StructureConseiller.POLE_EMPLOI,
+            structure: structureFTCej,
           })}
         >
           <ChatCredentialsProvider>
@@ -70,7 +70,7 @@ describe('ChatCredentialsProvider', () => {
         <ConseillerProvider
           conseiller={unConseiller({
             id: 'id-early-adopter',
-            structure: StructureConseiller.POLE_EMPLOI,
+            structure: structureFTCej,
           })}
         >
           <ChatCredentialsProvider>

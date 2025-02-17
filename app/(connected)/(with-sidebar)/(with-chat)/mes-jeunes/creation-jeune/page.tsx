@@ -6,7 +6,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
@@ -21,8 +21,8 @@ export default async function CreationBeneficiaire() {
       <PageFilArianePortal />
       <PageHeaderPortal header='Créer un compte bénéficiaire' />
 
-      {estUserMilo(user) && <CreationBeneficiaireMiloPage />}
-      {!estUserMilo(user) && <CreationBeneficiaireFranceTravailPage />}
+      {estMilo(user.structure) && <CreationBeneficiaireMiloPage />}
+      {!estMilo(user.structure) && <CreationBeneficiaireFranceTravailPage />}
     </>
   )
 }

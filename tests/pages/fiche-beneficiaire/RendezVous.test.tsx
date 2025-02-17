@@ -14,9 +14,9 @@ import {
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
+import { Structure } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
@@ -136,7 +136,7 @@ describe('Rendez-vous de la fiche jeune', () => {
   describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
     beforeEach(async () => {
       await renderFicheJeuneFT(
-        StructureConseiller.POLE_EMPLOI,
+        'POLE_EMPLOI',
         uneMetadonneeFavoris(),
         uneListeDOffres(),
         uneListeDeRecherches()
@@ -170,7 +170,7 @@ async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: 'MILO',
           structureMilo: { id: 'id-test', nom: 'Milo Agence' },
         },
       }
@@ -179,7 +179,7 @@ async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
 }
 
 async function renderFicheJeuneFT(
-  structure: StructureConseiller,
+  structure: Structure,
   metadonnees: MetadonneesFavoris,
   offresFT: Offre[],
   recherchesFT: Recherche[]

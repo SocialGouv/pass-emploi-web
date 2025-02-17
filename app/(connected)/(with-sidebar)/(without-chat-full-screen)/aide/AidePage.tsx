@@ -16,7 +16,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estMilo, estPassEmploi } from 'interfaces/conseiller'
+import { estMilo, estPassEmploi } from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -27,7 +27,7 @@ export default function AidePage() {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const conseillerEstPassEmploi = estPassEmploi(conseiller)
+  const conseillerEstPassEmploi = estPassEmploi(conseiller.structure)
   const aDesBeneficiaires = portefeuille.length > 0
 
   const QrcodeAppStore = conseillerEstPassEmploi
@@ -110,7 +110,7 @@ export default function AidePage() {
               <li>Répondre à vos questions</li>
               <li>Collecter vos retours utilisateurs</li>
 
-              {!estMilo(conseiller) && (
+              {!estMilo(conseiller.structure) && (
                 <li>Vous aider dans la réaffectation de vos bénéficiaires</li>
               )}
             </ul>

@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { estMilo, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
@@ -74,11 +74,11 @@ function HomePage({
     router.replace(redirectUrl)
   }
 
-  function trackContacterSupport(etablissement: string) {
+  function trackContacterSupport() {
     trackEvent({
-      structure: conseiller.structure,
+      structure: structureMilo,
       categorie: 'Contact Support',
-      action: 'Pop-in sélection ' + etablissement,
+      action: 'Pop-in sélection Mission Locale',
       nom: '',
       aDesBeneficiaires: portefeuille.length > 0,
     })
@@ -86,7 +86,7 @@ function HomePage({
 
   function trackAccederImilo() {
     trackPage({
-      structure: StructureConseiller.MILO,
+      structure: structureMilo,
       customTitle: 'Accès i-milo',
       aDesBeneficiaires: portefeuille.length > 0,
     })
@@ -108,23 +108,23 @@ function HomePage({
         />
       )}
 
-      {showModaleAgence && !referentielAgences && (
+      {showModaleAgence && estMilo(conseiller.structure) && (
         <RenseignementStructureModal
-          onContacterSupport={() => trackContacterSupport('structure')}
+          onContacterSupport={trackContacterSupport}
           onAccederImilo={trackAccederImilo}
           onClose={() => setShowModaleAgence(false)}
         />
       )}
 
-      {showModaleAgence && referentielAgences && (
-        <RenseignementAgenceModal
-          conseiller={conseiller}
-          referentielAgences={referentielAgences}
-          onAgenceChoisie={selectAgence}
-          onContacterSupport={() => trackContacterSupport('agence')}
-          onClose={() => setShowModaleAgence(false)}
-        />
-      )}
+      {showModaleAgence &&
+        !estMilo(conseiller.structure) &&
+        referentielAgences && (
+          <RenseignementAgenceModal
+            referentielAgences={referentielAgences}
+            onAgenceChoisie={selectAgence}
+            onClose={() => setShowModaleAgence(false)}
+          />
+        )}
 
       {showModaleOnboarding && (
         <OnboardingModal

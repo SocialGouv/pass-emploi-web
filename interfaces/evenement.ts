@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { structureMilo } from 'interfaces/structure'
 
 export type TypeEvenement = {
   code: string
@@ -101,5 +102,5 @@ export function estClos(animationCollective: Evenement) {
 }
 
 export function estCreeParSiMILO(evenement: Evenement) {
-  return evenement.source === 'MILO'
+  return evenement.source === structureMilo
 }

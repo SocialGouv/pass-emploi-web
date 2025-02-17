@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { ID_CONTENU } from 'components/globals'
 import AlertLink from 'components/ui/Notifications/AlertLink'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -143,18 +143,18 @@ const ALERTES_MILO: DictAlertes = {
   choixAgence: { title: 'Votre Mission Locale a été ajoutée à votre profil' },
 }
 
-function getAlertesForStructure(structure?: string): DictAlertes {
-  switch (structure as StructureConseiller) {
-    case StructureConseiller.MILO:
+function getAlertesForStructure(structure: Structure): DictAlertes {
+  switch (structure) {
+    case 'MILO':
       return ALERTES_MILO
-    case StructureConseiller.POLE_EMPLOI:
-    case StructureConseiller.POLE_EMPLOI_BRSA:
-    case StructureConseiller.POLE_EMPLOI_AIJ:
-    case StructureConseiller.CONSEIL_DEPT:
-    case StructureConseiller.AVENIR_PRO:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
-    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+    case 'POLE_EMPLOI':
+    case 'POLE_EMPLOI_BRSA':
+    case 'POLE_EMPLOI_AIJ':
+    case 'CONSEIL_DEPT':
+    case 'AVENIR_PRO':
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+    case 'FT_EQUIP_EMPLOI_RECRUT':
       return ALERTES
   }
 }

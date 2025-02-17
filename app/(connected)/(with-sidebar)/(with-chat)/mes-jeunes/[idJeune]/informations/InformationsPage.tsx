@@ -21,7 +21,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -90,7 +90,7 @@ function InformationsPage({
     if (
       currentTab === 'INDICATEURS' &&
       !indicateursSemaine &&
-      estMilo(conseiller)
+      estMilo(conseiller.structure)
     ) {
       getIndicateursJeuneComplets(
         conseiller.id,
@@ -122,7 +122,7 @@ function InformationsPage({
           onSelectTab={() => setCurrentTab('INFORMATIONS')}
           iconName={IconName.Description}
         />
-        {estMilo(conseiller) && (
+        {estMilo(conseiller.structure) && (
           <Tab
             label='Indicateurs'
             selected={currentTab === 'INDICATEURS'}
@@ -153,7 +153,7 @@ function InformationsPage({
             conseiller={conseiller}
           />
 
-          {estMilo(conseiller) && (
+          {estMilo(conseiller.structure) && (
             <BlocSituation
               idBeneficiaire={idBeneficiaire}
               situations={situations}

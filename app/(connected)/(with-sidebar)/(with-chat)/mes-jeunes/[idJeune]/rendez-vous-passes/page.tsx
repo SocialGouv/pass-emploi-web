@@ -7,8 +7,8 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { estUserMilo } from 'interfaces/conseiller'
 import { PeriodeEvenements } from 'interfaces/evenement'
+import { estMilo } from 'interfaces/structure'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -40,7 +40,7 @@ export default async function RendezVousPasses({
 
   const [beneficiaire, rdvs] = await Promise.all([
     getJeuneDetails(idJeune, accessToken),
-    estUserMilo(user)
+    estMilo(user.structure)
       ? await getRendezVousJeune(idJeune, PeriodeEvenements.PASSES, accessToken)
       : [],
   ])

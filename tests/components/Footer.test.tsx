@@ -4,7 +4,6 @@ import React from 'react'
 
 import Footer from 'components/layouts/Footer'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<Footer/>', () => {
@@ -48,10 +47,10 @@ describe('<Footer/>', () => {
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
 
-  it('affiche les liens du footer pour PE BRSA', () => {
+  it('affiche les liens du footer pour Pass emploi', () => {
     // GIVEN
     const conseiller = unConseiller({
-      structure: StructureConseiller.POLE_EMPLOI_BRSA,
+      structure: 'POLE_EMPLOI_BRSA',
     })
 
     // WHEN

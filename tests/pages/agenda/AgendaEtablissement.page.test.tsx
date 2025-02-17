@@ -9,12 +9,12 @@ import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/Agenda
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 import { modifierAgence } from 'services/conseiller.service'
 import { getRendezVousEtablissement } from 'services/evenements.service'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import {
   changerAutoinscriptionSession,
   changerVisibiliteSession,
@@ -345,7 +345,7 @@ describe('Agenda - Onglet établissement', () => {
     beforeEach(async () => {
       // Given
       const conseiller = unConseiller({
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         agence: { nom: 'Mission Locale Aubenas', id: 'id-test' },
         structureMilo: {
           nom: 'Mission Locale Aubenas',
@@ -570,14 +570,14 @@ describe('Agenda - Onglet établissement', () => {
 
     beforeEach(async () => {
       agences = uneListeDAgencesMILO()
-      ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
+      ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
 
       // When
       await act(async () => {
         renderWithContexts(
           <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
           {
-            customConseiller: { structure: StructureConseiller.MILO },
+            customConseiller: { structure: structureMilo },
           }
         )
       })
@@ -622,9 +622,7 @@ describe('Agenda - Onglet établissement', () => {
       )
 
       // Then
-      expect(getAgencesClientSide).toHaveBeenCalledWith(
-        StructureConseiller.MILO
-      )
+      expect(getMissionsLocalesClientSide).toHaveBeenCalledWith()
       expect(
         screen.getByRole('combobox', { name: /votre Mission Locale/ })
       ).toBeInTheDocument()

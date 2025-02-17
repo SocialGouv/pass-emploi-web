@@ -1,5 +1,5 @@
 import { ActualitesRaw, ArticleJson, TagJson } from 'interfaces/actualites'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { getActualites } from 'services/actualites.service'
 import { fetchJson } from 'utils/httpClient'
 
@@ -52,7 +52,7 @@ describe('ActualitesService', () => {
       })
 
       //When
-      const output = await getActualites(StructureConseiller.MILO)
+      const output = await getActualites(structureMilo)
 
       //Then
       const actualites: ActualitesRaw = {

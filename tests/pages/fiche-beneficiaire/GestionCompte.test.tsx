@@ -18,8 +18,8 @@ import {
   extractBeneficiaireWithActivity,
   Portefeuille,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
@@ -372,7 +372,7 @@ async function renderFicheBeneficiaire(
       {
         customConseiller: {
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
         },
         customPortefeuille: { setter: portefeuilleSetter },
         customAlerte: { setter: alerteSetter },

@@ -9,7 +9,8 @@ import {
   compareBeneficiairesByNom,
   extractBeneficiaireWithActivity,
 } from 'interfaces/beneficiaire'
-import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import { ActualitesProvider } from 'utils/actualitesContext'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -34,7 +35,7 @@ export default function AppContextProviders({
     .map(extractBeneficiaireWithActivity)
     .sort(compareBeneficiairesByNom)
 
-  const theme = estPassEmploi(conseiller) ? 'darker' : 'neutral'
+  const theme = estPassEmploi(conseiller.structure) ? 'darker' : 'neutral'
 
   apm.setUserContext({
     id: conseiller.id,

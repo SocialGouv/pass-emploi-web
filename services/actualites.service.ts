@@ -6,11 +6,11 @@ import {
   EtiquetteArticle,
   TagJson,
 } from 'interfaces/actualites'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure, structureMilo } from 'interfaces/structure'
 import { fetchJson } from 'utils/httpClient'
 
 export async function getActualites(
-  structure: StructureConseiller
+  structure: Structure
 ): Promise<ActualitesRaw | undefined> {
   const urlTags = process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_TAGS
   const urlActualites = getUrlActualites(structure)
@@ -58,21 +58,21 @@ function extraireEtiquettes(
     .map((tag) => ({ id: tag.id, nom: tag.name, couleur: tag.description }))
 }
 
-function getUrlActualites(structure: StructureConseiller): string {
+function getUrlActualites(structure: Structure): string {
   switch (structure) {
-    case StructureConseiller.MILO:
+    case 'MILO':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_MILO_LINK as string
-    case StructureConseiller.POLE_EMPLOI:
+    case 'POLE_EMPLOI':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FT_CEJ_LINK as string
-    case StructureConseiller.CONSEIL_DEPT:
+    case 'CONSEIL_DEPT':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CD_LINK as string
-    case StructureConseiller.AVENIR_PRO:
+    case 'AVENIR_PRO':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_AVENIR_PRO_LINK as string
-    case StructureConseiller.POLE_EMPLOI_BRSA:
-    case StructureConseiller.POLE_EMPLOI_AIJ:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_GLOBAL:
-    case StructureConseiller.FT_ACCOMPAGNEMENT_INTENSIF:
-    case StructureConseiller.FT_EQUIP_EMPLOI_RECRUT:
+    case 'POLE_EMPLOI_BRSA':
+    case 'POLE_EMPLOI_AIJ':
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+    case 'FT_EQUIP_EMPLOI_RECRUT':
       return process.env
         .NEXT_PUBLIC_WORDPRESS_ACTUS_ACCOMPAGNEMENTS_INTENSIFS_LINK as string
   }
