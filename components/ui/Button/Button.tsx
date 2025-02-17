@@ -59,7 +59,6 @@ function Button(
       id={id ?? undefined}
       type={type ?? undefined}
       aria-controls={controls ?? undefined}
-      aria-label={label ?? undefined}
       aria-describedby={describedBy ?? undefined}
       disabled={disabled || isLoading}
       aria-disabled={disabled || isLoading}
@@ -86,6 +85,7 @@ function Button(
         className={`flex items-center justify-center ${
           isLoading ? 'invisible' : ''
         }`}
+        aria-label={label ?? undefined}
       >
         {children}
       </span>
