@@ -2,19 +2,23 @@
 
 export const structureMilo = 'MILO'
 export const structureFTCej = 'POLE_EMPLOI'
-const structureFTBrsa = 'POLE_EMPLOI_BRSA'
-const structureAvenirPro = 'AVENIR_PRO'
+export const structureBrsa = 'POLE_EMPLOI_BRSA'
+export const structureAvenirPro = 'AVENIR_PRO'
+export const structureAij = 'POLE_EMPLOI_AIJ'
+export const structureAccompagnementIntensif = 'FT_ACCOMPAGNEMENT_INTENSIF'
+export const structureAccompagnementGlobal = 'FT_ACCOMPAGNEMENT_GLOBAL'
+export const structureEquipEmploiRecrut = 'FT_EQUIP_EMPLOI_RECRUT'
 const structureConseilDepartemental = 'CONSEIL_DEPT'
 
 const structuresCEJ = [structureMilo, structureFTCej] as const
 
 const structuresFTConnect = [
   structureFTCej,
-  structureFTBrsa,
-  'POLE_EMPLOI_AIJ',
-  'FT_ACCOMPAGNEMENT_INTENSIF',
-  'FT_ACCOMPAGNEMENT_GLOBAL',
-  'FT_EQUIP_EMPLOI_RECRUT',
+  structureBrsa,
+  structureAij,
+  structureAccompagnementIntensif,
+  structureAccompagnementGlobal,
+  structureEquipEmploiRecrut,
   structureAvenirPro,
 ] as const
 
@@ -47,10 +51,8 @@ export function estConseilDepartemental(
   return structure === structureConseilDepartemental
 }
 
-export function estBRSA(
-  structure: string
-): structure is typeof structureFTBrsa {
-  return structure === structureFTBrsa
+export function estBRSA(structure: string): structure is typeof structureBrsa {
+  return structure === structureBrsa
 }
 
 export function estPassEmploi(
@@ -63,4 +65,23 @@ export function estFTConnect(
   structure: string
 ): structure is StructureFTConnect {
   return ([...structuresFTConnect] as string[]).includes(structure)
+}
+
+export function labelStructure(structure: StructureFTConnect): string {
+  switch (structure) {
+    case structureFTCej:
+      return 'CEJ'
+    case structureBrsa:
+      return 'RSA rénové'
+    case structureAij:
+      return 'AIJ'
+    case structureAccompagnementIntensif:
+      return 'Accompagnement intensif'
+    case structureAccompagnementGlobal:
+      return 'Accompagnement global'
+    case structureEquipEmploiRecrut:
+      return 'Equip’emploi / Equip’recrut'
+    case structureAvenirPro:
+      return 'Avenir pro'
+  }
 }

@@ -12,7 +12,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Agence } from 'interfaces/referentiel'
-import { estMilo, structureMilo } from 'interfaces/structure'
+import {
+  estFTConnect,
+  estMilo,
+  labelStructure,
+  structureMilo,
+} from 'interfaces/structure'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -167,6 +172,17 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
               </dt>
               <dd className='ml-2 inline text-base-bold'>
                 {conseiller.agence.nom}
+              </dd>
+            </div>
+          )}
+
+          {estFTConnect(conseiller.structure) && (
+            <div>
+              <dt className='mt-2 inline text-base-regular'>
+                Votre dispositif :
+              </dt>
+              <dd className='ml-2 inline text-base-bold'>
+                {labelStructure(conseiller.structure)}
               </dd>
             </div>
           )}
