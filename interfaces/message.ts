@@ -31,7 +31,7 @@ export interface Message {
   infoAction?: InfoAction
   infoEvenement?: InfoEvenement
   infoEvenementEmploi?: InfoEvenementEmploi
-  infoSessionImilo?: InfoSessionMilo
+  infoSessionMilo?: InfoSessionMilo
 }
 
 export interface MessageListeDiffusion {
