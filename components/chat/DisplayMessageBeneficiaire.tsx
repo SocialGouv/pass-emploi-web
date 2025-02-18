@@ -81,8 +81,8 @@ export default function DisplayMessageBeneficiaire(
 
             {(message.type === TypeMessage.MESSAGE_SESSION_MILO ||
               message.type === TypeMessage.AUTO_INSCRIPTION) &&
-              message.infoSessionImilo && (
-                <LienSessionMilo infoSessionMilo={message.infoSessionImilo} />
+              message.infoSessionMilo && (
+                <LienSessionMilo infoSessionMilo={message.infoSessionMilo} />
               )}
 
             {message.type === TypeMessage.MESSAGE_EVENEMENT &&

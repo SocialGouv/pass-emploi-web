@@ -44,17 +44,6 @@ import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureError } from 'utils/monitoring/elastic'
 
-type TypeMessageFirebase =
-  | 'NOUVEAU_CONSEILLER'
-  | 'MESSAGE'
-  | 'MESSAGE_PJ'
-  | 'MESSAGE_OFFRE'
-  | 'MESSAGE_EVENEMENT'
-  | 'MESSAGE_EVENEMENT_EMPLOI'
-  | 'MESSAGE_SESSION_MILO'
-  | 'MESSAGE_ACTION'
-  | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
-
 export type FirebaseMessage = {
   creationDate: Timestamp
   sentBy: string
@@ -62,7 +51,7 @@ export type FirebaseMessage = {
   iv: string | undefined
   piecesJointes?: InfoFichier[]
   conseillerId: string | undefined
-  type: TypeMessageFirebase | undefined
+  type: string | undefined
   status?: string
   offre?: InfoOffreFirebase
   action?: InfoActionFirebase
@@ -90,7 +79,7 @@ export type FirebaseMessageGroupe = {
   content: string
   iv: string
   conseillerId: string
-  type: TypeMessageFirebase
+  type: string
   idsBeneficiaires: string[]
   piecesJointes?: InfoFichier[]
 }
@@ -902,10 +891,11 @@ function firebaseMessageToMessage(
   }
 
   if (
-    message.type === TypeMessage.MESSAGE_SESSION_MILO &&
+    (message.type === TypeMessage.MESSAGE_SESSION_MILO ||
+      message.type === TypeMessage.AUTO_INSCRIPTION) &&
     firebaseMessage.sessionMilo
   ) {
-    message.infoSessionImilo = {
+    message.infoSessionMilo = {
       id: firebaseMessage.sessionMilo.id,
       titre: firebaseMessage.sessionMilo.titre,
     }
@@ -934,9 +924,7 @@ export function docSnapshotToMessageListeDiffusion(
   return message
 }
 
-function firebaseToMessageType(
-  type: TypeMessageFirebase | undefined
-): TypeMessage {
+function firebaseToMessageType(type: string | undefined): TypeMessage {
   switch (type) {
     case 'NOUVEAU_CONSEILLER':
     case 'NOUVEAU_CONSEILLER_TEMPORAIRE':
@@ -953,6 +941,8 @@ function firebaseToMessageType(
       return TypeMessage.MESSAGE_EVENEMENT_EMPLOI
     case 'MESSAGE_SESSION_MILO':
       return TypeMessage.MESSAGE_SESSION_MILO
+    case 'AUTO_INSCRIPTION':
+      return TypeMessage.AUTO_INSCRIPTION
     case 'MESSAGE':
       return TypeMessage.MESSAGE
     case undefined:
