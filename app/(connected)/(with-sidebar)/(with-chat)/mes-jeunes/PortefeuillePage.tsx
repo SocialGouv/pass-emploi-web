@@ -20,7 +20,7 @@ import {
   BeneficiaireAvecInfosComplementaires,
 } from 'interfaces/beneficiaire'
 import { utiliseChat } from 'interfaces/conseiller'
-import { estConseilDepartemental, estMilo } from 'interfaces/structure'
+import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -185,7 +185,11 @@ function PortefeuillePage({
           <div className='w-2/3 m-auto relative'>
             <h2 className='text-m-bold text-content_color text-center mb-8'>
               Vous n’avez pas encore de bénéficiaire rattaché à votre
-              portefeuille.
+              portefeuille
+              {estFTConnect(conseiller.structure)
+                ? ` ${labelStructure(conseiller.structure)}`
+                : ''}
+              .
             </h2>
             <IllustrationComponent
               name={IllustrationName.CurvyArrow}
@@ -197,7 +201,7 @@ function PortefeuillePage({
             {estMilo(conseiller.structure) && <TutorielAjoutBeneficiaireMilo />}
             {!estMilo(conseiller.structure) && (
               <TutorielAjoutBeneficiaireFranceTravail
-                aAccesMap={!estConseilDepartemental(conseiller.structure)}
+                structure={conseiller.structure}
               />
             )}
           </div>
