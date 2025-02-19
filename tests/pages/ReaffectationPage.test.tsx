@@ -581,7 +581,7 @@ describe('Reaffectation', () => {
         })
       })
 
-      describe('demande confirmation si la réaffectation se fait vers un conseiller avec une structure milo différente', () => {
+      describe('empêche la réaffectation si elle se fait vers un conseiller avec une structure milo différente', () => {
         beforeEach(async () => {
           // GIVEN
           await userEvent.type(conseillerDestinataireInput, 'Ada')
@@ -609,28 +609,11 @@ describe('Reaffectation', () => {
         it('affiche une modale', () => {
           // THEN
           expect(
-            screen.getByRole('heading', {
-              name: 'Vous êtes sur le point de réaffecter un ou plusieurs bénéficiaires appartenant à une autre Mission Locale.',
-            })
+            screen.getByText(
+              'La réaffectation n’est pas autorisée lorsqu’un bénéficiaire n’appartient pas à la même Mission Locale du conseiller destinataire.'
+            )
           ).toBeInTheDocument()
           expect(reaffecter).not.toHaveBeenCalled()
-        })
-
-        it('déclenche la réaffectation', async () => {
-          // WHEN
-          await userEvent.click(
-            screen.getAllByRole('button', {
-              name: 'Valider la réaffectation',
-            })[1]
-          )
-
-          // WHEN
-          expect(reaffecter).toHaveBeenCalledWith(
-            'id-nils-tavernier',
-            'id-ada-lovelace',
-            ['beneficiaire-2'],
-            false
-          )
         })
       })
     })

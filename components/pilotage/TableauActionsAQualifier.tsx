@@ -191,28 +191,22 @@ export default function TableauActionsAQualifier({
 
       <div className='mt-4'>
         {actionSansCategorieSelectionnee && (
-          <FailureAlert
-            label='Qualification impossible.'
-            sub={
-              <p>
-                Vous ne pouvez pas qualifier une ou plusieurs actions sans
-                catégorie. Cliquez sur l’action pour pouvoir la modifier et lui
-                ajouter une catégorie.
-              </p>
-            }
-          />
+          <FailureAlert label='Qualification impossible.'>
+            <p>
+              Vous ne pouvez pas qualifier une ou plusieurs actions sans
+              catégorie. Cliquez sur l’action pour pouvoir la modifier et lui
+              ajouter une catégorie.
+            </p>
+          </FailureAlert>
         )}
 
         {plusieursBeneficiairesSelectionnes && (
-          <FailureAlert
-            label='Qualification impossible.'
-            sub={
-              <p>
-                Vous ne pouvez pas qualifier les actions de plusieurs
-                bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.
-              </p>
-            }
-          />
+          <FailureAlert label='Qualification impossible.'>
+            <p>
+              Vous ne pouvez pas qualifier les actions de plusieurs
+              bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.
+            </p>
+          </FailureAlert>
         )}
       </div>
 

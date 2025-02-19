@@ -266,25 +266,24 @@ export default function BeneficiairesMultiselectAutocomplete({
           helpText: labelHelpText(),
         }}
       </Label>
+
       {navigateurEstEdge && (
-        <FailureAlert
-          label='Cette fonctionnalité peut être dégradée sur votre navigateur (Edge).'
-          sub={
-            <p>
-              Nous recommandons l’usage de Firefox ou de Chrome. Si vous ne
-              pouvez pas changer de navigateur, veuillez&nbsp;
-              <span className={'text-warning hover:text-primary'}>
-                <ExternalLink
-                  href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`}
-                  label={'contacter le support'}
-                  iconName={IconName.OutgoingMail}
-                  onClick={trackContacterSupportClick}
-                />
-              </span>
-            </p>
-          }
-        />
+        <FailureAlert label='Cette fonctionnalité peut être dégradée sur votre navigateur (Edge).'>
+          <p>
+            Nous recommandons l’usage de Firefox ou de Chrome. Si vous ne pouvez
+            pas changer de navigateur, veuillez&nbsp;
+            <span className={'text-warning hover:text-primary'}>
+              <ExternalLink
+                href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`}
+                label={'contacter le support'}
+                iconName={IconName.OutgoingMail}
+                onClick={trackContacterSupportClick}
+              />
+            </span>
+          </p>
+        </FailureAlert>
       )}
+
       {error && (
         <InputError id={id + '--error'} className='mt-2'>
           {error}

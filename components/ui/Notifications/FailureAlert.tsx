@@ -5,19 +5,23 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type FailureMessageProps = {
   label: string
-  sub?: ReactNode
   onAcknowledge?: () => void
+  shouldFocus?: boolean
+  children?: ReactNode
 }
 
 export default function FailureAlert({
   label,
-  sub,
   onAcknowledge,
+  shouldFocus,
+  children,
 }: FailureMessageProps) {
   return (
     <div
       role='alert'
       className='text-warning bg-warning_lighten p-6 flex flex-col rounded-base mb-8'
+      ref={shouldFocus ? (e) => e?.focus() : undefined}
+      tabIndex={shouldFocus ? -1 : undefined}
     >
       <div className='flex'>
         <FailureIcon
@@ -41,7 +45,7 @@ export default function FailureAlert({
           </button>
         )}
       </div>
-      {sub}
+      {children}
     </div>
   )
 }
