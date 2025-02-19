@@ -109,6 +109,16 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
     }
   }
 
+  function trackTutoSuppression() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Tutoriel',
+      action: 'Suppression compte',
+      nom: '',
+      aDesBeneficiaires: null,
+    })
+  }
+
   function trackContacterSupportClick() {
     trackEvent({
       structure: conseiller.structure,
@@ -152,6 +162,22 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+
+        {estFTConnect(conseiller.structure) && (
+          <InformationMessage label='Changement d’agence ou de dispositif ?'>
+            <p>
+              Pour changer d’agence ou de dispositif, vous devez supprimer votre
+              compte.
+              <ExternalLink
+                label='Consultez la procédure à suivre'
+                href='https://doc.pass-emploi.beta.gouv.fr/suppression-de-compte/'
+                onClick={trackTutoSuppression}
+                className='!flex mt-2'
+              />
+            </p>
+          </InformationMessage>
+        )}
+
         <h3 className='text-base-bold'>
           {conseiller.firstName} {conseiller.lastName}
         </h3>

@@ -43,7 +43,9 @@ export default function InformationMessage({
           </button>
         )}
       </div>
-      {children && <div className='mt-2'>{children}</div>}
+      {children && (
+        <div className='mt-2 [&_a]:hover:text-primary_darken'>{children}</div>
+      )}
     </div>
   )
 }
