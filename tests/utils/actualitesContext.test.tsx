@@ -7,7 +7,7 @@ import { ActualitesProvider, useActualites } from 'utils/actualitesContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 jest.mock('services/actualites.service')
-describe('ActualitesProvdider', () => {
+describe('ActualitesProvider', () => {
   const conseiller = unConseiller()
 
   beforeEach(async () => {
@@ -41,5 +41,5 @@ describe('ActualitesProvdider', () => {
 
 function FakeActualiteContainer() {
   const actualites = useActualites()
-  return actualites?.articles[0].contenu
+  return actualites?.[0].contenu
 }

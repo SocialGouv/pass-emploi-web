@@ -8,6 +8,7 @@ type NavLinkProps = {
   iconName: IconName
   showLabelOnSmallScreen: boolean
   badgeLabel?: string
+  badgeCount?: number
   href?: string
   isActive?: boolean
   className?: string
@@ -21,6 +22,7 @@ export default function NavLink({
   iconName,
   className,
   badgeLabel,
+  badgeCount,
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
@@ -48,7 +50,8 @@ export default function NavLink({
         >
           {label}
         </span>
-        {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+
+        {badgeLabel && <BadgeNavLink label={badgeLabel} count={badgeCount} />}
       </>
     )
   }
@@ -75,15 +78,24 @@ export default function NavLink({
   )
 }
 
-function BadgeNavLink({ label }: { label: string }) {
+function BadgeNavLink({ label, count }: { label: string; count?: number }) {
   return (
     <>
-      <IconComponent
-        focusable={false}
-        aria-hidden={true}
-        className='w-4 h-4 fill-warning absolute border border-white top-0 left-0 bg-white rounded-full'
-        name={IconName.Error}
-      />
+      {!count && (
+        <IconComponent
+          focusable={false}
+          aria-hidden={true}
+          className='w-4 h-4 fill-warning absolute border border-white top-0 left-0 bg-white rounded-full'
+          name={IconName.Error}
+        />
+      )}
+
+      {count && (
+        <span className='w-4 h-4 absolute top-0 left-0 rounded-full border border-white bg-warning text-white text-xs-bold !leading-none'>
+          {count}
+        </span>
+      )}
+
       <span className='sr-only'>{label}</span>
     </>
   )

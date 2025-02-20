@@ -13,30 +13,28 @@ describe('ActualitesModal', () => {
   let container: HTMLElement
 
   describe('quand le conseiller a des actualités', () => {
-    const article = {
-      id: 1,
-      titre: 'Invitation à la journée présentiel du 31 octobre 2024',
-      etiquettes: [
-        { id: 35, nom: 'Recette', couleur: 'additional_3' },
-        { id: 42, nom: 'Test', couleur: 'additional_2' },
-      ],
-      contenu: (
-        <>
-          <p>Rdv demain aux nouveaux locaux de la Fabrique</p>
-          <a href='www.google.com'>Google</a>
-          <img src='pouetImg.jpg' alt='pouet' />
-        </>
-      ),
-    }
-
-    const actualites: ActualitesParsees = {
-      articles: [article],
-      dateDerniereModification: '2024-01-01',
-    }
+    const actualites: ActualitesParsees = [
+      {
+        id: 1,
+        titre: 'Invitation à la journée présentiel du 31 octobre 2024',
+        etiquettes: [
+          { id: 35, nom: 'Recette', couleur: 'additional_3' },
+          { id: 42, nom: 'Test', couleur: 'additional_2' },
+        ],
+        contenu: (
+          <>
+            <p>Rdv demain aux nouveaux locaux de la Fabrique</p>
+            <a href='www.google.com'>Google</a>
+            <img src='pouetImg.jpg' alt='pouet' />
+          </>
+        ),
+        dateDerniereModification: '2024-01-01',
+      },
+    ]
     const conseiller = unConseiller()
 
     beforeEach(() => {
-      let onClose = jest.fn()
+      const onClose = jest.fn()
       ;({ container } = render(
         <ConseillerProvider conseiller={conseiller}>
           <ActualitesProvider actualitesForTests={actualites}>
@@ -82,17 +80,13 @@ describe('ActualitesModal', () => {
   })
 
   describe('quand le conseiller n’a pas d’actualité', () => {
-    const actualites = {
-      articles: [],
-      dateDerniereModification: '2024-01-01',
-    }
     const conseiller = unConseiller()
 
     beforeEach(() => {
-      let onClose = jest.fn()
+      const onClose = jest.fn()
       ;({ container } = render(
         <ConseillerProvider conseiller={conseiller}>
-          <ActualitesProvider actualitesForTests={actualites}>
+          <ActualitesProvider actualitesForTests={[]}>
             <ActualitesModal onClose={onClose} />
           </ActualitesProvider>
         </ConseillerProvider>
