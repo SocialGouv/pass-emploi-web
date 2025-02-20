@@ -6,7 +6,7 @@ import {
   EtiquetteArticle,
   TagJson,
 } from 'interfaces/actualites'
-import { Structure, structureMilo } from 'interfaces/structure'
+import { Structure } from 'interfaces/structure'
 import { fetchJson } from 'utils/httpClient'
 
 export async function getActualites(
@@ -22,16 +22,15 @@ export async function getActualites(
   ] = await Promise.all([fetchJson(urlTags), fetchJson(urlActualites)])
   if (!articlesJson.length) return
 
-  const articlesTries = [...articlesJson].sort(comparerArticles)
-  return {
-    articles: articlesTries.map((article: ArticleJson) => ({
+  return [...articlesJson]
+    .sort(comparerArticles)
+    .map((article: ArticleJson) => ({
       id: article.id,
       titre: article.title.rendered,
       etiquettes: extraireEtiquettes(article, tagsJson),
       contenu: extraireContenuAssaini(article),
-    })),
-    dateDerniereModification: articlesTries[0].modified,
-  }
+      dateDerniereModification: article.modified,
+    }))
 }
 
 function comparerArticles(a1: ArticleJson, a2: ArticleJson) {

@@ -12,7 +12,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
   const modalRef = useRef<ModalHandles>(null)
   const actualites = useActualites()
 
-  const aDesActualites = Boolean(actualites && actualites.articles.length > 0)
+  const aDesActualites = Boolean(actualites && actualites.length > 0)
 
   const modalTemplate = (
     <div className='rounded-l-l fixed right-0 bg-primary_lighten h-full max-w-[min(90%,_620px)] min-w-[min(30%)] overflow-auto pb-3 shadow-m'>
@@ -48,7 +48,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
 
       {aDesActualites && (
         <div className='p-6'>
-          {actualites?.articles.map((article) => (
+          {actualites?.map((article) => (
             <article
               className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_a]:hover:text-primary_darken [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey_800'
               key={article.id}

@@ -2,13 +2,13 @@
 
 import { DateTime } from 'luxon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import ActualitesModal from 'components/ActualitesModal'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import {
-  aDeNouvellesActualites,
+  compterNouvellesActualites,
   estSuperviseur,
   utiliseChat,
 } from 'interfaces/conseiller'
@@ -40,7 +40,7 @@ export default function NavLinks({
 }: NavLinksProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const [conseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const actualites = useActualites()
 
@@ -57,6 +57,11 @@ export default function NavLinks({
   const lienProfilBadgeLabel = !conseiller.email
     ? 'Une information en attente de mise à jour'
     : undefined
+
+  const [countNouvellesActualites, setCountNouvellesActualites] =
+    useState<number>()
+  const [labelNouvellesActualites, setLabelNouvellesActualites] =
+    useState<string>()
 
   function isCurrentRoute(href: string) {
     return pathname.startsWith(href)
@@ -85,9 +90,32 @@ export default function NavLinks({
 
   async function ouvrirActualites() {
     setAfficherActualiteModal(true)
-    modifierDateVisionnageActus(DateTime.now())
+    const now = DateTime.now()
     trackActualite()
+
+    modifierDateVisionnageActus(now)
+    setConseiller({ ...conseiller, dateVisionnageActus: now.toISO() })
   }
+
+  useEffect(() => {
+    if (
+      !items.includes(NavItem.Actualites) ||
+      process.env.NEXT_PUBLIC_ENABLE_ACTUS !== 'true' ||
+      !actualites
+    )
+      return
+
+    const count = compterNouvellesActualites(
+      conseiller.dateVisionnageActus,
+      actualites
+    )
+    if (!count) return
+
+    setCountNouvellesActualites(count)
+    if (count > 1)
+      setLabelNouvellesActualites(' nouvelles actualités sont disponibles')
+    else setLabelNouvellesActualites(' nouvelle actualité est disponible')
+  }, [actualites, conseiller.dateVisionnageActus])
 
   return (
     <>
@@ -216,15 +244,8 @@ export default function NavLinks({
               className='break-all'
               onClick={ouvrirActualites}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
-              badgeLabel={
-                actualites &&
-                aDeNouvellesActualites(
-                  conseiller,
-                  actualites.dateDerniereModification
-                )
-                  ? 'De nouvelles actualités sont disponibles'
-                  : undefined
-              }
+              badgeCount={countNouvellesActualites}
+              badgeLabel={labelNouvellesActualites}
             />
           )}
       </ul>

@@ -33,14 +33,11 @@ export function ActualitesProvider({
     if (actualites === undefined)
       getActualites(conseiller.structure).then((actualitesRaw) => {
         setActualites(
-          actualitesRaw && {
-            ...actualitesRaw,
-            articles: actualitesRaw.articles.map((article) => ({
-              ...article,
-              titre: parse(article.titre),
-              contenu: parse(nettoyerEtFormater(article.contenu)),
-            })),
-          }
+          actualitesRaw?.map((article) => ({
+            ...article,
+            titre: parse(article.titre),
+            contenu: parse(nettoyerEtFormater(article.contenu)),
+          }))
         )
       })
   }, [actualites])
