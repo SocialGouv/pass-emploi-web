@@ -157,7 +157,7 @@ function TableauDemarche({
           )
         : demarchesFiltreesParCategorie
 
-    const demarchesTrieesEtFiltrees = demarchesFiltreesParStatut.toSorted(
+    const demarchesTrieesEtFiltrees = [...demarchesFiltreesParStatut].sort(
       (demarche1, demarche2) => {
         const dateFin1 = DateTime.fromISO(demarche1.dateFin)
         const dateFin2 = DateTime.fromISO(demarche2.dateFin)

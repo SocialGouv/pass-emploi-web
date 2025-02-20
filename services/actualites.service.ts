@@ -22,7 +22,7 @@ export async function getActualites(
   ] = await Promise.all([fetchJson(urlTags), fetchJson(urlActualites)])
   if (!articlesJson.length) return
 
-  const articlesTries = articlesJson.toSorted(comparerArticles)
+  const articlesTries = [...articlesJson].sort(comparerArticles)
   return {
     articles: articlesTries.map((article: ArticleJson) => ({
       id: article.id,

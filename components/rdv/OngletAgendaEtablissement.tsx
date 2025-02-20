@@ -89,7 +89,7 @@ export default function OngletAgendaEtablissement({
       }
 
       setEvenements(
-        evenementsRecuperes.toSorted(
+        [...evenementsRecuperes].sort(
           (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
         )
       )

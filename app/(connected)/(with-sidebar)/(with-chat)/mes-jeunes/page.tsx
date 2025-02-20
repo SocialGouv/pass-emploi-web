@@ -58,7 +58,7 @@ export default async function Portefeuille({
     }))
   }
 
-  const beneficiairesAlphabetiques = beneficiairesAvecCompteurs.toSorted(
+  const beneficiairesAlphabetiques = [...beneficiairesAvecCompteurs].sort(
     compareBeneficiairesByNom
   )
   return (

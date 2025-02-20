@@ -96,7 +96,7 @@ function TableauBeneficiaires(
     beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
     ordreAlphabetique: boolean
   ): BeneficiaireAvecInfosComplementaires[] {
-    return beneficiairesATrier.toSorted((a, b) => {
+    return [...beneficiairesATrier].sort((a, b) => {
       const diff = a.nom.localeCompare(b.nom)
       return ordreAlphabetique ? diff : -diff
     })
@@ -106,7 +106,7 @@ function TableauBeneficiaires(
     beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
     ordreChronologique: boolean
   ): BeneficiaireAvecInfosComplementaires[] {
-    return beneficiairesATrier.toSorted((a, b) => {
+    return [...beneficiairesATrier].sort((a, b) => {
       if (!a.isActivated || !b.isActivated)
         return Number(b.isActivated) - Number(a.isActivated)
 
