@@ -15,9 +15,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la création de rdv est réussie', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // When
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.creationRDV,
@@ -50,8 +50,8 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la modification de rdv est réussie', () => {
-    it("affiche l'alerte de succès", () => {
-      renderWithContexts(<AlerteDisplayer />, {
+    it("affiche l'alerte de succès", async () => {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.modificationRDV,
@@ -68,9 +68,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la suppression de rdv est réussie', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.suppressionRDV,
@@ -87,9 +87,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la création d’une animation collective est réussie', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // When
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.creationAnimationCollective,
@@ -122,8 +122,8 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la modification d’une animation collective est réussie', () => {
-    it("affiche l'alerte de succès", () => {
-      renderWithContexts(<AlerteDisplayer />, {
+    it("affiche l'alerte de succès", async () => {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.modificationAnimationCollective,
@@ -140,9 +140,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la suppression d’une animation collective est réussie', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.suppressionAnimationCollective,
@@ -159,9 +159,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on vient de récupérer des bénéficiaires', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.recuperationBeneficiaires,
@@ -178,9 +178,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand la création d’un jeune est réussie', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.creationBeneficiaire,
@@ -214,9 +214,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.modificationIdentifiantPartenaire,
@@ -233,9 +233,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('envoie de message multi-destinataire', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.envoiMessage,
@@ -252,9 +252,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on renseigne une agence Milo', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.choixAgence,
@@ -272,8 +272,8 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on renseigne une agence France Travail', () => {
-    it("affiche l'alerte de succès", () => {
-      renderWithContexts(<AlerteDisplayer />, {
+    it("affiche l'alerte de succès", async () => {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.choixAgence,
@@ -291,8 +291,8 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on crée une liste de diffusion', () => {
-    it("affiche l'alerte de succès", () => {
-      renderWithContexts(<AlerteDisplayer />, {
+    it("affiche l'alerte de succès", async () => {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.creationListeDiffusion,
@@ -312,9 +312,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on modifie une liste de diffusion', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given - When
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.modificationListeDiffusion,
@@ -334,9 +334,9 @@ describe('AlerteDisplayer', () => {
   })
 
   describe('quand on supprime une liste de diffusion', () => {
-    it("affiche l'alerte de succès", () => {
+    it("affiche l'alerte de succès", async () => {
       // Given - When
-      renderWithContexts(<AlerteDisplayer />, {
+      await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
             key: AlerteParam.suppressionListeDiffusion,
@@ -357,7 +357,7 @@ describe('AlerteDisplayer', () => {
 
   it("permet de fermer l'alerte du succès", async () => {
     // Given
-    renderWithContexts(
+    await renderWithContexts(
       <>
         <div id={ID_CONTENU}></div>
         <AlerteDisplayer />

@@ -39,7 +39,7 @@ describe('ActionPage client side', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailActionPage
           action={action}
           lectureSeule={false}
@@ -212,7 +212,7 @@ describe('ActionPage client side', () => {
     ;(deleteAction as jest.Mock).mockResolvedValue({})
 
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailActionPage
           action={action}
           lectureSeule={true}
@@ -273,7 +273,7 @@ describe('ActionPage client side', () => {
 
       it('ne permet pas de supprimer l’action', async () => {
         //When
-        renderWithContexts(
+        await renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             lectureSeule={false}
@@ -290,7 +290,7 @@ describe('ActionPage client side', () => {
 
       it("affiche un lien pour qualifier l'action", async () => {
         //When
-        renderWithContexts(
+        await renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             lectureSeule={false}
@@ -311,7 +311,7 @@ describe('ActionPage client side', () => {
 
       it('a11y', async () => {
         let results: AxeResults
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             lectureSeule={false}
@@ -328,9 +328,9 @@ describe('ActionPage client side', () => {
       })
 
       describe('quand le conseiller vient de la page pilotage', () => {
-        it('affiche un lien pour qualifier l’action qui retourne vers pilotage', () => {
+        it('affiche un lien pour qualifier l’action qui retourne vers pilotage', async () => {
           //When
-          renderWithContexts(
+          await renderWithContexts(
             <DetailActionPage
               action={actionAQualifier}
               lectureSeule={false}
@@ -358,7 +358,7 @@ describe('ActionPage client side', () => {
       actionTerminee.beneficiaire.dispositif = 'PACEA'
 
       beforeEach(async () => {
-        renderWithContexts(
+        await renderWithContexts(
           <DetailActionPage
             action={actionTerminee}
             lectureSeule={false}
@@ -388,7 +388,7 @@ describe('ActionPage client side', () => {
             isSituationNonProfessionnelle: true,
           },
         })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <DetailActionPage
             action={actionQualifiee}
             lectureSeule={false}
@@ -436,7 +436,7 @@ describe('ActionPage client side', () => {
             isSituationNonProfessionnelle: false,
           },
         })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <DetailActionPage
             action={actionQualifiee}
             lectureSeule={false}

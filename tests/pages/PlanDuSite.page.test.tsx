@@ -8,15 +8,13 @@ import { structureFTCej, structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('PlanDuSite client side', () => {
-  let container: HTMLElement
-
   it('a11y Milo', async () => {
     //When
-    ;({ container } = renderWithContexts(<PlanDuSitePage />, {
+    const { container } = await renderWithContexts(<PlanDuSitePage />, {
       customConseiller: {
         structure: structureMilo,
       },
-    }))
+    })
 
     //Then
     let results: AxeResults
@@ -29,11 +27,11 @@ describe('PlanDuSite client side', () => {
 
   it('a11y France Travail', async () => {
     //When
-    ;({ container } = renderWithContexts(<PlanDuSitePage />, {
+    const { container } = await renderWithContexts(<PlanDuSitePage />, {
       customConseiller: {
         structure: structureFTCej,
       },
-    }))
+    })
 
     //Then
     let results: AxeResults

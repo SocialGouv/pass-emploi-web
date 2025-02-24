@@ -54,12 +54,7 @@ describe('<Footer/>', () => {
     })
 
     // WHEN
-    renderWithContexts(
-      <Footer aDesBeneficiaires={true} conseiller={conseiller} />,
-      {
-        customConseiller: conseiller,
-      }
-    )
+    render(<Footer aDesBeneficiaires={true} conseiller={conseiller} />)
 
     //THEN
     expect(

@@ -1,4 +1,4 @@
-import { DateTime, Duration, Interval } from 'luxon'
+import { DateTime, Duration } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
 export function dateIsToday(dateToCheck: DateTime): boolean {
@@ -97,8 +97,8 @@ export function minutesEntreDeuxDates(
   date1: DateTime,
   date2: DateTime
 ): number {
-  const diff = Interval.fromDateTimes(date1, date2)
-  return Math.round(diff.length('minutes'))
+  const diff = date1.diff(date2).as('minutes')
+  return Math.abs(Math.round(diff))
 }
 
 const DURATION_H_SEPARATOR = "h'h'mm"

@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -67,26 +67,24 @@ describe('Actions dans la fiche jeune', () => {
 
   describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
     beforeEach(async () => {
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={false}
-            beneficiaire={unDetailBeneficiaire()}
-            actionsInitiales={desActionsInitiales()}
-            metadonneesFavoris={uneMetadonneeFavoris()}
-            favorisOffres={uneListeDOffres()}
-            favorisRecherches={uneListeDeRecherches()}
-            ongletInitial='agenda'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: {
-              id: 'id-conseiller',
-              structure: 'POLE_EMPLOI',
-            },
-          }
-        )
-      })
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={false}
+          beneficiaire={unDetailBeneficiaire()}
+          actionsInitiales={desActionsInitiales()}
+          metadonneesFavoris={uneMetadonneeFavoris()}
+          favorisOffres={uneListeDOffres()}
+          favorisRecherches={uneListeDeRecherches()}
+          ongletInitial='agenda'
+          lectureSeule={false}
+        />,
+        {
+          customConseiller: {
+            id: 'id-conseiller',
+            structure: 'POLE_EMPLOI',
+          },
+        }
+      )
     })
 
     it("n'affiche pas de lien vers les actions du jeune", async () => {
@@ -648,23 +646,21 @@ async function renderFicheJeuneMILO({
   }
   onglet?: 'actions'
 }) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        categoriesActions={desCategories()}
-        rdvs={[]}
-        actionsInitiales={actionsInitiales ?? desActionsInitiales()}
-        ongletInitial={onglet ?? 'agenda'}
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: 'MILO',
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      categoriesActions={desCategories()}
+      rdvs={[]}
+      actionsInitiales={actionsInitiales ?? desActionsInitiales()}
+      ongletInitial={onglet ?? 'agenda'}
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: 'MILO',
+      },
+    }
+  )
 }

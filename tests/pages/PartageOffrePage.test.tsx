@@ -32,8 +32,8 @@ describe('PartageOffrePage client side', () => {
     let jeunes: BaseBeneficiaire[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let push: Function
-    beforeEach(() => {
+    let push: () => void
+    beforeEach(async () => {
       alerteSetter = jest.fn()
       push = jest.fn(async () => {})
       ;(useRouter as jest.Mock).mockReturnValue({ push })
@@ -41,7 +41,7 @@ describe('PartageOffrePage client side', () => {
       offre = unDetailOffreEmploi()
       jeunes = desItemsBeneficiaires()
       ;(partagerOffre as jest.Mock).mockResolvedValue({})
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <PartageOffrePage offre={offre} returnTo='/return/to' />,
         {
           customAlerte: { setter: alerteSetter },
@@ -109,7 +109,7 @@ describe('PartageOffrePage client side', () => {
     describe('formulaire incomplet', () => {
       beforeEach(async () => {
         //Given
-        let buttonValider: HTMLButtonElement = screen.getByRole('button', {
+        const buttonValider: HTMLButtonElement = screen.getByRole('button', {
           name: 'Envoyer',
         })
 
@@ -209,10 +209,10 @@ describe('PartageOffrePage client side', () => {
   describe('spécifique', () => {
     describe("affiche les informations de l’offre d'emploi", () => {
       let offre: DetailOffreEmploi
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         offre = unDetailOffreEmploi()
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageOffrePage offre={offre} returnTo='/return/to' />
         ))
       })
@@ -250,10 +250,10 @@ describe('PartageOffrePage client side', () => {
     describe("affiche les informations de l’offre d'alternance", () => {
       let offre: DetailOffreEmploi
 
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         offre = unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageOffrePage offre={offre} returnTo='/return/to' />
         ))
       })
@@ -291,10 +291,10 @@ describe('PartageOffrePage client side', () => {
     describe('affiche les informations du service civique', () => {
       let offre: DetailServiceCivique
 
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         offre = unDetailServiceCivique()
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageOffrePage offre={offre} returnTo='/return/to' />
         ))
       })
@@ -328,10 +328,10 @@ describe('PartageOffrePage client side', () => {
     describe("affiche les informations de l'immersion", () => {
       let offre: DetailImmersion
 
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         offre = unDetailImmersion()
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageOffrePage offre={offre} returnTo='/return/to' />
         ))
       })

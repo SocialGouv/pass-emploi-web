@@ -379,21 +379,18 @@ async function renderPage(
     desIndicateursSemaine()
   )
 
-  let container: HTMLElement
-  await act(async () => {
-    ;({ container } = renderWithContexts(
-      <InformationsPage
-        idBeneficiaire={'id'}
-        situations={situations}
-        conseillers={conseillers}
-        lectureSeule={false}
-        beneficiaire={beneficiaire}
-        metadonneesFavoris={uneMetadonneeFavoris()}
-        onglet={'INFORMATIONS'}
-      />,
-      { customConseiller: { structure: structure } }
-    ))
-  })
+  const { container } = await renderWithContexts(
+    <InformationsPage
+      idBeneficiaire={'id'}
+      situations={situations}
+      conseillers={conseillers}
+      lectureSeule={false}
+      beneficiaire={beneficiaire}
+      metadonneesFavoris={uneMetadonneeFavoris()}
+      onglet={'INFORMATIONS'}
+    />,
+    { customConseiller: { structure: structure } }
+  )
 
-  return container!
+  return container
 }

@@ -38,7 +38,7 @@ describe('Détails Session Page Client', () => {
       session.session.dateMaxInscription = '2023-06-17'
 
       // When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={[]}
@@ -129,7 +129,7 @@ describe('Détails Session Page Client', () => {
 
     it('affiche un switch désactivé par défaut', async () => {
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={sessionInvisible}
           beneficiairesStructureMilo={[]}
@@ -147,7 +147,7 @@ describe('Détails Session Page Client', () => {
       const sessionVisible = unDetailSession()
 
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={sessionVisible}
           beneficiairesStructureMilo={[]}
@@ -164,7 +164,7 @@ describe('Détails Session Page Client', () => {
       it('change la visibilité', async () => {
         // Given
         ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={sessionInvisible}
             beneficiairesStructureMilo={[]}
@@ -184,7 +184,7 @@ describe('Détails Session Page Client', () => {
       it('ne change pas la visibilité si l’autoinscription est activée', async () => {
         // Given
         ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={{
               ...sessionInvisible,
@@ -221,7 +221,7 @@ describe('Détails Session Page Client', () => {
 
     it('affiche un switch désactivé par défaut', async () => {
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={sessionOnPeutPasSAutoinscrire}
           beneficiairesStructureMilo={[]}
@@ -239,7 +239,7 @@ describe('Détails Session Page Client', () => {
       const sessionOnPeutSAutoinscrire = unDetailSession()
 
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={sessionOnPeutSAutoinscrire}
           beneficiairesStructureMilo={[]}
@@ -256,7 +256,7 @@ describe('Détails Session Page Client', () => {
       it('change la possibilité de s’autoinscrire et la visibilité', async () => {
         // Given
         ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={sessionOnPeutPasSAutoinscrire}
             beneficiairesStructureMilo={[]}
@@ -373,7 +373,7 @@ describe('Détails Session Page Client', () => {
           ],
         })
 
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
@@ -459,7 +459,7 @@ describe('Détails Session Page Client', () => {
           ],
         })
 
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
@@ -504,7 +504,7 @@ describe('Détails Session Page Client', () => {
         },
       })
 
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={[]}
@@ -543,7 +543,7 @@ describe('Détails Session Page Client', () => {
         },
       })
 
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={[]}
@@ -612,7 +612,7 @@ describe('Détails Session Page Client', () => {
         ],
       })
 
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={[]}
@@ -680,7 +680,7 @@ describe('Détails Session Page Client', () => {
         ],
       })
 
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={[]}
@@ -747,7 +747,7 @@ describe('Détails Session Page Client', () => {
           },
         })
 
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={[]}
@@ -773,7 +773,7 @@ describe('Détails Session Page Client', () => {
             statut: 'AClore',
           },
         })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={[]}

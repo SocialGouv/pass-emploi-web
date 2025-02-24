@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -156,26 +156,24 @@ describe('Rendez-vous de la fiche jeune', () => {
 })
 
 async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={rdvs}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: 'MILO',
-          structureMilo: { id: 'id-test', nom: 'Milo Agence' },
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      rdvs={rdvs}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: 'MILO',
+        structureMilo: { id: 'id-test', nom: 'Milo Agence' },
+      },
+    }
+  )
 }
 
 async function renderFicheJeuneFT(
@@ -184,23 +182,21 @@ async function renderFicheJeuneFT(
   offresFT: Offre[],
   recherchesFT: Recherche[]
 ) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={false}
-        beneficiaire={unDetailBeneficiaire()}
-        metadonneesFavoris={metadonnees}
-        favorisOffres={offresFT}
-        favorisRecherches={recherchesFT}
-        ongletInitial='offres'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: structure,
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={false}
+      beneficiaire={unDetailBeneficiaire()}
+      metadonneesFavoris={metadonnees}
+      favorisOffres={offresFT}
+      favorisRecherches={recherchesFT}
+      ongletInitial='offres'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structure,
+      },
+    }
+  )
 }

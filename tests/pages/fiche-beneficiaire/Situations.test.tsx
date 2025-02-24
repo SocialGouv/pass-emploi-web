@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -79,20 +79,18 @@ async function renderFicheJeune(
     dateFin?: string
   }>
 ) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire({ situations: situations })}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: { structure: 'MILO' },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire({ situations: situations })}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: { structure: 'MILO' },
+    }
+  )
 }

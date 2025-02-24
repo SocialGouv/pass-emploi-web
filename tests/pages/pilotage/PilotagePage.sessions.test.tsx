@@ -22,37 +22,34 @@ describe('PilotagePage client side - Sessions', () => {
         async () => {}
       )
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <Pilotage
-            onglet='SESSIONS_IMILO'
-            actions={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-            categoriesActions={desCategories()}
-            animationsCollectives={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-            sessions={sessions}
-          />,
-          {
-            customConseiller: {
-              structure: structureMilo,
-              agence: {
-                nom: 'Mission Locale Aubenas',
-                id: 'id-test',
-              },
-              structureMilo: {
-                nom: 'Mission Locale Aubenas',
-                id: 'id-test',
-              },
+      ;({ container } = await renderWithContexts(
+        <Pilotage
+          onglet='SESSIONS_IMILO'
+          actions={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+          categoriesActions={desCategories()}
+          animationsCollectives={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+          sessions={sessions}
+        />,
+        {
+          customConseiller: {
+            structure: structureMilo,
+            agence: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
             },
-          }
-        ))
-      })
+            structureMilo: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
+            },
+          },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -155,7 +152,7 @@ describe('PilotagePage client side - Sessions', () => {
     it('affiche un message qui le précise', async () => {
       // Given
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-      renderWithContexts(
+      await renderWithContexts(
         <Pilotage
           onglet='SESSIONS_IMILO'
           actions={{

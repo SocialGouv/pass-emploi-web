@@ -13,9 +13,9 @@ describe('<TableauRdvsConseiller>', () => {
 
   describe('Quand il y a des rendez-vous', () => {
     const listeRdv = desEvenementsListItems()
-    beforeEach(() => {
+    beforeEach(async () => {
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <TableauEvenementsConseiller
           evenements={listeRdv}
           periodeLabel='du dd/mm/yyyy au dd/mm/yyyy'

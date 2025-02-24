@@ -26,7 +26,7 @@ jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
-// @ts-ignore
+// @ts-expect-error simplistic mock for tests
 global.Audio = class FakeAudio {
   play = mockAudio
 }
@@ -94,18 +94,16 @@ describe('Intégration notifications sonores', () => {
 })
 
 async function renderWithNotificationsSonores(notificationsSonores: boolean) {
-  await act(async () => {
-    renderWithContexts(
-      <ChatsProvider>
-        <ProfilPage referentielMissionsLocales={[]} />
-      </ChatsProvider>,
-      {
-        customConseiller: unConseiller({
-          notificationsSonores: notificationsSonores,
-        }),
-      }
-    )
-  })
+  await renderWithContexts(
+    <ChatsProvider>
+      <ProfilPage referentielMissionsLocales={[]} />
+    </ChatsProvider>,
+    {
+      customConseiller: unConseiller({
+        notificationsSonores: notificationsSonores,
+      }),
+    }
+  )
 }
 
 async function toggleNotifications() {

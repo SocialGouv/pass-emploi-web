@@ -121,14 +121,12 @@ describe('Agenda - Onglet établissement', () => {
       })
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-          {
-            customConseiller: conseiller,
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        {
+          customConseiller: conseiller,
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -354,14 +352,12 @@ describe('Agenda - Onglet établissement', () => {
       })
 
       // When
-      await act(async () => {
-        renderWithContexts(
-          <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-          {
-            customConseiller: conseiller,
-          }
-        )
-      })
+      await renderWithContexts(
+        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        {
+          customConseiller: conseiller,
+        }
+      )
     })
 
     it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
@@ -573,14 +569,12 @@ describe('Agenda - Onglet établissement', () => {
       ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
 
       // When
-      await act(async () => {
-        renderWithContexts(
-          <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-          {
-            customConseiller: { structure: structureMilo },
-          }
-        )
-      })
+      await renderWithContexts(
+        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        {
+          customConseiller: { structure: structureMilo },
+        }
+      )
     })
 
     it('n’affiche pas l’agenda de l’établissement', async () => {

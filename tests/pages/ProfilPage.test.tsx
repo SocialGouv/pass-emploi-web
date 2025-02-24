@@ -38,14 +38,12 @@ describe('ProfilPage client side', () => {
       // Given
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <ProfilPage referentielMissionsLocales={[]} />,
-          {
-            customConseiller: conseiller,
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ProfilPage referentielMissionsLocales={[]} />,
+        {
+          customConseiller: conseiller,
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -81,11 +79,9 @@ describe('ProfilPage client side', () => {
   describe('quand il manque des informations', () => {
     beforeEach(async () => {
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <ProfilPage referentielMissionsLocales={[]} />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ProfilPage referentielMissionsLocales={[]} />
+      ))
     })
 
     it('a11y', async () => {
@@ -110,14 +106,12 @@ describe('ProfilPage client side', () => {
         })
 
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ProfilPage referentielMissionsLocales={[]} />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ProfilPage referentielMissionsLocales={[]} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -151,14 +145,12 @@ describe('ProfilPage client side', () => {
         })
 
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ProfilPage referentielMissionsLocales={agences} />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ProfilPage referentielMissionsLocales={agences} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -311,14 +303,12 @@ describe('ProfilPage client side', () => {
 
       beforeEach(async () => {
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ProfilPage referentielMissionsLocales={agences} />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ProfilPage referentielMissionsLocales={agences} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -358,14 +348,12 @@ describe('ProfilPage client side', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push })
 
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ProfilPage referentielMissionsLocales={[]} />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ProfilPage referentielMissionsLocales={[]} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
 
         const supprimerConseillerButton = screen.getByRole('button', {
           name: 'Supprimer mon compte',
@@ -423,14 +411,12 @@ describe('ProfilPage client side', () => {
         ).mockResolvedValue(jeunes)
 
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ProfilPage referentielMissionsLocales={[]} />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ProfilPage referentielMissionsLocales={[]} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
 
         const supprimerConseillerButton = screen.getByRole('button', {
           name: 'Supprimer mon compte',
@@ -463,10 +449,8 @@ describe('ProfilPage client side', () => {
         notificationsSonores: false,
       })
 
-      await act(async () => {
-        renderWithContexts(<ProfilPage referentielMissionsLocales={[]} />, {
-          customConseiller: conseiller,
-        })
+      await renderWithContexts(<ProfilPage referentielMissionsLocales={[]} />, {
+        customConseiller: conseiller,
       })
 
       const toggleNotifications = getToggleNotifications()

@@ -20,7 +20,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
       listesDeDiffusion = desListesDeDiffusion()
 
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <RubriqueListesDeDiffusion
           listesDeDiffusion={listesDeDiffusion}
           onBack={() => {}}
@@ -97,7 +97,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
   describe('quand le conseiller n‘a pas de liste de diffusion', () => {
     it('prévient le conseiller qu’il n’a pas de liste', async () => {
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <RubriqueListesDeDiffusion
           listesDeDiffusion={[]}
           onBack={() => {}}

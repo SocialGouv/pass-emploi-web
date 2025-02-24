@@ -9,10 +9,7 @@ import {
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
-import {
-  BeneficiaireEtChat,
-  ConseillerHistorique,
-} from 'interfaces/beneficiaire'
+import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
@@ -72,17 +69,15 @@ describe('<ConversationBeneficiaire />', () => {
     })
     ;(deleteFichier as jest.Mock).mockResolvedValue(undefined)
 
-    await act(async () => {
-      const renderResult = renderWithContexts(
-        <ConversationBeneficiaire
-          beneficiaireChat={beneficiaireChat}
-          conseillers={conseillersBeneficiaires}
-          onBack={jest.fn()}
-          shouldFocusOnFirstRender={false}
-        />
-      )
-      rerender = renderResult.rerender
-    })
+    const renderResult = await renderWithContexts(
+      <ConversationBeneficiaire
+        beneficiaireChat={beneficiaireChat}
+        conseillers={conseillersBeneficiaires}
+        onBack={jest.fn()}
+        shouldFocusOnFirstRender={false}
+      />
+    )
+    rerender = renderResult.rerender
   })
 
   it('s’abonne au message de la conversation', async () => {

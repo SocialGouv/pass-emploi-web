@@ -57,23 +57,20 @@ describe('PilotagePage client side - Actions', () => {
         idsActionsEnErreur: [],
       })
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <Pilotage
-            onglet='ACTIONS'
-            actions={{
-              donnees: [...uneListeDActionsAQualifier(), actionSansCategorie],
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            }}
-            categoriesActions={desCategories()}
-            animationsCollectives={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-          />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <Pilotage
+          onglet='ACTIONS'
+          actions={{
+            donnees: [...uneListeDActionsAQualifier(), actionSansCategorie],
+            metadonnees: { nombrePages: 3, nombreTotal: 25 },
+          }}
+          categoriesActions={desCategories()}
+          animationsCollectives={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+        />
+      ))
     })
 
     it('a11y', async () => {
@@ -606,7 +603,7 @@ describe('PilotagePage client side - Actions', () => {
   describe("quand le conseiller n'a pas d'action à qualifier", () => {
     it('affiche un message qui le précise', async () => {
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <Pilotage
           onglet='ACTIONS'
           actions={{

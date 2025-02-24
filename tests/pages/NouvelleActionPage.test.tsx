@@ -27,7 +27,7 @@ describe('NouvelleActionPage client side', () => {
     jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2023-12-19'))
 
     // When
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <NouvelleActionPage
         idBeneficiaire='id-beneficiaire'
         categories={categories}

@@ -45,7 +45,7 @@ describe('Page Recherche Immersions', () => {
     ;(getMetiers as jest.Mock).mockResolvedValue(metiers)
     ;(getCommunes as jest.Mock).mockResolvedValue(communes)
 
-    rendered = renderWithContexts(<RechercheOffresPage />, {})
+    rendered = await renderWithContexts(<RechercheOffresPage />, {})
     await userEvent.click(screen.getByRole('radio', { name: 'Immersion' }))
   })
 
@@ -550,7 +550,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffresPage />, {})
+      await renderWithContexts(<RechercheOffresPage />, {})
 
       // Then
       expect(screen.getByLabelText('Immersion')).toBeChecked()

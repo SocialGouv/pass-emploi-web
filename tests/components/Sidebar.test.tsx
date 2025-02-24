@@ -7,12 +7,16 @@ import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 import Sidebar from 'components/Sidebar'
+import { desActualitesRaw } from 'fixtures/actualites'
 import { Conseiller } from 'interfaces/conseiller'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
 jest.mock('components/ModalContainer')
+jest.mock('services/actualites.service', () => ({
+  getActualites: jest.fn(async () => desActualitesRaw()),
+}))
 
 describe('<Sidebar/>', () => {
   let routerPush: () => void
@@ -147,7 +151,7 @@ describe('<Sidebar/>', () => {
 })
 
 async function renderSidebar(conseiller?: Partial<Conseiller>) {
-  const { container } = renderWithContexts(<Sidebar />, {
+  const { container } = await renderWithContexts(<Sidebar />, {
     customConseiller: conseiller,
   })
 

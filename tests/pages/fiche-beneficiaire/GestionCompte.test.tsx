@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -358,25 +358,23 @@ async function renderFicheBeneficiaire(
   portefeuilleSetter?: (updatedBeneficiaires: Portefeuille) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={beneficiaire}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: structureMilo,
-        },
-        customPortefeuille: { setter: portefeuilleSetter },
-        customAlerte: { setter: alerteSetter },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={beneficiaire}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structureMilo,
+      },
+      customPortefeuille: { setter: portefeuilleSetter },
+      customAlerte: { setter: alerteSetter },
+    }
+  )
 }

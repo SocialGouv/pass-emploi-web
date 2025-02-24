@@ -52,7 +52,7 @@ describe('EtablissementPage client side', () => {
   describe('Render', () => {
     describe('quand le conseiller est superviseur', () => {
       beforeEach(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
+        ;({ container } = await renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: structureMilo,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
@@ -83,7 +83,7 @@ describe('EtablissementPage client side', () => {
 
     describe('quand le conseiller n’est pas superviseur', () => {
       beforeEach(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
+        ;({ container } = await renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: structureMilo,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
@@ -309,11 +309,9 @@ describe('EtablissementPage client side', () => {
       ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
-          customConseiller: { structure: structureMilo },
-        }))
-      })
+      ;({ container } = await renderWithContexts(<EtablissementPage />, {
+        customConseiller: { structure: structureMilo },
+      }))
     })
 
     it('a11y', async () => {

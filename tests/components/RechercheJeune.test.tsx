@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -17,11 +17,9 @@ describe('Recherche', () => {
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(countMessagesNotRead as jest.Mock).mockResolvedValue({})
 
-    await act(async () => {
-      renderWithContexts(
-        <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
-      )
-    })
+    await renderWithContexts(
+      <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
+    )
   })
 
   it('devrait afficher un formulaire de recherche', () => {
@@ -41,12 +39,10 @@ describe('Recherche', () => {
   })
 
   describe('devrait afficher le résultat de la recherche', () => {
-    let searchForm: HTMLFormElement
     let inputSearch: HTMLInputElement
     let submitButton: HTMLButtonElement
 
     beforeEach(() => {
-      searchForm = screen.getByRole('search') as HTMLFormElement
       inputSearch = screen.getByLabelText(
         'Rechercher un bénéficiaire par son nom ou prénom'
       )

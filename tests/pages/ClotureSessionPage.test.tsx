@@ -17,7 +17,7 @@ jest.mock('services/conseiller.service')
 
 describe('Cloture Session', () => {
   let container: HTMLElement
-  let session = unDetailSession({
+  const session = unDetailSession({
     session: {
       ...unDetailSession().session,
       statut: StatutAnimationCollective.AClore,
@@ -38,7 +38,7 @@ describe('Cloture Session', () => {
     ],
   })
 
-  let inscriptionsInitiales = session.inscriptions.map((inscription) => {
+  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
     return { idJeune: inscription.idJeune, statut: inscription.statut }
   })
 
@@ -56,7 +56,7 @@ describe('Cloture Session', () => {
     })
 
     // When
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <ClotureSession
         session={session}
         inscriptionsInitiales={inscriptionsInitiales}

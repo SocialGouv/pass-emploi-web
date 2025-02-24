@@ -19,8 +19,8 @@ describe('CloturePage client side', () => {
   const animationCollective = unEvenement()
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let routerPush: Function
-  let routerRefresh: Function
+  let routerPush: () => void
+  let routerRefresh: () => void
   beforeEach(async () => {
     // Given
     alerteSetter = jest.fn()
@@ -32,7 +32,7 @@ describe('CloturePage client side', () => {
     })
 
     // When
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <CloturePage
         evenement={animationCollective}
         returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}

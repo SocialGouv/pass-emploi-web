@@ -19,7 +19,7 @@ describe('Aide client side', () => {
         agence: { nom: 'Agence', id: 'id-test' },
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
-      ;({ container } = renderWithContexts(<AidePage />, {
+      ;({ container } = await renderWithContexts(<AidePage />, {
         customConseiller: conseiller,
       }))
     })
@@ -84,7 +84,7 @@ describe('Aide client side', () => {
 
   describe('conseiller France Travail', () => {
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(<AidePage />, {
+      ;({ container } = await renderWithContexts(<AidePage />, {
         customConseiller: { structure: structureFTCej },
       }))
     })
@@ -115,7 +115,7 @@ describe('Aide client side', () => {
 
   describe('conseiller France Travail BRSA', () => {
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(<AidePage />, {
+      ;({ container } = await renderWithContexts(<AidePage />, {
         customConseiller: { structure: 'POLE_EMPLOI_BRSA' },
       }))
     })

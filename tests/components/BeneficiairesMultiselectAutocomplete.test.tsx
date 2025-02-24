@@ -1,13 +1,14 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe, toHaveNoViolations } from 'jest-axe'
-expect.extend(toHaveNoViolations)
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import renderWithContexts from 'tests/renderWithContexts'
+
+expect.extend(toHaveNoViolations)
 
 describe('BeneficiairesMultiselectAutocomplete', () => {
   let beneficiaires: OptionBeneficiaire[]
@@ -63,7 +64,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     onUpdate = jest.fn()
 
     // When
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
@@ -266,7 +267,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 })
 
 describe('quand le conseiller utilise Edge', () => {
-  it('affiche un message d’erreur', () => {
+  it('affiche un message d’erreur', async () => {
     //Given
     const beneficiaires: OptionBeneficiaire[] = [
       { id: 'option-1', value: 'Option 1' },
@@ -306,11 +307,7 @@ describe('quand le conseiller utilise Edge', () => {
       },
     ]
 
-    let onUpdate: (selectedIds: {
-      beneficiaires?: string[]
-      listesDeDiffusion?: string[]
-    }) => void
-    onUpdate = jest.fn()
+    const onUpdate = jest.fn()
 
     Object.defineProperty(window.navigator, 'userAgent', {
       value:
@@ -319,7 +316,7 @@ describe('quand le conseiller utilise Edge', () => {
     })
 
     // When
-    renderWithContexts(
+    await renderWithContexts(
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}

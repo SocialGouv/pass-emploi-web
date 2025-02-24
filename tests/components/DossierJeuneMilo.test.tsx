@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import React from 'react'
 
 import DossierBeneficiaireMilo from 'components/jeune/DossierBeneficiaireMilo'
@@ -13,19 +13,17 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo()
 
       //WHEN
-      await act(async () => {
-        renderWithContexts(
-          <DossierBeneficiaireMilo
-            dossier={dossier}
-            beneficiaireExisteDejaMilo={false}
-            erreurMessageCreationCompte=''
-            onCreateCompte={jest.fn()}
-            onAnnulationCreerCompte={jest.fn()}
-            onRefresh={jest.fn()}
-            onRetour={jest.fn()}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DossierBeneficiaireMilo
+          dossier={dossier}
+          beneficiaireExisteDejaMilo={false}
+          erreurMessageCreationCompte=''
+          onCreateCompte={jest.fn()}
+          onAnnulationCreerCompte={jest.fn()}
+          onRefresh={jest.fn()}
+          onRetour={jest.fn()}
+        />
+      )
     })
 
     it("affiche les informations d'un dossier bénéficiaire avec e-mail", () => {
@@ -55,19 +53,17 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      await act(async () => {
-        renderWithContexts(
-          <DossierBeneficiaireMilo
-            dossier={dossier}
-            erreurMessageCreationCompte=''
-            beneficiaireExisteDejaMilo={false}
-            onCreateCompte={jest.fn()}
-            onAnnulationCreerCompte={jest.fn()}
-            onRefresh={jest.fn()}
-            onRetour={jest.fn()}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DossierBeneficiaireMilo
+          dossier={dossier}
+          erreurMessageCreationCompte=''
+          beneficiaireExisteDejaMilo={false}
+          onCreateCompte={jest.fn()}
+          onAnnulationCreerCompte={jest.fn()}
+          onRefresh={jest.fn()}
+          onRetour={jest.fn()}
+        />
+      )
     })
 
     it('le champ e-mail doit être vide', () => {

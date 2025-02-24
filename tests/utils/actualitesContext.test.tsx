@@ -1,6 +1,6 @@
 import { act, render, screen } from '@testing-library/react'
 
-import { uneActualiteRaw } from 'fixtures/actualites'
+import { desActualitesRaw } from 'fixtures/actualites'
 import { unConseiller } from 'fixtures/conseiller'
 import { getActualites } from 'services/actualites.service'
 import { ActualitesProvider, useActualites } from 'utils/actualitesContext'
@@ -11,7 +11,7 @@ describe('ActualitesProvider', () => {
   const conseiller = unConseiller()
 
   beforeEach(async () => {
-    ;(getActualites as jest.Mock).mockResolvedValue(uneActualiteRaw())
+    ;(getActualites as jest.Mock).mockResolvedValue(desActualitesRaw())
     await act(async () =>
       render(
         <ConseillerProvider conseiller={conseiller}>

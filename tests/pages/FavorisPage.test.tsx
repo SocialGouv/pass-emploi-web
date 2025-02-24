@@ -16,7 +16,7 @@ describe('FavorisPage client side', () => {
   const recherches = uneListeDeRecherches()
 
   beforeEach(async () => {
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <FavorisPage
         beneficiaire={uneBaseBeneficiaire()}
         offres={offres}

@@ -12,8 +12,8 @@ jest.mock('services/offres-emploi.service')
 describe('Page Recherche Offres', () => {
   let container: HTMLElement
 
-  beforeEach(() => {
-    ;({ container } = renderWithContexts(<RechercheOffres />, {}))
+  beforeEach(async () => {
+    ;({ container } = await renderWithContexts(<RechercheOffres />, {}))
   })
 
   it('a11y', async () => {

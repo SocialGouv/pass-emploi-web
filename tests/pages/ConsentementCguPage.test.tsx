@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -31,14 +31,12 @@ describe('ConsentementCGUPage client side', () => {
       })
 
       beforeEach(async () => {
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ConsentementCguPage returnTo='/mes-jeunes' />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ConsentementCguPage returnTo='/mes-jeunes' />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -69,14 +67,12 @@ describe('ConsentementCGUPage client side', () => {
       })
 
       beforeEach(async () => {
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <ConsentementCguPage returnTo='/mes-jeunes' />,
-            {
-              customConseiller: conseiller,
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <ConsentementCguPage returnTo='/mes-jeunes' />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -100,7 +96,7 @@ describe('ConsentementCGUPage client side', () => {
     beforeEach(async () => {
       // Given
       const conseiller = unConseiller()
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ConsentementCguPage returnTo='/mes-jeunes' />,
         {
           customConseiller: conseiller,

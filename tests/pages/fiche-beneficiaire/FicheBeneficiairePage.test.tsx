@@ -47,24 +47,22 @@ describe('FicheBeneficiairePage client side', () => {
       const conversation = unBeneficiaireChat({ ...beneficiaire })
 
       // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={true}
-            beneficiaire={beneficiaire}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            ongletInitial='agenda'
-            lectureSeule={false}
-          />,
-          {
-            customChats: [conversation],
-            customCurrentConversation: { setter: setCurrentConversation },
-            customConseiller: { id: beneficiaire.idConseiller },
-          }
-        )
-      })
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={true}
+          beneficiaire={beneficiaire}
+          rdvs={[]}
+          actionsInitiales={desActionsInitiales()}
+          categoriesActions={desCategories()}
+          ongletInitial='agenda'
+          lectureSeule={false}
+        />,
+        {
+          customChats: [conversation],
+          customCurrentConversation: { setter: setCurrentConversation },
+          customConseiller: { id: beneficiaire.idConseiller },
+        }
+      )
 
       // Then
       expect(setCurrentConversation).toHaveBeenCalledWith({
@@ -84,23 +82,21 @@ describe('FicheBeneficiairePage client side', () => {
       setCurrentConversation = jest.fn()
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={true}
-            beneficiaire={unDetailBeneficiaire()}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            ongletInitial='agenda'
-            lectureSeule={true}
-          />,
-          {
-            customConseiller: { id: 'fake-id' },
-            customCurrentConversation: { setter: setCurrentConversation },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={true}
+          beneficiaire={unDetailBeneficiaire()}
+          rdvs={[]}
+          actionsInitiales={desActionsInitiales()}
+          categoriesActions={desCategories()}
+          ongletInitial='agenda'
+          lectureSeule={true}
+        />,
+        {
+          customConseiller: { id: 'fake-id' },
+          customCurrentConversation: { setter: setCurrentConversation },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -332,19 +328,17 @@ describe('FicheBeneficiairePage client side', () => {
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
       it('affiche un message', async () => {
         // When
-        await act(async () => {
-          renderWithContexts(
-            <FicheBeneficiairePage
-              estMilo={true}
-              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              categoriesActions={desCategories()}
-              ongletInitial='agenda'
-              lectureSeule={false}
-            />
-          )
-        })
+        await renderWithContexts(
+          <FicheBeneficiairePage
+            estMilo={true}
+            beneficiaire={unDetailBeneficiaire({ isActivated: false })}
+            rdvs={[]}
+            actionsInitiales={desActionsInitiales()}
+            categoriesActions={desCategories()}
+            ongletInitial='agenda'
+            lectureSeule={false}
+          />
+        )
 
         // Then
         expect(
@@ -435,36 +429,33 @@ async function renderFicheJeuneMilo({
   structureDifferente?: boolean
   situation?: CategorieSituation
 } = {}): Promise<HTMLElement> {
-  let container: HTMLElement
-  await act(async () => {
-    const beneficiaire = unDetailBeneficiaire({
-      isActivated: isActivated ?? true,
-      situations: situation ? [{ categorie: situation }] : [],
-    })
-
-    ;({ container } = renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={beneficiaire}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          structure: structureMilo,
-          structureMilo: structureDifferente
-            ? {
-                nom: 'Mission locale',
-                id: 'id-structure-differente',
-              }
-            : undefined,
-        },
-      }
-    ))
+  const beneficiaire = unDetailBeneficiaire({
+    isActivated: isActivated ?? true,
+    situations: situation ? [{ categorie: situation }] : [],
   })
+
+  const { container } = await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={beneficiaire}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        structure: structureMilo,
+        structureMilo: structureDifferente
+          ? {
+              nom: 'Mission locale',
+              id: 'id-structure-differente',
+            }
+          : undefined,
+      },
+    }
+  )
 
   return container!
 }
@@ -480,28 +471,25 @@ async function renderFicheJeuneNonMilo({
   structure?: Structure
   ongletInitial?: string
 } = {}): Promise<HTMLElement> {
-  let container: HTMLElement
-  await act(async () => {
-    ;({ container } = renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={false}
-        beneficiaire={unDetailBeneficiaire()}
-        ongletInitial={ongletInitial ?? 'offres'}
-        lectureSeule={false}
-        metadonneesFavoris={uneMetadonneeFavoris({
-          autoriseLePartage: autorisePartageFavoris ?? true,
-        })}
-        favorisOffres={uneListeDOffres()}
-        favorisRecherches={uneListeDeRecherches()}
-        demarches={demarches}
-      />,
-      {
-        customConseiller: {
-          structure: structure ?? structureFTCej,
-        },
-      }
-    ))
-  })
+  const { container } = await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={false}
+      beneficiaire={unDetailBeneficiaire()}
+      ongletInitial={ongletInitial ?? 'offres'}
+      lectureSeule={false}
+      metadonneesFavoris={uneMetadonneeFavoris({
+        autoriseLePartage: autorisePartageFavoris ?? true,
+      })}
+      favorisOffres={uneListeDOffres()}
+      favorisRecherches={uneListeDeRecherches()}
+      demarches={demarches}
+    />,
+    {
+      customConseiller: {
+        structure: structure ?? structureFTCej,
+      },
+    }
+  )
 
   return container!
 }

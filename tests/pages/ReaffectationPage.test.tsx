@@ -54,11 +54,9 @@ describe('Reaffectation', () => {
   describe('Conseiller SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
-      act(() => {
-        ;({ container } = renderWithContexts(
-          <ReaffectationPage estSuperviseurResponsable={true} />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ReaffectationPage estSuperviseurResponsable={true} />
+      ))
     })
 
     it('a11y', async () => {
@@ -207,12 +205,11 @@ describe('Reaffectation', () => {
   describe('Conseiller non SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
-      act(() => {
-        ;({ container } = renderWithContexts(
-          <ReaffectationPage estSuperviseurResponsable={false} />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ReaffectationPage estSuperviseurResponsable={false} />
+      ))
     })
+
     describe('Étape 1 : type réaffectation', () => {
       it('a11y', async () => {
         const results = await axe(container)

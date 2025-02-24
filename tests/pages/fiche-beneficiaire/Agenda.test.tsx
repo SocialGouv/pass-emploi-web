@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -46,25 +46,23 @@ describe('Agenda de la fiche jeune', () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={false}
-            beneficiaire={unDetailBeneficiaire()}
-            metadonneesFavoris={uneMetadonneeFavoris()}
-            favorisOffres={uneListeDOffres()}
-            favorisRecherches={uneListeDeRecherches()}
-            ongletInitial='offres'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: {
-              id: 'id-conseiller',
-              structure: structureFTCej,
-            },
-          }
-        )
-      })
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={false}
+          beneficiaire={unDetailBeneficiaire()}
+          metadonneesFavoris={uneMetadonneeFavoris()}
+          favorisOffres={uneListeDOffres()}
+          favorisRecherches={uneListeDeRecherches()}
+          ongletInitial='offres'
+          lectureSeule={false}
+        />,
+        {
+          customConseiller: {
+            id: 'id-conseiller',
+            structure: structureFTCej,
+          },
+        }
+      )
 
       // Then
       expect(recupererAgenda).not.toHaveBeenCalled()
@@ -459,25 +457,23 @@ describe('Agenda de la fiche jeune', () => {
 })
 
 async function renderFicheJeuneMILO() {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: structureMilo,
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structureMilo,
+      },
+    }
+  )
 }
 
 function expectContenuCeJour(

@@ -42,36 +42,33 @@ describe('PilotagePage client side - Animations collectives', () => {
         metadonnees: { nombrePages: 3, nombreTotal: 25 },
       }))
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <Pilotage
-            onglet='ANIMATIONS_COLLECTIVES'
-            actions={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-            categoriesActions={desCategories()}
-            animationsCollectives={{
-              donnees: uneListeDAnimationCollectiveAClore(),
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            }}
-          />,
-          {
-            customConseiller: {
-              structure: structureMilo,
-              agence: {
-                nom: 'Mission Locale Aubenas',
-                id: 'id-test',
-              },
-              structureMilo: {
-                nom: 'Mission Locale Aubenas',
-                id: 'id-test',
-              },
+      ;({ container } = await renderWithContexts(
+        <Pilotage
+          onglet='ANIMATIONS_COLLECTIVES'
+          actions={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+          categoriesActions={desCategories()}
+          animationsCollectives={{
+            donnees: uneListeDAnimationCollectiveAClore(),
+            metadonnees: { nombrePages: 3, nombreTotal: 25 },
+          }}
+        />,
+        {
+          customConseiller: {
+            structure: structureMilo,
+            agence: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
             },
-          }
-        ))
-      })
+            structureMilo: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
+            },
+          },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -169,7 +166,7 @@ describe('PilotagePage client side - Animations collectives', () => {
   describe("quand le conseiller n'a pas d'animation collective à clore", () => {
     it('affiche un message qui le précise', async () => {
       // Given
-      renderWithContexts(
+      await renderWithContexts(
         <Pilotage
           onglet='ANIMATIONS_COLLECTIVES'
           actions={{
@@ -212,21 +209,19 @@ describe('PilotagePage client side - Animations collectives', () => {
       }))
 
       // When
-      await act(async () => {
-        renderWithContexts(
-          <Pilotage
-            onglet='ANIMATIONS_COLLECTIVES'
-            actions={{
-              donnees: [],
-              metadonnees: { nombrePages: 0, nombreTotal: 0 },
-            }}
-            categoriesActions={desCategories()}
-          />,
-          {
-            customConseiller: { structure: structureMilo },
-          }
-        )
-      })
+      await renderWithContexts(
+        <Pilotage
+          onglet='ANIMATIONS_COLLECTIVES'
+          actions={{
+            donnees: [],
+            metadonnees: { nombrePages: 0, nombreTotal: 0 },
+          }}
+          categoriesActions={desCategories()}
+        />,
+        {
+          customConseiller: { structure: structureMilo },
+        }
+      )
     })
 
     it('n’affiche pas la liste des animations à clore', async () => {

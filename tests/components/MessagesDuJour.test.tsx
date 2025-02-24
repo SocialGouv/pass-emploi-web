@@ -1,10 +1,10 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React from 'react'
 
 import MessagesDuJour from 'components/chat/MessagesDuJour'
-import { unBeneficiaireChat, unChat } from 'fixtures/beneficiaire'
+import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 import { unMessage } from 'fixtures/message'
 import { Message } from 'interfaces/message'
 import {
@@ -30,17 +30,15 @@ describe('<MessagesDuJour />', () => {
     ;(modifierMessage as jest.Mock).mockResolvedValue(messageSelectionne)
 
     // When
-    await act(async () => {
-      renderWithContexts(
-        <MessagesDuJour
-          beneficiaireEtChat={conversation}
-          messageSelectionne={messageSelectionne}
-          beneficiaireNomComplet='Kenji Jirac'
-          idConseiller='id-conseiller'
-          getConseillerNomComplet={() => 'Nils Tavernier'}
-        />
-      )
-    })
+    await renderWithContexts(
+      <MessagesDuJour
+        beneficiaireEtChat={conversation}
+        messageSelectionne={messageSelectionne}
+        beneficiaireNomComplet='Kenji Jirac'
+        idConseiller='id-conseiller'
+        getConseillerNomComplet={() => 'Nils Tavernier'}
+      />
+    )
   })
 
   it('charge les messages du même jour que le message sélectionné', async () => {

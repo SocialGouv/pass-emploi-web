@@ -28,7 +28,7 @@ describe('RendezVousPassesPage client side', () => {
         }),
         unEvenementListItem({ id: 'evenement-3' }),
       ]
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <RendezVousPasses
           beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}
@@ -87,7 +87,7 @@ describe('RendezVousPassesPage client side', () => {
     let container: HTMLElement
     beforeEach(async () => {
       // When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <RendezVousPasses
           beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}

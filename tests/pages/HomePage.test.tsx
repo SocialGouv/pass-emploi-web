@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
@@ -26,19 +26,17 @@ describe('HomePage client side', () => {
   describe('quand le conseiller doit renseigner sa structure', () => {
     beforeEach(async () => {
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <HomePage
-            afficherModaleAgence={true}
-            afficherModaleEmail={false}
-            afficherModaleOnboarding={false}
-            redirectUrl='/mes-jeunes'
-          />,
-          {
-            customConseiller: { structure: structureMilo },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <HomePage
+          afficherModaleAgence={true}
+          afficherModaleEmail={false}
+          afficherModaleOnboarding={false}
+          redirectUrl='/mes-jeunes'
+        />,
+        {
+          customConseiller: { structure: structureMilo },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -82,21 +80,19 @@ describe('HomePage client side', () => {
       agences = uneListeDAgencesFranceTravail()
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <HomePage
-            afficherModaleAgence={true}
-            afficherModaleEmail={false}
-            afficherModaleOnboarding={false}
-            referentielAgences={agences}
-            redirectUrl='/mes-jeunes'
-          />,
-          {
-            customConseiller: { structure: structureFTCej },
-            customAlerte: { setter: alerteSetter },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <HomePage
+          afficherModaleAgence={true}
+          afficherModaleEmail={false}
+          afficherModaleOnboarding={false}
+          referentielAgences={agences}
+          redirectUrl='/mes-jeunes'
+        />,
+        {
+          customConseiller: { structure: structureFTCej },
+          customAlerte: { setter: alerteSetter },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -241,19 +237,17 @@ describe('HomePage client side', () => {
   describe('quand le conseiller doit renseigner son adresse email', () => {
     beforeEach(async () => {
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <HomePage
-            afficherModaleAgence={false}
-            afficherModaleEmail={true}
-            afficherModaleOnboarding={false}
-            redirectUrl='/mes-jeunes'
-          />,
-          {
-            customConseiller: { structure: structureMilo },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <HomePage
+          afficherModaleAgence={false}
+          afficherModaleEmail={true}
+          afficherModaleOnboarding={false}
+          redirectUrl='/mes-jeunes'
+        />,
+        {
+          customConseiller: { structure: structureMilo },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -285,19 +279,17 @@ describe('HomePage client side', () => {
     describe('quand le conseiller est France Travail', () => {
       beforeEach(async () => {
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <HomePage
-              afficherModaleAgence={false}
-              afficherModaleEmail={false}
-              afficherModaleOnboarding={true}
-              redirectUrl='/mes-jeunes'
-            />,
-            {
-              customConseiller: { structure: structureFTCej },
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <HomePage
+            afficherModaleAgence={false}
+            afficherModaleEmail={false}
+            afficherModaleOnboarding={true}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: { structure: structureFTCej },
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -351,19 +343,17 @@ describe('HomePage client side', () => {
     describe('quand le conseiller est Milo', () => {
       beforeEach(async () => {
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <HomePage
-              afficherModaleAgence={false}
-              afficherModaleEmail={false}
-              afficherModaleOnboarding={true}
-              redirectUrl='/mes-jeunes'
-            />,
-            {
-              customConseiller: { structure: structureMilo },
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <HomePage
+            afficherModaleAgence={false}
+            afficherModaleEmail={false}
+            afficherModaleOnboarding={true}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: { structure: structureMilo },
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -426,21 +416,19 @@ describe('HomePage client side', () => {
     describe('quand le conseiller est pass emploi', () => {
       beforeEach(async () => {
         // When
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <HomePage
-              afficherModaleAgence={false}
-              afficherModaleEmail={false}
-              afficherModaleOnboarding={true}
-              redirectUrl='/mes-jeunes'
-            />,
-            {
-              customConseiller: {
-                structure: 'POLE_EMPLOI_BRSA',
-              },
-            }
-          ))
-        })
+        ;({ container } = await renderWithContexts(
+          <HomePage
+            afficherModaleAgence={false}
+            afficherModaleEmail={false}
+            afficherModaleOnboarding={true}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: {
+              structure: 'POLE_EMPLOI_BRSA',
+            },
+          }
+        ))
       })
 
       it('a11y', async () => {

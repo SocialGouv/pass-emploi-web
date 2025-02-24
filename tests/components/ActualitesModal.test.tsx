@@ -3,45 +3,34 @@ import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 
 import ActualitesModal from 'components/ActualitesModal'
+import { desActualitesRaw } from 'fixtures/actualites'
 import { unConseiller } from 'fixtures/conseiller'
-import { ActualitesParsees } from 'interfaces/actualites'
+import { getActualites } from 'services/actualites.service'
 import { ActualitesProvider } from 'utils/actualitesContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 jest.mock('components/ModalContainer')
+jest.mock('services/actualites.service', () => ({ getActualites: jest.fn() }))
+
 describe('ActualitesModal', () => {
   let container: HTMLElement
 
   describe('quand le conseiller a des actualités', () => {
-    const actualites: ActualitesParsees = [
-      {
-        id: 1,
-        titre: 'Invitation à la journée présentiel du 31 octobre 2024',
-        etiquettes: [
-          { id: 35, nom: 'Recette', couleur: 'additional_3' },
-          { id: 42, nom: 'Test', couleur: 'additional_2' },
-        ],
-        contenu: (
-          <>
-            <p>Rdv demain aux nouveaux locaux de la Fabrique</p>
-            <a href='www.google.com'>Google</a>
-            <img src='pouetImg.jpg' alt='pouet' />
-          </>
-        ),
-        dateDerniereModification: '2024-01-01',
-      },
-    ]
     const conseiller = unConseiller()
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const onClose = jest.fn()
-      ;({ container } = render(
-        <ConseillerProvider conseiller={conseiller}>
-          <ActualitesProvider actualitesForTests={actualites}>
-            <ActualitesModal onClose={onClose} />
-          </ActualitesProvider>
-        </ConseillerProvider>
-      ))
+      ;(getActualites as jest.Mock).mockResolvedValue(desActualitesRaw())
+
+      await act(async () => {
+        ;({ container } = render(
+          <ConseillerProvider conseiller={conseiller}>
+            <ActualitesProvider>
+              <ActualitesModal onClose={onClose} />
+            </ActualitesProvider>
+          </ConseillerProvider>
+        ))
+      })
     })
 
     it('a11y', async () => {
@@ -68,9 +57,9 @@ describe('ActualitesModal', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Google',
+          name: 'Vous êtes perdu ? (nouvelle fenêtre)',
         })
-      ).toHaveAttribute('href', 'www.google.com')
+      ).toHaveAttribute('href', 'perdu.com')
       expect(
         screen.getByRole('img', {
           name: 'pouet',
@@ -82,15 +71,18 @@ describe('ActualitesModal', () => {
   describe('quand le conseiller n’a pas d’actualité', () => {
     const conseiller = unConseiller()
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const onClose = jest.fn()
-      ;({ container } = render(
-        <ConseillerProvider conseiller={conseiller}>
-          <ActualitesProvider actualitesForTests={[]}>
-            <ActualitesModal onClose={onClose} />
-          </ActualitesProvider>
-        </ConseillerProvider>
-      ))
+      ;(getActualites as jest.Mock).mockResolvedValue([])
+      await act(async () => {
+        ;({ container } = render(
+          <ConseillerProvider conseiller={conseiller}>
+            <ActualitesProvider>
+              <ActualitesModal onClose={onClose} />
+            </ActualitesProvider>
+          </ConseillerProvider>
+        ))
+      })
     })
 
     it('a11y', async () => {

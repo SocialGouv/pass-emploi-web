@@ -35,13 +35,13 @@ describe('Partage Recherche', () => {
   let submitButton: HTMLButtonElement
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let push: Function
+  let push: () => void
   describe('pour tous les partages de recherche', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       alerteSetter = jest.fn()
       push = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <PartageRecherchePage
           type={TypeOffre.EMPLOI}
           criteresRecherche={{
@@ -153,10 +153,10 @@ describe('Partage Recherche', () => {
 
   describe('pour le partage de recherche d’un type d’offre particulier', () => {
     describe('Offre Emploi', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.EMPLOI}
             criteresRecherche={{
@@ -219,10 +219,10 @@ describe('Partage Recherche', () => {
     })
 
     describe('Alternance', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.ALTERNANCE}
             criteresRecherche={{
@@ -285,10 +285,10 @@ describe('Partage Recherche', () => {
     })
 
     describe('Immersion', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.IMMERSION}
             criteresRecherche={{
@@ -354,10 +354,10 @@ describe('Partage Recherche', () => {
     })
 
     describe('Service Civique', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.SERVICE_CIVIQUE}
             criteresRecherche={{

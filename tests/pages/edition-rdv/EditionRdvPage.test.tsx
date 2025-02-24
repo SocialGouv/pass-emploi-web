@@ -87,9 +87,9 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('contenu', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda?onglet=conseiller'
@@ -724,12 +724,12 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('événements issus d’i-milo', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         const evenement = unEvenement({ source: 'MILO' })
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='https://localhost:3000/agenda'
@@ -796,7 +796,7 @@ describe('EditionRdvPage client side', () => {
         )
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -828,7 +828,7 @@ describe('EditionRdvPage client side', () => {
 
     describe('quand on souhaite modifier un rendez-vous existant', () => {
       let evenement: Evenement
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         const beneficiaire0 = {
           id: beneficiairesConseiller[0].id,
@@ -844,7 +844,7 @@ describe('EditionRdvPage client side', () => {
         evenement = unEvenement({ jeunes: [beneficiaire0, beneficiaire2] })
 
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -1163,7 +1163,7 @@ describe('EditionRdvPage client side', () => {
 
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         const beneficiaire = {
           id: beneficiairesConseiller[0].id,
@@ -1182,7 +1182,7 @@ describe('EditionRdvPage client side', () => {
         })
 
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -1331,9 +1331,9 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('quand le conseiller connecté n’est référent d’aucun bénéficiaire de l’événement', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='https://localhost:3000/agenda'
@@ -1445,25 +1445,23 @@ describe('EditionRdvPage client side', () => {
       beforeEach(async () => {
         // Given
         typesRendezVous = typesAnimationCollective()
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <EditionRdvPage
-              typesRendezVous={typesRendezVous}
-              returnTo='/agenda?onglet=etablissement'
-              evenementTypeAC={true}
-              lectureSeule={false}
-              conseillerEstObservateur={false}
-            />,
-            {
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
+        ;({ container } = await renderWithContexts(
+          <EditionRdvPage
+            typesRendezVous={typesRendezVous}
+            returnTo='/agenda?onglet=etablissement'
+            evenementTypeAC={true}
+            lectureSeule={false}
+            conseillerEstObservateur={false}
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-etablissement',
               },
-            }
-          ))
-        })
+            },
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -1570,18 +1568,16 @@ describe('EditionRdvPage client side', () => {
           delete evenement.statut
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -1599,18 +1595,16 @@ describe('EditionRdvPage client side', () => {
           })
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -1628,18 +1622,16 @@ describe('EditionRdvPage client side', () => {
           })
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='https://localhost:3000/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.getByRole('link', {
@@ -1676,26 +1668,24 @@ describe('EditionRdvPage client side', () => {
           statut: StatutAnimationCollective.Close,
         })
 
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <EditionRdvPage
-              typesRendezVous={typesRendezVous}
-              returnTo='/agenda'
-              evenement={evenement}
-              evenementTypeAC={true}
-              lectureSeule={true}
-              conseillerEstObservateur={true}
-            />,
-            {
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
+        ;({ container } = await renderWithContexts(
+          <EditionRdvPage
+            typesRendezVous={typesRendezVous}
+            returnTo='/agenda'
+            evenement={evenement}
+            evenementTypeAC={true}
+            lectureSeule={true}
+            conseillerEstObservateur={true}
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-etablissement',
               },
-            }
-          ))
-        })
+            },
+          }
+        ))
       })
 
       it('a11y', async () => {

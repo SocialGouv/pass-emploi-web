@@ -104,14 +104,12 @@ describe('Agenda - Onglet conseiller', () => {
       })
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <AgendaPage onglet='CONSEILLER' periodeIndexInitial={0} />,
-          {
-            customConseiller: conseiller,
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <AgendaPage onglet='CONSEILLER' periodeIndexInitial={0} />,
+        {
+          customConseiller: conseiller,
+        }
+      ))
     })
 
     it('a11y', async () => {
