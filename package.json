@@ -63,7 +63,7 @@
     "eslint-config-next": "^15.1.2",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react-compiler": "19.0.0-beta-201e55d-20241215",
+    "eslint-plugin-react-compiler": "19.0.0-beta-e1e972c-20250221",
     "jest": "^29.7.0",
     "jest-axe": "^9.0.0",
     "jest-environment-jsdom": "^29.7.0",
