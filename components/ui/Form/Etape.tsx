@@ -24,7 +24,7 @@ function Etape(
           name={getIconNumero(numero)}
           focusable={false}
           aria-hidden={true}
-          className='mr-2 w-8 h-8'
+          className='mr-2 w-8 h-8 stroke-primary fill-white'
         />
         <span className='sr-only'>Étape {numero}: </span> {titre}
       </legend>
