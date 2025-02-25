@@ -7,11 +7,8 @@ import React, { useEffect, useState } from 'react'
 import ActualitesModal from 'components/ActualitesModal'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import {
-  compterNouvellesActualites,
-  estSuperviseur,
-  utiliseChat,
-} from 'interfaces/conseiller'
+import { ActualitesParsees } from 'interfaces/actualites'
+import { estSuperviseur, utiliseChat } from 'interfaces/conseiller'
 import { estMilo } from 'interfaces/structure'
 import { modifierDateVisionnageActus } from 'services/conseiller.service'
 import { useActualites } from 'utils/actualitesContext'
@@ -290,4 +287,17 @@ export default function NavLinks({
       )}
     </>
   )
+}
+
+function compterNouvellesActualites(
+  dateVisionnageActus: string | undefined,
+  actualites: ActualitesParsees
+): number {
+  if (!dateVisionnageActus) return actualites.length
+
+  return actualites.filter(
+    ({ dateDerniereModification }) =>
+      DateTime.fromISO(dateVisionnageActus) <
+      DateTime.fromISO(dateDerniereModification)
+  ).length
 }

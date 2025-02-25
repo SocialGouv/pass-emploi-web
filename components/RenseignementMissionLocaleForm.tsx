@@ -9,6 +9,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { Agence, MissionLocale } from 'interfaces/referentiel'
+import { getUrlFormulaireSupport } from 'interfaces/structure'
 import styles from 'styles/components/Button.module.css'
 
 interface RenseignementMissionLocaleFormProps {
@@ -167,7 +168,7 @@ export function RenseignementMissionLocaleForm({
         {missionLocaleNestPasDansLaListe() && (
           <a
             className={`w-fit flex items-center justify-center text-s-bold ${styles.button} ${styles.buttonTertiary}`}
-            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+            href={getUrlFormulaireSupport('MILO')}
             target='_blank'
             rel='noreferrer noopener'
             onClick={onContacterSupport}

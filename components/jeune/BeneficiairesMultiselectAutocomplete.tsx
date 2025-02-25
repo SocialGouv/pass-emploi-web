@@ -13,6 +13,7 @@ import {
   getListeInformations,
   ListeDeDiffusion,
 } from 'interfaces/liste-de-diffusion'
+import { getUrlFormulaireSupport } from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -69,9 +70,6 @@ export default function BeneficiairesMultiselectAutocomplete({
     ListeDeDiffusion[]
   >([])
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const mailSupportObject =
-    'Portail conseiller Mission Locale - problème inscription des bénéficiaires sous Edge'
 
   function getBeneficiairesNonSelectionnees(): OptionBeneficiaire[] {
     return beneficiaires.filter(
@@ -274,9 +272,8 @@ export default function BeneficiairesMultiselectAutocomplete({
             pas changer de navigateur, veuillez&nbsp;
             <span className={'text-warning hover:text-primary'}>
               <ExternalLink
-                href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`}
-                label={'contacter le support'}
-                iconName={IconName.OutgoingMail}
+                href={getUrlFormulaireSupport(conseiller.structure)}
+                label='contacter le support'
                 onClick={trackContacterSupportClick}
               />
             </span>

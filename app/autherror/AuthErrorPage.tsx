@@ -88,13 +88,6 @@ function AuthErrorPage({
               />
             )}
           </div>
-
-          {/* <ExternalLink
-            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-            label={'contacter le support'}
-            iconName={IconName.OutgoingMail}
-            onClick={trackContacterSupportClick}
-          /> */}
         </div>
       </main>
     </>

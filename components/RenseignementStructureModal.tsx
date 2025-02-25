@@ -5,6 +5,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import { getUrlFormulaireSupport } from 'interfaces/structure'
 
 interface RenseignementStructureModalProps {
   onContacterSupport: () => void
@@ -34,7 +35,7 @@ export default function RenseignementStructureModal({
 
       <div className='flex justify-center mt-4 gap-4'>
         <ButtonLink
-          href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+          href={getUrlFormulaireSupport('MILO')}
           onClick={onContacterSupport}
           externalIcon={IconName.OpenInNew}
           style={ButtonStyle.TERTIARY}

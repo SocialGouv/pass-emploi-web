@@ -132,7 +132,7 @@ describe('ProfilPage client side', () => {
           screen.getByRole('link', {
             name: /contacter le support/,
           })
-        ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
+        ).toHaveAttribute('href', 'http://perdu.com/assistance/')
       })
     })
 
@@ -256,7 +256,7 @@ describe('ProfilPage client side', () => {
           screen.getByRole('link', {
             name: 'Contacter le support (nouvelle fenêtre)',
           })
-        ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
+        ).toHaveAttribute('href', 'http://perdu.com/assistance/')
       })
 
       it("modifie le conseiller avec l'agence choisie", async () => {

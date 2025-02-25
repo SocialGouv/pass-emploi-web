@@ -24,6 +24,7 @@ import {
 } from 'interfaces/beneficiaire'
 import { SimpleConseiller } from 'interfaces/conseiller'
 import {
+  getUrlFormulaireSupport,
   StructureReaffectation,
   structuresReaffectation,
 } from 'interfaces/structure'
@@ -411,7 +412,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
             Besoin d’aide ?{' '}
             <ExternalLink
               label='Contacter le support'
-              href='https://doc.pass-emploi.beta.gouv.fr/support-milo/assistance/'
+              href={getUrlFormulaireSupport('MILO')}
               onClick={() => {}}
             />
           </p>

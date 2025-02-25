@@ -15,6 +15,7 @@ import { Agence } from 'interfaces/referentiel'
 import {
   estFTConnect,
   estMilo,
+  getUrlFormulaireSupport,
   labelStructure,
   structureMilo,
 } from 'interfaces/structure'
@@ -254,8 +255,8 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
                   Pour ce faire merci de&nbsp;
                   <span className={'text-primary_darken hover:text-primary'}>
                     <ExternalLink
-                      href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-                      label={'contacter le support'}
+                      href={getUrlFormulaireSupport(conseiller.structure)}
+                      label='contacter le support'
                       iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}
                     />

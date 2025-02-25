@@ -4,7 +4,7 @@ import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estPassEmploi } from 'interfaces/structure'
+import { estPassEmploi, getUrlFormulaireSupport } from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -47,7 +47,7 @@ export default function ConseillerIntrouvableSuggestionModal({
         les suggestions. Si malgré ça vous rencontrez des difficultés,&nbsp;
         <span className='text-primary_darken hover:text-primary'>
           <ExternalLink
-            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+            href={getUrlFormulaireSupport(conseiller.structure)}
             label='contactez le support'
             iconName={IconName.OutgoingMail}
             onClick={trackContacterSupportClick}

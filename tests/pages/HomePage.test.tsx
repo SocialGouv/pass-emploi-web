@@ -57,7 +57,7 @@ describe('HomePage client side', () => {
         screen.getByRole('link', {
           name: 'Contacter le support (nouvelle fenêtre)',
         })
-      ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
+      ).toHaveAttribute('href', 'http://perdu.com/assistance/')
     })
 
     it('affiche un lien vers i-milo', async () => {

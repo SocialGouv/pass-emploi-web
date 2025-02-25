@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 
-import { ActualitesParsees } from 'interfaces/actualites'
 import { MissionLocale } from 'interfaces/referentiel'
 import {
   estMilo,
@@ -85,17 +84,4 @@ export function doitSignerLesCGU(conseiller: Conseiller): boolean {
         DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
     : DateTime.fromISO(conseiller.dateSignatureCGU) <
         DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
-}
-
-export function compterNouvellesActualites(
-  dateVisionnageActus: string | undefined,
-  actualites: ActualitesParsees
-): number {
-  if (!dateVisionnageActus) return actualites.length
-
-  return actualites.filter(
-    ({ dateDerniereModification }) =>
-      DateTime.fromISO(dateVisionnageActus) <
-      DateTime.fromISO(dateDerniereModification)
-  ).length
 }
