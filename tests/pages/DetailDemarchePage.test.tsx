@@ -16,7 +16,7 @@ describe('DetailDemarchePage client side', () => {
   describe('render', () => {
     const demarche = uneDemarche()
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailDemarchePage
           demarche={demarche}
           lectureSeule={false}
@@ -61,7 +61,7 @@ describe('DetailDemarchePage client side', () => {
   describe('si la démarche n’a pas de moyen', () => {
     const demarche = uneDemarche({ sousTitre: undefined })
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <DetailDemarchePage
           demarche={demarche}
           lectureSeule={false}

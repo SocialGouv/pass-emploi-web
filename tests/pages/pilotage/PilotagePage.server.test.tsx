@@ -7,7 +7,7 @@ import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import {
   getActionsAQualifierServerSide,
   getSituationsNonProfessionnelles,
@@ -65,7 +65,7 @@ describe('PilotagePage server side', () => {
       )
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
         unConseiller({
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           agence: {
             nom: 'Mission Locale Aubenas',
             id: 'id-etablissement',
@@ -134,7 +134,7 @@ describe('PilotagePage server side', () => {
       // Given
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
         unConseiller({
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           structureMilo: { id: '06', nom: 'test' },
         })
       )

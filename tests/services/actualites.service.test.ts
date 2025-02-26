@@ -1,5 +1,5 @@
 import { ActualitesRaw, ArticleJson, TagJson } from 'interfaces/actualites'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import { getActualites } from 'services/actualites.service'
 import { fetchJson } from 'utils/httpClient'
 
@@ -52,32 +52,33 @@ describe('ActualitesService', () => {
       })
 
       //When
-      const output = await getActualites(StructureConseiller.MILO)
+      const output = await getActualites(structureMilo)
 
       //Then
-      const actualites: ActualitesRaw = {
-        articles: [
-          {
-            id: 3,
-            titre: 'Ceci est un article de test',
-            etiquettes: [],
-            contenu: 'Lorem ipsum dolor sit amet',
-          },
-          {
-            id: 2,
-            titre: 'Infolettre de novembre 2024',
-            etiquettes: [],
-            contenu: 'Retrouvez notre dernière note sur le blog.',
-          },
-          {
-            id: 1,
-            titre: 'Invitation à la journée présentiel du 31 octobre 2024',
-            etiquettes: [{ couleur: 'primary', id: 7, nom: 'Primaire' }],
-            contenu: 'Cette journée aura lieu au 35 rue de la République.',
-          },
-        ],
-        dateDerniereModification: '2024-12-03T16:38:54',
-      }
+      const actualites: ActualitesRaw = [
+        {
+          id: 3,
+          titre: 'Ceci est un article de test',
+          etiquettes: [],
+          contenu: 'Lorem ipsum dolor sit amet',
+          dateDerniereModification: '2024-12-03T16:38:54',
+        },
+        {
+          id: 2,
+          titre: 'Infolettre de novembre 2024',
+          etiquettes: [],
+          contenu: 'Retrouvez notre dernière note sur le blog.',
+          dateDerniereModification: '2024-11-19T15:38:54',
+        },
+        {
+          id: 1,
+          titre: 'Invitation à la journée présentiel du 31 octobre 2024',
+          etiquettes: [{ couleur: 'primary', id: 7, nom: 'Primaire' }],
+          contenu: 'Cette journée aura lieu au 35 rue de la République.',
+          dateDerniereModification: '2024-11-20T15:38:54',
+        },
+      ]
+
       expect(output).toEqual(actualites)
     })
   })

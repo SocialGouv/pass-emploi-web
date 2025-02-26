@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -26,15 +26,13 @@ describe('<MessagesListeDeDiffusion />', () => {
     afficherDetailMessage = jest.fn()
 
     // When
-    await act(async () => {
-      renderWithContexts(
-        <MessagesListeDeDiffusion
-          liste={listeDeDiffusion}
-          onAfficherDetailMessage={afficherDetailMessage}
-          onBack={() => {}}
-        />
-      )
-    })
+    await renderWithContexts(
+      <MessagesListeDeDiffusion
+        liste={listeDeDiffusion}
+        onAfficherDetailMessage={afficherDetailMessage}
+        onBack={() => {}}
+      />
+    )
   })
 
   it('charge les messages envoyé à la liste de diffusion', async () => {

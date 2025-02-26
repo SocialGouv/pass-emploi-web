@@ -5,14 +5,14 @@ import NavLinks, { NavItem } from 'components/NavLinks'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import styles from 'styles/components/Sidebar.module.css'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function Sidebar() {
   const [conseiller] = useConseiller()
 
-  const aThemePassEmploi = estPassEmploi(conseiller)
+  const aThemePassEmploi = estPassEmploi(conseiller.structure)
 
   return (
     <div className={styles.sidebar}>

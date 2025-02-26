@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import { ReactElement } from 'react'
 
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
 
 const OnboardingMILOModal = dynamic(
   () => import('components/onboarding/OnboardingMILOModal')
@@ -18,14 +18,17 @@ export default function OnboardingModal(
   props: OnboardingModalProps
 ): ReactElement {
   switch (props.conseiller.structure) {
-    case StructureConseiller.POLE_EMPLOI:
+    case 'POLE_EMPLOI':
       return <OnboardingPEModal {...props} />
-    case StructureConseiller.POLE_EMPLOI_BRSA:
-    case StructureConseiller.POLE_EMPLOI_AIJ:
-    case StructureConseiller.CONSEIL_DEPT:
-    case StructureConseiller.AVENIR_PRO:
+    case 'POLE_EMPLOI_BRSA':
+    case 'POLE_EMPLOI_AIJ':
+    case 'CONSEIL_DEPT':
+    case 'AVENIR_PRO':
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+    case 'FT_EQUIP_EMPLOI_RECRUT':
       return <OnboardingPEModal {...props} estPassEmploi={true} />
-    case StructureConseiller.MILO:
+    case 'MILO':
       return <OnboardingMILOModal {...props} />
   }
 }

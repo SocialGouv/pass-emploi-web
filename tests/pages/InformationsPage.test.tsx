@@ -20,7 +20,7 @@ import {
   DetailBeneficiaire,
   EtatSituation,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
   getIndicateursJeuneComplets,
@@ -57,12 +57,7 @@ describe('InformationsPage client side', () => {
     describe('pour les Informations', () => {
       beforeEach(async () => {
         // Given
-        container = await renderPage(
-          listeSituations,
-          [],
-          StructureConseiller.MILO,
-          jeune
-        )
+        container = await renderPage(listeSituations, [], structureMilo, jeune)
       })
 
       it('a11y', async () => {
@@ -165,7 +160,9 @@ describe('InformationsPage client side', () => {
           expect(() =>
             screen.getByText(/Confirmation du changement de dispositif/)
           ).toThrow()
-          expect(getByDescriptionTerm('Dispositif :')).toHaveTextContent('PACEA')
+          expect(getByDescriptionTerm('Dispositif :')).toHaveTextContent(
+            'PACEA'
+          )
         })
       })
 
@@ -188,7 +185,7 @@ describe('InformationsPage client side', () => {
     describe('pour l’indicateur des conseillers', () => {
       beforeEach(async () => {
         //Given
-        container = await renderPage([], [], StructureConseiller.MILO, jeune)
+        container = await renderPage([], [], structureMilo, jeune)
 
         // When
         const tabIndicateurs = screen.getByRole('tab', {
@@ -273,7 +270,7 @@ describe('InformationsPage client side', () => {
       describe('affiche un onglet dédié', () => {
         beforeEach(async () => {
           // Given
-          container = await renderPage([], [], StructureConseiller.MILO, jeune)
+          container = await renderPage([], [], structureMilo, jeune)
 
           // When
           const tabConseillers = screen.getByRole('tab', {
@@ -306,7 +303,7 @@ describe('InformationsPage client side', () => {
           container = await renderPage(
             [],
             listeConseillers,
-            StructureConseiller.MILO,
+            structureMilo,
             jeune
           )
 
@@ -340,12 +337,7 @@ describe('InformationsPage client side', () => {
   describe('quand l’utilisateur est un conseiller France Travail', () => {
     beforeEach(async () => {
       // Given
-      container = await renderPage(
-        [],
-        [],
-        StructureConseiller.POLE_EMPLOI,
-        jeune
-      )
+      container = await renderPage([], [], structureFTCej, jeune)
     })
 
     it('a11y', async () => {
@@ -378,7 +370,7 @@ async function renderPage(
     dateFin?: string
   }>,
   conseillers: ConseillerHistorique[],
-  structure: StructureConseiller,
+  structure: Structure,
   beneficiaire: DetailBeneficiaire
 ): Promise<HTMLElement> {
   const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
@@ -387,21 +379,18 @@ async function renderPage(
     desIndicateursSemaine()
   )
 
-  let container: HTMLElement
-  await act(async () => {
-    ;({ container } = renderWithContexts(
-      <InformationsPage
-        idBeneficiaire={'id'}
-        situations={situations}
-        conseillers={conseillers}
-        lectureSeule={false}
-        beneficiaire={beneficiaire}
-        metadonneesFavoris={uneMetadonneeFavoris()}
-        onglet={'INFORMATIONS'}
-      />,
-      { customConseiller: { structure: structure } }
-    ))
-  })
+  const { container } = await renderWithContexts(
+    <InformationsPage
+      idBeneficiaire={'id'}
+      situations={situations}
+      conseillers={conseillers}
+      lectureSeule={false}
+      beneficiaire={beneficiaire}
+      metadonneesFavoris={uneMetadonneeFavoris()}
+      onglet={'INFORMATIONS'}
+    />,
+    { customConseiller: { structure: structure } }
+  )
 
-  return container!
+  return container
 }

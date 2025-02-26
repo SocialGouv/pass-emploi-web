@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { axe } from 'jest-axe'
 import React from 'react'
 
@@ -9,9 +9,13 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { BaseBeneficiaire, BeneficiaireEtChat, extractBaseBeneficiaire } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
+import {
+  BaseBeneficiaire,
+  BeneficiaireEtChat,
+  extractBaseBeneficiaire,
+} from 'interfaces/beneficiaire'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
+import { structureFTCej } from 'interfaces/structure'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
   getMessagesListeDeDiffusion,
@@ -68,9 +72,9 @@ describe('MessageriePage client side', () => {
   describe('tunnel de messagerie', () => {
     beforeEach(async () => {
       //When
-      ;({ container } = renderWithContexts(<MessageriePage />, {
+      ;({ container } = await renderWithContexts(<MessageriePage />, {
         customConseiller: {
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         },
       }))
     })
@@ -92,14 +96,12 @@ describe('MessageriePage client side', () => {
     describe('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', () => {
       beforeEach(async () => {
         //When
-        await act(async () => {
-          ;({ container } = renderWithContexts(<MessageriePage />, {
-            customConseiller: {
-              structure: StructureConseiller.POLE_EMPLOI,
-            },
-            customShowRubriqueListeDeDiffusion: { value: true },
-          }))
-        })
+        ;({ container } = await renderWithContexts(<MessageriePage />, {
+          customConseiller: {
+            structure: structureFTCej,
+          },
+          customShowRubriqueListeDeDiffusion: { value: true },
+        }))
       })
 
       it('a11y', async () => {
@@ -120,17 +122,15 @@ describe('MessageriePage client side', () => {
         const listeSelectionnee = desListesDeDiffusion()[0]
 
         //When
-        await act(async () => {
-          ;({ container } = renderWithContexts(<MessageriePage />, {
-            customConseiller: {
-              structure: StructureConseiller.POLE_EMPLOI,
-            },
-            customShowRubriqueListeDeDiffusion: { value: true },
-            customListeDeDiffusionSelectionnee: {
-              value: { liste: listeSelectionnee },
-            },
-          }))
-        })
+        ;({ container } = await renderWithContexts(<MessageriePage />, {
+          customConseiller: {
+            structure: structureFTCej,
+          },
+          customShowRubriqueListeDeDiffusion: { value: true },
+          customListeDeDiffusionSelectionnee: {
+            value: { liste: listeSelectionnee },
+          },
+        }))
       })
 
       it('a11y', async () => {

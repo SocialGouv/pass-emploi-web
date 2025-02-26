@@ -4,7 +4,8 @@ import Link from 'next/link'
 import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/structure'
 import { trackPage } from 'utils/analytics/matomo'
 import { liensFooterCEJ, liensFooterPassEmploi } from 'utils/liensFooter'
 
@@ -23,7 +24,7 @@ export default function Footer({
 }: FooterProps) {
   const liensAffiches =
     liens ??
-    (conseiller && estPassEmploi(conseiller)
+    (conseiller && estPassEmploi(conseiller.structure)
       ? liensFooterPassEmploi
       : liensFooterCEJ)
 

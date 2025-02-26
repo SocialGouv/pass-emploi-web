@@ -13,6 +13,7 @@ import {
   SessionMiloJson,
 } from 'interfaces/json/session'
 import {
+  changerAutoinscriptionSession,
   changerInscriptionsSession,
   changerVisibiliteSession,
   cloreSession,
@@ -39,6 +40,7 @@ describe('SessionsApiService', () => {
           dateHeureDebut: dateDebut.toISO(),
           dateHeureFin: dateFin.toISO(),
           estVisible: true,
+          autoinscription: true,
           type: {
             code: 'COLLECTIVE_INFORMATION',
             label: 'info coll i-milo',
@@ -53,6 +55,7 @@ describe('SessionsApiService', () => {
           dateHeureDebut: dateDebut.toISO(),
           dateHeureFin: dateFin.toISO(),
           estVisible: false,
+          autoinscription: false,
           type: {
             code: 'WORKSHOP',
             label: 'Atelier i-milo',
@@ -87,7 +90,7 @@ describe('SessionsApiService', () => {
           type: 'info coll i-milo',
           statut: StatutAnimationCollective.Close,
           isSession: true,
-          estCache: false,
+          etatVisibilite: 'auto-inscription',
           nombreParticipants: 2,
         },
         {
@@ -99,7 +102,7 @@ describe('SessionsApiService', () => {
           type: 'Atelier i-milo',
           statut: StatutAnimationCollective.AVenir,
           isSession: true,
-          estCache: true,
+          etatVisibilite: 'non-visible',
           nombreParticipants: 4,
         },
       ]
@@ -275,6 +278,32 @@ describe('SessionsApiService', () => {
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
         { estVisible: true },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.changerAutoinscriptionSession', () => {
+    it('modifie l’autoinscription à la session et sa visibilité', async () => {
+      // When
+      await changerAutoinscriptionSession('idSession', true)
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        { autoinscription: true, visibilite: true },
+        'accessToken'
+      )
+    })
+
+    it('enlève l’autoinscription à la session mais pas sa visibilité', async () => {
+      // When
+      await changerAutoinscriptionSession('idSession', false)
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        { autoinscription: false, visibilite: undefined },
         'accessToken'
       )
     })

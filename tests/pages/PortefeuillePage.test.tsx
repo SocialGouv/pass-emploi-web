@@ -12,7 +12,8 @@ import {
   unBeneficiaireAvecActionsNonTerminees,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
@@ -45,11 +46,9 @@ describe('PortefeuillePage client side', () => {
   describe('Contenu de page', () => {
     beforeEach(async () => {
       // WHEN
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
+      ))
     })
 
     it('a11y', async () => {
@@ -196,7 +195,7 @@ describe('PortefeuillePage client side', () => {
 
       await act(async () => {
         conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
-        renderWithContexts(
+        await renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
           {
             customConseiller: conseiller,
@@ -243,21 +242,18 @@ describe('PortefeuillePage client side', () => {
 
     beforeEach(async () => {
       //GIVEN
-
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <PortefeuillePage
-            conseillerJeunes={[...jeunes, beneficiaireAvecStructureDifferente]}
-            isFromEmail
-          />,
-          {
-            customConseiller: {
-              structure: StructureConseiller.MILO,
-              structureMilo: { nom: 'Agence', id: '1' },
-            },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <PortefeuillePage
+          conseillerJeunes={[...jeunes, beneficiaireAvecStructureDifferente]}
+          isFromEmail
+        />,
+        {
+          customConseiller: {
+            structure: structureMilo,
+            structureMilo: { nom: 'Agence', id: '1' },
+          },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -365,14 +361,12 @@ describe('PortefeuillePage client side', () => {
   describe('quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       //GIVEN
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
-          {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
+        {
+          customConseiller: { structure: structureFTCej },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -414,14 +408,12 @@ describe('PortefeuillePage client side', () => {
       //GIVEN
       const jeune = unBeneficiaireAvecActionsNonTerminees()
 
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
-          {
-            customConseiller: { structure: StructureConseiller.CONSEIL_DEPT },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
+        {
+          customConseiller: { structure: 'CONSEIL_DEPT' },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -463,11 +455,9 @@ describe('PortefeuillePage client side', () => {
   describe("quand le conseiller n'a pas de jeune", () => {
     it("n'affiche pas la recherche de jeune", async () => {
       // GIVEN
-      await act(async () => {
-        renderWithContexts(
-          <PortefeuillePage conseillerJeunes={[]} isFromEmail />
-        )
-      })
+      await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={[]} isFromEmail />
+      )
 
       // Then
       expect(() =>
@@ -479,11 +469,9 @@ describe('PortefeuillePage client side', () => {
 
     it('affiche un message invitant à ajouter des bénéficiaires', async () => {
       // GIVEN
-      await act(async () => {
-        renderWithContexts(
-          <PortefeuillePage conseillerJeunes={[]} isFromEmail />
-        )
-      })
+      await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={[]} isFromEmail />
+      )
 
       //THEN
       expect(
@@ -500,12 +488,10 @@ describe('PortefeuillePage client side', () => {
         const conseiller = unConseiller({
           aDesBeneficiairesARecuperer: true,
         })
-        await act(async () => {
-          renderWithContexts(
-            <PortefeuillePage conseillerJeunes={[]} isFromEmail />,
-            { customConseiller: conseiller }
-          )
-        })
+        await renderWithContexts(
+          <PortefeuillePage conseillerJeunes={[]} isFromEmail />,
+          { customConseiller: conseiller }
+        )
       })
 
       it("n'affiche pas de message invitant à ajouter des bénéficiaires", () => {
@@ -533,11 +519,9 @@ describe('PortefeuillePage client side', () => {
       ;(countMessagesNotRead as jest.Mock).mockRejectedValue(new Error())
 
       // WHEN
-      await act(async () => {
-        renderWithContexts(
-          <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
-        )
-      })
+      await renderWithContexts(
+        <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
+      )
 
       //THEN
       expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)

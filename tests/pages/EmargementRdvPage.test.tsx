@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/dom'
-import { act } from '@testing-library/react'
 import { axe } from 'jest-axe'
 import React from 'react'
 
@@ -29,14 +28,12 @@ describe('<EmargementRdvPage>', () => {
   describe('quand l’événement est une ac', () => {
     beforeEach(async () => {
       //When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <EmargementRdvPage
-            evenement={acAEmarger}
-            agence='Montastruc-la-Conseillère'
-          />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <EmargementRdvPage
+          evenement={acAEmarger}
+          agence='Montastruc-la-Conseillère'
+        />
+      ))
     })
 
     it('a11y', async () => {
@@ -62,14 +59,12 @@ describe('<EmargementRdvPage>', () => {
   describe('quand l’événement est une session', () => {
     beforeEach(async () => {
       //When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <EmargementRdvPage
-            evenement={sessionAEmarger}
-            agence='Montastruc-la-Conseillère'
-          />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <EmargementRdvPage
+          evenement={sessionAEmarger}
+          agence='Montastruc-la-Conseillère'
+        />
+      ))
     })
 
     it('a11y', async () => {
@@ -100,14 +95,12 @@ describe('<EmargementRdvPage>', () => {
 
   it('affiche la modale d’impression de la page', async () => {
     //When
-    await act(async () => {
-      renderWithContexts(
-        <EmargementRdvPage
-          evenement={acAEmarger}
-          agence='Montastruc-la-Conseillère'
-        />
-      )
-    })
+    await renderWithContexts(
+      <EmargementRdvPage
+        evenement={acAEmarger}
+        agence='Montastruc-la-Conseillère'
+      />
+    )
 
     //Then
     expect(window.print).toHaveBeenCalledWith()

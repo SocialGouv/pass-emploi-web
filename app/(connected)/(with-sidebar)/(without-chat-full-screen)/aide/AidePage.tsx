@@ -16,18 +16,22 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estMilo, estPassEmploi } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPassEmploi,
+  getUrlFormulaireSupport,
+  getUrlSiteRessource,
+} from 'interfaces/structure'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { getUrlContact, getUrlSiteRessource } from 'utils/faq'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export default function AidePage() {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const conseillerEstPassEmploi = estPassEmploi(conseiller)
+  const conseillerEstPassEmploi = estPassEmploi(conseiller.structure)
   const aDesBeneficiaires = portefeuille.length > 0
 
   const QrcodeAppStore = conseillerEstPassEmploi
@@ -46,7 +50,7 @@ export default function AidePage() {
     : process.env.NEXT_PUBLIC_PLAY_STORE_CEJ
 
   const urlSiteRessource = getUrlSiteRessource(conseiller.structure)
-  const urlNousContacter = getUrlContact(conseiller.structure)
+  const urlFormulaireSupport = getUrlFormulaireSupport(conseiller.structure)
 
   const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstPassEmploi ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
 
@@ -110,12 +114,12 @@ export default function AidePage() {
               <li>Répondre à vos questions</li>
               <li>Collecter vos retours utilisateurs</li>
 
-              {!estMilo(conseiller) && (
+              {!estMilo(conseiller.structure) && (
                 <li>Vous aider dans la réaffectation de vos bénéficiaires</li>
               )}
             </ul>
             <ButtonLink
-              href={urlNousContacter}
+              href={urlFormulaireSupport}
               style={ButtonStyle.PRIMARY}
               externalIcon={IconName.OpenInNew}
               className='mt-8 w-fit self-center'

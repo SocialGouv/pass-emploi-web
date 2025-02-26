@@ -21,7 +21,6 @@ import {
   BeneficiaireFromListe,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -49,7 +48,7 @@ describe('EditionRdvPage client side', () => {
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let push: Function
+    let push: () => void
     let refresh: jest.Mock
 
     beforeEach(() => {
@@ -88,9 +87,9 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('contenu', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda?onglet=conseiller'
@@ -333,9 +332,10 @@ describe('EditionRdvPage client side', () => {
             name: 'Étape 5: Définissez la gestion des accès',
           })
         })
+
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Given
-          inputPresenceConseiller = screen.getByLabelText(
+          inputPresenceConseiller = within(etape).getByLabelText(
             /Informer les bénéficiaires qu’un conseiller sera présent à l’événement/i
           )
 
@@ -346,7 +346,7 @@ describe('EditionRdvPage client side', () => {
 
         it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation à l’événement', () => {
           // Given
-          inputEmailInvitation = screen.getByLabelText(
+          inputEmailInvitation = within(etape).getByLabelText(
             /Intégrer cet événement à mon agenda via l’adresse e-mail suivante :/i
           )
 
@@ -358,8 +358,8 @@ describe('EditionRdvPage client side', () => {
         it('indique l’email auquel le conseiller va recevoir son invitation à l’événement', () => {
           // Given
 
-          let getEmailConseiller: HTMLInputElement =
-            screen.getByLabelText(/fake@email.com/i)
+          const getEmailConseiller: HTMLInputElement =
+            within(etape).getByLabelText(/fake@email.com/i)
 
           // Then
 
@@ -368,26 +368,15 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('contient un bouton pour annuler', async () => {
-        // Given
-        const selectType = screen.getByRole('combobox', {
-          name: /Type/,
-        })
-
-        // When
-        await userEvent.selectOptions(selectType, 'Activités extérieures')
-
         // Then
-        const cancelButton = screen.getByText('Annuler')
-        expect(cancelButton).toBeInTheDocument()
+        expect(screen.getByText('Annuler')).toBeInTheDocument()
       })
 
       describe('quand tous les champs ne sont pas remplis', () => {
         let selectBeneficiaires: HTMLInputElement
-        let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHeureDeDebut: HTMLInputElement
-        let inputHeurDeFin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -399,15 +388,9 @@ describe('EditionRdvPage client side', () => {
           selectBeneficiaires = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
           })
-          selectModalite = screen.getByRole('combobox', {
-            name: 'Modalité',
-          })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
           inputHeureDeDebut = screen.getByLabelText(
             '* Heure de début format : hh:mm'
-          )
-          inputHeurDeFin = screen.getByLabelText(
-            '* Heure de fin format : hh:mm'
           )
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
@@ -741,12 +724,12 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('événements issus d’i-milo', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
-        const evenement = unEvenement({ source: StructureConseiller.MILO })
+        const evenement = unEvenement({ source: 'MILO' })
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='https://localhost:3000/agenda'
@@ -813,7 +796,7 @@ describe('EditionRdvPage client side', () => {
         )
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -845,7 +828,7 @@ describe('EditionRdvPage client side', () => {
 
     describe('quand on souhaite modifier un rendez-vous existant', () => {
       let evenement: Evenement
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         const beneficiaire0 = {
           id: beneficiairesConseiller[0].id,
@@ -861,7 +844,7 @@ describe('EditionRdvPage client side', () => {
         evenement = unEvenement({ jeunes: [beneficiaire0, beneficiaire2] })
 
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -1180,7 +1163,7 @@ describe('EditionRdvPage client side', () => {
 
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
-      beforeEach(() => {
+      beforeEach(async () => {
         // Given
         const beneficiaire = {
           id: beneficiairesConseiller[0].id,
@@ -1199,7 +1182,7 @@ describe('EditionRdvPage client side', () => {
         })
 
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -1348,9 +1331,9 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('quand le conseiller connecté n’est référent d’aucun bénéficiaire de l’événement', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         // When
-        ;({ container } = renderWithContexts(
+        ;({ container } = await renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='https://localhost:3000/agenda'
@@ -1422,8 +1405,7 @@ describe('EditionRdvPage client side', () => {
 
     let typesRendezVous: TypeEvenementReferentiel[]
 
-    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let push: Function
+    let push: () => void
     let refresh: jest.Mock
     beforeEach(() => {
       beneficiairesConseiller = desItemsBeneficiaires()
@@ -1454,7 +1436,6 @@ describe('EditionRdvPage client side', () => {
       ).mockResolvedValue(beneficiairesEtablissement)
       typesRendezVous = typesAnimationCollective()
 
-      alerteSetter = jest.fn()
       push = jest.fn()
       refresh = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
@@ -1464,25 +1445,23 @@ describe('EditionRdvPage client side', () => {
       beforeEach(async () => {
         // Given
         typesRendezVous = typesAnimationCollective()
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <EditionRdvPage
-              typesRendezVous={typesRendezVous}
-              returnTo='/agenda?onglet=etablissement'
-              evenementTypeAC={true}
-              lectureSeule={false}
-              conseillerEstObservateur={false}
-            />,
-            {
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
+        ;({ container } = await renderWithContexts(
+          <EditionRdvPage
+            typesRendezVous={typesRendezVous}
+            returnTo='/agenda?onglet=etablissement'
+            evenementTypeAC={true}
+            lectureSeule={false}
+            conseillerEstObservateur={false}
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-etablissement',
               },
-            }
-          ))
-        })
+            },
+          }
+        ))
       })
 
       it('a11y', async () => {
@@ -1589,18 +1568,16 @@ describe('EditionRdvPage client side', () => {
           delete evenement.statut
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -1618,18 +1595,16 @@ describe('EditionRdvPage client side', () => {
           })
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -1647,18 +1622,16 @@ describe('EditionRdvPage client side', () => {
           })
 
           // When
-          await act(async () => {
-            renderWithContexts(
-              <EditionRdvPage
-                typesRendezVous={typesRendezVous}
-                returnTo='https://localhost:3000/agenda'
-                evenement={evenement}
-                evenementTypeAC={true}
-                lectureSeule={false}
-                conseillerEstObservateur={false}
-              />
-            )
-          })
+          await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={evenement}
+              evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
+            />
+          )
 
           // Then
           const cloreButton = screen.getByRole('link', {
@@ -1695,26 +1668,24 @@ describe('EditionRdvPage client side', () => {
           statut: StatutAnimationCollective.Close,
         })
 
-        await act(async () => {
-          ;({ container } = renderWithContexts(
-            <EditionRdvPage
-              typesRendezVous={typesRendezVous}
-              returnTo='/agenda'
-              evenement={evenement}
-              evenementTypeAC={true}
-              lectureSeule={true}
-              conseillerEstObservateur={true}
-            />,
-            {
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
+        ;({ container } = await renderWithContexts(
+          <EditionRdvPage
+            typesRendezVous={typesRendezVous}
+            returnTo='/agenda'
+            evenement={evenement}
+            evenementTypeAC={true}
+            lectureSeule={true}
+            conseillerEstObservateur={true}
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-etablissement',
               },
-            }
-          ))
-        })
+            },
+          }
+        ))
       })
 
       it('a11y', async () => {

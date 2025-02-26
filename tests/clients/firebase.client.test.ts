@@ -289,6 +289,88 @@ describe('FirebaseClient', () => {
       }
       expect(message).toEqual(expectedMessage)
     })
+
+    it('mappe une session Milo', () => {
+      // Given
+      const docSnapshot: QueryDocumentSnapshot<FirebaseMessage> = {
+        id: 'document-id',
+        data: () => ({
+          iv: 'iv',
+          conseillerId: 'conseiller-id',
+          content: 'Je vous partage cette offre',
+          creationDate: Timestamp.fromDate(
+            DateTime.local(2022, 1, 17).toJSDate()
+          ),
+          type: 'MESSAGE_SESSION_MILO',
+          sentBy: 'conseiller',
+          sessionMilo: {
+            id: 'id-session-milo',
+            titre: 'Le titre d’une session',
+          },
+        }),
+      } as QueryDocumentSnapshot<FirebaseMessage>
+
+      // When
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
+
+      // Then
+      const expectedMessage: Message = {
+        id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
+        content: 'Je vous partage cette offre',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.MESSAGE_SESSION_MILO,
+        sentBy: 'conseiller',
+        iv: 'iv',
+        conseillerId: 'conseiller-id',
+        infoSessionMilo: {
+          id: 'id-session-milo',
+          titre: 'Le titre d’une session',
+        },
+      }
+      expect(message).toEqual(expectedMessage)
+    })
+
+    it('mappe une autoinscription à une session Milo', () => {
+      // Given
+      const docSnapshot: QueryDocumentSnapshot<FirebaseMessage> = {
+        id: 'document-id',
+        data: () => ({
+          iv: 'iv',
+          conseillerId: 'conseiller-id',
+          content: 'Je vous partage cette offre',
+          creationDate: Timestamp.fromDate(
+            DateTime.local(2022, 1, 17).toJSDate()
+          ),
+          type: 'AUTO_INSCRIPTION',
+          sentBy: 'conseiller',
+          sessionMilo: {
+            id: 'id-session-milo',
+            titre: 'Le titre d’une session',
+          },
+        }),
+      } as QueryDocumentSnapshot<FirebaseMessage>
+
+      // When
+      const message = docSnapshotToMessage(docSnapshot, 'idBeneficiaire')
+
+      // Then
+      const expectedMessage: Message = {
+        id: 'document-id',
+        idBeneficiaire: 'idBeneficiaire',
+        content: 'Je vous partage cette offre',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.AUTO_INSCRIPTION,
+        sentBy: 'conseiller',
+        iv: 'iv',
+        conseillerId: 'conseiller-id',
+        infoSessionMilo: {
+          id: 'id-session-milo',
+          titre: 'Le titre d’une session',
+        },
+      }
+      expect(message).toEqual(expectedMessage)
+    })
   })
 
   describe('chatToFirebase', () => {

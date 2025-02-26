@@ -63,23 +63,20 @@ describe('<ChatRoom />', () => {
 
     it('n’affiche pas de pastille s’il n’y a pas de message configuré', async () => {
       //Given
-      let container: HTMLElement
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
 
       //When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <ChatRoom
-            beneficiairesChats={beneficiairesChats}
-            onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />,
-          {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
-          }
-        ))
-      })
+      const { container } = await renderWithContexts(
+        <ChatRoom
+          beneficiairesChats={beneficiairesChats}
+          onAccesConversation={accederConversation}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />,
+        {
+          customConseiller: unConseiller({ id: 'id-conseiller' }),
+        }
+      )
 
       await userEvent.click(
         screen.getByRole('button', {
@@ -88,7 +85,7 @@ describe('<ChatRoom />', () => {
       )
 
       //Then
-      const result = await axe(container!)
+      const result = await axe(container)
       expect(result).toHaveNoViolations()
       expect(() =>
         screen.getByText('Un message important est déjà configuré')
@@ -105,19 +102,17 @@ describe('<ChatRoom />', () => {
           id: 'id-message',
         })
 
-        await act(async () => {
-          renderWithContexts(
-            <ChatRoom
-              beneficiairesChats={beneficiairesChats}
-              onAccesConversation={accederConversation}
-              onAccesListesDiffusion={() => {}}
-              onOuvertureMenu={() => {}}
-            />,
-            {
-              customConseiller: unConseiller({ id: 'id-conseiller' }),
-            }
-          )
-        })
+        await renderWithContexts(
+          <ChatRoom
+            beneficiairesChats={beneficiairesChats}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
 
         await userEvent.click(
           screen.getByRole('button', {
@@ -133,19 +128,17 @@ describe('<ChatRoom />', () => {
 
       it('affiche un bouton pour configurer son message', async () => {
         //When
-        await act(async () => {
-          renderWithContexts(
-            <ChatRoom
-              beneficiairesChats={beneficiairesChats}
-              onAccesConversation={accederConversation}
-              onAccesListesDiffusion={() => {}}
-              onOuvertureMenu={() => {}}
-            />,
-            {
-              customConseiller: unConseiller({ id: 'id-conseiller' }),
-            }
-          )
-        })
+        await renderWithContexts(
+          <ChatRoom
+            beneficiairesChats={beneficiairesChats}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
 
         await userEvent.click(
           screen.getByRole('button', {
@@ -174,19 +167,17 @@ describe('<ChatRoom />', () => {
               undefined,
             })
 
-            await act(async () => {
-              renderWithContexts(
-                <ChatRoom
-                  beneficiairesChats={beneficiairesChats}
-                  onAccesConversation={accederConversation}
-                  onAccesListesDiffusion={() => {}}
-                  onOuvertureMenu={() => {}}
-                />,
-                {
-                  customConseiller: unConseiller({ id: 'id-conseiller' }),
-                }
-              )
-            })
+            await renderWithContexts(
+              <ChatRoom
+                beneficiairesChats={beneficiairesChats}
+                onAccesConversation={accederConversation}
+                onAccesListesDiffusion={() => {}}
+                onOuvertureMenu={() => {}}
+              />,
+              {
+                customConseiller: unConseiller({ id: 'id-conseiller' }),
+              }
+            )
 
             await userEvent.click(
               screen.getByRole('button', {
@@ -272,19 +263,17 @@ describe('<ChatRoom />', () => {
             })
 
             //When
-            await act(async () => {
-              renderWithContexts(
-                <ChatRoom
-                  beneficiairesChats={beneficiairesChats}
-                  onAccesConversation={accederConversation}
-                  onAccesListesDiffusion={() => {}}
-                  onOuvertureMenu={() => {}}
-                />,
-                {
-                  customConseiller: unConseiller({ id: 'id-conseiller' }),
-                }
-              )
-            })
+            await renderWithContexts(
+              <ChatRoom
+                beneficiairesChats={beneficiairesChats}
+                onAccesConversation={accederConversation}
+                onAccesListesDiffusion={() => {}}
+                onOuvertureMenu={() => {}}
+              />,
+              {
+                customConseiller: unConseiller({ id: 'id-conseiller' }),
+              }
+            )
 
             await userEvent.click(
               screen.getByRole('button', {
@@ -326,19 +315,17 @@ describe('<ChatRoom />', () => {
         const now = DateTime.fromISO('2024-04-24')
         jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
-        await act(async () => {
-          renderWithContexts(
-            <ChatRoom
-              beneficiairesChats={beneficiairesChats}
-              onAccesConversation={accederConversation}
-              onAccesListesDiffusion={() => {}}
-              onOuvertureMenu={() => {}}
-            />,
-            {
-              customConseiller: unConseiller({ id: 'id-conseiller' }),
-            }
-          )
-        })
+        await renderWithContexts(
+          <ChatRoom
+            beneficiairesChats={beneficiairesChats}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
 
         await userEvent.click(
           screen.getByRole('button', {
@@ -371,16 +358,14 @@ describe('<ChatRoom />', () => {
     beforeEach(async () => {
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
       accederConversation = jest.fn()
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <ChatRoom
-            beneficiairesChats={beneficiairesChats}
-            onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ChatRoom
+          beneficiairesChats={beneficiairesChats}
+          onAccesConversation={accederConversation}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />
+      ))
     })
 
     it('a11y', async () => {
@@ -462,23 +447,20 @@ describe('<ChatRoom />', () => {
   describe("quand le conseiller n'a pas de beneficiaires", () => {
     it('affiche un message informatif', async () => {
       // Given
-      let container: HTMLElement
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <ChatRoom
-            beneficiairesChats={[]}
-            onAccesConversation={() => {}}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />
-        ))
-      })
+      const { container } = await renderWithContexts(
+        <ChatRoom
+          beneficiairesChats={[]}
+          onAccesConversation={() => {}}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />
+      )
 
       // Then
-      const results = await axe(container!)
+      const results = await axe(container)
       expect(results).toHaveNoViolations()
       expect(screen.getByText('Vous pouvez échanger :')).toBeInTheDocument()
       expect(
@@ -494,9 +476,9 @@ describe('<ChatRoom />', () => {
 
   // FIXME: mock le resizeWindow
   xdescribe('quand on est sur un écran à partir de 600 px', () => {
-    it('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', () => {
+    it('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', async () => {
       // Given
-      renderWithContexts(
+      await renderWithContexts(
         <ChatRoom
           beneficiairesChats={beneficiairesChats}
           onAccesConversation={() => {}}

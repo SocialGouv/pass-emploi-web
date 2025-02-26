@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
 import FormulaireBeneficiaireFranceTravail from 'components/jeune/FormulaireBeneficiaireFranceTravail'
-import { estConseilDepartemental } from 'interfaces/conseiller'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
+import { estConseilDepartemental } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -65,7 +65,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
 
   return (
     <FormulaireBeneficiaireFranceTravail
-      aAccesMap={!estConseilDepartemental(conseiller)}
+      aAccesMap={!estConseilDepartemental(conseiller.structure)}
       creerBeneficiaireFranceTravail={creerBeneficiaireFranceTravail}
       creationError={creationError}
       creationEnCours={creationEnCours}

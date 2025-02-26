@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -74,21 +74,19 @@ describe('Favoris dans la fiche jeune', () => {
 })
 
 async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        metadonneesFavoris={metadonneesFavoris}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: { id: 'id-conseiller' },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      metadonneesFavoris={metadonneesFavoris}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: { id: 'id-conseiller' },
+    }
+  )
 }

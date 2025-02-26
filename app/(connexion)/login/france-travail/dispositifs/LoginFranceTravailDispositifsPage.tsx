@@ -7,14 +7,26 @@ import React from 'react'
 import LoginHeader from 'components/LoginHeader'
 import LoginButton from 'components/ui/Button/LoginButton'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import {
+  labelStructure,
+  structureAccompagnementGlobal,
+  structureAccompagnementIntensif,
+  structureAij,
+  structureAvenirPro,
+  structureBrsa,
+  structureEquipEmploiRecrut,
+  structureFTCej,
+} from 'interfaces/structure'
 import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
 
 type LoginFranceTravailDispositifsPageProps = {
-  ssoAvenirProEstActif?: boolean
+  ssoAccompagnementsIntensifsSontActifs: boolean
+  ssoAvenirProEstActif: boolean
 }
 
 function LoginFranceTravailDispositifsPage({
+  ssoAccompagnementsIntensifsSontActifs,
   ssoAvenirProEstActif,
 }: LoginFranceTravailDispositifsPageProps) {
   const [errorMsg, setErrorMsg] = useLoginErrorMessage()
@@ -38,32 +50,63 @@ function LoginFranceTravailDispositifsPage({
       <main role='main'>
         {errorMsg && <FailureAlert label={errorMsg} />}
 
-        <ul className='grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] auto-rows-fr gap-8'>
-          <li>
+        <ul className='flex flex-wrap justify-center istems-stretch gap-8'>
+          <li className='min-w-[275px]'>
             <LoginButton
-              label='CEJ'
+              label={labelStructure(structureFTCej)}
               prefix='France Travail'
               onClick={() => handleSignin('pe-conseiller')}
             />
           </li>
-          <li>
+          <li className='min-w-[275px]'>
             <LoginButton
-              label='RSA rénové'
+              label={labelStructure(structureBrsa)}
               prefix='France Travail'
               onClick={() => handleSignin('pe-brsa-conseiller')}
             />
           </li>
-          <li>
+          <li className='min-w-[275px]'>
             <LoginButton
-              label='AIJ'
+              label={labelStructure(structureAij)}
               prefix='France Travail'
               onClick={() => handleSignin('pe-aij-conseiller')}
             />
           </li>
+          {ssoAccompagnementsIntensifsSontActifs && (
+            <>
+              <li className='min-w-[275px]'>
+                <LoginButton
+                  label={labelStructure(structureAccompagnementIntensif)}
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-accompagnement-intensif-conseiller')
+                  }
+                />
+              </li>
+              <li className='min-w-[275px]'>
+                <LoginButton
+                  label={labelStructure(structureAccompagnementGlobal)}
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-accompagnement-global-conseiller')
+                  }
+                />
+              </li>
+              <li className='min-w-[275px]'>
+                <LoginButton
+                  label={labelStructure(structureEquipEmploiRecrut)}
+                  prefix='France Travail'
+                  onClick={() =>
+                    handleSignin('ft-equip-emploi-recrut-conseiller')
+                  }
+                />
+              </li>
+            </>
+          )}
           {ssoAvenirProEstActif && (
-            <li>
+            <li className='min-w-[275px]'>
               <LoginButton
-                label='Avenir pro'
+                label={labelStructure(structureAvenirPro)}
                 prefix='France Travail'
                 onClick={() => handleSignin('avenirpro-conseiller')}
               />

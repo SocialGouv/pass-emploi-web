@@ -6,7 +6,7 @@ import React from 'react'
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller } from 'interfaces/conseiller'
 import {
   getJeunesDuConseillerParId,
   reaffecter,
@@ -54,11 +54,9 @@ describe('Reaffectation', () => {
   describe('Conseiller SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
-      act(() => {
-        ;({ container } = renderWithContexts(
-          <ReaffectationPage estSuperviseurResponsable={true} />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ReaffectationPage estSuperviseurResponsable={true} />
+      ))
     })
 
     it('a11y', async () => {
@@ -78,6 +76,17 @@ describe('Reaffectation', () => {
         ).toBeInTheDocument()
         expect(
           within(etape).getByRole('radio', { name: 'BRSA' })
+        ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', { name: 'Accompagnement intensif' })
+        ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', { name: 'Accompagnement global' })
+        ).toBeInTheDocument()
+        expect(
+          within(etape).getByRole('radio', {
+            name: 'Equip’emploi / Equip’recrut',
+          })
         ).toBeInTheDocument()
       })
     })
@@ -113,10 +122,7 @@ describe('Reaffectation', () => {
         )
 
         // Then
-        expect(getConseillers).toHaveBeenCalledWith(
-          'Nils',
-          StructureConseiller.POLE_EMPLOI_BRSA
-        )
+        expect(getConseillers).toHaveBeenCalledWith('Nils', 'POLE_EMPLOI_BRSA')
         const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller initial',
         })
@@ -177,10 +183,7 @@ describe('Reaffectation', () => {
         )
 
         // Then
-        expect(getConseillers).toHaveBeenCalledWith(
-          'Nils',
-          StructureConseiller.POLE_EMPLOI_BRSA
-        )
+        expect(getConseillers).toHaveBeenCalledWith('Nils', 'POLE_EMPLOI_BRSA')
         const listeConseillers = within(etape).getByRole('group', {
           name: 'Choix du conseiller destinataire',
         })
@@ -202,12 +205,11 @@ describe('Reaffectation', () => {
   describe('Conseiller non SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
-      act(() => {
-        ;({ container } = renderWithContexts(
-          <ReaffectationPage estSuperviseurResponsable={false} />
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <ReaffectationPage estSuperviseurResponsable={false} />
+      ))
     })
+
     describe('Étape 1 : type réaffectation', () => {
       it('a11y', async () => {
         const results = await axe(container)
@@ -576,7 +578,7 @@ describe('Reaffectation', () => {
         })
       })
 
-      describe('demande confirmation si la réaffectation se fait vers un conseiller avec une structure milo différente', () => {
+      describe('empêche la réaffectation si elle se fait vers un conseiller avec une structure milo différente', () => {
         beforeEach(async () => {
           // GIVEN
           await userEvent.type(conseillerDestinataireInput, 'Ada')
@@ -604,28 +606,11 @@ describe('Reaffectation', () => {
         it('affiche une modale', () => {
           // THEN
           expect(
-            screen.getByRole('heading', {
-              name: 'Vous êtes sur le point de réaffecter un ou plusieurs bénéficiaires appartenant à une autre Mission Locale.',
-            })
+            screen.getByText(
+              'La réaffectation n’est pas autorisée lorsqu’un bénéficiaire n’appartient pas à la même Mission Locale du conseiller destinataire.'
+            )
           ).toBeInTheDocument()
           expect(reaffecter).not.toHaveBeenCalled()
-        })
-
-        it('déclenche la réaffectation', async () => {
-          // WHEN
-          await userEvent.click(
-            screen.getAllByRole('button', {
-              name: 'Valider la réaffectation',
-            })[1]
-          )
-
-          // WHEN
-          expect(reaffecter).toHaveBeenCalledWith(
-            'id-nils-tavernier',
-            'id-ada-lovelace',
-            ['beneficiaire-2'],
-            false
-          )
         })
       })
     })

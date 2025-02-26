@@ -6,16 +6,18 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import EncartAgenceRequise from 'components/EncartAgenceRequise'
+import EncartMissionLocaleRequise from 'components/EncartMissionLocaleRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
+import { MissionLocale } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -40,6 +42,9 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
 
   const router = useRouter()
   const [alerte] = useAlerte()
+
+  const [showNewsAutoinscription, setShowNewsAutoinscription] =
+    useState<boolean>(true)
 
   const ongletProps: {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -125,7 +130,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
-    if (conseiller.structure !== StructureConseiller.MILO) return []
+    if (!peutAccederAuxSessions(conseiller)) return []
 
     const { getSessionsMissionLocaleClientSide } = await import(
       'services/sessions.service'
@@ -137,13 +142,16 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
-  async function renseignerAgence(agence: {
-    id?: string
-    nom: string
-  }): Promise<void> {
+  async function renseignerMissionLocale(
+    missionLocale: MissionLocale
+  ): Promise<void> {
     const { modifierAgence } = await import('services/conseiller.service')
-    await modifierAgence(agence)
-    setConseiller({ ...conseiller, agence })
+    await modifierAgence(missionLocale)
+    setConseiller({
+      ...conseiller,
+      agence: missionLocale,
+      structureMilo: missionLocale,
+    })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
 
@@ -184,12 +192,20 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
         )}
       </PageActionsPortal>
 
-      <TabList label='Vos agendas' className='mb-6'>
+      {showNewsAutoinscription && (
+        <InformationMessage
+          label='Nouveauté : les sessions i-milo sont ouvertes à l’auto-inscription pour les bénéficiaires !'
+          iconName={IconName.Celebration}
+          onAcknowledge={() => setShowNewsAutoinscription(false)}
+        />
+      )}
+
+      <TabList
+        label='Vos agendas'
+        className={`mb-6 ${showNewsAutoinscription ? 'mt-6' : ''}`}
+      >
         <Tab
-          label={
-            'Agenda ' +
-            (estMilo(conseiller) ? 'Mission Locale' : 'établissement')
-          }
+          label='Agenda Mission Locale'
           selected={currentTab === 'ETABLISSEMENT'}
           controls='agenda-etablissement'
           onSelectTab={() => switchTab('ETABLISSEMENT')}
@@ -222,10 +238,9 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
           )}
 
           {!conseiller.agence && (
-            <EncartAgenceRequise
-              conseiller={conseiller}
-              onAgenceChoisie={renseignerAgence}
-              getAgences={getAgencesClientSide}
+            <EncartMissionLocaleRequise
+              onMissionLocaleChoisie={renseignerMissionLocale}
+              getMissionsLocales={getMissionsLocalesClientSide}
               onChangeAffichageModal={trackAgenceModal}
             />
           )}

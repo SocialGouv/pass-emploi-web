@@ -1,10 +1,9 @@
-import { render, RenderResult } from '@testing-library/react'
+import { act, render, RenderResult } from '@testing-library/react'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
 
-import { uneActualite } from 'fixtures/actualites'
+import { desActualitesRaw } from 'fixtures/actualites'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { ActualitesParsees } from 'interfaces/actualites'
 import {
   BeneficiaireEtChat,
   extractBeneficiaireWithActivity,
@@ -28,7 +27,11 @@ import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueLis
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
-export default function renderWithContexts(
+jest.mock('services/actualites.service', () => ({
+  getActualites: jest.fn(async () => desActualitesRaw()),
+}))
+
+export default async function renderWithContexts(
   children: ReactNode,
   options: {
     customConseiller?: Partial<Conseiller>
@@ -54,7 +57,7 @@ export default function renderWithContexts(
       setter: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
     }>
   } = {}
-): RenderResult {
+): Promise<RenderResult> {
   const {
     customConseiller,
     customPortefeuille,
@@ -65,8 +68,6 @@ export default function renderWithContexts(
     customListeDeDiffusionSelectionnee,
   } = options
   const conseiller = unConseiller(customConseiller)
-
-  const actualites = uneActualite()
 
   const portefeuille = {
     ...customPortefeuille,
@@ -83,7 +84,6 @@ export default function renderWithContexts(
   const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
   const withContexts = (element: ReactNode) =>
     provideContexts(
-      actualites,
       element,
       conseiller,
       portefeuille,
@@ -94,17 +94,19 @@ export default function renderWithContexts(
       listeDeDiffusionSelectionnee
     )
 
-  const renderResult: RenderResult = render(withContexts(children))
+  let renderResult: RenderResult
+  await act(async () => {
+    renderResult = render(withContexts(children))
+  })
 
-  const rerender = renderResult.rerender
-  renderResult.rerender = (rerenderChildren: ReactNode) =>
+  const rerender = renderResult!.rerender
+  renderResult!.rerender = (rerenderChildren: ReactNode) =>
     rerender(withContexts(rerenderChildren))
 
-  return renderResult
+  return renderResult!
 }
 
 function provideContexts(
-  actualites: ActualitesParsees,
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
@@ -135,7 +137,7 @@ function provideContexts(
         portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
-        <ActualitesProvider actualitesForTests={actualites}>
+        <ActualitesProvider>
           <ChatCredentialsProvider
             credentials={{
               token: 'firebaseToken',

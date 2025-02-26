@@ -4,11 +4,7 @@ import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  SimpleConseiller,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { Conseiller, SimpleConseiller } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
   ConseillerJson,
@@ -16,6 +12,7 @@ import {
   jsonToSimpleConseiller,
   SimpleConseillerJson,
 } from 'interfaces/json/conseiller'
+import { StructureReaffectation } from 'interfaces/structure'
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,
@@ -28,10 +25,6 @@ export async function getConseillerServerSide(
   return jsonToConseiller(conseillerJson, user)
 }
 
-export type StructureReaffectation =
-  | StructureConseiller.POLE_EMPLOI
-  | StructureConseiller.POLE_EMPLOI_BRSA
-  | StructureConseiller.POLE_EMPLOI_AIJ
 export async function getConseillers(
   recherche: string,
   structure?: StructureReaffectation

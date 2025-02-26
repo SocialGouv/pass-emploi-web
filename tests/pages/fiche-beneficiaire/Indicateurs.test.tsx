@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import React from 'react'
 
@@ -30,21 +30,19 @@ describe('Indicateurs dans la fiche jeune', () => {
       ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
 
       // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={true}
-            beneficiaire={unDetailBeneficiaire()}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            metadonneesFavoris={uneMetadonneeFavoris()}
-            ongletInitial='agenda'
-            lectureSeule={false}
-          />,
-          {}
-        )
-      })
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={true}
+          beneficiaire={unDetailBeneficiaire()}
+          rdvs={[]}
+          actionsInitiales={desActionsInitiales()}
+          categoriesActions={desCategories()}
+          metadonneesFavoris={uneMetadonneeFavoris()}
+          ongletInitial='agenda'
+          lectureSeule={false}
+        />,
+        {}
+      )
     })
 
     it('affiche les indicateurs du jeune', async () => {

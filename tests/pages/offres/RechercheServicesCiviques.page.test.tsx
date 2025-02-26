@@ -18,7 +18,6 @@ import {
   uneBaseServiceCivique,
 } from 'fixtures/offre'
 import { desCommunes, desLocalites, uneCommune } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
@@ -52,7 +51,7 @@ describe('Page Recherche Offres Service civique', () => {
         offres: servicesCiviques,
       })
 
-      rendered = renderWithContexts(<RechercheOffresPage />, {})
+      rendered = await renderWithContexts(<RechercheOffresPage />, {})
       await userEvent.click(
         screen.getByRole('radio', { name: 'Service civique' })
       )
@@ -613,7 +612,7 @@ describe('Page Recherche Offres Service civique', () => {
 
         // When
         rendered.unmount()
-        renderWithContexts(<RechercheOffresPage />, {})
+        await renderWithContexts(<RechercheOffresPage />, {})
 
         // Then
         expect(screen.getByLabelText('Service civique')).toBeChecked()
@@ -643,10 +642,10 @@ describe('Page Recherche Offres Service civique', () => {
   })
 
   describe('quand le conseiller est FT BRSA', () => {
-    it('n’affiche pas la recherche en tant que conseiller FT BRSA', () => {
-      rendered = renderWithContexts(<RechercheOffresPage />, {
+    it('n’affiche pas la recherche en tant que conseiller FT BRSA', async () => {
+      await renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          structure: 'POLE_EMPLOI_BRSA',
         }),
       })
       // Then

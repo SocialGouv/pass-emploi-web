@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { unsafeRandomId } from 'utils/helpers'
 
 interface TagProps {
@@ -115,7 +114,7 @@ export function TagType({
     iconLabel: undefined,
     background: 'additional_5',
   }
-  if (source === StructureConseiller.MILO)
+  if (source === 'MILO')
     tagProps = {
       color: 'content_color',
       iconName: IconName.Lock,

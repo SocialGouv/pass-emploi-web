@@ -3,10 +3,12 @@ import { DateTime } from 'luxon'
 import { EntreeAgenda } from 'interfaces/agenda'
 import {
   AnimationCollective,
+  EtatVisibilite,
   StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
+import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
 type InscriptionSessionJson = {
@@ -33,6 +35,7 @@ export type SessionMiloJson = {
   dateHeureDebut: string
   dateHeureFin: string
   estVisible: boolean
+  autoinscription: boolean
   type: TypeEvenement
   statut: StatutAnimationCollectiveJson
   nombreParticipants: number
@@ -49,6 +52,7 @@ export type DetailsSessionJson = {
     lieu: string
     nbPlacesDisponibles?: number
     estVisible: boolean
+    autoinscription: boolean
     animateur?: string
     commentaire?: string
     statut: StatutAnimationCollectiveJson
@@ -93,7 +97,7 @@ export function sessionMiloJsonToAnimationCollective(
     sousTitre: json.nomSession,
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
-    estCache: !json.estVisible,
+    etatVisibilite: calculerEtatVisibilite(json),
     nombreParticipants: json.nombreParticipants,
   }
 
@@ -112,7 +116,7 @@ export function sessionJsonToEntree(
   return {
     id: session.id,
     date: date,
-    source: 'MILO',
+    source: structureMilo,
     titre,
     sousTitre: session.nomSession,
     type: 'session',
@@ -144,4 +148,13 @@ export function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
     return 'info coll i-milo'
   }
   return 'Atelier i-milo'
+}
+
+function calculerEtatVisibilite({
+  estVisible,
+  autoinscription,
+}: SessionMiloJson): EtatVisibilite {
+  if (autoinscription) return 'auto-inscription'
+  if (estVisible) return 'visible'
+  return 'non-visible'
 }

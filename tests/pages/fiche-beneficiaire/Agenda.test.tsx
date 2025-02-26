@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -15,7 +15,7 @@ import {
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -46,25 +46,23 @@ describe('Agenda de la fiche jeune', () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       // When
-      await act(async () => {
-        renderWithContexts(
-          <FicheBeneficiairePage
-            estMilo={false}
-            beneficiaire={unDetailBeneficiaire()}
-            metadonneesFavoris={uneMetadonneeFavoris()}
-            favorisOffres={uneListeDOffres()}
-            favorisRecherches={uneListeDeRecherches()}
-            ongletInitial='offres'
-            lectureSeule={false}
-          />,
-          {
-            customConseiller: {
-              id: 'id-conseiller',
-              structure: StructureConseiller.POLE_EMPLOI,
-            },
-          }
-        )
-      })
+      await renderWithContexts(
+        <FicheBeneficiairePage
+          estMilo={false}
+          beneficiaire={unDetailBeneficiaire()}
+          metadonneesFavoris={uneMetadonneeFavoris()}
+          favorisOffres={uneListeDOffres()}
+          favorisRecherches={uneListeDeRecherches()}
+          ongletInitial='offres'
+          lectureSeule={false}
+        />,
+        {
+          customConseiller: {
+            id: 'id-conseiller',
+            structure: structureFTCej,
+          },
+        }
+      )
 
       // Then
       expect(recupererAgenda).not.toHaveBeenCalled()
@@ -373,7 +371,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: LUNDI_JANVIER_3,
                   type: 'evenement',
                   titre: '15h00 - Rdv du lundi 3',
-                  source: StructureConseiller.MILO,
+                  source: structureMilo,
                 } as EntreeAgenda,
               ],
             })
@@ -459,25 +457,23 @@ describe('Agenda de la fiche jeune', () => {
 })
 
 async function renderFicheJeuneMILO() {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structureMilo,
+      },
+    }
+  )
 }
 
 function expectContenuCeJour(

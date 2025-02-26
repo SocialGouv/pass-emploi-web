@@ -7,14 +7,19 @@ import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 import Sidebar from 'components/Sidebar'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { desActualitesRaw } from 'fixtures/actualites'
+import { Conseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
 jest.mock('components/ModalContainer')
+jest.mock('services/actualites.service', () => ({
+  getActualites: jest.fn(async () => desActualitesRaw()),
+}))
 
 describe('<Sidebar/>', () => {
-  let routerPush: Function
+  let routerPush: () => void
   beforeEach(() => {
     routerPush = jest.fn()
     ;(usePathname as jest.Mock).mockReturnValue('')
@@ -23,7 +28,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche les liens de la barre de navigation', async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.MILO })
+    await renderSidebar({ structure: structureMilo })
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -103,7 +108,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de l’agenda lorsque le conseiller est France Travail", async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: structureFTCej })
 
     // THEN
     expect(() => screen.getByText('Agenda')).toThrow()
@@ -111,7 +116,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller est France Travail", async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: structureFTCej })
 
     // THEN
     expect(() => screen.getByText('Pilotage')).toThrow()
@@ -119,7 +124,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de Mission Locale lorsque le conseiller est France Travail", async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: structureFTCej })
 
     // THEN
     expect(() => screen.getByText('Mission Locale')).toThrow()
@@ -127,7 +132,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.MILO })
+    await renderSidebar({ structure: structureMilo })
 
     // THEN
     expect(() => screen.getByText('Messagerie')).toThrow()
@@ -135,7 +140,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de Messagerie lorsque le conseiller n’est pas MILO (PE, BRSA, Pass emploi)', async () => {
     // WHEN
-    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: structureFTCej })
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -146,14 +151,14 @@ describe('<Sidebar/>', () => {
 })
 
 async function renderSidebar(conseiller?: Partial<Conseiller>) {
-  let container: HTMLElement
-  ;({ container } = renderWithContexts(<Sidebar />, {
+  const { container } = await renderWithContexts(<Sidebar />, {
     customConseiller: conseiller,
-  }))
+  })
 
   let results: AxeResults
   await act(async () => {
     results = await axe(container)
   })
+
   expect(results!).toHaveNoViolations()
 }

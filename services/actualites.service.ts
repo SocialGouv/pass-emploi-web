@@ -6,11 +6,11 @@ import {
   EtiquetteArticle,
   TagJson,
 } from 'interfaces/actualites'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 import { fetchJson } from 'utils/httpClient'
 
 export async function getActualites(
-  structure: StructureConseiller
+  structure: Structure
 ): Promise<ActualitesRaw | undefined> {
   const urlTags = process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_TAGS
   const urlActualites = getUrlActualites(structure)
@@ -22,16 +22,15 @@ export async function getActualites(
   ] = await Promise.all([fetchJson(urlTags), fetchJson(urlActualites)])
   if (!articlesJson.length) return
 
-  const articlesTries = [...articlesJson].sort(comparerArticles)
-  return {
-    articles: articlesTries.map((article: ArticleJson) => ({
+  return [...articlesJson]
+    .sort(comparerArticles)
+    .map((article: ArticleJson) => ({
       id: article.id,
       titre: article.title.rendered,
       etiquettes: extraireEtiquettes(article, tagsJson),
       contenu: extraireContenuAssaini(article),
-    })),
-    dateDerniereModification: articlesTries[0].modified,
-  }
+      dateDerniereModification: article.modified,
+    }))
 }
 
 function comparerArticles(a1: ArticleJson, a2: ArticleJson) {
@@ -58,19 +57,22 @@ function extraireEtiquettes(
     .map((tag) => ({ id: tag.id, nom: tag.name, couleur: tag.description }))
 }
 
-function getUrlActualites(structure: StructureConseiller) {
+function getUrlActualites(structure: Structure): string {
   switch (structure) {
-    case StructureConseiller.MILO:
+    case 'MILO':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_MILO_LINK as string
-    case StructureConseiller.POLE_EMPLOI:
+    case 'POLE_EMPLOI':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FT_CEJ_LINK as string
-    case StructureConseiller.POLE_EMPLOI_BRSA:
-      return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FR_BRSA_LINK as string
-    case StructureConseiller.POLE_EMPLOI_AIJ:
-      return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_FR_AIJ_LINK as string
-    case StructureConseiller.CONSEIL_DEPT:
+    case 'CONSEIL_DEPT':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_CD_LINK as string
-    case StructureConseiller.AVENIR_PRO:
+    case 'AVENIR_PRO':
       return process.env.NEXT_PUBLIC_WORDPRESS_ACTUS_AVENIR_PRO_LINK as string
+    case 'POLE_EMPLOI_BRSA':
+    case 'POLE_EMPLOI_AIJ':
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+    case 'FT_EQUIP_EMPLOI_RECRUT':
+      return process.env
+        .NEXT_PUBLIC_WORDPRESS_ACTUS_ACCOMPAGNEMENTS_INTENSIFS_LINK as string
   }
 }

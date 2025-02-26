@@ -6,11 +6,12 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import ChoixConseiller from 'app/components/ChoixConseiller'
 import RadioBox from 'components/action/RadioBox'
-import ReaffectationVerificationMissionLocaleModal from 'components/ReaffectationVerificationMissionLocaleModal'
 import Button from 'components/ui/Button/Button'
 import Etape, { NumeroEtape } from 'components/ui/Form/Etape'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
@@ -21,9 +22,13 @@ import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { SimpleConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { SimpleConseiller } from 'interfaces/conseiller'
+import {
+  getUrlFormulaireSupport,
+  StructureReaffectation,
+  structuresReaffectation,
+} from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { StructureReaffectation } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDebounce } from 'utils/hooks/useDebounce'
@@ -86,8 +91,10 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
-  const [onConfirmationReaffectation, setOnConfirmationReaffectation] =
-    useState<() => void>()
+  const [
+    beneficiairesAvecMissionsLocalesDifferentes,
+    setBeneficiairesAvecMissionsLocalesDifferentes,
+  ] = useState<boolean>(false)
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
@@ -98,10 +105,10 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     : [1, 2, 3, 4]
 
   function handleInputStructureReaffectation(
-    structure: StructureReaffectation
+    structureSelectionnee: StructureReaffectation
   ) {
     setErreurReaffectation(undefined)
-    setStructureReaffectation({ value: structure })
+    setStructureReaffectation({ value: structureSelectionnee })
   }
 
   function handleInputTypeReaffectation(isTemporaire: boolean) {
@@ -277,6 +284,8 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   async function preparerReaffectationBeneficiaires(e: FormEvent) {
     e.preventDefault()
+    setBeneficiairesAvecMissionsLocalesDifferentes(false)
+
     if (isReaffectationEnCours) return
     if (!formIsValid()) {
       formErrorsRef.current!.focus()
@@ -291,12 +300,11 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
             structureMilo?.id !== conseillerDestination.value!.idStructureMilo
         )
     ) {
-      setOnConfirmationReaffectation(
-        () => async () => reaffecterBeneficiaires()
-      )
-    } else {
-      await reaffecterBeneficiaires()
+      setBeneficiairesAvecMissionsLocalesDifferentes(true)
+      return
     }
+
+    await reaffecterBeneficiaires()
   }
 
   async function reaffecterBeneficiaires() {
@@ -326,7 +334,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     const erreurs = []
     if (isReaffectationTemporaire.error)
       erreurs.push({
-        ancre: '#structure-reaffectation--CEJ',
+        ancre: '#structure-reaffectation',
         label: 'Le champ type de réaffectation est vide.',
         titreChamp: 'Type de réaffectation',
       })
@@ -390,6 +398,27 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         ref={formErrorsRef}
       />
 
+      {beneficiairesAvecMissionsLocalesDifferentes && (
+        <FailureAlert
+          label='La réaffectation n’est pas autorisée lorsqu’un bénéficiaire n’appartient pas à la même Mission Locale du conseiller destinataire.'
+          shouldFocus={true}
+        >
+          <p>
+            Demandez au conseiller actuel du bénéficiaire d’archiver ce dernier
+            dans son portefeuille. Une fois le bénéficiaire archivé, le nouveau
+            conseiller pourra le recréer depuis son portail.
+          </p>
+          <p>
+            Besoin d’aide ?{' '}
+            <ExternalLink
+              label='Contacter le support'
+              href={getUrlFormulaireSupport('MILO')}
+              onClick={() => {}}
+            />
+          </p>
+        </FailureAlert>
+      )}
+
       <p className='text-s-bold text-content_color mb-6'>
         Tous les champs sont obligatoires
       </p>
@@ -402,51 +431,21 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 {structureReaffectation.error}
               </InputError>
             )}
-            <div className='flex flex-wrap' id='structure-reaffectation--CEJ'>
-              <RadioBox
-                id='structure-reaffectation-FT'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI
-                  )
-                }
-                label='CEJ'
-                name='structure-reaffectation'
-              />
-
-              <RadioBox
-                id='structure-reaffectation-BRSA'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI_BRSA
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI_BRSA
-                  )
-                }
-                label='BRSA'
-                name='structure-reaffectation'
-              />
-
-              <RadioBox
-                id='structure-reaffectation-AIJ'
-                isSelected={
-                  structureReaffectation.value ===
-                  StructureConseiller.POLE_EMPLOI_AIJ
-                }
-                onChange={() =>
-                  handleInputStructureReaffectation(
-                    StructureConseiller.POLE_EMPLOI_AIJ
-                  )
-                }
-                label='AIJ'
-                name='structure-reaffectation'
-              />
+            <div
+              id='structure-reaffectation'
+              className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] auto-rows-fr gap-4'
+            >
+              {structuresReaffectation.map((structure) => (
+                <RadioBox
+                  key={structure}
+                  id={'structure-reaffectation--' + structure}
+                  isSelected={structureReaffectation.value === structure}
+                  onChange={() => handleInputStructureReaffectation(structure)}
+                  label={labelsStructures[structure]}
+                  name='structure-reaffectation'
+                  className='w-full'
+                />
+              ))}
             </div>
           </Etape>
         )}
@@ -460,7 +459,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               {isReaffectationTemporaire.error}
             </InputError>
           )}
-          <div className='flex flex-wrap'>
+          <div className='flex flex-wrap gap-4'>
             <RadioBox
               id='type-reaffectation-temporaire'
               isSelected={isReaffectationTemporaire.value === true}
@@ -637,13 +636,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
           onClose={() => setShowModalConseillerIntrouvable(false)}
         />
       )}
-
-      {onConfirmationReaffectation && (
-        <ReaffectationVerificationMissionLocaleModal
-          onClose={() => setOnConfirmationReaffectation(undefined)}
-          onReaffectation={onConfirmationReaffectation}
-        />
-      )}
     </>
   )
 }
@@ -657,4 +649,13 @@ type StateChoixConseiller = {
   value: SimpleConseiller | undefined
   errorInput?: string
   errorChoice?: string
+}
+
+const labelsStructures: { [key in StructureReaffectation]: string } = {
+  FT_ACCOMPAGNEMENT_GLOBAL: 'Accompagnement global',
+  FT_ACCOMPAGNEMENT_INTENSIF: 'Accompagnement intensif',
+  FT_EQUIP_EMPLOI_RECRUT: 'Equip’emploi / Equip’recrut',
+  POLE_EMPLOI: 'CEJ',
+  POLE_EMPLOI_AIJ: 'AIJ',
+  POLE_EMPLOI_BRSA: 'BRSA',
 }

@@ -41,8 +41,8 @@ describe('Page d’édition d’une liste de diffusion', () => {
   })
 
   describe('contenu', () => {
-    beforeEach(() => {
-      ;({ container } = renderWithContexts(
+    beforeEach(async () => {
+      ;({ container } = await renderWithContexts(
         <EditionListeDiffusionPage returnTo='/mes-jeunes/listes-de-diffusion' />,
         {
           customAlerte: { setter: alerteSetter },
@@ -210,7 +210,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
   describe('modification', () => {
     let listeDeDiffusion: ListeDeDiffusion
-    beforeEach(() => {
+    beforeEach(async () => {
       // When
       const beneficiaire0 = {
         id: beneficiaires[0].id,
@@ -227,7 +227,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       listeDeDiffusion = uneListeDeDiffusion({
         beneficiaires: [beneficiaire0, beneficiaire2],
       })
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <EditionListeDiffusionPage
           returnTo='/mes-jeunes/listes-de-diffusion'
           liste={listeDeDiffusion}

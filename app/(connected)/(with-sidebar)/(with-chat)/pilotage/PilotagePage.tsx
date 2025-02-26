@@ -13,7 +13,7 @@ import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { TriActionsAQualifier } from 'services/actions.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import { SessionsAClore } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -32,8 +32,8 @@ const OngletSessionsImiloPilotage = dynamic(
 const OngletBeneficiairesAArchiverPilotage = dynamic(
   () => import('components/pilotage/OngletBeneficiairesAArchiverPilotage')
 )
-const EncartAgenceRequise = dynamic(
-  () => import('components/EncartAgenceRequise')
+const EncartMissionLocaleRequise = dynamic(
+  () => import('components/EncartMissionLocaleRequise')
 )
 
 export type Onglet =
@@ -139,7 +139,7 @@ function PilotagePage({
     return result
   }
 
-  async function renseignerAgence(agence: {
+  async function renseignerMissionLocale(agence: {
     id?: string
     nom: string
   }): Promise<void> {
@@ -204,6 +204,7 @@ function PilotagePage({
                   <span className='text-base-bold'> À clore</span>
                 </dd>
               </div>
+
               {peutAccederAuxSessions(conseiller) && (
                 <div>
                   <dt className='text-base-bold'>Sessions i-milo</dt>
@@ -312,10 +313,9 @@ function PilotagePage({
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
           {!animationsCollectivesAffichees && (
-            <EncartAgenceRequise
-              conseiller={conseiller}
-              onAgenceChoisie={renseignerAgence}
-              getAgences={getAgencesClientSide}
+            <EncartMissionLocaleRequise
+              onMissionLocaleChoisie={renseignerMissionLocale}
+              getMissionsLocales={getMissionsLocalesClientSide}
               onChangeAffichageModal={trackAgenceModal}
             />
           )}

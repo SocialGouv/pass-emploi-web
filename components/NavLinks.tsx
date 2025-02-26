@@ -2,17 +2,14 @@
 
 import { DateTime } from 'luxon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import ActualitesModal from 'components/ActualitesModal'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import {
-  aDeNouvellesActualites,
-  estMilo,
-  estSuperviseur,
-  utiliseChat,
-} from 'interfaces/conseiller'
+import { ActualitesParsees } from 'interfaces/actualites'
+import { estSuperviseur, utiliseChat } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import { modifierDateVisionnageActus } from 'services/conseiller.service'
 import { useActualites } from 'utils/actualitesContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -40,10 +37,11 @@ export default function NavLinks({
 }: NavLinksProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const [conseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const actualites = useActualites()
 
+  const conseillerEstMilo = estMilo(conseiller.structure)
   const nombreBeneficiairesAArchiver = portefeuille.reduce(
     (count, beneficiaire) => count + Number(beneficiaire.estAArchiver),
     0
@@ -56,6 +54,11 @@ export default function NavLinks({
   const lienProfilBadgeLabel = !conseiller.email
     ? 'Une information en attente de mise à jour'
     : undefined
+
+  const [countNouvellesActualites, setCountNouvellesActualites] =
+    useState<number>()
+  const [labelNouvellesActualites, setLabelNouvellesActualites] =
+    useState<string>()
 
   function isCurrentRoute(href: string) {
     return pathname.startsWith(href)
@@ -84,9 +87,32 @@ export default function NavLinks({
 
   async function ouvrirActualites() {
     setAfficherActualiteModal(true)
-    modifierDateVisionnageActus(DateTime.now())
+    const now = DateTime.now()
     trackActualite()
+
+    modifierDateVisionnageActus(now)
+    setConseiller({ ...conseiller, dateVisionnageActus: now.toISO() })
   }
+
+  useEffect(() => {
+    if (
+      !items.includes(NavItem.Actualites) ||
+      process.env.NEXT_PUBLIC_ENABLE_ACTUS !== 'true' ||
+      !actualites
+    )
+      return
+
+    const count = compterNouvellesActualites(
+      conseiller.dateVisionnageActus,
+      actualites
+    )
+    if (!count) return
+
+    setCountNouvellesActualites(count)
+    if (count > 1)
+      setLabelNouvellesActualites(' nouvelles actualités sont disponibles')
+    else setLabelNouvellesActualites(' nouvelle actualité est disponible')
+  }, [actualites, conseiller.dateVisionnageActus])
 
   return (
     <>
@@ -106,7 +132,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Rdvs) && (
+        {conseillerEstMilo && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
@@ -134,7 +160,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Pilotage) && (
+        {conseillerEstMilo && items.includes(NavItem.Pilotage) && (
           <NavLink
             iconName={
               isCurrentRoute('/pilotage')
@@ -153,7 +179,7 @@ export default function NavLinks({
           />
         )}
 
-        {estMilo(conseiller) && items.includes(NavItem.Etablissement) && (
+        {conseillerEstMilo && items.includes(NavItem.Etablissement) && (
           <NavLink
             iconName={
               isCurrentRoute('/etablissement')
@@ -180,7 +206,7 @@ export default function NavLinks({
             />
           )}
 
-        {!estMilo(conseiller) &&
+        {!conseillerEstMilo &&
           utiliseChat(conseiller) &&
           items.includes(NavItem.Messagerie) && (
             <NavLink
@@ -215,15 +241,8 @@ export default function NavLinks({
               className='break-all'
               onClick={ouvrirActualites}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
-              badgeLabel={
-                actualites &&
-                aDeNouvellesActualites(
-                  conseiller,
-                  actualites.dateDerniereModification
-                )
-                  ? 'De nouvelles actualités sont disponibles'
-                  : undefined
-              }
+              badgeCount={countNouvellesActualites}
+              badgeLabel={labelNouvellesActualites}
             />
           )}
       </ul>
@@ -268,4 +287,17 @@ export default function NavLinks({
       )}
     </>
   )
+}
+
+function compterNouvellesActualites(
+  dateVisionnageActus: string | undefined,
+  actualites: ActualitesParsees
+): number {
+  if (!dateVisionnageActus) return actualites.length
+
+  return actualites.filter(
+    ({ dateDerniereModification }) =>
+      DateTime.fromISO(dateVisionnageActus) <
+      DateTime.fromISO(dateDerniereModification)
+  ).length
 }

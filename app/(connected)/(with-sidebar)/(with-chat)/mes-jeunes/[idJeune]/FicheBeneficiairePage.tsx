@@ -152,53 +152,45 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       )}
 
       {beneficiaire.estAArchiver && (
-        <FailureAlert
-          label='La récupération des informations de ce bénéficiaire depuis i-milo a échoué.'
-          sub={
-            <p className='pl-8'>
-              Veuillez vérifier si ce compte doit être archivé.
-            </p>
-          }
-        />
+        <FailureAlert label='La récupération des informations de ce bénéficiaire depuis i-milo a échoué.'>
+          <p className='pl-8'>
+            Veuillez vérifier si ce compte doit être archivé.
+          </p>
+        </FailureAlert>
       )}
 
       {!beneficiaire.estAArchiver && !beneficiaire.isActivated && (
         <>
           {!estBeneficiaireMilo && (
-            <FailureAlert
-              label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
-              sub={
-                <p className='pl-8'>
+            <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'>
+              <p className='pl-8'>
+                <strong>
+                  Il ne pourra pas échanger de messages avec vous.
+                </strong>
+              </p>
+            </FailureAlert>
+          )}
+
+          {estBeneficiaireMilo && (
+            <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'>
+              <ul className='list-disc pl-[48px]'>
+                <li>
                   <strong>
                     Il ne pourra pas échanger de messages avec vous.
                   </strong>
-                </p>
-              }
-            />
-          )}
-          {estBeneficiaireMilo && (
-            <FailureAlert
-              label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
-              sub={
-                <ul className='list-disc pl-[48px]'>
-                  <li>
-                    <strong>
-                      Il ne pourra pas échanger de messages avec vous.
-                    </strong>
-                  </li>
-                  <li>
-                    <strong>
-                      Le lien d’activation envoyé par i-milo à l’adresse e-mail
-                      du bénéficiaire n’est valable que 24h.
-                    </strong>
-                  </li>
-                  <li>
-                    Si le délai est dépassé, veuillez orienter ce bénéficiaire
-                    vers l’option : mot de passe oublié.
-                  </li>
-                </ul>
-              }
-            />
+                </li>
+                <li>
+                  <strong>
+                    Le lien d’activation envoyé par i-milo à l’adresse e-mail du
+                    bénéficiaire n’est valable que 24h.
+                  </strong>
+                </li>
+                <li>
+                  Si le délai est dépassé, veuillez orienter ce bénéficiaire
+                  vers l’option : mot de passe oublié.
+                </li>
+              </ul>
+            </FailureAlert>
           )}
         </>
       )}
@@ -229,15 +221,12 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       {!estBeneficiaireMilo && props.demarches === null && (
         <div className='mb-6'>
-          <FailureAlert
-            label='La récupération des démarches de ce bénéficiaire a échoué.'
-            sub={
-              <p className='pl-8'>
-                Vous pouvez lui demander de se reconnecter à son application
-                puis rafraîchir votre page.
-              </p>
-            }
-          />
+          <FailureAlert label='La récupération des démarches de ce bénéficiaire a échoué.'>
+            <p className='pl-8'>
+              Vous pouvez lui demander de se reconnecter à son application puis
+              rafraîchir votre page.
+            </p>
+          </FailureAlert>
         </div>
       )}
 

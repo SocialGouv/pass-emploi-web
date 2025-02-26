@@ -6,7 +6,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
@@ -16,13 +16,16 @@ export const metadata: Metadata = {
 export default async function CreationBeneficiaire() {
   const { user } = await getMandatorySessionServerSide()
 
+  const header =
+    'Créer un compte bénéficiaire' +
+    (estFTConnect(user.structure) ? ` ${labelStructure(user.structure)}` : '')
   return (
     <>
       <PageFilArianePortal />
-      <PageHeaderPortal header='Créer un compte bénéficiaire' />
+      <PageHeaderPortal header={header} />
 
-      {estUserMilo(user) && <CreationBeneficiaireMiloPage />}
-      {!estUserMilo(user) && <CreationBeneficiaireFranceTravailPage />}
+      {estMilo(user.structure) && <CreationBeneficiaireMiloPage />}
+      {!estMilo(user.structure) && <CreationBeneficiaireFranceTravailPage />}
     </>
   )
 }

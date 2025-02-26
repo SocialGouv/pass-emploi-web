@@ -32,7 +32,7 @@ describe('ModificationActionPage client side', () => {
     const action = uneAction()
     beforeEach(async () => {
       // When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
@@ -256,7 +256,7 @@ describe('ModificationActionPage client side', () => {
     })
     beforeEach(async () => {
       // When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}

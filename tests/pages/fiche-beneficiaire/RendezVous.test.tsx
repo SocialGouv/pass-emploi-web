@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -14,9 +14,9 @@ import {
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
+import { Structure } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
@@ -136,7 +136,7 @@ describe('Rendez-vous de la fiche jeune', () => {
   describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
     beforeEach(async () => {
       await renderFicheJeuneFT(
-        StructureConseiller.POLE_EMPLOI,
+        'POLE_EMPLOI',
         uneMetadonneeFavoris(),
         uneListeDOffres(),
         uneListeDeRecherches()
@@ -156,51 +156,47 @@ describe('Rendez-vous de la fiche jeune', () => {
 })
 
 async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={unDetailBeneficiaire()}
-        rdvs={rdvs}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
-          structureMilo: { id: 'id-test', nom: 'Milo Agence' },
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={unDetailBeneficiaire()}
+      rdvs={rdvs}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: 'MILO',
+        structureMilo: { id: 'id-test', nom: 'Milo Agence' },
+      },
+    }
+  )
 }
 
 async function renderFicheJeuneFT(
-  structure: StructureConseiller,
+  structure: Structure,
   metadonnees: MetadonneesFavoris,
   offresFT: Offre[],
   recherchesFT: Recherche[]
 ) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={false}
-        beneficiaire={unDetailBeneficiaire()}
-        metadonneesFavoris={metadonnees}
-        favorisOffres={offresFT}
-        favorisRecherches={recherchesFT}
-        ongletInitial='offres'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: structure,
-        },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={false}
+      beneficiaire={unDetailBeneficiaire()}
+      metadonneesFavoris={metadonnees}
+      favorisOffres={offresFT}
+      favorisRecherches={recherchesFT}
+      ongletInitial='offres'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structure,
+      },
+    }
+  )
 }

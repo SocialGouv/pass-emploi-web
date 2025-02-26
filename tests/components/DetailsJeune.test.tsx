@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierIdentifiantPartenaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -19,7 +19,7 @@ describe('<DetailsJeune>', () => {
     ;(modifierIdentifiantPartenaire as jest.Mock).mockResolvedValue(undefined)
   })
 
-  it("devrait afficher les informations de la fiche d'une jeune", () => {
+  it("devrait afficher les informations de la fiche d'une jeune", async () => {
     // Given
     const jeune = unDetailBeneficiaire({
       isActivated: true,
@@ -28,10 +28,10 @@ describe('<DetailsJeune>', () => {
     })
 
     // When
-    renderWithContexts(
+    await renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -46,16 +46,16 @@ describe('<DetailsJeune>', () => {
     ).toBeInTheDocument()
   })
 
-  it("n'affiche pas le mail si le jeune n'en a pas", () => {
+  it("n'affiche pas le mail si le jeune n'en a pas", async () => {
     // Given
     const jeune = unDetailBeneficiaire()
     delete jeune.email
 
     // When
-    renderWithContexts(
+    await renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -63,15 +63,15 @@ describe('<DetailsJeune>', () => {
     expect(screen.queryByTitle('e-mail')).toBeNull()
   })
 
-  it("n'affiche pas le lien vers le dossier si le jeune n'en a pas", () => {
+  it("n'affiche pas le lien vers le dossier si le jeune n'en a pas", async () => {
     // Given
     const jeune = unDetailBeneficiaire({ urlDossier: undefined })
 
     // When
-    renderWithContexts(
+    await renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+        conseiller={unConseiller({ structure: structureMilo })}
       />
     )
 
@@ -81,17 +81,17 @@ describe('<DetailsJeune>', () => {
 
   describe('Date de fin du CEJ', () => {
     describe('Conseiller MILO', () => {
-      it('affiche la date de fin du CEJ si le jeune en a', () => {
+      it('affiche la date de fin du CEJ si le jeune en a', async () => {
         // Given
         const jeune = unDetailBeneficiaire({
           dateFinCEJ: '2022-10-10T10:10:10Z',
         })
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+            conseiller={unConseiller({ structure: structureMilo })}
           />
         )
 
@@ -103,18 +103,18 @@ describe('<DetailsJeune>', () => {
       })
     })
     describe('Conseiller non MILO', () => {
-      it("n'affiche pas la date de fin du CEJ", () => {
+      it("n'affiche pas la date de fin du CEJ", async () => {
         // Given
         const jeune = unDetailBeneficiaire({
           dateFinCEJ: '2022-10-10T10:10:10Z',
         })
 
         // When
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />
         )
@@ -131,16 +131,16 @@ describe('<DetailsJeune>', () => {
     })
 
     describe('pour un jeune France Travail qui n’a pas d’identifiant partenaire', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const jeune = unDetailBeneficiaire({
           idPartenaire: undefined,
         })
 
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />,
           {
@@ -213,16 +213,16 @@ describe('<DetailsJeune>', () => {
     })
 
     describe('pour un jeune France Travail a déjà un identifiant partenaire', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const jeune = unDetailBeneficiaire({
           idPartenaire: '12345',
         })
 
-        renderWithContexts(
+        await renderWithContexts(
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({
-              structure: StructureConseiller.POLE_EMPLOI,
+              structure: structureFTCej,
             })}
           />,
           {
@@ -294,17 +294,17 @@ describe('<DetailsJeune>', () => {
       })
     })
 
-    it('ne permet pas l’ajout d’un identifiant partenaire pour un jeune Mission Locale', () => {
+    it('ne permet pas l’ajout d’un identifiant partenaire pour un jeune Mission Locale', async () => {
       // Given
       const jeune = unDetailBeneficiaire({
         idPartenaire: undefined,
       })
 
       // When
-      renderWithContexts(
+      await renderWithContexts(
         <DetailsJeune
           jeune={jeune}
-          conseiller={unConseiller({ structure: StructureConseiller.MILO })}
+          conseiller={unConseiller({ structure: structureMilo })}
         />
       )
 

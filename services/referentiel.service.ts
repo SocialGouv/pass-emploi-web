@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react'
 import { apiGet } from 'clients/api.client'
 import { ActionPredefinie } from 'interfaces/action'
 import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 
 export function getAgencesServerSide(
   structure: string,
@@ -11,11 +12,9 @@ export function getAgencesServerSide(
   return getAgences(structure, accessToken)
 }
 
-export async function getAgencesClientSide(
-  structure: string
-): Promise<Agence[]> {
+export async function getMissionsLocalesClientSide(): Promise<Agence[]> {
   const session = await getSession()
-  return getAgences(structure, session!.accessToken)
+  return getAgences(structureMilo, session!.accessToken)
 }
 
 export async function getCommunesEtDepartements(query: string) {

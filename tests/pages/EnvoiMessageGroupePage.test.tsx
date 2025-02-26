@@ -31,7 +31,7 @@ describe('EnvoiMessageGroupePage client side', () => {
   let submitButton: HTMLButtonElement
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let push: Function
+  let push: () => void
   beforeEach(async () => {
     alerteSetter = jest.fn()
     push = jest.fn()
@@ -45,7 +45,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       id: 'id-fichier',
       nom: 'imageupload.png',
     })
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <EnvoiMessageGroupePage
         listesDiffusion={listesDeDiffusion}
         returnTo='/mes-jeunes'
@@ -246,7 +246,7 @@ describe('EnvoiMessageGroupePage client side', () => {
   })
 
   describe('quand on remplit le formulaire avec une pièce jointe', () => {
-    let push: Function
+    let push: () => void
     let newMessage: string
     let file: File
     beforeEach(async () => {

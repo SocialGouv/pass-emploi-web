@@ -1,17 +1,14 @@
-import React, { ChangeEvent, ReactElement, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
+import Visibilite from 'components/rdv/Visibilite'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import {
-  TagMetier,
-  TagStatut as _TagStatut,
-  TagType,
-} from 'components/ui/Indicateurs/Tag'
-import SelectButton from 'components/ui/SelectButton'
+import { TagStatut as _TagStatut, TagType } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import {
   AnimationCollective,
+  EtatVisibilite,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -30,8 +27,9 @@ export function AnimationCollectiveRow({
 
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [estCache, setEstCache] = useState<boolean>(
-    animationCollective.estCache ?? false
+
+  const [etatVisibilite, setEtatVisibilite] = useState<EtatVisibilite>(
+    animationCollective.etatVisibilite
   )
 
   function getHref(): string {
@@ -40,17 +38,32 @@ export function AnimationCollectiveRow({
     else return `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}`
   }
 
-  async function permuterVisibiliteSession(visibilite: boolean) {
-    const { changerVisibiliteSession } = await import(
-      'services/sessions.service'
-    )
-    await changerVisibiliteSession(animationCollective.id, visibilite)
-    setEstCache(!visibilite)
+  async function updateVisibiliteSession(nouvelEtat: EtatVisibilite) {
+    switch (nouvelEtat) {
+      case 'auto-inscription':
+        const { changerAutoinscriptionSession } = await import(
+          'services/sessions.service'
+        )
+        await changerAutoinscriptionSession(animationCollective.id, true)
+        break
+      case 'visible':
+      case 'non-visible':
+        const { changerVisibiliteSession } = await import(
+          'services/sessions.service'
+        )
+        await changerVisibiliteSession(
+          animationCollective.id,
+          nouvelEtat === 'visible'
+        )
+        break
+    }
+
+    setEtatVisibilite(nouvelEtat)
 
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Session i-milo',
-      action: 'clic visibilité',
+      action: 'clic visibilité agenda',
       nom: '',
       aDesBeneficiaires: portefeuille.length > 0,
     })
@@ -89,10 +102,10 @@ export function AnimationCollectiveRow({
         )}
         <div className='mt-1 flex gap-2 flex-wrap'>
           <TagType {...animationCollective} isSmallTag={true} />
-          <Visiblite
+          <Visibilite
             {...animationCollective}
-            estCache={estCache}
-            onChangerVisibliteSession={permuterVisibiliteSession}
+            etatVisibilite={etatVisibilite}
+            onChangerVisibliteSession={updateVisibiliteSession}
           />
         </div>
       </TD>
@@ -141,54 +154,6 @@ function TagStatut(animationCollective: AnimationCollective): ReactElement {
       backgroundColor={color + '_lighten'}
       className='!px-2 !py-1 !text-xs !font-bold'
     />
-  )
-}
-
-function Visiblite({
-  id,
-  isSession,
-  titre,
-  estCache,
-  onChangerVisibliteSession,
-}: {
-  estCache: boolean
-  onChangerVisibliteSession: (visible: boolean) => Promise<void>
-} & AnimationCollective): ReactElement {
-  const selectId = id + '--visibilite'
-
-  async function changerVisibilite(e: ChangeEvent<HTMLSelectElement>) {
-    const value = e.target.value
-    await onChangerVisibliteSession(value === 'visible')
-  }
-
-  return (
-    <>
-      {isSession && (
-        <>
-          <label htmlFor={selectId} className='sr-only'>
-            Visibilité de l’événement {titre}
-          </label>
-          <SelectButton
-            id={selectId}
-            onChange={changerVisibilite}
-            value={estCache ? 'non-visible' : 'visible'}
-            className={`z-20 text-xs-bold ${estCache ? 'text-content_color border-grey_800 bg-grey_100' : 'border-success text-success bg-success_lighten'}`}
-          >
-            <option value='visible'>Visible</option>
-            <option value='non-visible'>Non visible</option>
-          </SelectButton>
-        </>
-      )}
-
-      {!isSession && (
-        <TagMetier
-          label='Visible'
-          color='success'
-          backgroundColor='success_lighten'
-          className='!px-2 !py-1 !text-xs !font-bold'
-        />
-      )}
-    </>
   )
 }
 

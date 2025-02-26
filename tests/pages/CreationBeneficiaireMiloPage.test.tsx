@@ -27,8 +27,10 @@ jest.mock('components/ModalContainer')
 describe('CreationBeneficiaireMiloPage client side', () => {
   let container: HTMLElement
   describe("quand le dossier n'a pas encore été saisi", () => {
-    beforeEach(() => {
-      ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />))
+    beforeEach(async () => {
+      ;({ container } = await renderWithContexts(
+        <CreationBeneficiaireMiloPage />
+      ))
     })
 
     it('a11y', async () => {
@@ -95,10 +97,13 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       setAlerte = jest.fn()
       setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
-      ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />, {
-        customAlerte: { setter: setAlerte },
-        customPortefeuille: { setter: setPortefeuille },
-      }))
+      ;({ container } = await renderWithContexts(
+        <CreationBeneficiaireMiloPage />,
+        {
+          customAlerte: { setter: setAlerte },
+          customPortefeuille: { setter: setPortefeuille },
+        }
+      ))
 
       await userEvent.type(
         screen.getByRole('textbox', {

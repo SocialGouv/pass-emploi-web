@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -8,7 +8,11 @@ import {
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseBeneficiaire, BeneficiaireEtChat, extractBaseBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  BaseBeneficiaire,
+  BeneficiaireEtChat,
+  extractBaseBeneficiaire,
+} from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
@@ -59,10 +63,8 @@ describe('<ChatContainer />', () => {
   describe('Messagerie', () => {
     it('affiche la messagerie', async () => {
       // When
-      await act(async () => {
-        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
-          customChats: beneficiairesChats,
-        })
+      await renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
+        customChats: beneficiairesChats,
       })
 
       // Then
@@ -78,16 +80,14 @@ describe('<ChatContainer />', () => {
   describe('Conversation', () => {
     beforeEach(async () => {
       // When
-      await act(async () => {
-        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
-          customChats: beneficiairesChats,
-          customCurrentConversation: {
-            value: {
-              conversation: beneficiairesChats[2],
-              shouldFocusOnRender: true,
-            },
+      await renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
+        customChats: beneficiairesChats,
+        customCurrentConversation: {
+          value: {
+            conversation: beneficiairesChats[2],
+            shouldFocusOnRender: true,
           },
-        })
+        },
       })
     })
 
@@ -111,10 +111,8 @@ describe('<ChatContainer />', () => {
 
   describe('listes de diffusion', () => {
     beforeEach(async () => {
-      await act(async () => {
-        renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
-          customChats: [],
-        })
+      await renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
+        customChats: [],
       })
     })
 

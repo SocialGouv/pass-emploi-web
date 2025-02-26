@@ -5,22 +5,24 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 interface ExternalLinkProps {
   href: string
   label: string
-  iconName?: IconName
   onClick: () => void
+  iconName?: IconName
+  className?: string
 }
 
 export default function ExternalLink({
   href,
   label,
-  iconName,
   onClick,
+  iconName,
+  className,
 }: ExternalLinkProps) {
   return (
     <a
       href={href}
       target='_blank'
       rel='noreferrer noopener'
-      className='inline-flex items-center whitespace-nowrap underline text-[inherit] hover:text-[inherit]'
+      className={`inline-flex items-center whitespace-nowrap underline text-[inherit] hover:text-[inherit] ${className}`}
       aria-label={`${label} (nouvelle fenêtre)`}
       onClick={onClick}
     >

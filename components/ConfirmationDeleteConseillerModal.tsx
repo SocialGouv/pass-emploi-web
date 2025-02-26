@@ -3,7 +3,8 @@ import { useRef } from 'react'
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 
 interface ConfirmationDeleteConseillerModalProps {
   onConfirmation: () => void
@@ -20,25 +21,9 @@ export default function ConfirmationDeleteConseillerModal({
 }: ConfirmationDeleteConseillerModalProps) {
   const modalRef = useRef<ModalHandles>(null)
 
-  const labelStructure = ((): string => {
-    switch (conseiller.structure) {
-      case StructureConseiller.AVENIR_PRO:
-        return 'avenir pro'
-      case StructureConseiller.CONSEIL_DEPT:
-        return 'départemental'
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-        return 'BRSA'
-      case StructureConseiller.POLE_EMPLOI_AIJ:
-        return 'AIJ'
-      case StructureConseiller.MILO:
-      case StructureConseiller.POLE_EMPLOI:
-        return 'CEJ'
-    }
-  })()
-
   const title = portefeuilleAvecBeneficiaires
     ? 'Pour supprimer votre compte, vos bénéficiaires doivent être transférés à un conseiller.'
-    : `Souhaitez-vous supprimer le compte conseiller ${labelStructure}: ${conseiller.firstName} ${conseiller.lastName} ?`
+    : `Souhaitez-vous supprimer le compte conseiller ${labelStructure(conseiller.structure)}: ${conseiller.firstName} ${conseiller.lastName} ?`
   return (
     <Modal
       title={title}
@@ -88,4 +73,26 @@ export default function ConfirmationDeleteConseillerModal({
       </div>
     </Modal>
   )
+}
+
+function labelStructure(structure: Structure): string {
+  switch (structure) {
+    case 'AVENIR_PRO':
+      return 'avenir pro'
+    case 'CONSEIL_DEPT':
+      return 'départemental'
+    case 'POLE_EMPLOI_BRSA':
+      return 'BRSA'
+    case 'POLE_EMPLOI_AIJ':
+      return 'AIJ'
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+      return 'Accompagnement intensif'
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+      return 'Accompagnement global'
+    case 'FT_EQUIP_EMPLOI_RECRUT':
+      return 'Equip’emploi / Equip’recrut'
+    case 'MILO':
+    case 'POLE_EMPLOI':
+      return 'CEJ'
+  }
 }

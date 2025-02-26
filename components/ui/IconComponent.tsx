@@ -26,6 +26,7 @@ import ArrowCircleRightFillIcon from 'assets/icons/informations/arrow_circle_rig
 import ArrowCircleRightOutlineIcon from 'assets/icons/informations/arrow_circle_right_outline.svg'
 import BarChartIcon from 'assets/icons/informations/bar_chart.svg'
 import CancelIcon from 'assets/icons/informations/cancel.svg'
+import CelebrationIcon from 'assets/icons/informations/celebration.svg'
 import ChatFillIcon from 'assets/icons/informations/chat_fill.svg'
 import ChatOutlineIcon from 'assets/icons/informations/chat_outline.svg'
 import CheckIcon from 'assets/icons/informations/check.svg'
@@ -93,6 +94,7 @@ export enum IconName {
   BookmarkFill = 'BookmarkFill',
   BookmarkOutline = 'BookmarkOutline',
   Cancel = 'Cancel',
+  Celebration = 'Celebration',
   ChatFill = 'ChatFill',
   ChatOutline = 'ChatOutline',
   Check = 'Check',
@@ -221,6 +223,7 @@ const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.Add]: AddIcon,
   [IconName.AttachFile]: AttachFileIcon,
   [IconName.Cancel]: CancelIcon,
+  [IconName.Celebration]: CelebrationIcon,
   [IconName.Error]: ErrorIcon,
   [IconName.Help]: HelpIcon,
   [IconName.Warning]: WarningIcon,

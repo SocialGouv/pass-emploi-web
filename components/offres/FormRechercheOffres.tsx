@@ -10,9 +10,9 @@ import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServ
 import Button from 'components/ui/Button/Button'
 import Etape from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { estBRSA, estConseilDepartemental } from 'interfaces/conseiller'
 import { TypeOffre } from 'interfaces/offre'
 import { Commune, Localite, Metier } from 'interfaces/referentiel'
+import { estBRSA, estConseilDepartemental } from 'interfaces/structure'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
@@ -72,7 +72,8 @@ export default function FormRechercheOffres({
   const [offreLieu, setOffreLieu] = useState<string | undefined>()
 
   const aAccesRechercheAlternanceServiceCivique =
-    !estBRSA(conseiller) && !estConseilDepartemental(conseiller)
+    !estBRSA(conseiller.structure) &&
+    !estConseilDepartemental(conseiller.structure)
 
   function formIsInvalid(): boolean {
     switch (typeOffre) {
@@ -168,7 +169,7 @@ export default function FormRechercheOffres({
           </p>
         )}
         <Etape numero={1} titre='Sélectionner un type d’offre'>
-          <div className='flex flex-wrap'>
+          <div className='flex flex-wrap gap-4'>
             <RadioBox
               id='type-offre-emploi'
               isSelected={typeOffre === TypeOffre.EMPLOI}

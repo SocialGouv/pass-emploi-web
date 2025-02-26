@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -8,7 +8,7 @@ import React from 'react'
 
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { unConseiller } from 'fixtures/conseiller'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureMilo } from 'interfaces/structure'
 import {
   getRendezVousConseiller,
   getRendezVousEtablissement,
@@ -42,7 +42,7 @@ describe('AgendaPage client side', () => {
     ;(getSessionsMissionLocaleClientSide as jest.Mock).mockResolvedValue([])
 
     const conseiller = unConseiller({
-      structure: StructureConseiller.MILO,
+      structure: structureMilo,
       agence: {
         nom: 'Mission Locale Aubenas',
         id: 'id-etablissement',
@@ -54,14 +54,12 @@ describe('AgendaPage client side', () => {
     })
 
     // When
-    await act(async () => {
-      ;({ container } = renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-        {
-          customConseiller: conseiller,
-        }
-      ))
-    })
+    ;({ container } = await renderWithContexts(
+      <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+      {
+        customConseiller: conseiller,
+      }
+    ))
   })
 
   it('a11y', async () => {

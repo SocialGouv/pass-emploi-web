@@ -2,12 +2,15 @@ import React from 'react'
 
 import EtapesTutoAjoutBeneficiaire from 'components/mes-jeunes/EtapesTutoAjoutBeneficiaire'
 import { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { Structure } from 'interfaces/structure'
+import { trackEvent } from 'utils/analytics/matomo'
 
 export default function TutorielAjoutBeneficiaireFranceTravail({
-  aAccesMap,
+  structure,
 }: {
-  aAccesMap: boolean
+  structure: Structure
 }) {
   const etapes = [
     {
@@ -34,16 +37,26 @@ export default function TutorielAjoutBeneficiaireFranceTravail({
     },
   ]
 
+  function trackTutoSuppression() {
+    trackEvent({
+      structure,
+      categorie: 'Tutoriel',
+      action: 'Suppression compte',
+      nom: '',
+      aDesBeneficiaires: null,
+    })
+  }
+
   return (
     <>
       <EtapesTutoAjoutBeneficiaire etapes={etapes} />
-      <InformationMessage
-        label={
-          aAccesMap
-            ? 'Attention à bien renseigner l’e-mail qui se trouve sous le dossier MAP du bénéficiaire.'
-            : 'Attention à bien renseigner l’adresse e-mail que votre bénéficiaire utilise pour se connecter à son espace France Travail.'
-        }
-      />
+      <InformationMessage label='Vous avez changé de dispositif ?'>
+        <ExternalLink
+          label='Consultez la procédure à suivre'
+          href='https://doc.pass-emploi.beta.gouv.fr/suppression-de-compte/'
+          onClick={trackTutoSuppression}
+        />
+      </InformationMessage>
     </>
   )
 }

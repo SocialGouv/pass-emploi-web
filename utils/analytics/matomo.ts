@@ -1,6 +1,6 @@
 import MatomoTracker from 'matomo-tracker'
 
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 import { unsafeRandomId } from 'utils/helpers'
 
 interface InitSettings {
@@ -13,12 +13,12 @@ interface InitSettings {
 
 interface TrackPageSettings {
   customTitle: string
-  structure: StructureConseiller | null
+  structure: Structure | null
   aDesBeneficiaires: boolean | null
 }
 
 interface TrackEventSettings {
-  structure: StructureConseiller
+  structure: Structure
   categorie: string
   action: string
   nom: string
@@ -98,7 +98,7 @@ export function trackPage({
     push([
       'setCustomDimension',
       numeroDimensionAvecBeneficiaires,
-      avecBeneficiairesDimencsionString(aDesBeneficiaires),
+      avecBeneficiairesDimensionString(aDesBeneficiaires),
     ])
 
     push(['setDocumentTitle', customTitle || document.title])
@@ -120,30 +120,7 @@ export function trackEvent(trackEventSettings: TrackEventSettings): void {
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(trackEventSettings.aDesBeneficiaires),
-  ])
-
-  push([
-    'trackEvent',
-    trackEventSettings.categorie,
-    trackEventSettings.categorie + ' ' + trackEventSettings.action,
-    trackEventSettings.categorie + ' ' + trackEventSettings.nom,
-  ])
-}
-
-export function trackEventBeneficiaire(
-  trackEventSettings: Omit<TrackEventSettings, 'aDesBeneficiaires'>
-): void {
-  push(['setCustomDimension', 1, 'jeune'])
-  push([
-    'setCustomDimension',
-    2,
-    userStructureDimensionString(trackEventSettings.structure),
-  ])
-  push([
-    'setCustomDimension',
-    numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(null),
+    avecBeneficiairesDimensionString(trackEventSettings.aDesBeneficiaires),
   ])
 
   push([
@@ -184,32 +161,36 @@ export function trackSSR({
     urlref: refererUrl,
     dimension1: 'conseiller',
     dimension2: userStructureDimensionString(structure),
-    dimension3: avecBeneficiairesDimencsionString(aDesBeneficiaires),
+    dimension3: avecBeneficiairesDimensionString(aDesBeneficiaires),
   })
 }
 
-function userStructureDimensionString(
-  loginMode: StructureConseiller | null
-): string {
+function userStructureDimensionString(loginMode: Structure | null): string {
   switch (loginMode) {
-    case StructureConseiller.MILO:
+    case 'MILO':
       return 'Mission Locale'
-    case StructureConseiller.POLE_EMPLOI:
+    case 'POLE_EMPLOI':
       return 'Pôle emploi'
-    case StructureConseiller.POLE_EMPLOI_BRSA:
+    case 'POLE_EMPLOI_BRSA':
       return 'Pôle emploi BRSA'
-    case StructureConseiller.POLE_EMPLOI_AIJ:
+    case 'POLE_EMPLOI_AIJ':
       return 'Pôle emploi AIJ'
-    case StructureConseiller.CONSEIL_DEPT:
+    case 'CONSEIL_DEPT':
       return 'Conseiller départemental'
-    case StructureConseiller.AVENIR_PRO:
+    case 'AVENIR_PRO':
       return 'Avenir Pro'
+    case 'FT_ACCOMPAGNEMENT_INTENSIF':
+      return 'France Travail Accompagnement intensif'
+    case 'FT_ACCOMPAGNEMENT_GLOBAL':
+      return 'France Travail Accompagnement global'
+    case 'FT_EQUIP_EMPLOI_RECRUT':
+      return 'France Travail Equip’emploi / Equip’recrut'
     case null:
       return 'visiteur'
   }
 }
 
-function avecBeneficiairesDimencsionString(
+function avecBeneficiairesDimensionString(
   aDesBeneficiaires: boolean | null
 ): 'oui' | 'non' | 'non applicable' {
   if (aDesBeneficiaires === null) return 'non applicable'

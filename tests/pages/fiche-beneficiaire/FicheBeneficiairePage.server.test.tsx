@@ -14,7 +14,7 @@ import { unConseiller } from 'fixtures/conseiller'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
@@ -92,7 +92,7 @@ describe('FicheBeneficiairePage server side', () => {
     ;(getConseillerServerSide as jest.Mock).mockReturnValue(
       unConseiller({
         id: 'id-conseiller',
-        structure: StructureConseiller.MILO,
+        structure: structureMilo,
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
     )
@@ -242,7 +242,7 @@ describe('FicheBeneficiairePage server side', () => {
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
-          structure: StructureConseiller.POLE_EMPLOI,
+          structure: structureFTCej,
         })
       )
 
@@ -311,7 +311,7 @@ describe('FicheBeneficiairePage server side', () => {
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
-          structure: StructureConseiller.CONSEIL_DEPT,
+          structure: 'CONSEIL_DEPT',
         })
       )
 

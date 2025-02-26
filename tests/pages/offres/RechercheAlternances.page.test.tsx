@@ -14,7 +14,6 @@ import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offr
 import { unConseiller } from 'fixtures/conseiller'
 import { listeBaseAlternances, uneBaseAlternance } from 'fixtures/offre'
 import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseOffreEmploi } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import {
@@ -45,7 +44,7 @@ describe('Page Recherche Alternances', () => {
         desLocalites()
       )
 
-      rendered = renderWithContexts(<RechercheOffresPage />, {})
+      rendered = await renderWithContexts(<RechercheOffresPage />, {})
       await userEvent.click(screen.getByRole('radio', { name: 'Alternance' }))
     })
 
@@ -683,7 +682,7 @@ describe('Page Recherche Alternances', () => {
 
         // When
         rendered.unmount()
-        renderWithContexts(<RechercheOffresPage />, {})
+        await renderWithContexts(<RechercheOffresPage />, {})
 
         // Then
         expect(screen.getByLabelText('Alternance')).toBeChecked()
@@ -709,10 +708,10 @@ describe('Page Recherche Alternances', () => {
     })
   })
   describe('quand le conseiller est FT BRSA', () => {
-    it('n’affiche pas la recherche en tant que conseiller FT BRSA', () => {
-      rendered = renderWithContexts(<RechercheOffresPage />, {
+    it('n’affiche pas la recherche en tant que conseiller FT BRSA', async () => {
+      await renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
-          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          structure: 'POLE_EMPLOI_BRSA',
         }),
       })
       // Then

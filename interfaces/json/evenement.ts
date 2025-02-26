@@ -16,6 +16,7 @@ import {
   jsonToTypeSessionMilo,
   SessionMiloBeneficiairesJson,
 } from 'interfaces/json/session'
+import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
@@ -148,6 +149,7 @@ export function jsonToAnimationCollective(
     duree: json.duration,
     statut: jsonToStatutAnimationCollective(json.statut),
     nombreParticipants: json.jeunes.length,
+    etatVisibilite: 'visible',
   }
 
   if (json.nombreMaxParticipants)
@@ -176,7 +178,7 @@ export function sessionMiloJsonToEvenementListItem(
     date: json.dateHeureDebut,
     duree: minutesEntreDeuxDates(dateDebut, dateFin),
     labelBeneficiaires: jsonToBeneficiaires(json.beneficiaires),
-    source: 'MILO',
+    source: structureMilo,
     isSession: true,
     beneficiaires: beneficiairesSession,
   }

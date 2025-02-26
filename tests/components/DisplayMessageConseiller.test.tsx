@@ -6,14 +6,14 @@ import React from 'react'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import { unConseiller } from 'fixtures/conseiller'
 import { unMessage } from 'fixtures/message'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { TypeMessage } from 'interfaces/message'
+import { structureMilo } from 'interfaces/structure'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DiplayMessageConseiller />', () => {
   const nomConseiller = 'johnny boi'
   const customConseiller = unConseiller({
-    structure: StructureConseiller.MILO,
+    structure: structureMilo,
     firstName: 'johnny',
     lastName: 'boi',
     id: 'id-conseiller',
@@ -30,19 +30,17 @@ describe('<DiplayMessageConseiller />', () => {
   describe('affiche le message', () => {
     beforeEach(async () => {
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageConseiller
-            message={message}
-            conseillerNomComplet={nomConseiller}
-            lastSeenByJeune={message.creationDate.plus({ day: 1 })}
-            isConseillerCourant={message.conseillerId === customConseiller.id}
-            onSuppression={supprimerMessage}
-            onModification={modifierMessage}
-            isEnCoursDeModification={false}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageConseiller
+          message={message}
+          conseillerNomComplet={nomConseiller}
+          lastSeenByJeune={message.creationDate.plus({ day: 1 })}
+          isConseillerCourant={message.conseillerId === customConseiller.id}
+          onSuppression={supprimerMessage}
+          onModification={modifierMessage}
+          isEnCoursDeModification={false}
+        />
+      )
     })
 
     it('affiche un message envoyé par le conseiller connecté', async () => {
@@ -101,19 +99,17 @@ describe('<DiplayMessageConseiller />', () => {
     const message = unMessage({ status: 'deleted' })
 
     // When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageConseiller
-          message={message}
-          conseillerNomComplet='Nils Tavernier'
-          lastSeenByJeune={DateTime.now()}
-          isConseillerCourant={true}
-          onSuppression={async () => {}}
-          onModification={() => {}}
-          isEnCoursDeModification={false}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageConseiller
+        message={message}
+        conseillerNomComplet='Nils Tavernier'
+        lastSeenByJeune={DateTime.now()}
+        isConseillerCourant={true}
+        onSuppression={async () => {}}
+        onModification={() => {}}
+        isEnCoursDeModification={false}
+      />
+    )
 
     // Then
     expect(
@@ -127,19 +123,17 @@ describe('<DiplayMessageConseiller />', () => {
     const message = unMessage({ status: 'edited' })
 
     // When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageConseiller
-          message={message}
-          conseillerNomComplet='Nils Tavernier'
-          lastSeenByJeune={DateTime.now().plus({ minute: 1 })}
-          isConseillerCourant={true}
-          onSuppression={async () => {}}
-          onModification={() => {}}
-          isEnCoursDeModification={false}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageConseiller
+        message={message}
+        conseillerNomComplet='Nils Tavernier'
+        lastSeenByJeune={DateTime.now().plus({ minute: 1 })}
+        isConseillerCourant={true}
+        onSuppression={async () => {}}
+        onModification={() => {}}
+        isEnCoursDeModification={false}
+      />
+    )
 
     // Then
     expect(screen.getByText('· Modifié')).toBeInTheDocument()
@@ -156,19 +150,17 @@ describe('<DiplayMessageConseiller />', () => {
       })
 
       //WHEN
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageConseiller
-            message={messageRecherche}
-            conseillerNomComplet={nomConseiller}
-            isConseillerCourant={message.conseillerId === customConseiller.id}
-            estResultatDeRecherche={true}
-            highlight={{ match: [0, 4], key: 'content' }}
-            isEnCoursDeModification={false}
-            onAllerAuMessage={() => {}}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageConseiller
+          message={messageRecherche}
+          conseillerNomComplet={nomConseiller}
+          isConseillerCourant={message.conseillerId === customConseiller.id}
+          estResultatDeRecherche={true}
+          highlight={{ match: [0, 4], key: 'content' }}
+          isEnCoursDeModification={false}
+          onAllerAuMessage={() => {}}
+        />
+      )
 
       //THEN
       const markedElements = screen.getAllByText('Hello', {
@@ -194,19 +186,17 @@ describe('<DiplayMessageConseiller />', () => {
       })
 
       //WHEN
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageConseiller
-            message={messageRecherche}
-            conseillerNomComplet={nomConseiller}
-            isConseillerCourant={message.conseillerId === customConseiller.id}
-            isEnCoursDeModification={false}
-            highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
-            estResultatDeRecherche={true}
-            onAllerAuMessage={() => {}}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageConseiller
+          message={messageRecherche}
+          conseillerNomComplet={nomConseiller}
+          isConseillerCourant={message.conseillerId === customConseiller.id}
+          isEnCoursDeModification={false}
+          highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
+          estResultatDeRecherche={true}
+          onAllerAuMessage={() => {}}
+        />
+      )
 
       //THEN
       const markedElements = screen.getAllByText('toto', {

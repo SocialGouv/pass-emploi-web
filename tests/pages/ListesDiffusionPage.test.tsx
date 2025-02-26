@@ -14,7 +14,7 @@ describe('Page Listes de Diffusion', () => {
   let container: HTMLElement
   describe('contenu', () => {
     beforeEach(async () => {
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ListesDiffusionPage listesDiffusion={[]} />
       ))
     })
@@ -41,9 +41,9 @@ describe('Page Listes de Diffusion', () => {
   })
 
   describe('quand il n’y a pas de listes de diffusion', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given - When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ListesDiffusionPage listesDiffusion={[]} />
       ))
     })
@@ -79,11 +79,11 @@ describe('Page Listes de Diffusion', () => {
 
   describe('quand il y a des listes de diffusion', () => {
     let listesDeDiffusion: ListeDeDiffusion[]
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
       listesDeDiffusion = desListesDeDiffusion()
       // When
-      ;({ container } = renderWithContexts(
+      ;({ container } = await renderWithContexts(
         <ListesDiffusionPage listesDiffusion={listesDeDiffusion} />
       ))
     })

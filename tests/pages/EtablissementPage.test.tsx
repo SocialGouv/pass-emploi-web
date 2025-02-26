@@ -10,11 +10,11 @@ import {
   BeneficiaireEtablissement,
   CategorieSituation,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 import { rechercheBeneficiairesDeLEtablissement } from 'services/beneficiaires.service'
 import { modifierAgence } from 'services/conseiller.service'
-import { getAgencesClientSide } from 'services/referentiel.service'
+import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toRelativeDateTime } from 'utils/date'
 
@@ -52,9 +52,9 @@ describe('EtablissementPage client side', () => {
   describe('Render', () => {
     describe('quand le conseiller est superviseur', () => {
       beforeEach(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
+        ;({ container } = await renderWithContexts(<EtablissementPage />, {
           customConseiller: {
-            structure: StructureConseiller.MILO,
+            structure: structureMilo,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
             estSuperviseur: true,
           },
@@ -83,9 +83,9 @@ describe('EtablissementPage client side', () => {
 
     describe('quand le conseiller n’est pas superviseur', () => {
       beforeEach(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
+        ;({ container } = await renderWithContexts(<EtablissementPage />, {
           customConseiller: {
-            structure: StructureConseiller.MILO,
+            structure: structureMilo,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
           },
         }))
@@ -301,59 +301,17 @@ describe('EtablissementPage client side', () => {
     })
   })
 
-  describe('Quand le conseiller n’est pas MILO', () => {
-    beforeEach(async () => {
-      ;({ container } = renderWithContexts(<EtablissementPage />, {
-        customConseiller: {
-          structure: StructureConseiller.POLE_EMPLOI,
-          agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
-        },
-      }))
-    })
-
-    it('a11y', async () => {
-      let results: AxeResults
-
-      await act(async () => {
-        results = await axe(container)
-      })
-
-      expect(results!).toHaveNoViolations()
-    })
-
-    it('n’affiche pas la colonne Situation', async () => {
-      // Given
-      const inputRechercheBeneficiaire = screen.getByLabelText(
-        /Rechercher un bénéficiaire par son nom ou prénom/
-      )
-      const buttonRechercheBeneficiaire = screen.getByRole('button', {
-        name: 'Rechercher',
-      })
-
-      // When
-      await userEvent.type(inputRechercheBeneficiaire, 'am')
-      await userEvent.click(buttonRechercheBeneficiaire)
-
-      // Then
-      expect(
-        screen.queryByRole('columnheader', { name: 'Situation' })
-      ).not.toBeInTheDocument()
-    })
-  })
-
   describe('quand le conseiller n’a pas d’établissement', () => {
     let agences: Agence[]
 
     beforeEach(async () => {
       agences = uneListeDAgencesMILO()
-      ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
+      ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
 
       // When
-      await act(async () => {
-        ;({ container } = renderWithContexts(<EtablissementPage />, {
-          customConseiller: { structure: StructureConseiller.MILO },
-        }))
-      })
+      ;({ container } = await renderWithContexts(<EtablissementPage />, {
+        customConseiller: { structure: structureMilo },
+      }))
     })
 
     it('a11y', async () => {
@@ -397,9 +355,7 @@ describe('EtablissementPage client side', () => {
       )
 
       // Then
-      expect(getAgencesClientSide).toHaveBeenCalledWith(
-        StructureConseiller.MILO
-      )
+      expect(getMissionsLocalesClientSide).toHaveBeenCalledWith()
       expect(
         screen.getByRole('combobox', { name: /votre Mission Locale/ })
       ).toBeInTheDocument()

@@ -13,6 +13,7 @@ export enum TypeMessage {
   MESSAGE_EVENEMENT = 'MESSAGE_EVENEMENT',
   MESSAGE_EVENEMENT_EMPLOI = 'MESSAGE_EVENEMENT_EMPLOI',
   MESSAGE_SESSION_MILO = 'MESSAGE_SESSION_MILO',
+  AUTO_INSCRIPTION = 'AUTO_INSCRIPTION',
 }
 
 export interface Message {
@@ -30,7 +31,7 @@ export interface Message {
   infoAction?: InfoAction
   infoEvenement?: InfoEvenement
   infoEvenementEmploi?: InfoEvenementEmploi
-  infoSessionImilo?: InfoSessionMilo
+  infoSessionMilo?: InfoSessionMilo
 }
 
 export interface MessageListeDiffusion {

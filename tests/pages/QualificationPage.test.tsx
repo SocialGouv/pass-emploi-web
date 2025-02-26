@@ -24,7 +24,7 @@ describe('QualificationPage client side', () => {
   let container: HTMLElement
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  beforeEach(() => {
+  beforeEach(async () => {
     // Given
     action = uneAction({
       status: StatutAction.TermineeAQualifier,
@@ -35,7 +35,7 @@ describe('QualificationPage client side', () => {
     alerteSetter = jest.fn()
 
     // When
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <QualificationPage
         action={action}
         categories={categories}

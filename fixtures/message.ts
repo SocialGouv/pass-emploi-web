@@ -36,7 +36,7 @@ export const desMessagesAntechronologiques = (): Message[] => [
       'Bonjour, je vous partage une session milo afin d’avoir votre avis',
     creationDate: DateTime.local(2022, 1, 17),
     type: TypeMessage.MESSAGE_SESSION_MILO,
-    infoSessionImilo: {
+    infoSessionMilo: {
       id: 'id-session-milo',
       titre: 'Une session milo',
     },
@@ -210,7 +210,7 @@ export const desMessagesParJour = (): ByDay<Message> => ({
             'Decrypted: Bonjour, je vous partage une session milo afin d’avoir votre avis',
           creationDate: DateTime.local(2022, 1, 17),
           type: TypeMessage.MESSAGE_SESSION_MILO,
-          infoSessionImilo: {
+          infoSessionMilo: {
             id: 'id-session-milo',
             titre: 'Une session milo',
           },

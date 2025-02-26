@@ -14,7 +14,7 @@ import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
 import { SimpleConseiller } from 'interfaces/conseiller'
-import { StructureReaffectation } from 'services/conseiller.service'
+import { StructureReaffectation } from 'interfaces/structure'
 
 type ChoixConseillerProps = {
   name: string

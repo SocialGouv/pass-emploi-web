@@ -8,7 +8,7 @@ import {
   BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
 import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -28,7 +28,7 @@ export default async function Portefeuille({
   )
 
   let beneficiairesAvecCompteurs: BeneficiaireAvecCompteursActionsRdvs[]
-  if (estUserMilo(user)) {
+  if (estMilo(user.structure)) {
     const dateDebut = DateTime.now().startOf('week')
     const dateFin = DateTime.now().endOf('week')
     const compteurActionsPeriode: CompteurActionsPeriode[] =
@@ -61,9 +61,13 @@ export default async function Portefeuille({
   const beneficiairesAlphabetiques = [...beneficiairesAvecCompteurs].sort(
     compareBeneficiairesByNom
   )
+
+  const header =
+    'Portefeuille' +
+    (estFTConnect(user.structure) ? ` ${labelStructure(user.structure)}` : '')
   return (
     <>
-      <PageHeaderPortal header='Portefeuille' />
+      <PageHeaderPortal header={header} />
 
       <PortefeuillePage
         conseillerJeunes={beneficiairesAlphabetiques}

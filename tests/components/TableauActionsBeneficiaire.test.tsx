@@ -1,4 +1,4 @@
-import { act, screen, waitFor, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
@@ -43,26 +43,20 @@ describe('TableauActionsJeune', () => {
     })
     ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
 
-    await act(async () =>
-      renderWithContexts(
-        <TableauActionsBeneficiaire
-          jeune={jeune}
-          actionsFiltrees={[
-            ...actions,
-            actionSansCategorie,
-            actionAvecCategorie,
-          ]}
-          categories={desCategories()}
-          isLoading={false}
-          onFiltres={jest.fn()}
-          onTri={jest.fn()}
-          avecQualification={{
-            onLienExterne: jest.fn(),
-            onQualification: jest.fn(),
-          }}
-          tri={TRI.dateEcheanceDecroissante}
-        />
-      )
+    await renderWithContexts(
+      <TableauActionsBeneficiaire
+        jeune={jeune}
+        actionsFiltrees={[...actions, actionSansCategorie, actionAvecCategorie]}
+        categories={desCategories()}
+        isLoading={false}
+        onFiltres={jest.fn()}
+        onTri={jest.fn()}
+        avecQualification={{
+          onLienExterne: jest.fn(),
+          onQualification: jest.fn(),
+        }}
+        tri={TRI.dateEcheanceDecroissante}
+      />
     )
   })
 

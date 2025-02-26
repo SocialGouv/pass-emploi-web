@@ -10,7 +10,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { estUserMilo } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/structure'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -67,7 +67,7 @@ export default async function Informations({
         lectureSeule={lectureSeule}
         beneficiaire={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
-        onglet={searchParamToOnglet(onglet, !estUserMilo(user))}
+        onglet={searchParamToOnglet(onglet, estMilo(user.structure))}
       />
     </>
   )
@@ -75,11 +75,11 @@ export default async function Informations({
 
 function searchParamToOnglet(
   onglet: string | undefined,
-  estMilo: boolean
+  forMilo: boolean
 ): Onglet {
   switch (onglet) {
     case 'indicateurs':
-      return estMilo ? 'INDICATEURS' : 'INFORMATIONS'
+      return forMilo ? 'INDICATEURS' : 'INFORMATIONS'
     case 'conseillers':
       return 'CONSEILLERS'
     case 'informations':

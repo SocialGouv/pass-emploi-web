@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import React from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
@@ -17,14 +17,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
     })
 
     //When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageBeneficiaire
-          message={message}
-          beneficiaireNomComplet={beneficiaireNomComplet}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageBeneficiaire
+        message={message}
+        beneficiaireNomComplet={beneficiaireNomComplet}
+      />
+    )
 
     // Then
     expect(screen.getByText('Père Castor :')).toBeInTheDocument()
@@ -41,14 +39,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
     })
 
     //When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageBeneficiaire
-          message={message}
-          beneficiaireNomComplet={beneficiaireNomComplet}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageBeneficiaire
+        message={message}
+        beneficiaireNomComplet={beneficiaireNomComplet}
+      />
+    )
 
     // Then
     expect(screen.getByText('Message supprimé')).toBeInTheDocument()
@@ -66,14 +62,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
     })
 
     //When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageBeneficiaire
-          message={message}
-          beneficiaireNomComplet={beneficiaireNomComplet}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageBeneficiaire
+        message={message}
+        beneficiaireNomComplet={beneficiaireNomComplet}
+      />
+    )
 
     // Then
     expect(screen.getByText(/Modifié/)).toBeInTheDocument()
@@ -89,15 +83,13 @@ describe('<DiplayMessageBeneficiaire />', () => {
     })
 
     //When
-    await act(async () => {
-      renderWithContexts(
-        <DisplayMessageBeneficiaire
-          message={message}
-          beneficiaireNomComplet={beneficiaireNomComplet}
-          highlight={{ match: [0, 1], key: 'content' }}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DisplayMessageBeneficiaire
+        message={message}
+        beneficiaireNomComplet={beneficiaireNomComplet}
+        highlight={{ match: [0, 1], key: 'content' }}
+      />
+    )
 
     // Then
     const markedElements = screen.getAllByText('Je', {
@@ -124,14 +116,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+        />
+      )
 
       // Then
       expect(screen.getByText('piece-jointe.jpg')).toBeInTheDocument()
@@ -155,14 +145,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+        />
+      )
 
       // Then
       expect(
@@ -191,14 +179,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+        />
+      )
 
       // Then
       expect(
@@ -227,14 +213,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+        />
+      )
 
       // Then
       expect(
@@ -263,14 +247,12 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+        />
+      )
 
       // Then
       expect(
@@ -296,15 +278,13 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       //When
-      await act(async () => {
-        renderWithContexts(
-          <DisplayMessageBeneficiaire
-            message={message}
-            beneficiaireNomComplet={beneficiaireNomComplet}
-            highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
-          />
-        )
-      })
+      await renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+          highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
+        />
+      )
 
       // Then
       const markedElements = screen.getAllByText('toto', {

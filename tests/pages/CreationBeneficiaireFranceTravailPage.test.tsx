@@ -34,7 +34,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsBeneficiaires().map(extractBeneficiaireWithActivity)
-    ;({ container } = renderWithContexts(
+    ;({ container } = await renderWithContexts(
       <CreationBeneficiaireFranceTravailPage />,
       {
         customAlerte: { setter: alerteSetter },

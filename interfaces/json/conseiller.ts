@@ -1,11 +1,8 @@
 import { Session } from 'next-auth'
 
 import { ConseillerHistorique } from 'interfaces/beneficiaire'
-import {
-  Conseiller,
-  SimpleConseiller,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { Conseiller, SimpleConseiller } from 'interfaces/conseiller'
+import { Structure } from 'interfaces/structure'
 
 export interface ConseillerHistoriqueJson {
   id: string
@@ -74,7 +71,7 @@ export function jsonToConseiller(
     conseillerJson
   const conseiller: Conseiller = {
     ...json,
-    structure: structure as StructureConseiller,
+    structure: structure as Structure,
     estSuperviseur,
     estSuperviseurResponsable,
   }

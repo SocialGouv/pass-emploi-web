@@ -40,7 +40,7 @@ describe('Page Recherche Offres Emploi', () => {
     })
     ;(getCommunesEtDepartements as jest.Mock).mockResolvedValue(desLocalites())
 
-    rendered = renderWithContexts(<RechercheOffresPage />)
+    rendered = await renderWithContexts(<RechercheOffresPage />)
     await userEvent.click(screen.getByRole('radio', { name: 'Offre d’emploi' }))
   })
 
@@ -674,7 +674,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffresPage />, {})
+      await renderWithContexts(<RechercheOffresPage />, {})
 
       // Then
       expect(screen.getByLabelText('Offre d’emploi')).toBeChecked()

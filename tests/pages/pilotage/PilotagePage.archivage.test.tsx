@@ -25,42 +25,39 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
     beforeEach(async () => {
       ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-
-      await act(async () => {
-        ;({ container } = renderWithContexts(
-          <Pilotage
-            onglet='ARCHIVAGE'
-            actions={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-            categoriesActions={[]}
-            animationsCollectives={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-          />,
-          {
-            customPortefeuille: {
-              value: [
-                unBeneficiaireWithActivity({
-                  id: 'a-archiver-1',
-                  prenom: 'Ada',
-                  nom: 'Lovelace',
-                  estAArchiver: true,
-                }),
-                unBeneficiaireWithActivity({
-                  id: 'a-archiver-2',
-                  prenom: 'Grace',
-                  nom: 'Hopper',
-                  estAArchiver: true,
-                }),
-                unBeneficiaireWithActivity(),
-              ],
-            },
-          }
-        ))
-      })
+      ;({ container } = await renderWithContexts(
+        <Pilotage
+          onglet='ARCHIVAGE'
+          actions={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+          categoriesActions={[]}
+          animationsCollectives={{
+            donnees: [],
+            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+          }}
+        />,
+        {
+          customPortefeuille: {
+            value: [
+              unBeneficiaireWithActivity({
+                id: 'a-archiver-1',
+                prenom: 'Ada',
+                nom: 'Lovelace',
+                estAArchiver: true,
+              }),
+              unBeneficiaireWithActivity({
+                id: 'a-archiver-2',
+                prenom: 'Grace',
+                nom: 'Hopper',
+                estAArchiver: true,
+              }),
+              unBeneficiaireWithActivity(),
+            ],
+          },
+        }
+      ))
     })
 
     it('a11y', async () => {
@@ -132,7 +129,7 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
   describe("quand le conseiller n'a pas de bénéficiaire à archiver", () => {
     it('affiche un message qui le précise', async () => {
       // Given
-      renderWithContexts(
+      await renderWithContexts(
         <Pilotage
           onglet='ARCHIVAGE'
           actions={{

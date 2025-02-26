@@ -9,7 +9,7 @@ import {
   BeneficiaireEtablissement,
   CategorieSituation,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -36,10 +36,10 @@ describe('Détails Session Page Server', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+        user: { structure: structureFTCej },
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-        unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
+        unConseiller({ structure: structureFTCej })
       )
 
       //When
@@ -88,7 +88,7 @@ describe('Détails Session Page Server', () => {
     beforeEach(async () => {
       //Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: StructureConseiller.MILO },
+        user: { id: 'id-conseiller', structure: structureMilo },
         accessToken: 'accessToken',
       })
       ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
@@ -97,7 +97,7 @@ describe('Détails Session Page Server', () => {
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
+          structure: structureMilo,
           agence: { nom: 'Agence', id: 'id-test' },
           structureMilo: { nom: 'Agence', id: 'id-test' },
         })

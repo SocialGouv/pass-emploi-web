@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 
 import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
@@ -39,24 +39,22 @@ describe('DetailMessageListeDeDiffusion', () => {
     ])
 
     // When
-    await act(async () => {
-      renderWithContexts(
-        <DetailMessageListeDeDiffusion
-          message={message}
-          onBack={() => {}}
-          chats={[
-            unBeneficiaireChat({
-              ...destinataire1,
-              lastJeuneReading: message.creationDate.plus({ day: 1 }),
-            }),
-            unBeneficiaireChat({
-              ...destinataire2,
-              lastJeuneReading: message.creationDate.minus({ day: 1 }),
-            }),
-          ]}
-        />
-      )
-    })
+    await renderWithContexts(
+      <DetailMessageListeDeDiffusion
+        message={message}
+        onBack={() => {}}
+        chats={[
+          unBeneficiaireChat({
+            ...destinataire1,
+            lastJeuneReading: message.creationDate.plus({ day: 1 }),
+          }),
+          unBeneficiaireChat({
+            ...destinataire2,
+            lastJeuneReading: message.creationDate.minus({ day: 1 }),
+          }),
+        ]}
+      />
+    )
   })
 
   it('affiche le contenu du message', async () => {

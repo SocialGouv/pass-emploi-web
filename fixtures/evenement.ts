@@ -10,6 +10,7 @@ import {
 } from 'interfaces/evenement'
 import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 
 export function typesEvenement(): TypeEvenementReferentiel[] {
   return [...typesEvenementCEJ(), ...typesAnimationCollective()]
@@ -118,7 +119,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
         id: '2',
       },
       beneficiaires: [{ id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
-      source: 'MILO',
+      source: structureMilo,
     },
   ]
 }
@@ -155,6 +156,7 @@ export function uneAnimationCollective(
     statut: StatutAnimationCollective.AVenir,
     nombreParticipants: 1,
     nombreMaxParticipants: 10,
+    etatVisibilite: 'visible',
   }
   return { ...defaults, ...overrides }
 }

@@ -5,14 +5,20 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import { RenseignementAgenceMissionLocaleForm } from 'components/RenseignementAgenceMissionLocaleForm'
+import { RenseignementMissionLocaleForm } from 'components/RenseignementMissionLocaleForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import {
+  estFTConnect,
+  estMilo,
+  getUrlFormulaireSupport,
+  labelStructure,
+  structureMilo,
+} from 'interfaces/structure'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -26,15 +32,15 @@ const ConfirmationSuppressionCompteConseillerModal = dynamic(
 )
 
 type ProfilProps = {
-  referentielAgences: Agence[]
+  referentielMissionsLocales: Agence[]
 }
 
-function ProfilPage({ referentielAgences }: ProfilProps) {
+function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const conseillerEstMilo = estMilo(conseiller)
+  const conseillerEstMilo = estMilo(conseiller.structure)
   const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
     useState(false)
   const [
@@ -104,6 +110,16 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
     }
   }
 
+  function trackTutoSuppression() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Tutoriel',
+      action: 'Suppression compte',
+      nom: '',
+      aDesBeneficiaires: null,
+    })
+  }
+
   function trackContacterSupportClick() {
     trackEvent({
       structure: conseiller.structure,
@@ -117,7 +133,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
   function trackAccederAIMilo() {
     trackPage({
       customTitle: 'Accès i-milo',
-      structure: StructureConseiller.MILO,
+      structure: structureMilo,
       aDesBeneficiaires,
     })
   }
@@ -147,6 +163,22 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+
+        {estFTConnect(conseiller.structure) && (
+          <InformationMessage label='Changement d’agence ou de dispositif ?'>
+            <p>
+              Pour changer d’agence ou de dispositif, vous devez supprimer votre
+              compte.
+              <ExternalLink
+                label='Consultez la procédure à suivre'
+                href='https://doc.pass-emploi.beta.gouv.fr/suppression-de-compte/'
+                onClick={trackTutoSuppression}
+                className='!flex mt-2'
+              />
+            </p>
+          </InformationMessage>
+        )}
+
         <h3 className='text-base-bold'>
           {conseiller.firstName} {conseiller.lastName}
         </h3>
@@ -167,6 +199,17 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
               </dt>
               <dd className='ml-2 inline text-base-bold'>
                 {conseiller.agence.nom}
+              </dd>
+            </div>
+          )}
+
+          {estFTConnect(conseiller.structure) && (
+            <div>
+              <dt className='mt-2 inline text-base-regular'>
+                Votre dispositif :
+              </dt>
+              <dd className='ml-2 inline text-base-bold'>
+                {labelStructure(conseiller.structure)}
               </dd>
             </div>
           )}
@@ -212,8 +255,8 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
                   Pour ce faire merci de&nbsp;
                   <span className={'text-primary_darken hover:text-primary'}>
                     <ExternalLink
-                      href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-                      label={'contacter le support'}
+                      href={getUrlFormulaireSupport(conseiller.structure)}
+                      label='contacter le support'
                       iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}
                     />
@@ -223,9 +266,9 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
             )}
 
             {!conseiller.agence && (
-              <RenseignementAgenceMissionLocaleForm
-                referentielAgences={referentielAgences}
-                onAgenceChoisie={selectAgence}
+              <RenseignementMissionLocaleForm
+                referentielMissionsLocales={referentielMissionsLocales}
+                onMissionLocaleChoisie={selectAgence}
                 onContacterSupport={trackContacterSupportClick}
               />
             )}

@@ -20,9 +20,7 @@ describe('OffrePage client side - Immersion', () => {
     offre = unDetailImmersion()
 
     // When
-    await act(async () => {
-      ;({ container } = renderWithContexts(<OffrePage offre={offre} />))
-    })
+    ;({ container } = await renderWithContexts(<OffrePage offre={offre} />))
   })
 
   it('a11y', async () => {

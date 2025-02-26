@@ -4,8 +4,8 @@ import { notFound, redirect } from 'next/navigation'
 import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 import Cloture from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/page'
 import { unEvenement } from 'fixtures/evenement'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { structureFTCej } from 'interfaces/structure'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -90,7 +90,7 @@ describe('CloturePage server side', () => {
     it('renvoie sur la liste des jeunes', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: StructureConseiller.POLE_EMPLOI },
+        user: { structure: structureFTCej },
       })
 
       // When

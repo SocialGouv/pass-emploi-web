@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -18,8 +18,8 @@ import {
   extractBeneficiaireWithActivity,
   Portefeuille,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
@@ -358,25 +358,23 @@ async function renderFicheBeneficiaire(
   portefeuilleSetter?: (updatedBeneficiaires: Portefeuille) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
-  await act(async () => {
-    renderWithContexts(
-      <FicheBeneficiairePage
-        estMilo={true}
-        beneficiaire={beneficiaire}
-        rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
-        categoriesActions={desCategories()}
-        ongletInitial='agenda'
-        lectureSeule={false}
-      />,
-      {
-        customConseiller: {
-          id: 'id-conseiller',
-          structure: StructureConseiller.MILO,
-        },
-        customPortefeuille: { setter: portefeuilleSetter },
-        customAlerte: { setter: alerteSetter },
-      }
-    )
-  })
+  await renderWithContexts(
+    <FicheBeneficiairePage
+      estMilo={true}
+      beneficiaire={beneficiaire}
+      rdvs={[]}
+      actionsInitiales={desActionsInitiales()}
+      categoriesActions={desCategories()}
+      ongletInitial='agenda'
+      lectureSeule={false}
+    />,
+    {
+      customConseiller: {
+        id: 'id-conseiller',
+        structure: structureMilo,
+      },
+      customPortefeuille: { setter: portefeuilleSetter },
+      customAlerte: { setter: alerteSetter },
+    }
+  )
 }
