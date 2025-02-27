@@ -65,7 +65,9 @@ function AuthErrorPage({
                 <br />
               </span>
             ))}
-            {codeErreur && <p className='text-xs mt-6'>code : {codeErreur}</p>}
+            {codeErreur && !codeErreur.includes('UTILISATEUR') && (
+              <p className='text-xs mt-6'>code : {codeErreur}</p>
+            )}
 
             {withStructure?.withTuto && (
               <div className='mt-4'>
