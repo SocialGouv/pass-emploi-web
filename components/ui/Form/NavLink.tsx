@@ -91,7 +91,7 @@ function BadgeNavLink({ label, count }: { label: string; count?: number }) {
       )}
 
       {count && (
-        <span className='w-4 h-4 absolute top-0 left-0 rounded-full border border-white bg-warning text-white text-xs-bold !leading-none'>
+        <span className='w-4 h-4 absolute top-0 left-0 rounded-full border border-white bg-warning text-white text-xs-bold leading-none!'>
           {count}
         </span>
       )}

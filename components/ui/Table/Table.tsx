@@ -39,12 +39,7 @@ function Caption({
     >
       {text}{' '}
       {count !== undefined && (
-        <Badge
-          count={count}
-          textColor='primary'
-          bgColor='primary_lighten'
-          size={6}
-        />
+        <Badge count={count} className='text-primary bg-primary_lighten' />
       )}
     </caption>
   )

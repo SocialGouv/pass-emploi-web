@@ -15,8 +15,7 @@ export default function OffreRow({ offre }: { offre: Offre }) {
       <TD>
         <TagMetier
           label={offre.type}
-          color='primary'
-          backgroundColor='primary_lighten'
+          className='text-primary bg-primary_lighten'
         />
       </TD>
       <TDLink

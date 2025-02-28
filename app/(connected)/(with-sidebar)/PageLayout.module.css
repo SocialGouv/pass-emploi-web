@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .page {
   flex-grow: 1;
   display: flex;
@@ -20,19 +22,19 @@
   padding: 40px 1rem;
 }
 
-@media screen and (min-width: theme('screens.layout_s')) {
+@variant layout_s {
   .content.content_centered {
     padding: 40px 0;
   }
 }
 
-@media screen and (min-width: theme('screens.layout_l')) {
+@variant layout_l {
   .content.content_fullWidth {
     padding: 1.5rem;
   }
 }
 
-@media screen and (min-width: theme('screens.layout_xl')) {
+@variant layout_xl {
   .content.content_fullWidth {
     padding: 2rem;
   }

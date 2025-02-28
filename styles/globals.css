@@ -1,23 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('tailwind.css');
 
 :root {
-  --primary: #3B69D1;
+  --primary: #3b69d1;
   --primary-darken: #274996;
 }
 
 [data-theme='darker'] {
   --primary: #274996;
-  --primary-darken: #172B5A;
+  --primary-darken: #172b5a;
 }
 
 html {
   min-height: 100%;
   padding: 0;
   margin: 0;
-  background-color: theme('colors.white');
-  color: #000;
+  background-color: var(--color-white);
+  color: var(--color-black);
   overflow-y: hidden;
 }
 
@@ -25,7 +23,7 @@ body {
   height: 100dvh;
   padding: 0;
   margin: 0;
-  color: theme('colors.content_color');
+  color: var(--color-content_color);
   position: fixed;
 }
 
@@ -33,10 +31,6 @@ body {
   body {
     height: 100vh;
   }
-}
-
-a {
-  color: inherit;
 }
 
 textarea {

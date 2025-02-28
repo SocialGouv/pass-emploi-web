@@ -41,12 +41,12 @@ function Modal(
   useImperativeHandle(ref, () => modalContainerRef.current!)
 
   const modalTemplate = (
-    <div className='rounded-l bg-white max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'>
+    <div className='rounded-large bg-white max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'>
       <div className='flex justify-end'>
         <button
           type='button'
           onClick={(e) => modalContainerRef.current!.closeModal(e)}
-          className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
+          className='p-2 border-none hover:bg-primary_lighten hover:rounded-full'
         >
           <IconComponent
             name={IconName.Close}

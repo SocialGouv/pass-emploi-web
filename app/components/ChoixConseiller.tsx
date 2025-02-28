@@ -161,7 +161,7 @@ function ChoixConseiller(
           )}
           <fieldset
             ref={listeRef}
-            className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
+            className='grid grid-cols-[auto_1fr_2fr] gap-2 pb-2'
           >
             <legend className='sr-only'>Choix du conseiller {name}</legend>
             {choixConseillers.map((conseiller) => (

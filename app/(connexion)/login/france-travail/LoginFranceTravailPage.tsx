@@ -30,7 +30,7 @@ function LoginFranceTravailPage() {
         {errorMsg && <FailureAlert label={errorMsg} />}
 
         <div className='flex flex-wrap gap-2'>
-          <div className='flex-[1_1_300px] py-16 rounded-l border border-primary_lighten text-center'>
+          <div className='flex-[1_1_300px] py-16 rounded-large border border-primary_lighten text-center'>
             <span
               id='connexion-unique--description'
               className='text-m-regular text-primary_darken'
@@ -42,13 +42,13 @@ function LoginFranceTravailPage() {
               aria-label='Connexion France Travail'
               aria-describedby='connexion-unique--description'
               onClick={handleSignin}
-              className='block mx-auto mt-4 w-fit py-4 px-8 rounded-full bg-primary_darken text-l-bold text-white hover:bg-primary_darken_strong'
+              className='block mx-auto mt-4 w-fit py-4 px-8 rounded-large bg-primary_darken text-l-bold text-white hover:bg-primary_darken_strong'
             >
               Connexion
             </button>
           </div>
 
-          <div className='flex-[1_1_300px] rounded-l border border-primary_lighten flex justify-center items-center'>
+          <div className='flex-[1_1_300px] rounded-large border border-primary_lighten flex justify-center items-center'>
             <Link
               href='/login/france-travail/dispositifs'
               className='text-m-regular underline text-primary_darken hover:text-primary_darken_strong'

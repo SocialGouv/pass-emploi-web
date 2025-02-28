@@ -39,7 +39,7 @@ export default function TR({
       ref={rowRef}
       className={`rounded-base ${!isHeader ? style : ''} ${
         containsExtendedClickZone ? clickableStyle : ''
-      } ${containsExtendedClickZone ? 'relative rotate-0' : ''}
+      } ${containsExtendedClickZone ? 'relative' : ''}
       ${className ?? ''}`}
     >
       {children}

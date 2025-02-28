@@ -621,7 +621,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                       name={IconName.Error}
                       focusable={false}
                       aria-hidden={true}
-                      className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                      className='fill-warning w-6 h-6 mr-2 shrink-0'
                     />
                     <p className='text-warning'>{erreurReaffectation}</p>
                   </div>

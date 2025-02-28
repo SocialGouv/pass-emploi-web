@@ -1,12 +1,17 @@
+@reference "../tailwind.css";
+
 .button {
   padding: 0.5rem 1rem;
   height: max-content;
-  border-radius: theme('borderRadius.l');
-  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+  border-radius: var(--radius-large);
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background-color 0.2s;
 }
 
 .button:hover {
-  box-shadow: theme('boxShadow.m');
+  box-shadow: theme(--shadow-m);
 }
 
 .button[disabled]:hover {
@@ -22,28 +27,28 @@
 */
 
 .buttonPrimary {
-  background-color: theme('colors.primary');
-  color: theme('colors.white');
+  background-color: var(--color-primary);
+  color: var(--color-white);
   border: 1px solid transparent;
-  box-shadow: theme('boxShadow.base');
+  box-shadow: theme(--shadow-md);
 }
 
 .buttonPrimary:hover,
 .buttonPrimary:active {
-  background-color: theme('colors.primary_darken');
-  color: theme('colors.white');
-  border: 1px solid theme('colors.primary');
+  background-color: var(--color-primary_darken);
+  color: var(--color-white);
+  border: 1px solid var(--color-primary);
 }
 
 .buttonPrimary[disabled] {
-  background-color: theme('colors.primary');
+  background-color: var(--color-primary);
   opacity: 50%;
   cursor: not-allowed;
   border: 1px solid transparent;
 }
 
 .buttonPrimary[disabled]:hover {
-  color: theme('colors.white');
+  color: var(--color-white);
   border: 1px solid transparent;
 }
 
@@ -53,19 +58,19 @@
 
 .buttonSecondary,
 .buttonTertiary {
-  background-color: theme('colors.white');
-  color: theme('colors.primary');
-  border: 1px solid theme('colors.primary');
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .buttonTertiary {
-  background-color: theme('colors.primary_lighten');
+  background-color: var(--color-primary_lighten);
   border: 1px solid transparent;
 }
 
 .buttonSecondary:hover,
 .buttonSecondary:active {
-  background-color: theme('colors.primary_lighten');
+  background-color: var(--color-primary_lighten);
 }
 
 .buttonSecondary[disabled],
@@ -79,14 +84,14 @@
 */
 
 .buttonWarning {
-  background-color: theme('colors.warning_lighten');
-  color: theme('colors.warning');
-  box-shadow: theme('boxShadow.base');
+  background-color: var(--color-warning_lighten);
+  color: var(--color-warning);
+  box-shadow: theme(--shadow-base);
 }
 
 .buttonWarning:hover {
-  background-color: theme('colors.warning');
-  color: theme('colors.white');
+  background-color: var(--color-warning);
+  color: var(--color-white);
 }
 
 .buttonWarning[disabled] {
@@ -94,8 +99,8 @@
 }
 
 .buttonWarning[disabled]:hover {
-  background-color: theme('colors.warning_lighten');
-  color: theme('colors.warning');
+  background-color: var(--color-warning_lighten);
+  color: var(--color-warning);
 }
 
 /**
@@ -103,16 +108,15 @@
 */
 
 .buttonPrimaryDark {
-  background-color: theme('colors.primary_darken');
-  color: theme('colors.white');
+  background-color: var(--color-primary_darken);
+  color: var(--color-white);
   border: 1px solid transparent;
-  box-shadow: theme('boxShadow.base');
+  box-shadow: theme(--shadow-base);
 }
 
 .buttonPrimaryDark:hover,
 .buttonPrimaryDark:active {
-  background-color: theme('colors.primary_darken_strong');
-  color: theme('colors.white');
-  border: 1px solid theme('colors.primary_darken_strong');
+  background-color: var(--color-primary_darken_strong);
+  color: var(--color-white);
+  border: 1px solid var(--color-primary_darken_strong);
 }
-

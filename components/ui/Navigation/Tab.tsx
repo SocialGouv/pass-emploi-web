@@ -57,10 +57,12 @@ export default function Tab({
             <span className='sr-only'> </span>
             <Badge
               count={count}
-              textColor={accentuer ? 'white' : 'primary'}
-              bgColor={accentuer ? 'warning' : 'primary_lighten'}
-              style='shrink-0 ml-4'
-              size={6}
+              className={
+                'shrink-0 ml-4 ' +
+                (accentuer
+                  ? 'text-white bg-warning'
+                  : 'text-primary bg-primary_lighten')
+              }
             />
             <span className='sr-only'> éléments</span>
           </>
