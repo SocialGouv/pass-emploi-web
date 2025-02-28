@@ -1,10 +1,9 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
+import EmptyState from 'components/EmptyState'
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
@@ -148,17 +147,10 @@ export default function OngletActionsPilotage({
       )}
 
       {actions.length === 0 && (
-        <div className='bg-grey_100 flex flex-col justify-center items-center'>
-          <IllustrationComponent
-            name={IllustrationName.EventWhite}
-            className='w-48 h-48'
-            aria-hidden={true}
-            focusable={false}
-          />
-          <p className='mt-2 mb-12 text-base-medium w-2/3 text-center'>
-            Vous n’avez pas d’action à qualifier.
-          </p>
-        </div>
+        <EmptyState
+          illustrationName={IllustrationName.Event}
+          titre='Vous n’avez pas d’action à qualifier.'
+        />
       )}
 
       {actions.length > 0 && (

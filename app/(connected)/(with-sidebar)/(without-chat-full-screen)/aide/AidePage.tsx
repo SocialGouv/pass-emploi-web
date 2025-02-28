@@ -103,7 +103,7 @@ export default function AidePage() {
           <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Question}
-              className='w-24 h-24 self-center fill-primary'
+              className='w-24 h-24 self-center fill-primary [--secondary-fill:var(--color-white)]'
               aria-hidden={true}
             />
             <h4 className='text-m-bold mb-2'>
@@ -130,7 +130,7 @@ export default function AidePage() {
           <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Forum}
-              className='w-24 h-24 self-center fill-primary'
+              className='w-24 h-24 self-center fill-primary [--secondary-fill:var(--color-white)]'
               aria-hidden={true}
             />
             <h4 className='text-m-bold mb-2'>

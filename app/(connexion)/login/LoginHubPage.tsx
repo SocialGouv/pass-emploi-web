@@ -4,9 +4,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
 
+import IllustrationLogoCD from 'assets/images/logo-cd.svg'
+import IllustrationLogoFT from 'assets/images/logo-ft.svg'
+import IllustrationLogoMilo from 'assets/images/logo-milo.svg'
 import LoginHeader from 'components/LoginHeader'
 import LoginButton from 'components/ui/Button/LoginButton'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { signin } from 'utils/auth/auth'
 import { useLoginErrorMessage } from 'utils/auth/loginErrorMessageContext'
@@ -37,22 +39,22 @@ function LoginHubPage() {
           <li>
             <LoginButton
               label='Mission locale'
-              illustrationName={IllustrationName.LogoMilo}
               onClick={() => handleSignin('similo-conseiller')}
+              Illustration={IllustrationLogoMilo}
             />
           </li>
           <li>
             <LoginButton
               label='France Travail'
-              illustrationName={IllustrationName.LogoFT}
               href='/login/france-travail'
+              Illustration={IllustrationLogoFT}
             />
           </li>
           <li>
             <LoginButton
               label='Conseil départemental'
-              illustrationName={IllustrationName.LogoCD}
               onClick={() => handleSignin('conseildepartemental-conseiller')}
+              Illustration={IllustrationLogoCD}
             />
           </li>
         </ul>

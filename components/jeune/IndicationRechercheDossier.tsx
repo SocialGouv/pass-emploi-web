@@ -1,6 +1,6 @@
-import Indication1 from '../../assets/images/indication-dossier-milo-1.svg'
-import Indication2 from '../../assets/images/indication-dossier-milo-2.svg'
-import Indication3 from '../../assets/images/indication-dossier-milo-3.svg'
+import Indication1 from 'assets/images/indication-dossier-milo-1.svg'
+import Indication2 from 'assets/images/indication-dossier-milo-2.svg'
+import Indication3 from 'assets/images/indication-dossier-milo-3.svg'
 
 function IndicationRechercheDossier() {
   return (

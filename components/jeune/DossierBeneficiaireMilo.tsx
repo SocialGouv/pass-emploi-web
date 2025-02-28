@@ -7,10 +7,9 @@ import React, {
   useState,
 } from 'react'
 
-import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/beneficiaire'
@@ -251,7 +250,8 @@ function DossierBeneficiaireMilo(
 
           {!dossier.email && (
             <Button type='button' onClick={onRefresh}>
-              <RefreshIcon
+              <IconComponent
+                name={IconName.Refresh}
                 className='w-4 h-4 mr-2.5'
                 aria-hidden={true}
                 focusable={false}

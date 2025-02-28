@@ -3,7 +3,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react'
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 
 type FormulaireRechercheDossierProps = {

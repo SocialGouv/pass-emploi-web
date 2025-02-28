@@ -5,15 +5,13 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
+import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import TableauBeneficiaires from 'components/jeune/TableauBeneficiaires'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   BeneficiaireAvecCompteursActionsRdvs,
@@ -191,9 +189,8 @@ function PortefeuillePage({
                 : ''}
               .
             </h2>
-            <IllustrationComponent
-              name={IllustrationName.CurvyArrow}
-              className='absolute top-0 -right-16 fill-primary w-[100px] [--secondary-fill:theme(colors.primary\_lighten)]'
+            <IllustrationCurvyArrow
+              className='absolute top-0 -right-16 fill-primary w-[100px]'
               aria-hidden={true}
               focusable={false}
             />

@@ -4,7 +4,7 @@ import { BaseBeneficiaireASelectionner } from 'app/(connected)/(with-sidebar)/(w
 import RadioBox from 'components/action/RadioBox'
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import { ValueWithError } from 'components/ValueWithError'

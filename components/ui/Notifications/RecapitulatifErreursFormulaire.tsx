@@ -1,6 +1,6 @@
 import React, { ForwardedRef, forwardRef } from 'react'
 
-import FailureIcon from 'assets/icons/informations/info.svg'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export type LigneErreur = {
   ancre: string
@@ -29,7 +29,8 @@ function RecapitulatifErreursFormulaire(
       {erreurs.length > 0 && (
         <>
           <div className='flex items-center mb-4'>
-            <FailureIcon
+            <IconComponent
+              name={IconName.Info}
               aria-hidden={true}
               focusable={false}
               className='w-6 h-6 mr-2 fill-warning shrink-0'

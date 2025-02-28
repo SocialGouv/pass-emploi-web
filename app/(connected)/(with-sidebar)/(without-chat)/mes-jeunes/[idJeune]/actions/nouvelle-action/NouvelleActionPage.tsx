@@ -78,7 +78,7 @@ function NouvelleActionPage({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='m-auto fill-success_darken w-[180px] h-[180px]'
+            className='m-auto w-[180px] h-[180px] fill-success_darken [--secondary-fill:var(--color-success_lighten)]'
             aria-hidden={true}
             focusable={false}
           />

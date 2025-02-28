@@ -5,10 +5,10 @@ import React, {
   useRef,
 } from 'react'
 
-import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
@@ -56,7 +56,7 @@ function ListeConversations(
                 name={IllustrationName.Messagerie}
                 focusable={false}
                 aria-hidden={true}
-                className='w-[360px] h-[200px] fill-primary [--secondary-fill:theme(colors.white)]'
+                className='w-[360px] h-[200px] fill-primary [--secondary-fill:var(--color-white)]'
               />
               <div className='mx-4'>
                 <p className='text-base-bold'>Vous pouvez échanger :</p>
@@ -97,7 +97,8 @@ function ListeConversations(
           style={ButtonStyle.PRIMARY}
           className='absolute bottom-8 self-center'
         >
-          <MessageGroupeIcon
+          <IconComponent
+            name={IconName.OutgoingMail}
             aria-hidden={true}
             focusable={false}
             className='w-4 shrink-0 mr-2'
