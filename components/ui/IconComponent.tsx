@@ -9,6 +9,7 @@ import DeleteIcon from 'assets/icons/actions/delete.svg'
 import EditIcon from 'assets/icons/actions/edit.svg'
 import FilterIcon from 'assets/icons/actions/filter.svg'
 import OutgoingMailIcon from 'assets/icons/actions/outgoing_mail.svg'
+import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import SearchIcon from 'assets/icons/actions/search.svg'
 import SendIcon from 'assets/icons/actions/send.svg'
 import SettingsIcon from 'assets/icons/actions/settings.svg'
@@ -47,7 +48,6 @@ import LeaderboardFillIcon from 'assets/icons/informations/leaderboard_fill.svg'
 import LeaderboardOutlineIcon from 'assets/icons/informations/leaderboard_outline.svg'
 import LocationOnIcon from 'assets/icons/informations/location_on.svg'
 import LockIcon from 'assets/icons/informations/lock.svg'
-import MailIcon from 'assets/icons/informations/mail.svg'
 import NotificationIcon from 'assets/icons/informations/notification.svg'
 import PageViewFillIcon from 'assets/icons/informations/page_view_fill.svg'
 import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg'
@@ -128,7 +128,6 @@ export enum IconName {
   LocationOn = 'LocationOn',
   Lock = 'Lock',
   Logout = 'Logout',
-  Mail = 'Mail',
   Menu = 'Menu',
   More = 'More',
   Note = 'Note',
@@ -145,6 +144,7 @@ export enum IconName {
   Pending = 'Pending',
   PeopleFill = 'PeopleFill',
   PeopleOutline = 'PeopleOutline',
+  Refresh = 'Refresh',
   Remove = 'Remove',
   Schedule = 'Schedule',
   ScheduleOutline = 'ScheduleOutline',
@@ -201,7 +201,6 @@ const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.LocationOn]: LocationOnIcon,
   [IconName.Lock]: LockIcon,
   [IconName.Logout]: LogoutIcon,
-  [IconName.Mail]: MailIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.More]: MoreIcon,
   [IconName.NumberCircleOne]: NumberCircleOneIcon,
@@ -233,6 +232,7 @@ const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.Pending]: PendingIcon,
+  [IconName.Refresh]: RefreshIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.Note]: NoteIcon,
   [IconName.Notification]: NotificationIcon,

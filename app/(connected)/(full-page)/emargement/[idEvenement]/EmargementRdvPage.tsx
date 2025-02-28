@@ -3,9 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect } from 'react'
 
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import IllustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
@@ -55,12 +53,9 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
           <h1 className='text-l-bold'>Feuille d’émargement</h1>
           <h2>Mission Locale de {agence}</h2>
         </div>
-        <IllustrationComponent
-          name={IllustrationName.LogoCEJ}
-          role='img'
+        <IllustrationLogoCEJ
+          aria-hidden={true}
           focusable={false}
-          aria-label='contrat d’engagement jeune'
-          title='contrat d’engagement jeune'
           className='h-[64px] w-[120px] fill-white'
         />
       </header>

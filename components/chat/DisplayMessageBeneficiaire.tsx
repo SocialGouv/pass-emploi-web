@@ -185,7 +185,7 @@ function MessagePJ({
             conserver de manière sécurisée.
           </p>
           <div className='flex flex-row justify-end items-center break-all'>
-            <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
+            <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
             {nom}
           </div>
         </>
@@ -203,7 +203,7 @@ function MessagePJ({
     default:
       return (
         <div className='flex flex-row justify-end items-center break-all'>
-          <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
+          <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
           {nom}
         </div>
       )

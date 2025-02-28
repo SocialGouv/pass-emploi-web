@@ -1,9 +1,11 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 import Image from 'next/image'
 import {
+  FC,
   ForwardedRef,
   forwardRef,
   ReactNode,
+  SVGProps,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -22,7 +24,7 @@ type ModalProps = Pick<ModalContainerProps, 'onClose'> & {
   title: string
   children: ReactNode
   titleIcon?: IconName
-  titleIllustration?: IllustrationName
+  titleIllustration?: IllustrationName | FC<SVGProps<SVGElement>>
   titleImageSrc?: string | StaticImport
 }
 
@@ -67,14 +69,26 @@ function Modal(
             className='w-16 h-16 m-auto fill-primary mb-8'
           />
         )}
-        {titleIllustration && (
+        {titleIllustration && !isSVG(titleIllustration) && (
           <IllustrationComponent
             name={titleIllustration}
             focusable={false}
             aria-hidden={true}
-            className='w-1/4 m-auto fill-primary [--secondary-fill:theme(colors.primary\_lighten)] mb-8'
+            className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary_lighten)] mb-8'
           />
         )}
+        {titleIllustration &&
+          isSVG(titleIllustration) &&
+          (() => {
+            const TitleIllustration = titleIllustration
+            return (
+              <TitleIllustration
+                focusable={false}
+                aria-hidden={true}
+                className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary_lighten)] mb-8'
+              />
+            )
+          })()}
         {titleImageSrc && (
           <Image
             src={titleImageSrc}
@@ -107,3 +121,9 @@ function Modal(
 }
 
 export default forwardRef(Modal)
+
+function isSVG(
+  prop: string | FC<SVGProps<SVGElement>>
+): prop is FC<SVGProps<SVGElement>> {
+  return typeof prop !== 'string'
+}

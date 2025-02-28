@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 
-import FailureIcon from 'assets/icons/informations/info.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type FailureMessageProps = {
@@ -24,7 +23,8 @@ export default function FailureAlert({
       tabIndex={shouldFocus ? -1 : undefined}
     >
       <div className='flex'>
-        <FailureIcon
+        <IconComponent
+          name={IconName.Info}
           aria-hidden={true}
           focusable={false}
           className='w-6 h-6 mr-2 fill-warning shrink-0'

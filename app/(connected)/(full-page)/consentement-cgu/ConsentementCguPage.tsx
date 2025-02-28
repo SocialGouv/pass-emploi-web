@@ -8,7 +8,7 @@ import React, { FormEvent, useState } from 'react'
 
 import Checkbox from 'components/offres/Checkbox'
 import Button from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { estPassEmploi } from 'interfaces/structure'

@@ -2,7 +2,7 @@ import React, { FormEvent, MouseEvent, useEffect, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -174,7 +174,7 @@ export function RenseignementMissionLocaleForm({
             onClick={onContacterSupport}
           >
             <IconComponent
-              name={IconName.Mail}
+              name={IconName.OutgoingMail}
               aria-hidden={true}
               focusable={false}
               className='inline w-4 h-4 mr-2'

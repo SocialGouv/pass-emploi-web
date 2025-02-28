@@ -15,7 +15,7 @@ import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
@@ -456,10 +456,10 @@ export function Conversation({
                       </p>
                     </div>
                     <IllustrationComponent
-                      name={IllustrationName.SendWhite}
+                      name={IllustrationName.Send}
                       focusable={false}
                       aria-hidden={true}
-                      className='w-48 h-48 m-auto mt-8 [--secondary-fill:theme(colors.grey\_100)]'
+                      className='w-48 h-48 m-auto mt-8 fill-disabled [--secondary-fill:var(--color-white)]'
                     />
                   </>
                 )}
