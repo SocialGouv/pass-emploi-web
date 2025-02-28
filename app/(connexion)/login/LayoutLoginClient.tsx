@@ -68,7 +68,7 @@ export default function LayoutLoginClient({
       <LoginErrorMessageProvider state={[errorMsg, setErrorMsg]}>
         <div className='flex flex-col h-screen w-screen overflow-y-auto'>
           <div className='grow flex flex-col justify-center items-center bg-primary_lighten'>
-            <div className='max-w-[1020px] w-full bg-white rounded-l p-16'>
+            <div className='max-w-[1020px] w-full bg-white rounded-large p-16'>
               {!pageEstHubLogin && (
                 <Link
                   href='/login'

@@ -611,7 +611,7 @@ export function Conversation({
                 <textarea
                   ref={inputRef}
                   id='input-new-message'
-                  className='w-full outline-none text-base-regular'
+                  className='w-full outline-hidden text-base-regular'
                   onFocus={() => setReadByConseiller(beneficiaireChat.chatId)}
                   onChange={(e) => setUserInput(e.target.value)}
                   title='Écrivez votre message ici...'

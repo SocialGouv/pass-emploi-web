@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary_lighten: #eef1f8;
+  --color-primary_darken: var(--primary-darken);
+  --color-primary_darken_strong: #172b5a;
+  --color-success: #0d7f50;
+  --color-success_lighten: #e5f6ef;
+  --color-success_darken: #033c24;
+  --color-warning: #d31140;
+  --color-warning_lighten: #fdeaef;
+  --color-alert: #ff975c;
+  --color-alert_lighten: #ffc6a6;
+  --color-accent_1: #950eff;
+  --color-accent_1_lighten: #f4e5ff;
+  --color-accent_2: #4a526d;
+  --color-accent_2_lighten: #f6f6f6;
+  --color-accent_3: #0c7a81;
+  --color-accent_3_lighten: #dffdff;
+  --color-additional_1: #fcbf49;
+  --color-additional_1_lighten: #ffd88d;
+  --color-additional_2: #15616d;
+  --color-additional_2_lighten: #ddffed;
+  --color-additional_3: #5149a8;
+  --color-additional_3_lighten: #d2cef6;
+  --color-additional_4: #2186c7;
+  --color-additional_4_lighten: #dbedf9;
+  --color-additional_5: #49bbbf;
+  --color-additional_5_lighten: #cef0f1;
+  --color-content_color: #161616;
+  --color-gray-*: initial; /* disables default color gray */
+  --color-grey_100: #f1f1f1;
+  --color-grey_500: #b2b2b2;
+  --color-grey_700: #878787;
+  --color-grey_800: #646464;
+  --color-disabled: #73758d;
+
+  --breakpoint-layout_xs: 375px;
+  --breakpoint-layout_s: 600px;
+  --breakpoint-layout_base: 900px;
+  --breakpoint-layout_m: 1024px;
+  --breakpoint-layout_l: 1200px;
+  --breakpoint-layout_xl: 1425px;
+
+  --radius-base: 8px;
+  --radius-large: 24px;
+  --radius-full: 9999px;
+
+  --shadow-base: 0 4px 12px 0px rgba(39, 73, 150, 0.12);
+  --shadow-m: 0 8px 12px 0px rgba(39, 73, 150, 0.24);
+}
+
+@custom-variant short (@media (max-height: 350px));

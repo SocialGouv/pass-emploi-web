@@ -93,7 +93,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
               <TD>
                 <label
                   htmlFor='cloture-tout-selectionner'
-                  className='cursor-pointer before:fixed before:inset-0 before:z-10'
+                  className='cursor-pointer before:absolute before:inset-0 before:z-10'
                 >
                   Tout sélectionner
                 </label>
@@ -115,7 +115,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                 <TD>
                   <label
                     htmlFor={'checkbox-' + jeune.id}
-                    className='cursor-pointer before:fixed before:inset-0 before:z-10'
+                    className='cursor-pointer before:absolute before:inset-0 before:z-10'
                   >
                     {getNomBeneficiaireComplet(jeune)}
                   </label>

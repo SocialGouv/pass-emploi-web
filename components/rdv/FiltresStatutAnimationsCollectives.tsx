@@ -81,9 +81,7 @@ function FiltresStatutAnimationsCollectives(
           <>
             <Badge
               count={statutsSelectionnes.length}
-              bgColor='primary'
-              textColor='white'
-              size={6}
+              className='text-white bg-primary'
             />
             <span className='sr-only'> filtre sélectionné</span>
           </>

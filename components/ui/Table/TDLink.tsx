@@ -28,12 +28,11 @@ export default function TDLink({
   }, [])
 
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
-  // absolute position in grandparent : https://stackoverflow.com/a/25768682
   return (
     <TD ref={tdRef} className={className}>
       <Link
         href={href}
-        className='block before:fixed before:inset-0 before:z-10 cursor-pointer'
+        className='block before:absolute before:inset-0 before:z-10 cursor-pointer'
         title={label}
       >
         <IconComponent

@@ -188,7 +188,7 @@ function DetailActionPage({ action, lectureSeule, from }: DetailActionProps) {
           )}
         </div>
 
-        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,auto)]'>
           <dt className='text-base-bold pb-6'>
             <span>Catégorie :</span>
           </dt>

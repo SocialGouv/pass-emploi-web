@@ -226,7 +226,7 @@ function ClotureSessionPage({
                     className={`${
                       beneficiaire.statut === StatutBeneficiaire.PRESENT
                         ? 'text-disabled'
-                        : 'before:fixed before:inset-0 before:z-10 cursor-pointer'
+                        : 'before:absolute before:inset-0 before:z-10 cursor-pointer'
                     }`}
                   >
                     {/* FIXME title != label */}

@@ -59,7 +59,7 @@ function Multiselection(
         ({ id: idItem, value, avecIndication, estUneListe }, index) => (
           <li
             key={idItem}
-            className='bg-white w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
+            className='bg-white w-full rounded-large px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           >
             {avecIndication && <Indication value={value} id={idItem} />}
             {estUneListe && <BeneficiaireListeItem value={value} id={idItem} />}

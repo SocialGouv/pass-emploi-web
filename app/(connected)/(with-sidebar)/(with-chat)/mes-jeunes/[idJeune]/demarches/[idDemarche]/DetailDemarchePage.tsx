@@ -52,7 +52,7 @@ function DetailDemarchePage({
           Informations sur la démarche
         </h2>
 
-        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)] gap-6 pb-6'>
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,auto)] gap-6 pb-6'>
           <dt className='text-base-bold'>Catégorie :</dt>
           <dd className='text-base-regular'>{demarche.label}</dd>
 

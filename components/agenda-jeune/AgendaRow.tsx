@@ -93,19 +93,17 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
               {entree.type === 'session' && entree.typeSession && (
                 <TagStatut
                   label={entree.typeSession}
-                  color='accent_1'
                   iconName={IconName.Lock}
                   iconLabel='Informations de la session non modifiables'
-                  backgroundColor='accent_1_lighten'
+                  className='text-accent_1 bg-accent_1_lighten'
                 />
               )}
 
               {entree.type !== 'session' && (
                 <TagStatut
                   label='Non modifiable'
-                  color='accent_2'
-                  backgroundColor='accent_2_lighten'
                   iconName={IconName.Lock}
+                  className='text-accent_2 bg-accent_2_lighten'
                 />
               )}
             </>

@@ -64,7 +64,7 @@ function ResettableTextInput(
         ref={inputRef}
         value={value}
         onChange={applyChange}
-        className='flex-1 p-3 bg-white rounded-l-base outline-none'
+        className='flex-1 p-3 bg-white rounded-l-base outline-hidden'
         required={required}
         aria-describedby={invalid ? id + '--error' : undefined}
         aria-invalid={invalid || undefined}

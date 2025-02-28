@@ -51,7 +51,7 @@ export function ConversationTile({
       >
         {!beneficiaireChat.seenByConseiller && (
           <span className='text-accent_1 text-s-regular mb-2'>
-            <Dot color='accent_1' className='ml-1 mr-2' />
+            <Dot color='ACCENT' className='ml-1 mr-2' />
             Nouveau(x) message(s)
           </span>
         )}
@@ -70,7 +70,7 @@ export function ConversationTile({
           {lastMessageSentAt}{' '}
           {beneficiaireChat.lastMessageSentBy === 'conseiller' && (
             <>
-              <Dot color='grey_700' />{' '}
+              <Dot color='GREY' />{' '}
               {isLastMessageSeenByBeneficiaire && (
                 <span>
                   Lu{' '}
@@ -87,9 +87,7 @@ export function ConversationTile({
                   <span>Non lu </span>
                   <Badge
                     count={beneficiaireChat.newConseillerMessageCount}
-                    textColor='accent_1'
-                    bgColor='accent_1_lighten'
-                    size={6}
+                    className='text-accent_1 bg-accent_1_lighten'
                   />
                 </>
               )}

@@ -56,7 +56,7 @@ export default function TableauBeneficiairesPasMilo({
             >
               <TD
                 isBold
-                className='relative h-full !p-2 !rounded-tl-base !rounded-bl-none after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""] layout_m:!rounded-l-base'
+                className='relative h-full p-2! rounded-tl-base! rounded-bl-none! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""] layout_m:rounded-l-base!'
               >
                 {beneficiaire.isReaffectationTemporaire && (
                   <span className='self-center mr-2'>
@@ -79,7 +79,7 @@ export default function TableauBeneficiairesPasMilo({
                 {getNomBeneficiaireComplet(beneficiaire)}
               </TD>
 
-              <TD className='h-full !p-2'>
+              <TD className='h-full p-2!'>
                 <div
                   className='text-s-regular text-grey_800'
                   aria-hidden={true}
@@ -91,7 +91,7 @@ export default function TableauBeneficiairesPasMilo({
                 </span>
               </TD>
 
-              <TD className='h-full !p-2 row-start-2 col-span-2 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-3 layout_m:col-span-1 layout_m:rounded-none layout_m:flex-col layout_m:gap-0 layout_m:justify-center layout_m:pt-0'>
+              <TD className='h-full p-2! row-start-2 col-span-2 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-3 layout_m:col-span-1 layout_m:rounded-none layout_m:flex-col layout_m:gap-0 layout_m:justify-center layout_m:pt-0'>
                 {beneficiaire.isActivated && (
                   <>
                     <span
@@ -115,7 +115,7 @@ export default function TableauBeneficiairesPasMilo({
               <TDLink
                 href={`/mes-jeunes/${beneficiaire.id}`}
                 labelPrefix='Accéder à la fiche de'
-                className='!p-2 row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
+                className='p-2! row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
               />
             </TR>
           )

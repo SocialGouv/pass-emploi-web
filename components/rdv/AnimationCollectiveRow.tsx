@@ -71,7 +71,7 @@ export function AnimationCollectiveRow({
 
   return (
     <TR className='grid grid-cols-subgrid grid-rows-[repeat(3,auto) layout_base:grid-rows-[auto] col-span-full'>
-      <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:col-end-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
+      <TD className='col-start-1 col-end-3 rounded-tl-base! rounded-bl-none! p-0! pt-2! pl-2! layout_base:col-end-2 layout_base:rounded-l-base! layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:p-2!'>
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
         <div>
           <span aria-label={toFrenchTime(date, { a11y: true })}>
@@ -95,7 +95,7 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD className='row-start-2 row-end-4 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-span-1 layout_base:rounded-none layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
+      <TD className='row-start-2 row-end-4 rounded-bl-base pt-0! pb-2! pl-2! layout_base:row-span-1 layout_base:rounded-none layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:p-2!'>
         <div className='text-base-bold'>{animationCollective.titre}</div>
         {animationCollective.sousTitre && (
           <div>{animationCollective.sousTitre}</div>
@@ -110,16 +110,16 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD className='row-start-2 col-start-2 !p-0 layout_base:row-start-1 layout_base:col-start-3 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
+      <TD className='row-start-2 col-start-2 p-0! layout_base:row-start-1 layout_base:col-start-3 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:p-2!'>
         <Inscrits {...animationCollective} />
       </TD>
 
-      <TD className='row-start-3 !p-0 !pb-2 layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
+      <TD className='row-start-3 p-0! pb-2! layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:p-2!'>
         <TagStatut {...animationCollective} />
       </TD>
 
       <TDLink
-        className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
+        className='row-span-3 flex items-center justify-center p-2! pl-4! layout_base:row-span-1 layout_base:p-2!'
         href={getHref()}
         labelPrefix={`Consulter ${animationCollective.type} du`}
       />
@@ -129,30 +129,28 @@ export function AnimationCollectiveRow({
 
 function statusProps({ type, statut }: AnimationCollective): {
   label: string
-  color: string
+  style: string
 } {
   switch (statut) {
     case StatutAnimationCollective.AVenir:
-      return { label: 'À venir', color: 'accent_1' }
+      return { label: 'À venir', style: 'text-accent_1 bg-accent_1_lighten' }
     case StatutAnimationCollective.AClore:
-      return { label: 'À clore', color: 'warning' }
+      return { label: 'À clore', style: 'text-warning bg-warning_lighten' }
 
     case StatutAnimationCollective.Close:
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
-        color: 'accent_2',
+        style: 'text-accent_2 bg-accent_2_lighten',
       }
   }
 }
 
 function TagStatut(animationCollective: AnimationCollective): ReactElement {
-  const { label, color } = statusProps(animationCollective)
+  const { label, style } = statusProps(animationCollective)
   return (
     <_TagStatut
       label={label}
-      color={color}
-      backgroundColor={color + '_lighten'}
-      className='!px-2 !py-1 !text-xs !font-bold'
+      className={style + ' px-2! py-1! text-xs! font-bold!'}
     />
   )
 }
