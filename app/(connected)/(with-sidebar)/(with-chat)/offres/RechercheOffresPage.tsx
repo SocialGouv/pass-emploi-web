@@ -321,7 +321,7 @@ function RechercheOffresPage() {
           </button>
         </div>
         <FormRechercheOffres
-          hasResults={isSearching || offres !== undefined}
+          isSearching={isSearching}
           collapsed={collapsed}
           fetchMetiers={fetchMetiers}
           fetchCommunes={fetchCommunes}
