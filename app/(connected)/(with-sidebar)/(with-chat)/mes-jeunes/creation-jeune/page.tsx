@@ -7,7 +7,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Créer compte bénéficiaire - Portefeuille',

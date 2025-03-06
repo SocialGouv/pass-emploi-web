@@ -16,7 +16,7 @@ import {
   getJeuneDetails,
   getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type InformationsParams = Promise<{ idJeune: string }>
 type InformationsSearchParams = Promise<Partial<{ onglet: Onglet }>>

@@ -7,7 +7,7 @@ import { aEtablissement, doitSignerLesCGU } from 'interfaces/conseiller'
 import { estMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = { title: 'Accueil' }
 

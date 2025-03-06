@@ -7,7 +7,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Listes de diffusion - Portefeuille',

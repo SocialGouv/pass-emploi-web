@@ -12,7 +12,7 @@ import {
 } from 'components/PageNavigationPortals'
 import { estMilo } from 'interfaces/structure'
 import { getAction } from 'services/actions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type DetailActionParams = Promise<{ idJeune: string; idAction: string }>
 

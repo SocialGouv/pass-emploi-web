@@ -26,7 +26,7 @@ import {
   getDetailsEvenement,
   getTypesRendezVous,
 } from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { redirectedFromHome } from 'utils/helpers'
 
 type EditionRdvSearchParams = Promise<

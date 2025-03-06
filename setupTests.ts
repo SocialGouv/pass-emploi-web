@@ -24,10 +24,15 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
   useSearchParams: jest.fn(),
 }))
-jest.mock('next/headers', () => ({ headers: jest.fn() }))
+jest.mock('next/headers', () => ({
+  headers: jest.fn(async () => ({
+    get: jest.fn(),
+    has: jest.fn(),
+  })),
+}))
 
 jest.mock('next-auth/react', () => ({
-  getSession: async () => ({
+  getSession: jest.fn(async () => ({
     user: {
       id: 'idConseiller',
       estSuperviseur: false,
@@ -35,7 +40,7 @@ jest.mock('next-auth/react', () => ({
       structure: 'MILO',
     },
     accessToken: 'accessToken',
-  }),
+  })),
 }))
 
 afterEach(() => {

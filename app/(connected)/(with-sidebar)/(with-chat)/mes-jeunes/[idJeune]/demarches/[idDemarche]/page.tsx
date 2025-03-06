@@ -16,7 +16,7 @@ import {
   getDemarchesBeneficiaire,
   getJeuneDetails,
 } from 'services/beneficiaires.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type DetailDemarcheParams = Promise<{ idJeune: string; idDemarche: string }>
 

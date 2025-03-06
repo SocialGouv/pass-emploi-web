@@ -8,7 +8,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { recupererListeDeDiffusion } from 'services/listes-de-diffusion.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { redirectedFromHome } from 'utils/helpers'
 
 type EditionListeDiffusionSearchParams = Promise<Partial<{ idListe: string }>>

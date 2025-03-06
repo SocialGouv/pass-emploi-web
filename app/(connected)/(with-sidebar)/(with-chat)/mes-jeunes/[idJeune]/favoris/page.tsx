@@ -9,7 +9,7 @@ import {
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { ApiError } from 'utils/httpClient'
 
 type FavorisParams = Promise<{ idJeune: string }>

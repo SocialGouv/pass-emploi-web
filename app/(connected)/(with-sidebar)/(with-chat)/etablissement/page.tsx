@@ -5,7 +5,7 @@ import React from 'react'
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { estMilo } from 'interfaces/structure'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = { title: 'Établissement' }
 

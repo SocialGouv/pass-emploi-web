@@ -10,7 +10,7 @@ import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type ClotureSessionParams = Promise<{ idSession: string }>
 type ClotureSessionSearchParams = Promise<Partial<{ redirectUrl: string }>>

@@ -11,7 +11,7 @@ import { PeriodeEvenements } from 'interfaces/evenement'
 import { estMilo } from 'interfaces/structure'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type RendezVousPassesParams = Promise<{ idJeune: string }>
 

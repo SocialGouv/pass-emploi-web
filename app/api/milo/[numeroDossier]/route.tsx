@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { estMilo, structureMilo } from 'interfaces/structure'
 import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export async function GET(
   _: Request,

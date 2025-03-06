@@ -12,7 +12,7 @@ import { estMilo } from 'interfaces/structure'
 import { getBeneficiairesDeLaStructureMilo } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { redirectedFromHome } from 'utils/helpers'
 
 type DetailsSessionParams = Promise<{ idSession: string }>
