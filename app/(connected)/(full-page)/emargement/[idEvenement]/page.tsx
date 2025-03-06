@@ -11,7 +11,7 @@ import { estMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsEvenement } from 'services/evenements.service'
 import { getDetailsSession } from 'services/sessions.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type EmargementRdvParams = Promise<{ idEvenement: string }>
 type EmargementRdvSearchParams = Promise<{ type: string }>

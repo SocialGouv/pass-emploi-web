@@ -22,7 +22,7 @@ import {
   SessionsAClore,
 } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Pilotage',

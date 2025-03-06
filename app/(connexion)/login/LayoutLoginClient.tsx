@@ -4,8 +4,10 @@ import Link from 'next/link'
 import {
   ReadonlyURLSearchParams,
   usePathname,
+  useRouter,
   useSearchParams,
 } from 'next/navigation'
+import { getSession } from 'next-auth/react'
 import React, { ReactNode, useEffect, useState } from 'react'
 
 import { MIN_DESKTOP_WIDTH } from 'components/globals'
@@ -22,6 +24,7 @@ export default function LayoutLoginClient({
 }: {
   children: ReactNode
 }) {
+  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [errorMsg, setErrorMsg] = useState<string>()
@@ -40,13 +43,18 @@ export default function LayoutLoginClient({
   }, [])
 
   useEffect(() => {
-    const provider = searchParams.get('provider')
-    if (provider)
-      signin(
-        `${provider}-conseiller`,
-        setErrorMsg,
-        searchParams.get('redirectUrl') ?? undefined
-      )
+    getSession().then((session) => {
+      const defaultRedirectUrl = searchParams.has('source')
+        ? `/?source=${searchParams.get('source')}`
+        : '/'
+      const redirectUrl = searchParams.get('redirectUrl') ?? defaultRedirectUrl
+
+      if (session) router.replace(redirectUrl)
+      else {
+        const provider = searchParams.get('provider')
+        if (provider) signin(`${provider}-conseiller`, setErrorMsg, redirectUrl)
+      }
+    })
   }, [])
 
   useEffect(() => {

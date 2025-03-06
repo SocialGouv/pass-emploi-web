@@ -9,7 +9,7 @@ import {
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { estMilo } from 'interfaces/structure'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { unsafeRandomId } from 'utils/helpers'
 
 type QualificationParams = Promise<{ idAction: string }>

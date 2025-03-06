@@ -14,7 +14,7 @@ import {
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { unsafeRandomId } from 'utils/helpers'
 
 type ModificationActionParams = Promise<{ idAction: string }>

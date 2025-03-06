@@ -4,7 +4,7 @@ import React from 'react'
 
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = { title: 'Réaffectation' }
 export default async function Reaffectation() {

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { estMilo } from 'interfaces/structure'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Tableau de bord - Agenda',

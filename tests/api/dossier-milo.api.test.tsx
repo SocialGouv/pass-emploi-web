@@ -9,11 +9,9 @@ import { GET } from 'app/api/milo/[numeroDossier]/route'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getIdJeuneMilo } from 'services/beneficiaires.service'
 import { trackSSR } from 'utils/analytics/matomo'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
+jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 jest.mock('utils/analytics/matomo')

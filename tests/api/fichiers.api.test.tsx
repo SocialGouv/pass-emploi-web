@@ -5,11 +5,9 @@
 import { redirect } from 'next/navigation'
 
 import { GET } from 'app/api/fichiers/[idFichier]/route'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
-jest.mock('utils/auth/auth', () => ({
-  getMandatorySessionServerSide: jest.fn(),
-}))
+jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 
 describe('GET api/fichier/[idFichier]', () => {
   it('redirige vers le fichier demandé', async () => {

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export async function GET(
   _: Request,

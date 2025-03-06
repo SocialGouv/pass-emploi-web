@@ -9,7 +9,7 @@ import {
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { estMilo } from 'interfaces/structure'
 import { getDetailsEvenement } from 'services/evenements.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Clore - Mes événements',

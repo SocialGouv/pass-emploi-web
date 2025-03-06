@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 import ConsentementCguPage from 'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
   title: 'Consentement CGU',
