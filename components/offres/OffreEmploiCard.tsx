@@ -26,13 +26,11 @@ export default function OffreEmploiCard({
     >
       <TagMetier
         label={offre.type === TypeOffre.ALTERNANCE ? 'Alternance' : 'Emploi'}
-        color='content_color'
-        backgroundColor={
+        className={`text-content_color ${
           offre.type === TypeOffre.ALTERNANCE
-            ? 'additional_3_lighten'
-            : 'additional_4_lighten'
-        }
-        className='text-s-regular mb-4'
+            ? 'bg-additional_3_lighten'
+            : 'bg-additional_4_lighten'
+        } text-s-regular mb-4`}
       />
 
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>

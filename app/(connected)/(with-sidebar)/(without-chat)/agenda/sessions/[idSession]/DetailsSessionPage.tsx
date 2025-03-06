@@ -11,7 +11,7 @@ import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Etape from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
@@ -476,7 +476,7 @@ function DetailsSessionPage({
 
       <form>
         <Etape numero={1} titre='Configurez la session'>
-          <div className='grid grid-cols-[1fr,auto] auto-rows-fr items-center'>
+          <div className='grid grid-cols-[1fr_auto] auto-rows-fr items-center'>
             <Label htmlFor='visibilite-session'>
               Rendre visible la session aux bénéficiaires de la Mission Locale
             </Label>
@@ -574,7 +574,7 @@ function DetailsSessionPage({
               {beneficiairesSelectionnes.value.map((beneficiaire) => (
                 <li
                   key={beneficiaire.id}
-                  className='bg-white w-full rounded-full px-8 py-4 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
+                  className='bg-white w-full rounded-large px-8 py-4 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
                   aria-atomic={true}
                 >
                   <BeneficiaireItemList

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 
 import Details from 'components/Details'
 import Button from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Textarea from 'components/ui/Form/Textarea'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'

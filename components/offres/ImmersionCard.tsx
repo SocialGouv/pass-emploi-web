@@ -23,9 +23,7 @@ export default function ImmersionCard({
     >
       <TagMetier
         label='Immersion'
-        color='content_color'
-        backgroundColor='additional_1_lighten'
-        className='text-s-regular mb-4'
+        className='text-content_color bg-additional_1_lighten text-s-regular mb-4'
       />
 
       <h3 className='text-base-bold mb-2'>{offre.titre}</h3>

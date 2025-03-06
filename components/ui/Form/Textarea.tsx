@@ -80,7 +80,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     function provideStyle(): string {
       let className = styles.input
-      if (maxLength) className += ' !mb-3'
+      if (maxLength) className += ' mb-3!'
       if (invalid) className += ' ' + styles.invalid
       return className
     }

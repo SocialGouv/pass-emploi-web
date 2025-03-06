@@ -14,8 +14,7 @@ export default function RechercheRow({ recherche }: { recherche: Recherche }) {
       <TD>
         <TagMetier
           label={recherche.type}
-          color='primary'
-          backgroundColor='primary_lighten'
+          className='text-primary bg-primary_lighten'
         />
       </TD>
     </TR>

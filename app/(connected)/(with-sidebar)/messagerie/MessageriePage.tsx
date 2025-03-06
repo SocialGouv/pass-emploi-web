@@ -3,7 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import ConversationImage from 'assets/images/conversation.svg'
+import ImageConversation from 'assets/images/conversation.svg'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
@@ -72,7 +72,7 @@ function MessageriePage() {
         <>
           {!currentConversation && (
             <div className='flex flex-col justify-center items-center h-full'>
-              <ConversationImage focusable={false} aria-hidden={true} />
+              <ImageConversation focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
                 Bienvenue dans votre espace de messagerie.
               </p>
@@ -103,7 +103,7 @@ function MessageriePage() {
         <>
           {!listeSelectionnee.liste && (
             <div className='flex flex-col justify-center items-center h-full'>
-              <ConversationImage focusable={false} aria-hidden={true} />
+              <ImageConversation focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
                 Veuillez sélectionner une liste de diffusion.
               </p>

@@ -1,10 +1,9 @@
 import React from 'react'
 
+import IllustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
+import IllustrationLogoPassemploi from 'assets/images/logo_pass_emploi.svg'
 import { ID_MENU } from 'components/globals'
 import NavLinks, { NavItem } from 'components/NavLinks'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
 import { estPassEmploi } from 'interfaces/structure'
 import styles from 'styles/components/Sidebar.module.css'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -17,24 +16,18 @@ export default function Sidebar() {
   return (
     <div className={styles.sidebar}>
       {aThemePassEmploi && (
-        <IllustrationComponent
-          name={IllustrationName.LogoPassemploi}
-          role='img'
+        <IllustrationLogoPassemploi
+          aria-hidden={true}
           focusable={false}
-          aria-label='pass emploi'
-          title='pass emploi'
           className='mb-8 mx-auto min-h-[55px] w-[95px] fill-white'
         />
       )}
 
       {!aThemePassEmploi && (
-        <IllustrationComponent
-          name={IllustrationName.LogoCEJ}
-          role='img'
+        <IllustrationLogoCEJ
+          aria-hidden={true}
           focusable={false}
-          aria-label='contrat d’engagement jeune'
-          title='contrat d’engagement jeune'
-          className='mx-auto mb-8 min-h-[64px] w-[120px] fill-white'
+          className='mx-auto mb-8 min-h-[64px] w-[120px]'
         />
       )}
 

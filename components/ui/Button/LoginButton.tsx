@@ -1,14 +1,11 @@
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { FC, SVGProps, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
 
 type BaseProps = {
   label: string
-  illustrationName?: IllustrationName
+  Illustration?: FC<SVGProps<SVGElement>>
   prefix?: string
 }
 type LoginButtonProps = BaseProps & {
@@ -59,7 +56,7 @@ export default function LoginButton(props: LoginButtonProps | LoginLinkProps) {
 }
 
 function Content({
-  illustrationName,
+  Illustration,
   label,
   isLoading,
 }: BaseProps & { isLoading: boolean }) {
@@ -70,15 +67,14 @@ function Content({
       <span
         className={`flex gap-4 items-center ${isLoading ? 'invisible' : ''}`}
       >
-        {illustrationName && (
-          <IllustrationComponent
-            name={illustrationName}
+        {Illustration && (
+          <Illustration
             focusable={false}
             aria-hidden={true}
             className='inline h-[40px] shrink-0'
           />
         )}
-        <span className={!illustrationName ? 'w-full text-center' : ''}>
+        <span className={!Illustration ? 'w-full text-center' : ''}>
           {label}
         </span>
       </span>

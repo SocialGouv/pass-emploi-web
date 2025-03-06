@@ -202,7 +202,7 @@ export function SelecteurPeriode({
         style={ButtonStyle.SECONDARY}
         onClick={allerPeriodeActuelle}
         disabled={indexPeriodeAffichee === 0}
-        className='!py-0'
+        className='py-0!'
         label={`Aller à la période en cours ${labelPeriode(
           jourDeDebutDeLaPeriode(0),
           jourDeFinDeLaPeriode(0),

@@ -2,6 +2,7 @@ import sanitizeHtml from 'sanitize-html'
 
 import {
   ActualitesRaw,
+  ArticleCouleur,
   ArticleJson,
   EtiquetteArticle,
   TagJson,
@@ -54,7 +55,15 @@ function extraireEtiquettes(
   return article.tags
     .map((idTag) => tagsJson.find(({ id }) => id === idTag))
     .filter((tag) => tag !== undefined)
-    .map((tag) => ({ id: tag.id, nom: tag.name, couleur: tag.description }))
+    .map((tag) => ({
+      id: tag.id,
+      nom: tag.name,
+      couleur: toCouleurArticle(tag.description),
+    }))
+}
+
+function toCouleurArticle(couleur: string): ArticleCouleur | undefined {
+  if ((couleur as ArticleCouleur) === couleur) return couleur
 }
 
 function getUrlActualites(structure: Structure): string {

@@ -18,14 +18,12 @@ export default function Visibilite({
     return (
       <TagMetier
         label='Visible'
-        color='success'
-        backgroundColor='success_lighten'
-        className='!px-2 !py-1 !text-xs !font-bold'
+        className='text-success bg-success_lighten px-2! py-1! text-xs! font-bold!'
       />
     )
 
   const selectId = id + '--visibilite'
-  const props = propsEtatsVisibilite[etatVisibilite]
+  const { style } = etatsVisibilite[etatVisibilite]
 
   return (
     <>
@@ -38,9 +36,9 @@ export default function Visibilite({
           onChangerVisibliteSession(e.target.value as EtatVisibilite)
         }
         value={etatVisibilite}
-        className={`z-20 text-xs-bold text-${props.textColor} border-${props.borderColor} bg-${props.bgColor}`}
+        className={`z-20 text-xs-bold ${style}`}
       >
-        {Object.entries(propsEtatsVisibilite).map(([etat, { label }]) => (
+        {Object.entries(etatsVisibilite).map(([etat, { label }]) => (
           <option key={etat} value={etat}>
             {label}
           </option>
@@ -50,30 +48,22 @@ export default function Visibilite({
   )
 }
 
-const propsEtatsVisibilite: {
+const etatsVisibilite: {
   [key in EtatVisibilite]: {
     label: string
-    textColor: string
-    borderColor: string
-    bgColor: string
+    style: string
   }
 } = {
   visible: {
     label: 'Visible',
-    textColor: 'success',
-    borderColor: 'success',
-    bgColor: 'success_lighten',
+    style: 'text-success border-success bg-success_lighten',
   },
   'non-visible': {
     label: 'Non visible',
-    textColor: 'content_color',
-    borderColor: 'grey_800',
-    bgColor: 'grey_100',
+    style: 'text-content_color border-grey_800 bg-grey_100',
   },
   'auto-inscription': {
     label: 'Auto-inscription',
-    textColor: 'primary',
-    borderColor: 'primary',
-    bgColor: 'primary_lighten',
+    style: 'text-primary border-primary bg-primary_lighten',
   },
 }

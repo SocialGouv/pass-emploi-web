@@ -61,28 +61,24 @@ function IndicateursActions({
         <TileIndicateur
           valeur={actions?.creees.toString() ?? '-'}
           label={actions?.creees !== 1 ? 'Créées' : 'Créée'}
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={actions?.enRetard.toString() ?? '-'}
           label='En retard'
-          bgColor='alert_lighten'
-          textColor='content_color'
+          color='ALERT'
           iconName={IconName.Error}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}
           label={actions?.terminees !== 1 ? 'Terminées' : 'Terminée'}
-          bgColor='accent_2_lighten'
-          textColor='accent_2'
+          color='ACCENT_2'
           iconName={IconName.CheckCircleFill}
         />
         <TileIndicateur
           valeur={actions?.aEcheance.toString() ?? '-'}
           label='Échéance cette semaine'
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
       <LienVersActions
@@ -103,8 +99,7 @@ function IndicateursRendezvous({
         <TileIndicateur
           valeur={rendezVous?.toString() ?? '-'}
           label='Cette semaine'
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
     </div>
@@ -133,8 +128,7 @@ function IndicateursOffres({
           label={
             offres?.consultees !== 1 ? 'Offres consultées' : 'Offre consultée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={favoris?.offresSauvegardees.toString() ?? '-'}
@@ -143,16 +137,14 @@ function IndicateursOffres({
               ? 'Favoris ajoutés'
               : 'Favori ajouté'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={offres?.partagees.toString() ?? '-'}
           label={
             offres?.partagees !== 1 ? 'Offres partagées' : 'Offre partagée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={favoris?.recherchesSauvegardees.toString() ?? '-'}
@@ -161,8 +153,7 @@ function IndicateursOffres({
               ? 'Recherches sauvegardées'
               : 'Recherche sauvegardée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
       {metadonneesFavoris?.autoriseLePartage && (

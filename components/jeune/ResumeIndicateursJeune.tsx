@@ -44,8 +44,7 @@ export function ResumeIndicateursJeune({
               label={
                 indicateursSemaine?.actions.creees !== 1 ? 'Créées' : 'Créée'
               }
-              bgColor='primary_lighten'
-              textColor='primary_darken'
+              color='PRIMARY'
             />
             <TileIndicateur
               valeur={indicateursSemaine?.actions.terminees.toString() ?? '-'}
@@ -54,15 +53,13 @@ export function ResumeIndicateursJeune({
                   ? 'Terminées'
                   : 'Terminée'
               }
-              bgColor='accent_3_lighten'
-              textColor='primary'
+              color='ACCENT_3'
               iconName={IconName.CheckCircleFill}
             />
             <TileIndicateur
               valeur={indicateursSemaine?.actions.enRetard.toString() ?? '-'}
               label='En retard'
-              bgColor='warning_lighten'
-              textColor='warning'
+              color='WARNING'
               iconName={IconName.Error}
             />
           </ul>

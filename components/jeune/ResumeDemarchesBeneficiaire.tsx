@@ -65,21 +65,18 @@ export function ResumeDemarchesBeneficiaire({
             <TileIndicateur
               valeur={demarchesCrees.length.toString() ?? '-'}
               label={demarchesCrees.length !== 1 ? 'Créées' : 'Créée'}
-              bgColor='primary_lighten'
-              textColor='primary_darken'
+              color='PRIMARY'
             />
             <TileIndicateur
               valeur={demarchesTerminees.length.toString() ?? '-'}
               label={demarchesTerminees.length !== 1 ? 'Terminées' : 'Terminée'}
-              bgColor='accent_3_lighten'
-              textColor='primary'
+              color='ACCENT_3'
               iconName={IconName.CheckCircleFill}
             />
             <TileIndicateur
               valeur={demarchesEnRetard.length.toString() ?? '-'}
               label='En retard'
-              bgColor='warning_lighten'
-              textColor='warning'
+              color='WARNING'
               iconName={IconName.Error}
             />
           </ul>

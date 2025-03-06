@@ -1,8 +1,7 @@
 import React from 'react'
 
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import IllustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
+import IllustrationLogoPassemploi from 'assets/images/logo_pass_emploi.svg'
 
 type LoginHeaderProps = {
   title: string
@@ -12,16 +11,14 @@ export default function LoginHeader({ title, subtitle }: LoginHeaderProps) {
   return (
     <>
       <div className='flex justify-center gap-8'>
-        <IllustrationComponent
-          name={IllustrationName.LogoCEJ}
+        <IllustrationLogoCEJ
           className='h-[60px]'
           focusable={false}
           aria-hidden={true}
         />
 
-        <IllustrationComponent
-          name={IllustrationName.LogoPassemploi}
-          className='h-[60px] fill-primary_darken'
+        <IllustrationLogoPassemploi
+          className='h-[60px]'
           focusable={false}
           aria-hidden={true}
         />

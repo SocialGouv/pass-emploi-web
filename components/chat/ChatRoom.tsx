@@ -282,7 +282,7 @@ function ChatRoom(
                   />
                   {afficherNotificationMessageImportant && (
                     <>
-                      {/* TODO tooltip https://inclusive-components.design/tooltips-toggletips/ */}
+                      {/* TODO tooltip https://inclusive-components.design/tooltips-toggletips/ ? */}
                       <IconComponent
                         name={IconName.DecorativePoint}
                         className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'

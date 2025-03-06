@@ -5,9 +5,7 @@ import { unsafeRandomId } from 'utils/helpers'
 
 interface TagProps {
   label: string
-  color: string
-  backgroundColor: string
-  className?: string
+  className: string
   iconName?: IconName
   iconLabel?: string
   isSmallTag?: boolean
@@ -24,15 +22,7 @@ interface TagTypeProps {
   isSmallTag?: boolean
 }
 
-function Tag({
-  label,
-  color,
-  backgroundColor,
-  className,
-  iconName,
-  iconLabel,
-  isSmallTag,
-}: TagProps) {
+function Tag({ label, className, iconName, iconLabel, isSmallTag }: TagProps) {
   function TagIcon() {
     const iconStyle = 'h-5 w-5 mr-1 fill-current'
     if (iconLabel) {
@@ -65,9 +55,7 @@ function Tag({
 
   return (
     <span
-      className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
-        className ?? ''
-      } ${isSmallTag ? '!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4' : ''}`}
+      className={`flex items-center w-fit text-s-medium px-3 ${className} whitespace-nowrap ${isSmallTag ? 'px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!' : ''}`}
     >
       {iconName && <TagIcon />}
       {label}
@@ -80,20 +68,12 @@ export function TagMetier({ className, ...props }: TagProps) {
 }
 
 export function TagStatut({ className, ...props }: TagProps) {
-  return <Tag className={'rounded-l ' + className} {...props} />
+  return <Tag className={'rounded-large ' + className} {...props} />
 }
 
-export function TagDate({
-  className,
-  label,
-}: Pick<TagProps, 'className' | 'label'>) {
+export function TagDate({ label }: Pick<TagProps, 'label'>) {
   return (
-    <Tag
-      className={'rounded-l ' + className}
-      backgroundColor='grey_100'
-      color='grey_800'
-      label={label}
-    />
+    <Tag className='bg-grey_100 text-grey_800 rounded-large' label={label} />
   )
 }
 
@@ -104,37 +84,33 @@ export function TagType({
   isSmallTag = false,
 }: TagTypeProps): ReactElement {
   let tagProps: {
-    color: string
+    style: string
     iconName?: IconName
     iconLabel?: string
-    background?: string
   } = {
-    color: 'content_color',
+    style: 'text-content_color bg-additional_5_lighten',
     iconName: undefined,
     iconLabel: undefined,
-    background: 'additional_5',
   }
+
   if (source === 'MILO')
     tagProps = {
-      color: 'content_color',
+      style: 'text-content_color bg-additional_5_lighten',
       iconName: IconName.Lock,
       iconLabel: 'Non modifiable',
-      background: 'additional_5',
     }
 
   if (isSession)
     tagProps = {
-      color: 'accent_1',
+      style: 'text-accent_1 bg-accent_1_lighten',
       iconName: IconName.Lock,
       iconLabel: 'Informations de la session non modifiables',
-      background: 'accent_1',
     }
 
   return (
     <TagMetier
       label={type!}
-      color={tagProps.color}
-      backgroundColor={tagProps.background + '_lighten'}
+      className={tagProps.style}
       iconName={tagProps.iconName}
       iconLabel={tagProps.iconLabel}
       isSmallTag={isSmallTag}
@@ -146,18 +122,14 @@ export function TagCategorie({ categorie }: TagCategorieProps) {
   if (categorie)
     return (
       <Tag
-        className='rounded-l text-wrap'
-        backgroundColor='primary_lighten'
-        color='primary'
+        className='text-primary bg-primary_lighten rounded-large text-wrap!'
         label={categorie}
       />
     )
 
   return (
     <Tag
-      className='rounded-l'
-      backgroundColor='white'
-      color='alert'
+      className='text-alert bg-white rounded-large'
       iconName={IconName.Warning}
       label='Catégorie manquante'
     />

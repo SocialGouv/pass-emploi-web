@@ -2,11 +2,8 @@ import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
 import LienAction from 'components/chat/LienAction'
-import LienEvenement from 'components/chat/LienEvenement'
-import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
-import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -151,31 +148,13 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
         />
       )}
 
-      {message.type === TypeMessage.MESSAGE_SESSION_MILO &&
-        message.infoSessionMilo && (
-          <LienSessionMilo infoSessionMilo={message.infoSessionMilo} />
-        )}
-
-      {message.type === TypeMessage.MESSAGE_EVENEMENT &&
-        message.infoEvenement && (
-          <LienEvenement infoEvenement={message.infoEvenement} />
-        )}
-
-      {message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
-        message.infoEvenementEmploi && (
-          <LienEvenementEmploi
-            infoEvenementEmploi={message.infoEvenementEmploi}
-          />
-        )}
-
       {message.type === TypeMessage.MESSAGE_PJ &&
         message.infoPiecesJointes &&
-        message.infoPiecesJointes.map(({ id, nom }) => (
+        message.infoPiecesJointes.map((infoFichier) => (
           <LienPieceJointe
-            key={id}
-            id={id}
-            nom={nom}
-            className='fill-primary'
+            key={infoFichier.id}
+            infoFichier={infoFichier}
+            isSentByConseiller={true}
             highlight={
               highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }
