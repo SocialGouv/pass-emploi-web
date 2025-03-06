@@ -23,7 +23,7 @@ export default function HeaderCGUConseillerCEJ() {
         Conditions générales d’utilisation
       </h1>
       <p className='text-m-bold mb-4'>Application conseiller CEJ</p>
-      <p className='text-s-regular'>Version 3 – 03 juillet 2024</p>
+      <p className='text-s-regular'>Version 4 – 29 janvier 2025</p>
     </header>
   )
 }

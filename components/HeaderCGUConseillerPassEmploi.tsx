@@ -23,7 +23,7 @@ export default function HeaderCGUConseillerPassEmploi() {
         Conditions générales d’utilisation
       </h1>
       <p className='text-m-bold mb-4'>Application conseiller pass emploi</p>
-      <p className='text-s-regular'>Version 4 – 04 octobre 2024</p>
+      <p className='text-s-regular'>Version 5 – 10 mars 2025</p>
     </header>
   )
 }
