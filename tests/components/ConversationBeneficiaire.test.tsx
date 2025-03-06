@@ -10,7 +10,7 @@ import {
 } from 'fixtures/beneficiaire'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { ConseillerHistorique } from 'interfaces/beneficiaire'
-import { ByDay, Message } from 'interfaces/message'
+import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
   getChatCredentials,
@@ -187,18 +187,27 @@ describe('<ConversationBeneficiaire />', () => {
         ).toBeInTheDocument()
       })
 
-      it('affiche le nom complet du conseiller', () => {
+      it('affiche le nom complet de l’émetteur', () => {
         // Then
         const messageItem = screen.getByTestId(message.id)
-        const conseiller = conseillersBeneficiaires.find(
-          (conseiller) => conseiller.id === message.conseillerId
-        )
-        expect(
-          within(messageItem).getByText(
-            `${conseiller?.prenom} ${conseiller?.nom}`,
-            { exact: false }
+        if (fromConseiller(message)) {
+          const conseiller = conseillersBeneficiaires.find(
+            (conseiller) => conseiller.id === message.conseillerId
           )
-        ).toBeInTheDocument()
+          expect(
+            within(messageItem).getByText(
+              `${conseiller!.prenom} ${conseiller!.nom}`,
+              { exact: false }
+            )
+          ).toBeInTheDocument()
+        } else {
+          expect(
+            within(messageItem).getByText(
+              `${beneficiaireChat.prenom} ${beneficiaireChat.nom}`,
+              { exact: false }
+            )
+          ).toBeInTheDocument()
+        }
       })
     })
   })
@@ -236,14 +245,16 @@ describe('<ConversationBeneficiaire />', () => {
     // Then
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
-      messagesParJour.days.at(-1)!.messages.at(-1)!,
+      messagesParJour.days.at(-2)!.messages.at(0)!,
       'cleChiffrement'
     )
   })
 
   describe('modification de message', () => {
     let input: HTMLInputElement
-    const dernierMessage = messagesParJour.days.at(-1)!.messages.at(-1)!
+    const dernierMessageDuConseiller = messagesParJour.days
+      .at(-2)!
+      .messages.at(0)!
     beforeEach(async () => {
       // Given
       input = screen.getByRole('textbox')
@@ -262,7 +273,7 @@ describe('<ConversationBeneficiaire />', () => {
     it('prépare le message à modifier dans la zone de saisie', async () => {
       // Then
       expect(screen.getByText('Modifier le message')).toBeInTheDocument()
-      expect(input).toHaveValue(dernierMessage.content)
+      expect(input).toHaveValue(dernierMessageDuConseiller.content)
       expect(input).toHaveFocus()
     })
 
@@ -280,8 +291,8 @@ describe('<ConversationBeneficiaire />', () => {
       // Then
       expect(modifierMessage).toHaveBeenCalledWith(
         'idChat',
-        dernierMessage,
-        dernierMessage.content + 'nouveau contenu',
+        dernierMessageDuConseiller,
+        dernierMessageDuConseiller.content + 'nouveau contenu',
         'cleChiffrement'
       )
       expect(screen.queryByText('Modifier le message')).not.toBeInTheDocument()
@@ -493,7 +504,7 @@ describe('<ConversationBeneficiaire />', () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Voir l’événement Un atelier',
+          name: 'Voir l’événement Un atelier (nouvelle fenêtre)',
         })
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
@@ -543,7 +554,7 @@ describe('<ConversationBeneficiaire />', () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: /Voir les détails de la session/,
+          name: 'Voir les détails de la session Une session milo (nouvelle fenêtre)',
         })
       ).toHaveAttribute('href', '/agenda/sessions/id-session-milo')
     })

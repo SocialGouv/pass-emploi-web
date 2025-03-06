@@ -36,12 +36,11 @@ export default function DisplayMessageListeDeDiffusion({
 
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
-          message.infoPiecesJointes.map(({ id: idPieceJointe, nom }) => (
+          message.infoPiecesJointes.map((infoFichier) => (
             <LienPieceJointe
-              key={idPieceJointe}
-              id={id}
-              nom={nom}
-              className='fill-primary'
+              key={infoFichier.id}
+              infoFichier={infoFichier}
+              isSentByConseiller={true}
             />
           ))}
 

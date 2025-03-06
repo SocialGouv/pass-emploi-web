@@ -7,6 +7,7 @@ import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import SpinningLoader from 'components/ui/SpinningLoader'
+import { InfoFichier } from 'interfaces/fichier'
 import {
   isDeleted,
   isEdited,
@@ -53,7 +54,11 @@ export default function DisplayMessageBeneficiaire(
               message.infoPiecesJointes &&
               message.infoPiecesJointes.map((pj, key) => {
                 return (
-                  <MessagePJ key={key} {...pj} highlight={props.highlight} />
+                  <MessagePJ
+                    key={key}
+                    infoFichier={pj}
+                    highlight={props.highlight}
+                  />
                 )
               })}
 
@@ -137,17 +142,13 @@ export default function DisplayMessageBeneficiaire(
 }
 
 function MessagePJ({
-  id,
-  nom,
-  statut,
+  infoFichier,
   highlight,
 }: {
-  id: string
-  nom: string
-  statut?: string
+  infoFichier: InfoFichier
   highlight?: MessageRechercheMatch
 }) {
-  switch (statut) {
+  switch (infoFichier.statut) {
     case 'valide':
       return (
         <>
@@ -157,10 +158,8 @@ function MessagePJ({
             conserver de manière sécurisée.
           </p>
           <LienPieceJointe
-            key={id}
-            id={id}
-            nom={nom}
-            className='fill-white'
+            infoFichier={infoFichier}
+            isSentByConseiller={false}
             highlight={
               highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }
@@ -172,7 +171,7 @@ function MessagePJ({
         <p className='whitespace-pre-wrap'>
           La pièce-jointe envoyée par votre bénéficiaire a été bloquée par
           l’antivirus
-          <span className='block text-xs-regular'>{nom}</span>
+          <span className='block text-xs-regular'>{infoFichier.nom}</span>
         </p>
       )
     case 'analyse_a_faire':
@@ -186,25 +185,29 @@ function MessagePJ({
           </p>
           <div className='flex flex-row justify-end items-center break-all'>
             <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
-            {nom}
+            {infoFichier.nom}
           </div>
         </>
       )
     case 'expiree':
-      return <p className='text-xs-regular'>{nom} (Pièce jointe expirée)</p>
+      return (
+        <p className='text-xs-regular'>
+          {infoFichier.nom} (Pièce jointe expirée)
+        </p>
+      )
     case 'erreur_analyse':
       return (
         <p className='whitespace-pre-wrap'>
           Erreur lors de l’analyse de la pièce jointe envoyée par votre
           bénéficiaire. Vous pouvez lui demander de la renvoyer.
-          <span className='block text-xs-regular'>{nom}</span>
+          <span className='block text-xs-regular'>{infoFichier.nom}</span>
         </p>
       )
     default:
       return (
         <div className='flex flex-row justify-end items-center break-all'>
           <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
-          {nom}
+          {infoFichier.nom}
         </div>
       )
   }

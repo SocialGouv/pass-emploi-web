@@ -23,6 +23,7 @@ export type ModalContainerProps = {
   label: { id: string } | { value: string }
 }
 
+// TODO handle click outside modal
 function ModalContainer(
   { children, onClose, label }: ModalContainerProps,
   ref: ForwardedRef<ModalHandles>

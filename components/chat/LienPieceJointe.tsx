@@ -2,17 +2,16 @@ import parse from 'html-react-parser'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { InfoFichier } from 'interfaces/fichier'
 import { MessageRechercheMatch } from 'interfaces/message'
 
 export function LienPieceJointe({
-  id,
-  nom,
-  className,
+  infoFichier,
+  isSentByConseiller,
   highlight,
 }: {
-  id: string
-  nom: string
-  className?: string
+  infoFichier: InfoFichier
+  isSentByConseiller: boolean
   highlight?: MessageRechercheMatch
 }) {
   function surlignerTexte(texte: string) {
@@ -27,22 +26,23 @@ export function LienPieceJointe({
   }
 
   return (
-    <div className='flex flex-row justify-end underline'>
+    <div
+      className={`flex flex-row justify-end underline ${isSentByConseiller ? 'hover:text-primary' : 'hover:text-primary_lighten'}`}
+    >
       <IconComponent
         name={IconName.AttachFile}
         aria-hidden={true}
         focusable={false}
-        className={`w-6 h-6 ${className ?? ''}`}
+        className='shrink-0 w-6 h-6 fill-current'
       />
       <a
-        href={`/api/fichiers/${id}`}
+        href={`/api/fichiers/${infoFichier.id}`}
         target='_blank'
         rel='noreferrer noopener'
-        aria-label={`Télécharger la pièce jointe ${nom}`}
         className='font-bold break-all'
       >
         <span className='sr-only'>Télécharger la pièce jointe </span>
-        {highlight ? surlignerTexte(nom) : nom}
+        {highlight ? surlignerTexte(infoFichier.nom) : infoFichier.nom}
       </a>
     </div>
   )

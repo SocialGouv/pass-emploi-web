@@ -118,8 +118,7 @@ function ClotureSessionPage({
   function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
     const isChecked = tailleSelection === session.inscriptions.length
-    const isIndeterminate =
-      tailleSelection !== session.inscriptions.length && tailleSelection > 0
+    const isIndeterminate = !isChecked && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -229,8 +228,6 @@ function ClotureSessionPage({
                         : 'before:absolute before:inset-0 before:z-10 cursor-pointer'
                     }`}
                   >
-                    {/* FIXME title != label */}
-                    {/* FIXME title pas hoverable à cause de "before:z-10" ? */}
                     <input
                       disabled={
                         beneficiaire.statut === StatutBeneficiaire.PRESENT
@@ -241,10 +238,6 @@ function ClotureSessionPage({
                         Boolean(
                           idsSelectionnes.includes(beneficiaire.idJeune)
                         ) || beneficiaire.statut === StatutBeneficiaire.PRESENT
-                      }
-                      title={
-                        'Sélectionner ' +
-                        `${beneficiaire.prenom} ${beneficiaire.nom}`
                       }
                       onChange={() => modifierStatutBeneficiaire(beneficiaire)}
                       className='mr-4'

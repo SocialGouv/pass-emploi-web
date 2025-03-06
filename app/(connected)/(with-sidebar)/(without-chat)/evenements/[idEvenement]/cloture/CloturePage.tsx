@@ -2,7 +2,7 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -29,22 +29,42 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
 
   function selectionnerBeneficiaire(jeune: BaseBeneficiaire) {
+    let nouvelleSelection
     if (idsSelectionnes.includes(jeune.id)) {
-      setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.id))
+      nouvelleSelection = idsSelectionnes.filter((id) => id !== jeune.id)
     } else {
-      setIdsSelectionnes(idsSelectionnes.concat(jeune.id))
+      nouvelleSelection = idsSelectionnes.concat(jeune.id)
     }
+
+    setIdsSelectionnes(nouvelleSelection)
+    mettreAJourCheckboxToutSelectionner(nouvelleSelection.length)
   }
 
   function selectionnerTousLesBeneficiaires() {
-    if (idsSelectionnes.length !== evenement.jeunes.length) {
+    if (idsSelectionnes.length === 0) {
       setIdsSelectionnes(evenement.jeunes.map((jeune) => jeune.id))
+      mettreAJourCheckboxToutSelectionner(evenement.jeunes.length)
     } else {
       setIdsSelectionnes([])
+      mettreAJourCheckboxToutSelectionner(0)
     }
+  }
+
+  function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === evenement.jeunes.length
+    const isIndeterminate = !isChecked && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
   async function cloreAnimationCollective(event: FormEvent) {
@@ -83,6 +103,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
             <TR>
               <TD>
                 <input
+                  ref={toutSelectionnerCheckboxRef}
                   id='cloture-tout-selectionner'
                   type='checkbox'
                   checked={idsSelectionnes.length === evenement.jeunes.length}

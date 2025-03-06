@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -17,27 +16,25 @@ export default function LienEvenementEmploi({
           <dd>{infoEvenementEmploi.titre}</dd>
         </dl>
       </div>
-      <div
-        className={`mt-4 w-max ml-auto text-s-regular text-primary_darken hover:text-primary`}
+
+      <a
+        href={infoEvenementEmploi.url}
+        target='_blank'
+        rel='noreferrer noopener'
+        className='block mt-4 w-fit ml-auto text-s-regular underline text-primary hover:text-primary_darken'
       >
-        <Link
-          href={infoEvenementEmploi.url}
-          target='_blank'
-          rel='noreferrer noopener'
-          className='underline text-primary hover:text-primary_darken flex items-center'
-        >
-          Voir l’événement emploi{' '}
-          <span className='sr-only'>
-            {infoEvenementEmploi.titre} (nouvelle fenêtre)
-          </span>
-          <IconComponent
-            name={IconName.OpenInNew}
-            className='w-4 h-4 ml-1 fill-current'
-            focusable={false}
-            aria-hidden={true}
-          />
-        </Link>
-      </div>
+        Voir l’événement emploi
+        <span className='sr-only'>
+          {' '}
+          {infoEvenementEmploi.titre} (nouvelle fenêtre)
+        </span>
+        <IconComponent
+          name={IconName.OpenInNew}
+          className='inline shrink-0 w-4 h-4 ml-1 fill-current'
+          focusable={false}
+          aria-hidden={true}
+        />
+      </a>
     </div>
   )
 }

@@ -21,7 +21,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 
 type FormRechercheOffresProps = {
-  hasResults: boolean
+  isSearching: boolean
   collapsed: boolean
   fetchMetiers: (search: string) => Promise<Metier[]>
   fetchCommunes: (search: string) => Promise<Commune[]>
@@ -46,7 +46,7 @@ export default function FormRechercheOffres({
   fetchCommunes,
   fetchCommunesEtDepartements,
   collapsed,
-  hasResults,
+  isSearching,
   onNouvelleRecherche,
   stateQueryOffresEmploi,
   stateQueryServicesCiviques,
@@ -111,7 +111,6 @@ export default function FormRechercheOffres({
 
   async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (hasResults) return
     if (formIsInvalid()) return
     if (!typeOffre) return
 
@@ -243,7 +242,7 @@ export default function FormRechercheOffres({
               {countCriteres > 1 && 's'}
             </p>
 
-            <Button type='submit' className='mx-auto'>
+            <Button type='submit' className='mx-auto' isLoading={isSearching}>
               <IconComponent
                 name={IconName.Search}
                 focusable={false}
