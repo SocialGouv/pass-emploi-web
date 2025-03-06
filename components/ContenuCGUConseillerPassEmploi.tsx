@@ -39,7 +39,8 @@ export default function ContenuCGUConseillerPassEmploi() {
         bénéficiaires du RSA dans leur recherche professionnelle, ou dans la
         création de leur projet. Il peut également s’agir de tout agent de
         France travail utilisant le back office « pass emploi », accompagnant
-        les bénéficiaires de l’AIJ.
+        les bénéficiaires de l’AIJ, de l’Accompagnement global, de
+        l’Accompagnement intensif ou d’Equi’emploi / Equip’recrut.
       </p>
       <p className='mb-4'>
         « Le bénéficiaire de l’AIJ » est toute personne bénéficiant d’un AIJ
@@ -51,10 +52,26 @@ export default function ContenuCGUConseillerPassEmploi() {
         des familles.
       </p>
       <p className='mb-4'>
-        « L’Usager » est toute personne bénéficiaire de l’AIJ ou bénéficiaire du
-        RSA s’étant créé un compte, accompagnée dans sa recherche par un
-        Conseiller, souhaitant trouver des ressources ou être accompagné dans
-        son projet professionnel en général.
+        « Le bénéficiaire de l’Accompagnement global » est toute personne
+        bénéficiant d’un accompagnement global dans les conditions prévues par
+        la réglementation en vigueur.
+      </p>
+      <p className='mb-4'>
+        « Le bénéficiaire de l’Accompagnement intensif » est toute personne
+        bénéficiant d’un accompagnement global dans les conditions prévues par
+        la réglementation en vigueur.
+      </p>
+      <p className='mb-4'>
+        « Le bénéficiaire de l’Accompagnement d’Equip’emploi / Equip’recrut »
+        est toute personne bénéficiant d’un accompagnement global dans les
+        conditions prévues par la réglementation en vigueur.
+      </p>
+      <p className='mb-4'>
+        « L’Usager » est toute personne bénéficiaire de l’AIJ, du RSA, de
+        l’Accompagnement global, de l’Accompagnement intensif et du dispositif
+        Equip’emploi / Equip’recrut s’étant créé un compte, accompagnée dans sa
+        recherche par un Conseiller, souhaitant trouver des ressources et être
+        accompagnée dans son projet professionnel en général.
       </p>
       <p className='mb-4'>
         « Le Superviseur » est un agent ayant un rôle d’encadrement et
@@ -209,7 +226,7 @@ export default function ContenuCGUConseillerPassEmploi() {
       </h2>
       <h3 className='text-base-bold text-content_color mb-2'>5.1 L’éditeur</h3>
       <p className='mb-4'>
-        La DGEFP a qualité d’éditeur de l’application « pass emploi ».
+        France Travail a qualité d’éditeur de l’application « pass emploi ».
       </p>
       <p className='mb-4'>
         Les sources des informations diffusées sur la Plateforme sont réputées
@@ -347,28 +364,28 @@ export default function ContenuCGUConseillerPassEmploi() {
       <p className='mb-4'>
         La Plateforme et tous les éléments qui le composent notamment les
         programmes, données, textes, images, sons, dessins, graphismes etc. sont
-        la propriété de la DGEFP ou font l’objet d’une concession accordée à son
-        profit. Toute copie, reproduction, représentation, adaptation,
+        la propriété de France Travail ou font l’objet d’une concession accordée
+        à son profit. Toute copie, reproduction, représentation, adaptation,
         diffusion, intégrale ou partielle de la Plateforme, par quelque procédé
         que ce soit et sur quelque support que ce soit est soumise à l’accord
-        préalable écrit de la DGEFP, sous réserve des exceptions prévues par le
-        Code de propriété intellectuelle.
+        préalable écrit de France Travail, sous réserve des exceptions prévues
+        par le Code de propriété intellectuelle.
       </p>
       <p className='mb-4'>
         Toute utilisation non autorisée des contenus ou informations de la
         Plateforme “pass emploi”, notamment à des fins d’exploitation
         commerciale, pourra faire l’objet de poursuites sur la base d’une action
         en contrefaçon et/ou d’une action en concurrence déloyale et/ou
-        parasitisme de la part de la DGEFP.
+        parasitisme de la part de France Travail.
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
         Article 8 – Protection des données personnelles
       </h2>
       <p className='mb-4'>
-        Les données à caractère personnel sont traitées par la DGEFP et les
-        utilisateurs dans le respect des dispositions de la Loi n° 78-17 du 6
-        janvier 1978 relative à l’informatique, aux fichiers et aux libertés,
+        Les données à caractère personnel sont traitées par France Travail et
+        les utilisateurs dans le respect des dispositions de la Loi n° 78-17 du
+        6 janvier 1978 relative à l’informatique, aux fichiers et aux libertés,
         dans sa version en vigueur, ainsi qu’au Règlement Général sur les
         Données Personnelles (RGPD).
       </p>
