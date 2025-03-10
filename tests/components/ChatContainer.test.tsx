@@ -83,10 +83,7 @@ describe('<ChatContainer />', () => {
       await renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
         customChats: beneficiairesChats,
         customCurrentConversation: {
-          value: {
-            conversation: beneficiairesChats[2],
-            shouldFocusOnRender: true,
-          },
+          value: beneficiairesChats[2],
         },
       })
     })

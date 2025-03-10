@@ -48,7 +48,6 @@ type ConversationProps = {
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
   beneficiaireChat: BeneficiaireEtChat
-  shouldFocusOnFirstRender: boolean
   toggleAfficherRecherche: () => void
 }
 
@@ -57,7 +56,6 @@ export function Conversation({
   onBack,
   getConseillerNomComplet,
   beneficiaireChat,
-  shouldFocusOnFirstRender,
   toggleAfficherRecherche,
 }: ConversationProps) {
   const NB_MESSAGES_PAR_PAGE = 10
@@ -304,12 +302,12 @@ export function Conversation({
   useEffect(() => {
     if (!nombrePagesChargees) return
 
-    if (!messagesByDay!.length && shouldFocusOnFirstRender) {
+    if (!messagesByDay!.length) {
       headerChatRef.current!.focusRetour()
       return
     }
 
-    if (nombrePagesChargees === 1 && shouldFocusOnFirstRender) {
+    if (nombrePagesChargees === 1) {
       focusDernierMessage()
       return
     }

@@ -15,10 +15,7 @@ import { ActualitesProvider } from 'utils/actualitesContext'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
-import {
-  CurrentConversation,
-  CurrentConversationProvider,
-} from 'utils/chat/currentConversationContext'
+import { CurrentConversationProvider } from 'utils/chat/currentConversationContext'
 import {
   ListeDeDiffusionSelectionneeProvider,
   ListeSelectionnee,
@@ -41,8 +38,8 @@ export default async function renderWithContexts(
     }>
     customChats?: BeneficiaireEtChat[]
     customCurrentConversation?: Partial<{
-      value: CurrentConversation
-      setter: Dispatch<SetStateAction<CurrentConversation | undefined>>
+      value: BeneficiaireEtChat
+      setter: Dispatch<SetStateAction<BeneficiaireEtChat | undefined>>
     }>
     customAlerte?: Partial<{
       value: Alerte
@@ -115,8 +112,8 @@ function provideContexts(
   }>,
   chats: BeneficiaireEtChat[] | undefined,
   currentConversation: Partial<{
-    value: CurrentConversation
-    setter: Dispatch<SetStateAction<CurrentConversation | undefined>>
+    value: BeneficiaireEtChat
+    setter: Dispatch<SetStateAction<BeneficiaireEtChat | undefined>>
   }>,
   alerte: Partial<{
     value: Alerte

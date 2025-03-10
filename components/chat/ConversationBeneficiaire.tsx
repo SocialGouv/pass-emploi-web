@@ -3,22 +3,20 @@ import React, { useState } from 'react'
 import { Conversation } from 'components/chat/Conversation'
 import { RechercheMessage } from 'components/chat/RechercheMessage'
 import {
-  ConseillerHistorique,
   BeneficiaireEtChat,
+  ConseillerHistorique,
 } from 'interfaces/beneficiaire'
 import { Message } from 'interfaces/message'
 
 type ConversationBeneficiaireProps = {
   conseillers: ConseillerHistorique[]
   beneficiaireChat: BeneficiaireEtChat
-  shouldFocusOnFirstRender: boolean
   onBack: () => void
 }
 
 export default function ConversationBeneficiaire({
   beneficiaireChat,
   conseillers,
-  shouldFocusOnFirstRender,
   onBack,
 }: ConversationBeneficiaireProps) {
   const [afficherRecherche, setAfficherRecherche] = useState<boolean>(false)
@@ -42,7 +40,6 @@ export default function ConversationBeneficiaire({
           getConseillerNomComplet={getConseillerNomComplet}
           beneficiaireChat={beneficiaireChat}
           onBack={onBack}
-          shouldFocusOnFirstRender={shouldFocusOnFirstRender}
           toggleAfficherRecherche={() => setAfficherRecherche(true)}
         />
       )}

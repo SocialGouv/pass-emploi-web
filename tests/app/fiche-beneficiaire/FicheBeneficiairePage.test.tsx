@@ -65,10 +65,7 @@ describe('FicheBeneficiairePage client side', () => {
       )
 
       // Then
-      expect(setCurrentConversation).toHaveBeenCalledWith({
-        conversation,
-        shouldFocusOnRender: false,
-      })
+      expect(setCurrentConversation).toHaveBeenCalledWith(conversation)
     })
   })
 

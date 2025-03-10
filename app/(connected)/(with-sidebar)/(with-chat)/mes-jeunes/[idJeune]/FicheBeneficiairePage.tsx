@@ -119,8 +119,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   useEffect(() => {
     if (chatIsLoaded && !lectureSeule) {
       const conversation = chats!.find(({ id }) => id === beneficiaire.id)
-      if (conversation)
-        setCurrentConversation({ conversation, shouldFocusOnRender: false })
+      setCurrentConversation(conversation)
     }
   }, [chatIsLoaded])
 

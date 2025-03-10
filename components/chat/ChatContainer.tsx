@@ -49,9 +49,7 @@ export default function ChatContainer({
 
   function afficherConversation(conversation: BeneficiaireEtChat | undefined) {
     if (conversation) conversationAFocus.current = conversation.id
-    setCurrentConversation(
-      conversation && { conversation, shouldFocusOnRender: true }
-    )
+    setCurrentConversation(conversation)
   }
 
   useEffect(() => {
@@ -67,7 +65,7 @@ export default function ChatContainer({
       !listeSelectionnee.liste &&
       !showRubriqueListesDeDiffusion
     ) {
-      getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
+      getConseillersDuJeuneClientSide(currentConversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
     }
@@ -137,8 +135,7 @@ export default function ChatContainer({
           {!showRubriqueListesDeDiffusion && currentConversation && (
             <ConversationBeneficiaire
               onBack={() => afficherConversation(undefined)}
-              beneficiaireChat={currentConversation.conversation}
-              shouldFocusOnFirstRender={currentConversation.shouldFocusOnRender}
+              beneficiaireChat={currentConversation}
               conseillers={conseillers}
             />
           )}
