@@ -8,7 +8,7 @@ import ChoixConseiller from 'app/components/ChoixConseiller'
 import RadioBox from 'components/action/RadioBox'
 import Button from 'components/ui/Button/Button'
 import Etape, { NumeroEtape } from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -621,7 +621,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                       name={IconName.Error}
                       focusable={false}
                       aria-hidden={true}
-                      className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                      className='fill-warning w-6 h-6 mr-2 shrink-0'
                     />
                     <p className='text-warning'>{erreurReaffectation}</p>
                   </div>

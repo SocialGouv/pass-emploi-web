@@ -36,6 +36,7 @@ export const desMessagesAntechronologiques = (): Message[] => [
       'Bonjour, je vous partage une session milo afin d’avoir votre avis',
     creationDate: DateTime.local(2022, 1, 17),
     type: TypeMessage.MESSAGE_SESSION_MILO,
+    sentBy: 'jeune',
     infoSessionMilo: {
       id: 'id-session-milo',
       titre: 'Une session milo',
@@ -46,6 +47,7 @@ export const desMessagesAntechronologiques = (): Message[] => [
     content: 'Bonjour, je vous partage un événement afin d’avoir votre avis',
     creationDate: DateTime.local(2022, 1, 17),
     type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
+    sentBy: 'jeune',
     infoEvenementEmploi: {
       id: 'id-evenement-emploi',
       titre: 'Un événement emploi',
@@ -57,6 +59,7 @@ export const desMessagesAntechronologiques = (): Message[] => [
     content: 'Je vous partage cet événement',
     creationDate: DateTime.local(2022, 1, 17),
     type: TypeMessage.MESSAGE_EVENEMENT,
+    sentBy: 'jeune',
     infoEvenement: {
       id: 'id-evenement',
       titre: 'Un atelier',
@@ -185,6 +188,7 @@ export const desMessagesParJour = (): ByDay<Message> => ({
           id: 'message-7',
           content: 'Decrypted: Je vous partage cet événement',
           creationDate: DateTime.local(2022, 1, 17),
+          sentBy: 'jeune',
           type: TypeMessage.MESSAGE_EVENEMENT,
           infoEvenement: {
             id: 'id-evenement',
@@ -197,6 +201,7 @@ export const desMessagesParJour = (): ByDay<Message> => ({
           content:
             'Decrypted: Bonjour, je vous partage un événement afin d’avoir votre avis',
           creationDate: DateTime.local(2022, 1, 17),
+          sentBy: 'jeune',
           type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
           infoEvenementEmploi: {
             id: 'id-evenement-emploi',
@@ -209,6 +214,7 @@ export const desMessagesParJour = (): ByDay<Message> => ({
           content:
             'Decrypted: Bonjour, je vous partage une session milo afin d’avoir votre avis',
           creationDate: DateTime.local(2022, 1, 17),
+          sentBy: 'jeune',
           type: TypeMessage.MESSAGE_SESSION_MILO,
           infoSessionMilo: {
             id: 'id-session-milo',

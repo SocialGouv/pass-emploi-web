@@ -9,7 +9,7 @@ import React, {
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
@@ -161,7 +161,7 @@ function ChoixConseiller(
           )}
           <fieldset
             ref={listeRef}
-            className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
+            className='grid grid-cols-[auto_1fr_2fr] gap-2 pb-2'
           >
             <legend className='sr-only'>Choix du conseiller {name}</legend>
             {choixConseillers.map((conseiller) => (

@@ -1,6 +1,6 @@
-import React, { forwardRef } from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
-import ErrorIcon from 'assets/icons/informations/error.svg'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface InputErrorProps {
   children: string
@@ -8,15 +8,19 @@ interface InputErrorProps {
   className?: string
 }
 
-export const InputError = forwardRef<HTMLDivElement, InputErrorProps>(
-  ({ id, children, className }: InputErrorProps, ref) => (
+export function InputError(
+  { id, children, className }: InputErrorProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  return (
     <div
       id={id}
       className={`${className ?? ''} flex items-center`}
       ref={ref}
       tabIndex={ref ? -1 : undefined}
     >
-      <ErrorIcon
+      <IconComponent
+        name={IconName.Error}
         focusable={false}
         aria-hidden={true}
         className='w-4 h-4 mr-1 shrink-0 fill-warning'
@@ -24,5 +28,6 @@ export const InputError = forwardRef<HTMLDivElement, InputErrorProps>(
       <p className='text-warning text-s-regular'>{children}</p>
     </div>
   )
-)
-InputError.displayName = 'InputError'
+}
+
+export default forwardRef(InputError)

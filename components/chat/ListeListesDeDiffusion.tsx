@@ -97,7 +97,7 @@ function ListeListesDeDiffusion(
                 className='bg-grey_100 flex flex-col justify-center items-center'
               >
                 <EmptyState
-                  illustrationName={IllustrationName.SendWhite}
+                  illustrationName={IllustrationName.Send}
                   titre='Vous n’avez pas encore créé de liste de diffusion.'
                   sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
                   lien={{

@@ -1,6 +1,8 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
-import React, { ReactNode, useRef, useState } from 'react'
+import React, { FC, ReactNode, SVGProps, useRef, useState } from 'react'
 
+import illustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
+import illustrationLogoPassemploi from 'assets/images/logo_pass_emploi.svg'
 import onboardingMessageriePassEmploi from 'assets/images/onboarding_messagerie_pass-emploi.webp'
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
 import onboardingOffresPassEmploi from 'assets/images/onboarding_offres_pass-emploi.webp'
@@ -35,28 +37,28 @@ export default function OnboardingPEModal({
     offresImage,
     portefeuilleImage,
     titreOnboarding,
-    illustrationName,
+    logoImage,
   } = estPassEmploi
     ? {
         messagerieImage: onboardingMessageriePassEmploi,
         offresImage: onboardingOffresPassEmploi,
         portefeuilleImage: onboardingPortefeuillePassEmploi,
         titreOnboarding: 'pass emploi',
-        illustrationName: IllustrationName.LogoPassemploi,
+        logoImage: illustrationLogoPassemploi,
       }
     : {
         messagerieImage: onboardingMessagerie,
         offresImage: onboardingOffres,
         portefeuilleImage: onboardingPortefeuille,
         titreOnboarding: 'CEJ',
-        illustrationName: IllustrationName.LogoCEJ,
+        logoImage: illustrationLogoCEJ,
       }
 
   return (
     <>
       {etape === 'ACCUEIL' && (
         <OnboardingPEEtapeModal
-          illustrationName={illustrationName}
+          illustration={logoImage}
           titre={`Bienvenue ${conseiller.firstName} dans votre espace conseiller ${titreOnboarding}`}
           onClose={onClose}
           onContinue={() => setEtape('PORTEFEUIILLE')}
@@ -131,19 +133,19 @@ export default function OnboardingPEModal({
 }
 
 function OnboardingPEEtapeModal({
-  illustrationName,
+  illustration,
   imageSrc,
   titre,
   children,
   onClose,
   onContinue,
 }: {
-  illustrationName?: IllustrationName
-  imageSrc?: StaticImport
   titre: string
   children: ReactNode
   onClose: () => void
   onContinue?: () => void
+  illustration?: FC<SVGProps<SVGElement>>
+  imageSrc?: StaticImport
 }) {
   const modalRef = useRef<ModalHandles>(null)
 
@@ -152,8 +154,8 @@ function OnboardingPEEtapeModal({
       title={titre}
       onClose={onClose}
       ref={modalRef}
+      titleIllustration={illustration}
       titleImageSrc={imageSrc}
-      titleIllustration={illustrationName}
     >
       {children}
 

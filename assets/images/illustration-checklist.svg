@@ -1,9 +1,9 @@
-<svg fill="#73758D" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 55">
+<svg fill="var(--color-disabled)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 55">
     <ellipse cx="38.7" cy="38.5" rx="8.4" ry="8.6" transform="rotate(-90 38.7 38.5)" fill="var(--secondary-fill)"/>
     <ellipse cx="18.2" cy="16.5" rx="8.4" ry="8.6" transform="rotate(-90 18.2 16.5)" fill="var(--secondary-fill)"/>
     <path fill="var(--secondary-fill)" d="m42.2 19 .7-5.7 5.9.7-.7 5.7zM8.3 42l1.3-5.6 5.8 1.3-1.3 5.6z"/>
     <path d="M29 14.9c-7.6 0-13.8 5.8-13.8 13S21.4 41 29 41c7.5 0 13.7-5.8 13.7-13S36.5 15 29 15" fill="inherit"/>
     <path
         d="M23.9 33.1q-.4 0-.7-.2l-.2-.6v-8.7q0-.4.2-.7l.7-.2h10.4q.4 0 .6.2.3.3.3.7v8.7q0 .3-.3.6l-.6.2zm1-2.3h3v-1.1h-3zm5.7-1.1 3-3-.9-.7-2 2-1-.8-.8.8zM25 28.5h3v-1.2h-3zm0-2.3h3V25h-3z"
-        fill="#fff"/>
+        fill="var(--color-white)"/>
 </svg>

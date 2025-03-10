@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'

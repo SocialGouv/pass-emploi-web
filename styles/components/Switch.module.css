@@ -9,9 +9,9 @@
   display: inline-block;
   width: 3rem;
   height: 2rem;
-  background-color: theme('colors.grey_700');
+  background-color: var(--color-grey_700);
   border-radius: 9999px;
-  border: 1px solid theme('colors.grey_700');
+  border: 1px solid var(--color-grey_700);
   cursor: pointer;
 }
 
@@ -21,7 +21,7 @@
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 9999px;
-  background-color: theme('colors.white');
+  background-color: var(--color-white);
   top: 1px;
   left: 1px;
   -webkit-transition: 0.4s;
@@ -29,8 +29,8 @@
 }
 
 .checkbox:checked + .toggle {
-  background-color: theme('colors.success');
-  border: 1px solid theme('colors.success');
+  background-color: var(--color-success);
+  border: 1px solid var(--color-success);
 }
 
 .checkbox:checked + .toggle::after {
@@ -42,7 +42,7 @@
 }
 
 .checkbox:disabled + .toggle {
-  opacity: 0.6;
+  opacity: 0.7;
   filter: grayscale(40%);
   cursor: not-allowed;
 }

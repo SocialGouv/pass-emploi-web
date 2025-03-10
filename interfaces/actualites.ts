@@ -8,13 +8,14 @@ export type ActualitesRaw = Array<{
   dateDerniereModification: string
 }>
 
-export type ActualitesParsees = Array<{
+export type ArticleCouleur = 'primary' | 'warning'
+export type Article = {
   id: number
   titre: ReturnType<typeof domToReact>
   etiquettes: EtiquetteArticle[]
   contenu: ReturnType<typeof domToReact>
   dateDerniereModification: string
-}>
+}
 
 export type ArticleJson = {
   id: number
@@ -38,5 +39,5 @@ export type TagJson = {
 export type EtiquetteArticle = {
   id: number
   nom: string
-  couleur: string
+  couleur?: ArticleCouleur
 }

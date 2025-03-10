@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Etape from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Commune, Metier } from 'interfaces/referentiel'

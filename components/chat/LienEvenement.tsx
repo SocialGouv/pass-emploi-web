@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InfoEvenement } from 'interfaces/message'
 import { toShortDate } from 'utils/date'
 
@@ -19,17 +20,25 @@ export default function LienEvenement({
           <dd>le {toShortDate(infoEvenement.date)}</dd>
         </dl>
       </div>
-      <div
-        className={`mt-4 w-max ml-auto text-s-regular text-primary_darken hover:text-primary`}
+
+      <Link
+        href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
+        target='_blank'
+        rel='noreferrer noopener'
+        className='block mt-4 w-fit ml-auto text-s-regular underline text-primary hover:text-primary_darken'
       >
-        <Link
-          href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
-          className='underline text-content_color hover:text-primary'
-        >
-          Voir l’événement{' '}
-          <span className='sr-only'>{infoEvenement.titre}</span>
-        </Link>
-      </div>
+        Voir l’événement
+        <span className='sr-only'>
+          {' '}
+          {infoEvenement.titre} (nouvelle fenêtre)
+        </span>
+        <IconComponent
+          name={IconName.OpenInNew}
+          className='inline shrink-0 w-4 h-4 ml-1 fill-current'
+          focusable={false}
+          aria-hidden={true}
+        />
+      </Link>
     </div>
   )
 }

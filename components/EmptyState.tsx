@@ -60,7 +60,7 @@ export default function EmptyState({
         name={illustrationName}
         focusable={false}
         aria-hidden={true}
-        className='w-48 h-48 m-auto mt-12 [--secondary-fill:theme(colors.grey\_100)]'
+        className='w-48 h-48 m-auto mt-12 [--secondary-fill:var(--color-grey_100)]'
       />
 
       <p

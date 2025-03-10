@@ -9,18 +9,7 @@ export default function TagStatutDemarche({
 }: {
   status: StatutDemarche
 }) {
-  const {
-    label,
-    color,
-    altColor: backgroundColor,
-  } = propsStatutsDemarches[status]
+  const { label, style } = propsStatutsDemarches[status]
 
-  return (
-    <TagStatut
-      label={label}
-      color={color}
-      backgroundColor={backgroundColor}
-      className='text-s-bold'
-    />
-  )
+  return <TagStatut label={label} className={style + ' text-s-bold'} />
 }

@@ -83,8 +83,8 @@ export function EvenementRow({
                   }
                   focusable={false}
                   aria-hidden={true}
-                  className={`inline mr-2 h-6 w-6 fill-${
-                    evenement.futPresent ? 'success' : 'alert'
+                  className={`inline mr-2 h-6 w-6 ${
+                    evenement.futPresent ? 'fill-success' : 'fill-alert'
                   }`}
                 />
                 {evenement.futPresent ? 'Oui' : 'Non'}

@@ -173,7 +173,7 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
                 label='Consultez la procédure à suivre'
                 href='https://doc.pass-emploi.beta.gouv.fr/suppression-de-compte/'
                 onClick={trackTutoSuppression}
-                className='!flex mt-2'
+                className='flex! mt-2'
               />
             </p>
           </InformationMessage>
