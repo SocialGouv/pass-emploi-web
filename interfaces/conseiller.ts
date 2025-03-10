@@ -8,6 +8,7 @@ import {
   Structure,
   structureFTCej,
 } from 'interfaces/structure'
+import { dateIsFuture } from 'utils/date'
 
 export enum UserType {
   CONSEILLER = 'CONSEILLER',
@@ -77,11 +78,14 @@ export function utiliseChat({
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
-  if (!conseiller.dateSignatureCGU) return false
+  if (!conseiller.dateSignatureCGU) return true
 
-  return estPassEmploi(conseiller.structure)
-    ? DateTime.fromISO(conseiller.dateSignatureCGU) <
-        DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
-    : DateTime.fromISO(conseiller.dateSignatureCGU) <
-        DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
+  const dateUpdateCgu = estPassEmploi(conseiller.structure)
+    ? DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
+    : DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
+
+  return (
+    !dateIsFuture(dateUpdateCgu) &&
+    DateTime.fromISO(conseiller.dateSignatureCGU) < dateUpdateCgu
+  )
 }

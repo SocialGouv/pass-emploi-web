@@ -5,6 +5,10 @@ export function dateIsToday(dateToCheck: DateTime): boolean {
   return DateTime.now().hasSame(dateToCheck, 'day')
 }
 
+export function dateIsFuture(dateToCheck: DateTime): boolean {
+  return DateTime.now() < dateToCheck
+}
+
 export function dateIsYesterday(dateToCheck: DateTime): boolean {
   return DateTime.now().minus({ day: 1 }).hasSame(dateToCheck, 'day')
 }
