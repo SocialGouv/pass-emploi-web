@@ -83,7 +83,7 @@ export default function DeleteBeneficiaireModal({
     )
     if (index > -1) updatedPortefeuille.splice(index, 1)
     setPortefeuille(updatedPortefeuille)
-    if (currentConversation?.conversation.id === idBeneficiaire)
+    if (currentConversation?.id === idBeneficiaire)
       setCurrentConversation(undefined)
 
     onSuccess()

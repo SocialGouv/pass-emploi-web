@@ -46,7 +46,7 @@ function MessageriePage() {
       !listeSelectionnee.liste &&
       !showRubriqueListesDeDiffusion
     ) {
-      getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
+      getConseillersDuJeuneClientSide(currentConversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
     }
@@ -84,14 +84,11 @@ function MessageriePage() {
               <ConversationBeneficiaire
                 onBack={() => {
                   document
-                    .getElementById(
-                      'chat-' + currentConversation.conversation.id
-                    )
+                    .getElementById('chat-' + currentConversation.id)
                     ?.focus()
                   setCurrentConversation(undefined)
                 }}
-                beneficiaireChat={currentConversation.conversation}
-                shouldFocusOnFirstRender={true}
+                beneficiaireChat={currentConversation}
                 conseillers={conseillers}
               />
             </div>
