@@ -65,7 +65,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react-compiler": "19.0.0-beta-e552027-20250112",
     "jest": "^29.7.0",
-    "jest-axe": "^9.0.0",
+    "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "pino-pretty": "^13.0.0",
     "postcss": "^8.5.3",
