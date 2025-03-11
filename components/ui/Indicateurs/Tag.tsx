@@ -55,7 +55,7 @@ function Tag({ label, className, iconName, iconLabel, isSmallTag }: TagProps) {
 
   return (
     <span
-      className={`flex items-center w-fit text-s-medium px-3 ${className} whitespace-nowrap ${isSmallTag ? 'px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!' : ''}`}
+      className={`flex items-center w-fit text-s-medium px-3 ${className} ${isSmallTag ? 'px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!' : ''}`}
     >
       {iconName && <TagIcon />}
       {label}
@@ -132,6 +132,24 @@ export function TagCategorie({ categorie }: TagCategorieProps) {
       className='text-alert bg-white rounded-large'
       iconName={IconName.Warning}
       label='Catégorie manquante'
+    />
+  )
+}
+
+export function TagFavori({ aPostule }: { aPostule: boolean }) {
+  if (aPostule) {
+    return (
+      <TagMetier
+        label='Postulée'
+        className='text-accent_1 bg-accent_1_lighten'
+      />
+    )
+  }
+
+  return (
+    <TagMetier
+      label='Enregistrée'
+      className='text-primary bg-primary_lighten'
     />
   )
 }

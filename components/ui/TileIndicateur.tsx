@@ -26,7 +26,6 @@ export default function TileIndicateur({
       }`}
     >
       <span className='text-xl-bold'>{valeur}</span>
-
       <span className='flex items-center gap-1'>
         {iconName && (
           <IconComponent

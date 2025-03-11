@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React from 'react'
 
-import { LienVersFavoris } from 'components/jeune/BlocFavoris'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/beneficiaire'
@@ -165,6 +164,7 @@ function IndicateursOffres({
     </div>
   )
 }
+
 function LienVersActions({
   idBeneficiaire,
   pathPrefix,
@@ -179,6 +179,31 @@ function LienVersActions({
         className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
         Voir toutes les actions
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </Link>
+    </div>
+  )
+}
+
+export function LienVersFavoris({
+  idBeneficiaire,
+  pathPrefix,
+}: {
+  idBeneficiaire: string
+  pathPrefix: string
+}) {
+  return (
+    <div className='flex justify-end mt-4'>
+      <Link
+        href={`${pathPrefix}/${idBeneficiaire}/favoris`}
+        className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+      >
+        Voir tous les favoris
         <IconComponent
           name={IconName.ChevronRight}
           className='w-4 h-5 fill-[inherit]'
