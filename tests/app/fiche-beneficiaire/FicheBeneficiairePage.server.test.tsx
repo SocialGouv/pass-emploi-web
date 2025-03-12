@@ -122,6 +122,7 @@ describe('FicheBeneficiairePage server side', () => {
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),
+          favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
           lectureSeule: false,
           erreurSessions: false,
@@ -156,6 +157,16 @@ describe('FicheBeneficiairePage server side', () => {
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ metadonneesFavoris: uneMetadonneeFavoris() }),
+        undefined
+      )
+    })
+
+    it('récupère les offres favorites', async () => {
+      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          favorisOffres: uneListeDOffres(),
+        }),
         undefined
       )
     })

@@ -22,7 +22,12 @@ const OngletAgendaBeneficiaire = dynamic(
 const OngletRdvsBeneficiaire = dynamic(
   () => import('components/rdv/OngletRdvsBeneficiaire')
 )
-const BlocFavoris = dynamic(() => import('components/jeune/BlocFavoris'))
+const TableauOffres = dynamic(
+  () => import('components/favoris/offres/TableauOffres')
+)
+const ResumeFavorisBeneficiaire = dynamic(
+  () => import('components/jeune/ResumeFavorisBeneficiaire')
+)
 
 export default function FicheBeneficiaireMilo({
   ongletInitial,
@@ -30,6 +35,7 @@ export default function FicheBeneficiaireMilo({
   lectureSeule,
   beneficiaire,
   metadonneesFavoris,
+  favorisOffres,
   actionsInitiales,
   rdvs,
   categoriesActions,
@@ -39,6 +45,10 @@ export default function FicheBeneficiaireMilo({
   onSwitchTab: (tab: OngletMilo) => void
   onLienExterne: (label: string) => void
 }) {
+  const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
+  const afficherSyntheseFavoris =
+    metadonneesFavoris?.autoriseLePartage === false
+
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
@@ -164,7 +174,17 @@ export default function FicheBeneficiaireMilo({
           onSelectTab={() => switchTab('rdvs')}
           iconName={IconName.EventFill}
         />
-        {metadonneesFavoris && (
+        {afficherSuiviOffres && (
+          <Tab
+            label='Suivi des offres'
+            count={metadonneesFavoris!.offres.total}
+            selected={currentTab === 'offres'}
+            controls='liste-offres'
+            onSelectTab={() => switchTab('offres')}
+            iconName={IconName.BookmarkFill}
+          />
+        )}
+        {!afficherSuiviOffres && afficherSyntheseFavoris && (
           <Tab
             label='Favoris'
             count={
@@ -232,7 +252,19 @@ export default function FicheBeneficiaireMilo({
         </div>
       )}
 
-      {currentTab === 'favoris' && metadonneesFavoris && (
+      {currentTab === 'offres' && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-offres--tab'
+          tabIndex={0}
+          id='liste-offres'
+          className='mt-8 pb-8'
+        >
+          <TableauOffres offres={favorisOffres!} />
+        </div>
+      )}
+
+      {currentTab === 'favoris' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-favoris--tab'
@@ -240,10 +272,7 @@ export default function FicheBeneficiaireMilo({
           id='liste-favoris'
           className='mt-8 pb-8'
         >
-          <BlocFavoris
-            idBeneficiaire={beneficiaire.id}
-            metadonneesFavoris={metadonneesFavoris}
-          />
+          <ResumeFavorisBeneficiaire metadonneesFavoris={metadonneesFavoris!} />
         </div>
       )}
     </>

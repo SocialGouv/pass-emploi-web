@@ -14,6 +14,7 @@ export type BaseFiche = {
   beneficiaire: DetailBeneficiaire
   lectureSeule: boolean
   metadonneesFavoris?: MetadonneesFavoris
+  favorisOffres?: Offre[]
 }
 export type FicheBeneficiaireProps = BaseFiche &
   (FicheMiloProps | FichePasMiloProps)
@@ -25,7 +26,13 @@ export function estFicheMilo(
 }
 
 // Milo
-export const valeursOngletsMilo = ['agenda', 'actions', 'rdvs', 'favoris']
+export const valeursOngletsMilo = [
+  'agenda',
+  'actions',
+  'rdvs',
+  'offres',
+  'favoris',
+]
 export type OngletMilo = (typeof valeursOngletsMilo)[number]
 type DonneesMilo = {
   rdvs: EvenementListItem[]
@@ -49,7 +56,6 @@ export const valeursOngletsPasMilo = [
 ]
 export type OngletPasMilo = (typeof valeursOngletsPasMilo)[number]
 type DonneesPasMilo = {
-  favorisOffres?: Offre[]
   favorisRecherches?: Recherche[]
   demarches?: { data: Demarche[]; isStale: boolean } | null
 }
