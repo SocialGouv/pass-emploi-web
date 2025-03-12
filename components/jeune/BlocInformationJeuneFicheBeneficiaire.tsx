@@ -112,9 +112,12 @@ export default function BlocInformationJeuneFicheBeneficiaire({
             )}
         </dl>
 
-        <BoutonChangementDispositif
-          onClick={() => setAfficherChangementDispositif(true)}
-        />
+        {conseillerEstMilo && (
+          <BoutonChangementDispositif
+            onClick={() => setAfficherChangementDispositif(true)}
+          />
+        )}
+
         <LienVersInformations idBeneficiaire={id} pathPrefix={pathPrefix} />
       </div>
 

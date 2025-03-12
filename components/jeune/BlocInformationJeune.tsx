@@ -128,9 +128,12 @@ export function IdentifiantPartenaire(props: {
   onClick: () => void
 }) {
   return (
-    <div className='flex gap-1'>
+    <div className='flex gap-1 items-center'>
       <dt>Identifiant France Travail :</dt>
-      <dd className='text-base-bold' onCopy={props.onCopy}>
+      <dd
+        className='text-base-bold inline-flex items-center'
+        onCopy={props.onCopy}
+      >
         {props.identifiantPartenaire ?? (
           <>
             <span className='sr-only'>non renseigné</span>
@@ -138,7 +141,7 @@ export function IdentifiantPartenaire(props: {
           </>
         )}
         <button
-          className='ml-5 flex items-center text-primary'
+          className='ml-1 inline-flex items-center text-primary'
           aria-label={
             props.identifiantPartenaire
               ? 'Modifier l’identifiant France Travail'
