@@ -85,6 +85,17 @@ const nextConfig: NextConfig = {
 
     return config
   },
+
+  images: {
+    remotePatterns: (process.env.LOGO_AUTHORIZED_URL ?? '')
+      .split(',')
+      .map((authorizedUrl) => ({
+        protocol: 'https',
+        hostname: authorizedUrl,
+        port: '',
+        search: '',
+      })),
+  },
 }
 
 export default withBundleAnalyzer(nextConfig)

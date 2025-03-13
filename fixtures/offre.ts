@@ -72,6 +72,7 @@ export function unDetailOffreEmploi(
       adaptee: false,
       accessibleTH: true,
     },
+    origine: { nom: 'Source offre', logo: 'https://www.perdu.com/logo.png' },
   }
   return { ...defaults, ...overrides }
 }
@@ -131,10 +132,15 @@ export function unDetailOffreJson(
     permis: [{ libelle: 'permis 1' }],
     accessibleTH: true,
   }
+
   return {
     id: 'id-offre',
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
     data: { ...defaults, ...overrides },
+    origine: {
+      logo: 'https://www.perdu.com/logo.png',
+      nom: 'Source offre',
+    },
   }
 }
 

@@ -1,6 +1,9 @@
+import Image from 'next/image'
 import React from 'react'
 
+import IllustrationLogoFT from 'assets/images/logo-ft-full.svg'
 import LienPartageOffre from 'components/offres/LienPartageOffre'
+import SectionTitleDot from 'components/offres/SectionTitleDot'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -65,9 +68,18 @@ export default function OffreEmploiDetail({
       )}
 
       <div className='max-w-2xl mx-auto'>
-        <p className='text-s-regular mb-2'>
-          {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
-        </p>
+        {offre.origine && (
+          <p className='text-s-regular text-grey_800 mb-2 flex items-center gap-2'>
+            <LogoOrigine {...offre.origine} />
+            Source : {offre.origine.nom}
+          </p>
+        )}
+
+        {dateActualisation && (
+          <p className='text-s-regular text-grey_800 mb-2'>
+            Actualisée le {dateActualisation}
+          </p>
+        )}
         <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 
         <section aria-labelledby='heading-info' className='mt-6'>
@@ -324,13 +336,22 @@ export default function OffreEmploiDetail({
   )
 }
 
-function SectionTitleDot() {
-  return (
-    <IconComponent
-      name={IconName.DecorativePoint}
-      focusable={false}
-      aria-hidden={true}
-      className='inline w-2 h-2 fill-primary mr-4'
-    />
-  )
+function LogoOrigine({ logo, nom }: { nom: string; logo?: string }) {
+  const style = 'p-1 h-10 rounded-base border border-primary_lighten'
+
+  if (nom === 'France Travail')
+    return (
+      <IllustrationLogoFT
+        aria-hidden={true}
+        focusable={false}
+        className={style}
+      />
+    )
+  else if (!logo) return null
+  else
+    return (
+      <span aria-hidden={true} className={style + ' relative block w-18'}>
+        <Image src={logo} alt='' fill={true} className='object-cover' />
+      </span>
+    )
 }
