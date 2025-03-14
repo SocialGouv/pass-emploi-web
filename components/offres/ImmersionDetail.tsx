@@ -1,9 +1,10 @@
 import React from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
+import SectionTitleDot from 'components/offres/SectionTitleDot'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { utiliseChat } from 'interfaces/conseiller'
 import { DetailImmersion } from 'interfaces/offre'
@@ -83,16 +84,5 @@ export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
         </section>
       </div>
     </>
-  )
-}
-
-function SectionTitleDot() {
-  return (
-    <IconComponent
-      name={IconName.DecorativePoint}
-      focusable={false}
-      aria-hidden={true}
-      className='inline w-2 h-2 fill-primary mr-4'
-    />
   )
 }

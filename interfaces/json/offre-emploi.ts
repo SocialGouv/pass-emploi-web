@@ -54,6 +54,7 @@ export type DetailOffreEmploiJson = {
   id: string
   urlRedirectPourPostulation?: string
   data: DataDetailOffreEmploiJson
+  origine?: { nom: string; logo?: string }
 }
 
 export function jsonToOffreEmploiItem(
@@ -78,7 +79,8 @@ export function jsonToOffreEmploiItem(
 export function jsonToDetailOffreEmploi(
   json: DetailOffreEmploiJson
 ): DetailOffreEmploi {
-  const { id, data, urlRedirectPourPostulation } = json
+  const { id, data, urlRedirectPourPostulation, origine } = json
+
   const offre: DetailOffreEmploi = {
     type: json.data.alternance ? TypeOffre.ALTERNANCE : TypeOffre.EMPLOI,
     id: id,
@@ -93,6 +95,7 @@ export function jsonToDetailOffreEmploi(
     formations: jsonToFormations(data),
     langues: jsonToLangues(data),
     permis: jsonToPermis(data),
+    origine,
   }
 
   if (urlRedirectPourPostulation)

@@ -30,6 +30,7 @@ export type DetailOffreEmploi = BaseOffreEmploi & {
   permis: string[]
   typeContratLibelle: string
 
+  origine?: { nom: string; logo?: string }
   description?: string
   experience?: DetailOffreEmploiExperience
   horaires?: string
