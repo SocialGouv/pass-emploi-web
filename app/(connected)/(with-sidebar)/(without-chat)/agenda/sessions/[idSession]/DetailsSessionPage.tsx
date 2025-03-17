@@ -20,7 +20,12 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireEtablissement } from 'interfaces/beneficiaire'
-import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
+import {
+  estAClore,
+  estClose,
+  Session,
+  StatutBeneficiaire,
+} from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -327,6 +332,7 @@ function DetailsSessionPage({
           </ButtonLink>
         </PageActionsPortal>
       )}
+
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       {dateLimiteInscriptionDepassee && (
@@ -485,7 +491,7 @@ function DetailsSessionPage({
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
               isLoading={loadingChangerConfiguration}
-              disabled={autoinscriptionSession}
+              disabled={autoinscriptionSession || estClose(session)}
             />
 
             <Label htmlFor='autoinscription-session'>
@@ -497,6 +503,7 @@ function DetailsSessionPage({
               checked={autoinscriptionSession}
               onChange={handleChangerAutoinscriptionSession}
               isLoading={loadingChangerConfiguration}
+              disabled={estClose(session)}
             />
           </div>
         </Etape>

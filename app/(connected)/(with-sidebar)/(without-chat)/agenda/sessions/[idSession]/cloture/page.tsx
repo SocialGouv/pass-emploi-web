@@ -7,7 +7,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { estAClore } from 'interfaces/session'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
@@ -45,7 +45,7 @@ export default async function ClotureSession({
   const { idSession } = await params
   const session = await getDetailsSession(user.id, idSession, accessToken)
   if (!session) notFound()
-  if (session?.session.statut !== StatutAnimationCollective.AClore) notFound()
+  if (!estAClore(session)) notFound()
 
   const inscriptionsInitiales = session.inscriptions.map((inscription) => {
     return { idJeune: inscription.idJeune, statut: inscription.statut }

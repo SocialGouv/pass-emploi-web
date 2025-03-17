@@ -1,20 +1,22 @@
-import React, { ReactElement } from 'react'
+import React, { ChangeEvent, ReactElement } from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import SelectButton from 'components/ui/SelectButton'
-import { AnimationCollective, EtatVisibilite } from 'interfaces/evenement'
+import {
+  AnimationCollective,
+  estClos,
+  EtatVisibilite,
+} from 'interfaces/evenement'
 
 export default function Visibilite({
-  id,
-  isSession,
-  titre,
   etatVisibilite,
   onChangerVisibliteSession,
+  ...animationCollective
 }: {
   etatVisibilite: EtatVisibilite
   onChangerVisibliteSession: (nouvelEtat: EtatVisibilite) => Promise<void>
 } & AnimationCollective): ReactElement {
-  if (!isSession)
+  if (!animationCollective.isSession)
     return (
       <TagMetier
         label='Visible'
@@ -22,20 +24,26 @@ export default function Visibilite({
       />
     )
 
-  const selectId = id + '--visibilite'
+  const selectId = animationCollective.id + '--visibilite'
   const { style } = etatsVisibilite[etatVisibilite]
+
+  async function changerVisibiliteSession(e: ChangeEvent<HTMLSelectElement>) {
+    if (estClos(animationCollective)) return
+
+    const nouvelEtat = e.target.value
+    await onChangerVisibliteSession(nouvelEtat as EtatVisibilite)
+  }
 
   return (
     <>
       <label htmlFor={selectId} className='sr-only'>
-        Visibilité de l’événement {titre}
+        Visibilité de l’événement {animationCollective.titre}
       </label>
       <SelectButton
         id={selectId}
-        onChange={(e) =>
-          onChangerVisibliteSession(e.target.value as EtatVisibilite)
-        }
+        onChange={changerVisibiliteSession}
         value={etatVisibilite}
+        disabled={estClos(animationCollective)}
         className={`z-20 text-xs-bold ${style}`}
       >
         {Object.entries(etatsVisibilite).map(([etat, { label }]) => (
