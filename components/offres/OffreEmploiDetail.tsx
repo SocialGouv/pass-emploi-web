@@ -337,20 +337,20 @@ export default function OffreEmploiDetail({
 }
 
 function LogoOrigine({ logo, nom }: { nom: string; logo?: string }) {
-  const style = 'p-1 h-10 rounded-base border border-primary_lighten'
+  const style = 'p-1 rounded-base border border-primary_lighten'
 
   if (nom === 'France Travail')
     return (
       <IllustrationLogoFT
         aria-hidden={true}
         focusable={false}
-        className={style}
+        className={style + ' h-10'}
       />
     )
   else if (!logo) return null
   else
     return (
-      <span aria-hidden={true} className={style + ' relative block w-18'}>
+      <span aria-hidden={true} className={style + ' relative block h-20 w-20'}>
         <Image src={logo} alt='' fill={true} className='object-cover' />
       </span>
     )
