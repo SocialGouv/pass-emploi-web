@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import { Offre, Recherche } from 'interfaces/favoris'
 
 export type TypeOffreJson =
@@ -38,9 +36,7 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     titre: offreJson.titre,
     type: jsonToLabelTypeOffre(offreJson.type),
     urlParam: jsonToUrlParam(offreJson.type),
-    dateUpdate: offreJson.dateCandidature
-      ? DateTime.fromISO(offreJson.dateCandidature)
-      : DateTime.fromISO(offreJson.dateCreation),
+    dateUpdate: offreJson.dateCandidature ?? offreJson.dateCreation,
     aPostule: Boolean(offreJson.dateCandidature),
   }
 

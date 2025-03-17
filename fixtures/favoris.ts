@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import { Offre, Recherche } from 'interfaces/favoris'
 import { OffreJson, RechercheJson } from 'interfaces/json/favoris'
 
@@ -12,7 +10,7 @@ export function uneListeDOffres(): Offre[] {
       organisation: 'organisation',
       localisation: 'localisation',
       urlParam: 'emploi',
-      dateUpdate: DateTime.fromISO('2025-03-07T08:51:00'),
+      dateUpdate: '2025-03-07T08:51:00',
       aPostule: true,
     },
     {
@@ -22,7 +20,7 @@ export function uneListeDOffres(): Offre[] {
       organisation: 'organisation',
       localisation: 'localisation',
       urlParam: 'service-civique',
-      dateUpdate: DateTime.fromISO('2025-03-01T12:34:35'),
+      dateUpdate: '2025-03-01T12:34:35',
       aPostule: false,
     },
     {
@@ -32,7 +30,7 @@ export function uneListeDOffres(): Offre[] {
       organisation: 'organisation',
       localisation: 'localisation',
       urlParam: 'immersion',
-      dateUpdate: DateTime.fromISO('2025-02-27T10:05:35'),
+      dateUpdate: '2025-02-27T10:05:35',
       aPostule: false,
     },
     {
@@ -42,7 +40,7 @@ export function uneListeDOffres(): Offre[] {
       organisation: 'organisation',
       localisation: 'localisation',
       urlParam: 'alternance',
-      dateUpdate: DateTime.fromISO('2025-02-22T22:22:22'),
+      dateUpdate: '2025-02-22T22:22:22',
       aPostule: false,
     },
   ]

@@ -1,11 +1,9 @@
-import { DateTime } from 'luxon'
-
 export interface Offre {
   id: string
   titre: string
   type: string
   urlParam: string
-  dateUpdate: DateTime
+  dateUpdate: string
   aPostule: boolean
   organisation?: string
   localisation?: string

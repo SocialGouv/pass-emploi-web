@@ -15,8 +15,8 @@ export default function OffreRow({ offre }: { offre: Offre }) {
           label={offre.type}
           className='text-primary bg-primary_lighten'
         />
+        {offre.id}
       </TD>
-      <TD className='break-all'>{offre.id}</TD>
       <TD>{offre.titre}</TD>
       <TD>{offre.organisation}</TD>
       <TD>

@@ -33,8 +33,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
         <Table caption={{ text: 'Liste des offres en favoris' }}>
           <thead>
             <TR isHeader={true}>
-              <TH>Type</TH>
-              <TH>N°Offre</TH>
+              <TH>Type et n° d’offre</TH>
               <TH>Titre</TH>
               <TH>Entreprise</TH>
               <TH>Statut</TH>
