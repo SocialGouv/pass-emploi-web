@@ -55,7 +55,7 @@ function Tag({ label, className, iconName, iconLabel, isSmallTag }: TagProps) {
 
   return (
     <span
-      className={`flex items-center w-fit text-s-medium px-3 ${className} ${isSmallTag ? 'px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!' : ''}`}
+      className={`flex items-center w-fit text-s-medium px-3 ${className} whitespace-nowrap ${isSmallTag ? 'px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!' : ''}`}
     >
       {iconName && <TagIcon />}
       {label}
