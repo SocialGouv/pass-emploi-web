@@ -12,6 +12,7 @@ type AuthErrorSearchParams = Promise<
     reason: string
     typeUtilisateur: string
     structureUtilisateur: string
+    email?: string
   }>
 >
 
@@ -20,7 +21,7 @@ export default async function AuthError({
 }: {
   searchParams?: AuthErrorSearchParams
 }) {
-  const { reason, typeUtilisateur, structureUtilisateur } =
+  const { reason, typeUtilisateur, structureUtilisateur, email } =
     (await searchParams) ?? {}
 
   if (typeUtilisateur === 'CONSEILLER') {
@@ -45,7 +46,7 @@ export default async function AuthError({
 
   return (
     <AuthErrorPage
-      erreur={erreurBeneficiaire(reason, structureUtilisateur)}
+      erreur={erreurBeneficiaire(reason, structureUtilisateur, email)}
       codeErreur={reason}
     />
   )
@@ -53,12 +54,13 @@ export default async function AuthError({
 
 function erreurBeneficiaire(
   reason?: string,
-  structureUtilisateur?: string
+  structureUtilisateur?: string,
+  email?: string
 ): string {
   {
     switch (reason) {
       case 'UTILISATEUR_INEXISTANT':
-        return "Votre compte n'est pas enregistré sur l'application, veuillez contacter votre conseiller."
+        return `Votre compte n'est pas enregistré sur l'application, veuillez contacter votre conseiller.${email && structureUtilisateur !== 'MILO' ? `\n(votre adresse e-mail associée : ${email})` : ''}`
       case 'UTILISATEUR_DEJA_MILO':
         return "Veuillez vous connecter en choisissant Mission Locale sur l'application du CEJ ou contacter votre conseiller pour recréer le compte."
       case 'UTILISATEUR_DEJA_PE':
