@@ -88,7 +88,7 @@ export default function AidePage() {
         Découvrez notre site ressources, conçu spécialement pour vous guider pas
         à pas
       </h2>
-      <div className='text-primary hover:text-primary_darken'>
+      <div className='text-primary hover:text-primary-darken'>
         <ExternalLink
           label='Voir le site ressources'
           href={urlSiteRessource}
@@ -99,8 +99,8 @@ export default function AidePage() {
         <h3 className='text-m-bold my-8'>
           Partagez vos remarques ou suggestions
         </h3>
-        <ul className='flex flex-col mb-16 w-full layout_m:flex-row gap-4'>
-          <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
+        <ul className='flex flex-col mb-16 w-full layout-m:flex-row gap-4'>
+          <li className='bg-primary-lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Question}
               className='w-24 h-24 self-center fill-primary [--secondary-fill:var(--color-white)]'
@@ -127,7 +127,7 @@ export default function AidePage() {
               onClick={() => trackEventAideEtRessources('Demande support')}
             />
           </li>
-          <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
+          <li className='bg-primary-lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Forum}
               className='w-24 h-24 self-center fill-primary [--secondary-fill:var(--color-white)]'
@@ -157,8 +157,8 @@ export default function AidePage() {
         <h3 className='text-m-bold mb-8'>
           Embarquez facilement vos bénéficiaires
         </h3>
-        <ul className='flex flex-col layout_m:flex-row gap-4 border border-grey_100 rounded-base py-8'>
-          <li className='flex flex-col w-full px-16 py-4 border-r border-grey_100'>
+        <ul className='flex flex-col layout-m:flex-row gap-4 border border-grey-100 rounded-base py-8'>
+          <li className='flex flex-col w-full px-16 py-4 border-r border-grey-100'>
             <h4 className='text-m-bold mb-2'>Avec nos ressources</h4>
             <div className='flex gap-16'>
               <div className='flex flex-col justify-between'>
@@ -223,7 +223,7 @@ export default function AidePage() {
                 <QrcodeAppStore focusable={false} aria-hidden={true} />
                 <a
                   href={urlQrcodeAppStore}
-                  className='text-center text-primary underline inline-flex items-center hover:text-primary_darken'
+                  className='text-center text-primary underline inline-flex items-center hover:text-primary-darken'
                   target='_blank'
                   rel='noreferrer noopener'
                 >
@@ -244,7 +244,7 @@ export default function AidePage() {
                 <QrcodePlayStore focusable={false} aria-hidden={true} />
                 <a
                   href={urlQrcodePlayStore}
-                  className='text-center text-primary underline inline-flex items-center hover:text-primary_darken'
+                  className='text-center text-primary underline inline-flex items-center hover:text-primary-darken'
                   target='_blank'
                   rel='noreferrer noopener'
                 >
@@ -269,8 +269,8 @@ export default function AidePage() {
         <h3 className='text-m-bold mb-8'>
           Consultez nos ressources pour vous aider
         </h3>
-        <ul className='flex flex-col layout_m:flex-row gap-4'>
-          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
+        <ul className='flex flex-col layout-m:flex-row gap-4'>
+          <li className='flex flex-col w-full border border-grey-100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
               <h4 className='text-m-bold mb-2'>Notre guide d’utilisation</h4>
               <p>
@@ -289,7 +289,7 @@ export default function AidePage() {
               }
             />
           </li>
-          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
+          <li className='flex flex-col w-full border border-grey-100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
               <h4 className='text-m-bold mb-2'>Nos tutoriels vidéo</h4>
               <p>
@@ -308,7 +308,7 @@ export default function AidePage() {
               }
             />
           </li>
-          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
+          <li className='flex flex-col w-full border border-grey-100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
               <h4 className='text-m-bold mb-2'>Notre Foire aux questions</h4>
               <p>Trouvez des réponses immédiates aux questions fréquentes.</p>

@@ -15,7 +15,7 @@ export default function SuccessAlert({
 }: SuccessMessageProps) {
   return (
     <div
-      className='flex-col items-center text-success bg-success_lighten p-6 rounded-base mb-8'
+      className='flex-col items-center text-success bg-success-lighten p-6 rounded-base mb-8'
       tabIndex={-1}
       ref={(e) => e?.focus()}
     >

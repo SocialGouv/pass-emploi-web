@@ -48,14 +48,14 @@ function Modal(
         <button
           type='button'
           onClick={(e) => modalContainerRef.current!.closeModal(e)}
-          className='p-2 border-none hover:bg-primary_lighten hover:rounded-full'
+          className='p-2 border-none hover:bg-primary-lighten hover:rounded-full'
         >
           <IconComponent
             name={IconName.Close}
             role='img'
             focusable={false}
             aria-label='Fermer la fenêtre'
-            className='w-6 h-6 fill-content_color'
+            className='w-6 h-6 fill-content-color'
           />
         </button>
       </div>
@@ -74,7 +74,7 @@ function Modal(
             name={titleIllustration}
             focusable={false}
             aria-hidden={true}
-            className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary_lighten)] mb-8'
+            className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary-lighten)] mb-8'
           />
         )}
         {titleIllustration &&
@@ -85,7 +85,7 @@ function Modal(
               <TitleIllustration
                 focusable={false}
                 aria-hidden={true}
-                className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary_lighten)] mb-8'
+                className='w-1/4 m-auto fill-primary [--secondary-fill:var(--color-primary-lighten)] mb-8'
               />
             )
           })()}

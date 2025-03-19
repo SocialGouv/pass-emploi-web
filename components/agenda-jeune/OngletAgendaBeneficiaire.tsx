@@ -56,7 +56,7 @@ export default function OngletAgendaBeneficiaire({
       {semaines && (
         <>
           {Boolean(nombreActionsEnRetard) && (
-            <div className='flex justify-between p-4 mb-6 bg-warning_lighten rounded-base'>
+            <div className='flex justify-between p-4 mb-6 bg-warning-lighten rounded-base'>
               <div className='flex gap-2'>
                 <IconComponent
                   name={IconName.Error}
@@ -157,9 +157,9 @@ function preparerSemaines(
 
 function AucuneEntreeDansLaSemaine({ periode }: { periode: string }) {
   return (
-    <div className='rounded-base border border-grey_100 p-4'>
+    <div className='rounded-base border border-grey-100 p-4'>
       <p className='text-base-medium mb-2'>{periode}</p>
-      <p className='text-grey_800'>Pas d’action ni de rendez-vous</p>
+      <p className='text-grey-800'>Pas d’action ni de rendez-vous</p>
     </div>
   )
 }

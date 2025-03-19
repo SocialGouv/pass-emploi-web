@@ -253,7 +253,7 @@ export default function MessageImportantModal({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='mx-auto my-8 w-[180px] h-[180px] fill-success_darken [--secondary-fill:var(--color-success_lighten)]'
+            className='mx-auto my-8 w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />
@@ -265,7 +265,7 @@ export default function MessageImportantModal({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='mx-auto my-8 w-[180px] h-[180px] fill-success_darken [--secondary-fill:var(--color-success_lighten)]'
+            className='mx-auto my-8 w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />

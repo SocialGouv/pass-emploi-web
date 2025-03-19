@@ -59,7 +59,7 @@ export default function EncartMissionLocaleRequise({
 
   return (
     <>
-      <div className='bg-warning_lighten rounded-base p-6'>
+      <div className='bg-warning-lighten rounded-base p-6'>
         <p className='flex items-center text-base-bold text-warning mb-2'>
           <IconComponent
             focusable={false}

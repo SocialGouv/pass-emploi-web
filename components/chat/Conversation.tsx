@@ -430,11 +430,11 @@ export function Conversation({
 
                 {messagesByDay.length === 0 && (
                   <>
-                    <p className='text-base-bold text-center text-content_color'>
+                    <p className='text-base-bold text-center text-content-color'>
                       Ceci est le début de votre conversation avec votre
                       bénéficiaire.
                     </p>
-                    <p className='text-base-regular text-center text-content_color mt-4'>
+                    <p className='text-base-regular text-center text-content-color mt-4'>
                       Écrivez votre premier message !
                     </p>
                     <div className='text-primary text-center mt-4'>
@@ -577,11 +577,11 @@ export function Conversation({
               )}
 
               <div
-                className='p-4 bg-white rounded-base border text-base-bold border-grey_700 focus-within:[outline:auto]'
+                className='p-4 bg-white rounded-base border text-base-bold border-grey-700 focus-within:[outline:auto]'
                 onClick={() => inputRef.current!.focus()}
               >
                 {uploadedFileInfo && (
-                  <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
+                  <div className='flex px-2 py-1 rounded-base bg-primary-lighten w-fit mb-4'>
                     <p className='break-all overflow-y-auto max-h-56'>
                       {uploadedFileInfo.nom}
                     </p>
@@ -623,7 +623,7 @@ export function Conversation({
                   aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
                   title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
                   disabled={!userInput && !Boolean(uploadedFileInfo)}
-                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
+                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey-500 disabled:cursor-not-allowed absolute bottom-0'
                 >
                   <IconComponent
                     name={IconName.Send}

@@ -26,7 +26,7 @@ export default function InfoAction({
       <dd
         className={`${
           isInline
-            ? 'primary_lighten mb-3 pl-3 text-base-bold'
+            ? 'primary-lighten mb-3 pl-3 text-base-bold'
             : 'text-base-regular pb-10'
         }`}
       >

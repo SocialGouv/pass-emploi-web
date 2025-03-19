@@ -78,7 +78,7 @@ export default function OnboardingMILOModal({
           onContinue={() => setEtape('MESSAGERIE-PILOTAGE')}
         >
           <div className='flex gap-4'>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingPortefeuille}
                 alt=''
@@ -92,7 +92,7 @@ export default function OnboardingMILOModal({
                 rendez-vous et favoris en toute simplicité !
               </p>
             </div>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingAgenda}
                 alt=''
@@ -118,7 +118,7 @@ export default function OnboardingMILOModal({
           onContinue={() => setEtape('OFFRES-REAFFECTATION')}
         >
           <div className='flex gap-4'>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingMessagerie}
                 alt=''
@@ -133,7 +133,7 @@ export default function OnboardingMILOModal({
                 temps.
               </p>
             </div>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingPilotage}
                 alt=''
@@ -157,7 +157,7 @@ export default function OnboardingMILOModal({
           onClose={onClose}
         >
           <div className='flex  gap-4'>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingOffres}
                 alt=''
@@ -171,7 +171,7 @@ export default function OnboardingMILOModal({
                 bénéficiaires.
               </p>
             </div>
-            <div className='p-4 border border-grey_100 rounded-base flex-1'>
+            <div className='p-4 border border-grey-100 rounded-base flex-1'>
               <Image
                 src={onboardingReaffectation}
                 alt=''

@@ -12,7 +12,7 @@ export default function LienEvenement({
 }) {
   return (
     <div className={`mt-4 p-4 rounded-base bg-white`}>
-      <div className={`text-base-bold text-content_color`}>
+      <div className={`text-base-bold text-content-color`}>
         <dl>
           <dt className='sr-only'>Titre de l’événement :</dt>
           <dd>{infoEvenement.titre}</dd>
@@ -25,7 +25,7 @@ export default function LienEvenement({
         href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
         target='_blank'
         rel='noreferrer noopener'
-        className='block mt-4 w-fit ml-auto text-s-regular underline text-primary hover:text-primary_darken'
+        className='block mt-4 w-fit ml-auto text-s-regular underline text-primary hover:text-primary-darken'
       >
         Voir l’événement
         <span className='sr-only'>

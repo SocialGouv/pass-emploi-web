@@ -23,7 +23,7 @@ export default function FilAriane({ path }: FilArianeProps) {
               <>
                 <Link
                   href={href}
-                  className='text-s-regular text-content_color underline hover:text-primary'
+                  className='text-s-regular text-content-color underline hover:text-primary'
                 >
                   {label}
                 </Link>
@@ -31,7 +31,7 @@ export default function FilAriane({ path }: FilArianeProps) {
                   name={IconName.ChevronRight}
                   aria-hidden={true}
                   focusable={false}
-                  className='mx-2 w-6 h-6 fill-content_color'
+                  className='mx-2 w-6 h-6 fill-content-color'
                 />
               </>
             )}
@@ -39,7 +39,7 @@ export default function FilAriane({ path }: FilArianeProps) {
               <Link
                 href={href}
                 aria-current='page'
-                className='text-s-regular text-content_color'
+                className='text-s-regular text-content-color'
               >
                 {label}
               </Link>

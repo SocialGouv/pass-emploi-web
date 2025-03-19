@@ -167,7 +167,7 @@ function ChoixConseiller(
             {choixConseillers.map((conseiller) => (
               <label
                 key={conseiller.id}
-                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
+                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary-lighten shadow-m' : 'shadow-base'} focus-within:bg-primary-lighten hover:bg-primary-lighten`}
               >
                 <input
                   type='radio'

@@ -35,7 +35,7 @@
 
 .buttonPrimary:hover,
 .buttonPrimary:active {
-  background-color: var(--color-primary_darken);
+  background-color: var(--color-primary-darken);
   color: var(--color-white);
   border: 1px solid var(--color-primary);
 }
@@ -64,13 +64,13 @@
 }
 
 .buttonTertiary {
-  background-color: var(--color-primary_lighten);
+  background-color: var(--color-primary-lighten);
   border: 1px solid transparent;
 }
 
 .buttonSecondary:hover,
 .buttonSecondary:active {
-  background-color: var(--color-primary_lighten);
+  background-color: var(--color-primary-lighten);
 }
 
 .buttonSecondary[disabled],
@@ -84,7 +84,7 @@
 */
 
 .buttonWarning {
-  background-color: var(--color-warning_lighten);
+  background-color: var(--color-warning-lighten);
   color: var(--color-warning);
   box-shadow: theme(--shadow-base);
 }
@@ -99,7 +99,7 @@
 }
 
 .buttonWarning[disabled]:hover {
-  background-color: var(--color-warning_lighten);
+  background-color: var(--color-warning-lighten);
   color: var(--color-warning);
 }
 
@@ -108,7 +108,7 @@
 */
 
 .buttonPrimaryDark {
-  background-color: var(--color-primary_darken);
+  background-color: var(--color-primary-darken);
   color: var(--color-white);
   border: 1px solid transparent;
   box-shadow: theme(--shadow-base);
@@ -116,7 +116,7 @@
 
 .buttonPrimaryDark:hover,
 .buttonPrimaryDark:active {
-  background-color: var(--color-primary_darken_strong);
+  background-color: var(--color-primary-darken-strong);
   color: var(--color-white);
-  border: 1px solid var(--color-primary_darken_strong);
+  border: 1px solid var(--color-primary-darken-strong);
 }

@@ -234,7 +234,7 @@ export default function OngletAgendaEtablissement({
             </tr>
           </thead>
 
-          <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout_base:grid-cols-[repeat(5,auto)] gap-y-2'>
+          <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout-base:grid-cols-[repeat(5,auto)] gap-y-2'>
             {evenementsAffiches.map((evenement) => (
               <AnimationCollectiveRow
                 key={evenement.id}
@@ -280,21 +280,21 @@ function RechercheAgendaForm({
     <form role='search' onSubmit={rechercherDansAgenda} className='mb-6'>
       <label
         htmlFor='rechercher-agenda'
-        className='text-base-medium text-content_color'
+        className='text-base-medium text-content-color'
       >
         Rechercher un atelier ou une information collective
       </label>
       <div className='flex mt-3'>
         <ResettableTextInput
           id='rechercher-agenda'
-          className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+          className='flex-1 border border-solid border-grey-700 rounded-l-base border-r-0 text-base-medium text-primary-darken'
           onChange={setRecherche}
           onReset={onReset}
           value={recherche}
         />
 
         <button
-          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary-lighten'
           type='submit'
         >
           <IconComponent

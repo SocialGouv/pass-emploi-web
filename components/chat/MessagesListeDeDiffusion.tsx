@@ -110,7 +110,7 @@ function MessagesListeDeDiffusion(
 
       {messagerieEstVisible && (
         <>
-          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+          <div className='hidden layout-s:block w-fit ml-4 mb-8'>
             <ButtonLink
               href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
               style={ButtonStyle.TERTIARY}
@@ -130,7 +130,7 @@ function MessagesListeDeDiffusion(
             {!messages && <SpinningLoader />}
 
             {messages && messages.length === 0 && (
-              <div className='bg-grey_100 flex flex-col justify-center items-center'>
+              <div className='bg-grey-100 flex flex-col justify-center items-center'>
                 <EmptyState
                   illustrationName={IllustrationName.Send}
                   titre='Vous n’avez envoyé aucun message à cette liste de diffusion'

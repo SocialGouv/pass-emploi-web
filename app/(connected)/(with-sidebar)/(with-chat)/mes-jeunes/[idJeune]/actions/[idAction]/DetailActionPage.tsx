@@ -167,9 +167,9 @@ function DetailActionPage({ action, lectureSeule, from }: DetailActionProps) {
         avecQualification={estCEJ(beneficiaire)}
       />
 
-      <div className='border-b-2 border-primary_lighten mt-8'>
+      <div className='border-b-2 border-primary-lighten mt-8'>
         <div className='flex justify-between mb-2'>
-          <h2 className='text-m-bold text-grey_800 mb-5'>
+          <h2 className='text-m-bold text-grey-800 mb-5'>
             Informations sur l’action
           </h2>
           {!qualifiee && (

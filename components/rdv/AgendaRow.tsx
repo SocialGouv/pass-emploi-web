@@ -28,8 +28,8 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   const urlSessionMilo = '/agenda/sessions/' + evenement.id
 
   return (
-    <TR className='grid grid-cols-subgrid grid-rows-[repeat(2,auto) layout_base:grid-rows-[auto] col-span-full'>
-      <TD className='rounded-tl-base! rounded-bl-none! p-0! pt-2! pl-2! layout_base:rounded-l-base! layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:p-2!'>
+    <TR className='grid grid-cols-subgrid grid-rows-[repeat(2,auto) layout-base:grid-rows-[auto] col-span-full'>
+      <TD className='rounded-tl-base! rounded-bl-none! p-0! pt-2! pl-2! layout-base:rounded-l-base! layout-base:flex layout-base:flex-col layout-base:justify-center layout-base:p-2!'>
         <div className='text-m-bold'>{longMonthDate}</div>
         <div>
           <span aria-label={heureA11y}>{heure} - </span>
@@ -51,7 +51,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         </div>
       </TD>
 
-      <TD className='row-start-2 rounded-bl-base pt-0! pb-2! pl-2! layout_base:row-start-1 layout_base:col-start-2 layout_base:rounded-none layout_base:justify-center layout_base:p-2!'>
+      <TD className='row-start-2 rounded-bl-base pt-0! pb-2! pl-2! layout-base:row-start-1 layout-base:col-start-2 layout-base:rounded-none layout-base:justify-center layout-base:p-2!'>
         <div className='text-base-bold'>{evenement.labelBeneficiaires}</div>
         <div className='mt-1 flex flex-col gap-2'>
           <TagType {...evenement} isSmallTag={true} />
@@ -59,20 +59,20 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         </div>
       </TD>
 
-      <TD className='col-start-2 p-0! layout_base:col-start-3 layout_base:p-2! layout_base:flex layout_base:flex-col layout_base:justify-center'>
-        <div className='text-grey_800'>créé par</div>
+      <TD className='col-start-2 p-0! layout-base:col-start-3 layout-base:p-2! layout-base:flex layout-base:flex-col layout-base:justify-center'>
+        <div className='text-grey-800'>créé par</div>
         <CreateurEvenementLabel
           evenement={evenement}
           idConseiller={conseiller.id}
         />
       </TD>
 
-      <TD className='row-start-2 p-0! pb-2! layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:p-2!'>
+      <TD className='row-start-2 p-0! pb-2! layout-base:row-start-1 layout-base:col-start-4 layout-base:flex layout-base:items-center layout-base:justify-center layout-base:p-2!'>
         <Inscrits evenement={evenement} />
       </TD>
 
       <TDLink
-        className='row-span-2 flex items-center justify-center p-2! pl-4! layout_base:row-span-1 layout_base:p-2!'
+        className='row-span-2 flex items-center justify-center p-2! pl-4! layout-base:row-span-1 layout-base:p-2!'
         href={evenement.isSession ? urlSessionMilo : urlRdv}
         labelPrefix='Consulter l’événement du'
       />
@@ -137,7 +137,7 @@ function TagModalite({ modality }: EvenementListItem): ReactElement {
   return (
     <TagStatut
       label={modality!}
-      className='text-primary bg-primary_lighten px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!'
+      className='text-primary bg-primary-lighten px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!'
     />
   )
 }

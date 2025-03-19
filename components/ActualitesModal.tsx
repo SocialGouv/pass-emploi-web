@@ -16,7 +16,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
   const aDesActualites = Boolean(actualites && actualites.length > 0)
 
   const modalTemplate = (
-    <div className='rounded-l-large fixed right-0 bg-primary_lighten h-full max-w-[min(90%,_620px)] min-w-[min(30%)] overflow-auto pb-3 shadow-m'>
+    <div className='rounded-l-large fixed right-0 bg-primary-lighten h-full max-w-[min(90%,_620px)] min-w-[min(30%)] overflow-auto pb-3 shadow-m'>
       <div className='bg-primary p-3'>
         <div className='flex justify-end'>
           <button
@@ -42,7 +42,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
       </div>
 
       {!aDesActualites && (
-        <div className='bg-white px-4 py-2 rounded-base m-4 text-center text-grey_800'>
+        <div className='bg-white px-4 py-2 rounded-base m-4 text-center text-grey-800'>
           Vous n’avez pas d’actualités en cours
         </div>
       )}
@@ -70,7 +70,7 @@ export default function ActualitesModal({ onClose }: ActualitesModalProps) {
 
 function ArticleActualitees({ article }: { article: Article }) {
   return (
-    <article className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_a]:hover:text-primary_darken [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey_800'>
+    <article className='bg-white px-4 py-2 rounded-base mb-4 [&_a]:underline [&_a]:text-primary [&_a]:hover:text-primary-darken [&_img]:max-w-[200px] [&_img]:my-4 [&_p]:text-grey-800'>
       <header>
         <h3 className='font-bold text-primary my-2'>{article.titre}</h3>
 
@@ -96,5 +96,5 @@ function ArticleActualitees({ article }: { article: Article }) {
 
 const stylesEtiquettes: { [key in ArticleCouleur]: string } = {
   primary: 'text-primary bg-primary_ligthen',
-  warning: 'text-warning bg-warning_lighten',
+  warning: 'text-warning bg-warning-lighten',
 }

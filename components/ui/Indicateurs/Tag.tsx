@@ -73,7 +73,7 @@ export function TagStatut({ className, ...props }: TagProps) {
 
 export function TagDate({ label }: Pick<TagProps, 'label'>) {
   return (
-    <Tag className='bg-grey_100 text-grey_800 rounded-large' label={label} />
+    <Tag className='bg-grey-100 text-grey-800 rounded-large' label={label} />
   )
 }
 
@@ -88,21 +88,21 @@ export function TagType({
     iconName?: IconName
     iconLabel?: string
   } = {
-    style: 'text-content_color bg-additional_5_lighten',
+    style: 'text-content-color bg-additional-5-lighten',
     iconName: undefined,
     iconLabel: undefined,
   }
 
   if (source === 'MILO')
     tagProps = {
-      style: 'text-content_color bg-additional_5_lighten',
+      style: 'text-content-color bg-additional-5-lighten',
       iconName: IconName.Lock,
       iconLabel: 'Non modifiable',
     }
 
   if (isSession)
     tagProps = {
-      style: 'text-accent_1 bg-accent_1_lighten',
+      style: 'text-accent-1 bg-accent-1-lighten',
       iconName: IconName.Lock,
       iconLabel: 'Informations de la session non modifiables',
     }
@@ -122,7 +122,7 @@ export function TagCategorie({ categorie }: TagCategorieProps) {
   if (categorie)
     return (
       <Tag
-        className='text-primary bg-primary_lighten rounded-large text-wrap!'
+        className='text-primary bg-primary-lighten rounded-large text-wrap!'
         label={categorie}
       />
     )
@@ -141,7 +141,7 @@ export function TagFavori({ aPostule }: { aPostule: boolean }) {
     return (
       <TagMetier
         label='Postulée'
-        className='text-accent_1 bg-accent_1_lighten'
+        className='text-accent-1 bg-accent-1-lighten'
       />
     )
   }
@@ -149,7 +149,7 @@ export function TagFavori({ aPostule }: { aPostule: boolean }) {
   return (
     <TagMetier
       label='Enregistrée'
-      className='text-primary bg-primary_lighten'
+      className='text-primary bg-primary-lighten'
     />
   )
 }

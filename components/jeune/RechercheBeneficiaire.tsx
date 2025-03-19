@@ -37,7 +37,7 @@ export default function RechercheBeneficiaire({
     <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
       <label
         htmlFor='rechercher-beneficiaires'
-        className='text-base-medium text-content_color'
+        className='text-base-medium text-content-color'
       >
         Rechercher un bénéficiaire par son nom ou prénom
       </label>
@@ -51,11 +51,11 @@ export default function RechercheBeneficiaire({
           onChange={setQuery}
           onReset={onReset}
           invalid={Boolean(error)}
-          className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+          className='flex-1 border border-solid border-grey-700 rounded-l-base border-r-0 text-base-medium text-primary-darken'
         />
 
         <button
-          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary-lighten'
           type='submit'
         >
           <IconComponent
@@ -64,7 +64,7 @@ export default function RechercheBeneficiaire({
             aria-hidden={true}
             className='w-6 h-6 fill-current'
           />
-          <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
+          <span className='ml-1 sr-only layout-s:not-sr-only'>Rechercher</span>
         </button>
       </div>
     </form>

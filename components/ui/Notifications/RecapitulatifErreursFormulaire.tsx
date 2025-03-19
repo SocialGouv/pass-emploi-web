@@ -21,7 +21,7 @@ function RecapitulatifErreursFormulaire(
       ref={ref}
       className={
         erreurs.length
-          ? 'text-warning bg-warning_lighten p-6 rounded-base mb-8'
+          ? 'text-warning bg-warning-lighten p-6 rounded-base mb-8'
           : ''
       }
       tabIndex={-1}

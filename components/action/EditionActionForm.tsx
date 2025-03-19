@@ -299,7 +299,7 @@ export function EditionActionForm({
       />
 
       <form onSubmit={handleSoumettreAction} noValidate={true}>
-        <p className='text-s-bold text-content_color mb-4'>
+        <p className='text-s-bold text-content-color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>
 
@@ -401,7 +401,7 @@ export function EditionActionForm({
 
         <Etape numero={2} titre='Statut et date'>
           <fieldset>
-            <legend className='text-base-regular text-content_color mb-3'>
+            <legend className='text-base-regular text-content-color mb-3'>
               <span aria-hidden={true}>*&nbsp;</span>L’action est :
             </legend>
             <div className='mb-7 flex flex-wrap gap-4'>
@@ -552,7 +552,7 @@ function BoutonDateRapide({
       type='button'
       id={label}
       aria-controls={ariaControls}
-      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary_lighten'
+      className='text-s-medium border border-solid border-grey-700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary-lighten'
       value={`${label} (${toWeekday(date)})`}
       onClick={() => {
         onClick(date.toISODate())

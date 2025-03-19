@@ -26,8 +26,8 @@ export function ResumeIndicateursJeune({
     : '/mes-jeunes'
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800'>Cette semaine</h2>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h2 className='text-m-bold text-grey-800'>Cette semaine</h2>
       <p className='mb-4'>
         du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
@@ -36,7 +36,7 @@ export function ResumeIndicateursJeune({
           !indicateursSemaine ? 'animate-pulse' : ''
         }`}
       >
-        <div className='text-content_color text-base-bold'>
+        <div className='text-content-color text-base-bold'>
           <h3 className='mb-2'>Les actions</h3>
           <ul className='flex gap-2'>
             <TileIndicateur
@@ -83,7 +83,7 @@ function LienVersIndicateurs({
   return (
     <Link
       href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=indicateurs`}
-      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
+      className='flex items-center text-content-color underline hover:text-primary hover:fill-primary mt-4'
     >
       Voir plus d’indicateurs
       <IconComponent

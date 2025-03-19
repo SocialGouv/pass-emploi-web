@@ -40,7 +40,7 @@ function Details(
   return (
     <details
       ref={detailsRef}
-      className='bg-primary_lighten p-6 mt-8 rounded-base shadow-base'
+      className='bg-primary-lighten p-6 mt-8 rounded-base shadow-base'
       open={initiallyOpened}
     >
       <summary

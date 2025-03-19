@@ -252,7 +252,7 @@ function EditionListeDiffusionPage({
         ref={formErrorsRef}
       />
 
-      <p className='text-s-bold text-content_color mb-4'>
+      <p className='text-s-bold text-content-color mb-4'>
         Tous les champs sont obligatoires
       </p>
 

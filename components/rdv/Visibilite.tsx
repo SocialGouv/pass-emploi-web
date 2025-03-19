@@ -20,7 +20,7 @@ export default function Visibilite({
     return (
       <TagMetier
         label='Visible'
-        className='text-success bg-success_lighten px-2! py-1! text-xs! font-bold!'
+        className='text-success bg-success-lighten px-2! py-1! text-xs! font-bold!'
       />
     )
 
@@ -64,14 +64,14 @@ const etatsVisibilite: {
 } = {
   visible: {
     label: 'Visible',
-    style: 'text-success border-success bg-success_lighten',
+    style: 'text-success border-success bg-success-lighten',
   },
   'non-visible': {
     label: 'Non visible',
-    style: 'text-content_color border-grey_800 bg-grey_100',
+    style: 'text-content-color border-grey-800 bg-grey-100',
   },
   'auto-inscription': {
     label: 'Auto-inscription',
-    style: 'text-primary border-primary bg-primary_lighten',
+    style: 'text-primary border-primary bg-primary-lighten',
   },
 }

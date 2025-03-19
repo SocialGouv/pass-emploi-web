@@ -22,7 +22,7 @@ export default function ProgressBar({
         <div
           key={index}
           aria-hidden={true}
-          className={`w-[10px] h-[10px] rounded-full ${index + 1 === etapeCourante ? 'bg-primary' : 'bg-grey_500'}`}
+          className={`w-[10px] h-[10px] rounded-full ${index + 1 === etapeCourante ? 'bg-primary' : 'bg-grey-500'}`}
         />
       ))}
       <span className='sr-only'>{texteInformatifEtape}</span>

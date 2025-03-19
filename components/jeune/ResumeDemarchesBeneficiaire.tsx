@@ -51,15 +51,15 @@ export function ResumeDemarchesBeneficiaire({
     )
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800'>Cette semaine</h2>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h2 className='text-m-bold text-grey-800'>Cette semaine</h2>
       <p className='mb-4'>
         du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
       <div
         className={`flex flex-wrap gap-6 ${!demarches ? 'animate-pulse' : ''}`}
       >
-        <div className='text-content_color text-base-bold'>
+        <div className='text-content-color text-base-bold'>
           <h3 className='mb-2'>Les démarches</h3>
           <ul className='flex gap-2'>
             <TileIndicateur

@@ -38,7 +38,7 @@ export default function OngletRdvsBeneficiaire({
       />
       <Link
         href={`${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`}
-        className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
+        className='flex justify-end items-center text-content-color underline hover:text-primary hover:fill-primary mt-3'
       >
         Voir les événements passés
         <IconComponent

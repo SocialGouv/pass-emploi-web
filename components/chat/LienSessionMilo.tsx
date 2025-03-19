@@ -11,7 +11,7 @@ export default function LienSessionMilo({
 }) {
   return (
     <div className='mt-4 p-4 rounded-base bg-white'>
-      <div className='text-base-bold text-content_color'>
+      <div className='text-base-bold text-content-color'>
         <dl>
           <dt className='sr-only'>Titre de la session :</dt>
           <dd>{infoSessionMilo.titre}</dd>
@@ -22,7 +22,7 @@ export default function LienSessionMilo({
         href={`/agenda/sessions/${infoSessionMilo.id}`}
         target='_blank'
         rel='noreferrer noopener'
-        className='block w-fit ml-auto mt-4 underline text-s-regular text-primary hover:text-primary_darken'
+        className='block w-fit ml-auto mt-4 underline text-s-regular text-primary hover:text-primary-darken'
       >
         Voir les détails de la session
         <span className='sr-only'>

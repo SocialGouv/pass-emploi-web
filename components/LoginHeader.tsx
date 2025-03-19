@@ -25,11 +25,11 @@ export default function LoginHeader({ title, subtitle }: LoginHeaderProps) {
       </div>
 
       <header role='banner' className='my-8'>
-        <h1 className='text-xl-bold text-primary_darken text-center'>
+        <h1 className='text-xl-bold text-primary-darken text-center'>
           {title}
         </h1>
         {subtitle && (
-          <p className='text-m-regular text-primary_darken text-center mt-8'>
+          <p className='text-m-regular text-primary-darken text-center mt-8'>
             {subtitle}
           </p>
         )}

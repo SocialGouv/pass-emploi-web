@@ -271,7 +271,7 @@ function EnvoiMessageGroupePage({
       />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
-        <p className='text-s-bold text-content_color mb-8'>
+        <p className='text-s-bold text-content-color mb-8'>
           Tous les champs avec * sont obligatoires
         </p>
 
@@ -286,7 +286,7 @@ function EnvoiMessageGroupePage({
           />
           <Link
             href='/mes-jeunes/listes-de-diffusion'
-            className='flex items-center pt-2 text-s-regular text-content_color underline hover:text-primary_darken'
+            className='flex items-center pt-2 text-s-regular text-content-color underline hover:text-primary-darken'
           >
             Gérer mes listes de diffusion
             <IconComponent

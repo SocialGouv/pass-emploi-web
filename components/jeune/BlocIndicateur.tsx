@@ -24,7 +24,7 @@ export function BlocIndicateurs({
 }) {
   return (
     <>
-      <h2 className='text-m-bold text-grey_800 mb-6'>
+      <h2 className='text-m-bold text-grey-800 mb-6'>
         Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
       </h2>
       <IndicateursActions
@@ -54,8 +54,8 @@ function IndicateursActions({
   pathPrefix,
 }: IndicateursActionsProps) {
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les actions</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur
           valeur={actions?.creees.toString() ?? '-'}
@@ -92,8 +92,8 @@ function IndicateursRendezvous({
   rendezVous,
 }: Pick<IndicateursSemaine, 'rendezVous'>) {
   return (
-    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les événements</h3>
       <ul className='flex'>
         <TileIndicateur
           valeur={rendezVous?.toString() ?? '-'}
@@ -119,8 +119,8 @@ function IndicateursOffres({
   metadonneesFavoris,
 }: IndicateursOffresProps) {
   return (
-    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les offres</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur
           valeur={offres?.consultees.toString() ?? '-'}
@@ -176,7 +176,7 @@ function LienVersActions({
     <div className='flex justify-end mt-4'>
       <Link
         href={`${pathPrefix}/${idBeneficiaire}?onglet=actions`}
-        className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
+        className='flex float-right items-center text-content-color underline hover:text-primary hover:fill-primary'
       >
         Voir toutes les actions
         <IconComponent
@@ -201,7 +201,7 @@ export function LienVersFavoris({
     <div className='flex justify-end mt-4'>
       <Link
         href={`${pathPrefix}/${idBeneficiaire}/favoris`}
-        className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+        className='flex items-center text-content-color underline hover:text-primary hover:fill-primary'
       >
         Voir tous les favoris
         <IconComponent

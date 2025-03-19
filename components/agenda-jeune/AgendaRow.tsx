@@ -61,7 +61,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
   }
 
   return (
-    <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary_lighten'>
+    <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary-lighten'>
       <Link
         href={href + entree.id}
         aria-label={label}
@@ -95,7 +95,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
                   label={entree.typeSession}
                   iconName={IconName.Lock}
                   iconLabel='Informations de la session non modifiables'
-                  className='text-accent_1 bg-accent_1_lighten'
+                  className='text-accent-1 bg-accent-1-lighten'
                 />
               )}
 
@@ -103,7 +103,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
                 <TagStatut
                   label='Non modifiable'
                   iconName={IconName.Lock}
-                  className='text-accent_2 bg-accent_2_lighten'
+                  className='text-accent-2 bg-accent-2-lighten'
                 />
               )}
             </>

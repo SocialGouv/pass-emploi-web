@@ -5,16 +5,16 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-primary_lighten);
+  background-color: var(--color-primary-lighten);
 }
 
-@variant layout_s {
+@variant layout-s {
   .chatRoom {
     width: 20vw;
   }
 }
 
-@variant layout_l {
+@variant layout-l {
   .chatRoom {
     width: 24vw;
   }

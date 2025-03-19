@@ -80,7 +80,7 @@ function MessageriePage() {
           )}
 
           {currentConversation && (
-            <div className='px-6 bg-grey_100 h-full min-h-0'>
+            <div className='px-6 bg-grey-100 h-full min-h-0'>
               <ConversationBeneficiaire
                 onBack={() => {
                   document

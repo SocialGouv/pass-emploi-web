@@ -70,7 +70,7 @@ export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
           <h3
             id='heading-contact'
             className={
-              'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
+              'inline-flex items-center w-full text-m-bold text-grey-800 pb-6 border-b border-solid border-primary-lighten'
             }
           >
             <SectionTitleDot />

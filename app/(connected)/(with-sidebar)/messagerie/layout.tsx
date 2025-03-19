@@ -23,7 +23,7 @@ export default function LayoutPageMessagerie({
         <ChatContainer onShowMenu={() => {}} messagerieFullScreen={true} />
       </div>
 
-      <div className='flex flex-col min-h-0 w-[100vw] layout_s:w-[70vw] layout_l:w-[61vw]'>
+      <div className='flex flex-col min-h-0 w-[100vw] layout-s:w-[70vw] layout-l:w-[61vw]'>
         {children}
         <Footer
           conseiller={{ structure: conseiller.structure }}

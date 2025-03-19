@@ -26,8 +26,8 @@ export function BlocSituation({
     : '/mes-jeunes'
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-1'>Historique situations</h2>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h2 className='text-m-bold text-grey-800 mb-1'>Historique situations</h2>
 
       {!(situations && situations.length) && <SansSituation />}
 
@@ -108,7 +108,7 @@ function LienVersSituations({
   return (
     <Link
       href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=informations`}
-      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
+      className='flex items-center text-content-color underline hover:text-primary hover:fill-primary mt-3'
     >
       Voir le détail des situations
       <IconComponent

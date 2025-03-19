@@ -8,23 +8,23 @@ const propsStatutsActions: {
 } = {
   Annulee: {
     label: 'Annulée',
-    style: 'text-disabled bg-grey_100',
+    style: 'text-disabled bg-grey-100',
   },
   AFaire: {
     label: 'À faire',
-    style: 'text-primary_darken bg-accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   Terminee: {
     label: 'Terminée',
-    style: 'text-primary_darken bg-accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeAQualifier: {
     label: 'Terminée - À qualifier',
-    style: 'text-primary_darken bg-accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeQualifiee: {
     label: 'Qualifiée',
-    style: 'text-success bg-success_lighten',
+    style: 'text-success bg-success-lighten',
   },
 }
 

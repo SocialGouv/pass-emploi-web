@@ -154,7 +154,7 @@ function LiensMilo({
         {liensFooterCEJ.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='hover:text-primary_darken'
+            className='hover:text-primary-darken'
           >
             <ExternalLink
               key={url}
@@ -221,7 +221,7 @@ function LiensFT({
         {liensFooterPassEmploi.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='hover:text-primary_darken'
+            className='hover:text-primary-darken'
           >
             <ExternalLink
               key={url}

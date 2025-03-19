@@ -101,7 +101,7 @@ function HeaderRechercheMessage({
   return (
     <button
       id='chat-bouton-retour'
-      className='m-4 border-none rounded-large bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
+      className='m-4 border-none rounded-large bg-primary-lighten flex items-center text-content hover:text-primary focus:pr-2'
       onClick={messageSelectionne ? onRetourMessage : onFermerRecherche}
     >
       <IconComponent

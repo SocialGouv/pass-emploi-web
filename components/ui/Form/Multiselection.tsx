@@ -53,7 +53,7 @@ function Multiselection(
       id={id}
       ref={ulRef}
       aria-labelledby={id + '--title'}
-      className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
+      className='bg-grey-100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
     >
       {selection.map(
         ({ id: idItem, value, avecIndication, estUneListe }, index) => (

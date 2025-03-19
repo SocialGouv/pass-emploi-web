@@ -55,8 +55,8 @@ export default function BlocInformationJeuneFicheBeneficiaire({
 
   return (
     <>
-      <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-        <h2 className='text-m-bold text-grey_800 mb-2'>Informations</h2>
+      <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+        <h2 className='text-m-bold text-grey-800 mb-2'>Informations</h2>
         <dl className='mb-2'>
           {conseillerEstMilo && (
             <div className='flex gap-2 mb-4'>

@@ -26,14 +26,14 @@ export default function OffreEmploiCard({
     >
       <TagMetier
         label={offre.type === TypeOffre.ALTERNANCE ? 'Alternance' : 'Emploi'}
-        className={`text-content_color ${
+        className={`text-content-color ${
           offre.type === TypeOffre.ALTERNANCE
-            ? 'bg-additional_3_lighten'
-            : 'bg-additional_4_lighten'
+            ? 'bg-additional-3-lighten'
+            : 'bg-additional-4-lighten'
         } text-s-regular mb-4`}
       />
 
-      <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
+      <h3 className='text-base-bold text-accent-1 mb-2'>Offre n°{offre.id}</h3>
       <dl>
         <dt className='sr-only'>Titre</dt>
         <dd className='text-base-bold mb-2'>{offre.titre}</dd>
@@ -48,7 +48,7 @@ export default function OffreEmploiCard({
         {offre.localisation && (
           <>
             <dt className='sr-only'>Localité</dt>
-            <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
+            <dd className='flex items-center text-s-regular text-grey-800 mb-5'>
               <IconComponent
                 name={IconName.LocationOn}
                 className='w-4 h-4 mr-3 fill-primary'

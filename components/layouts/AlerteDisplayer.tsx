@@ -33,7 +33,7 @@ export default function AlerteDisplayer({
   }, [alerte, alertes, setAlerte])
 
   return (
-    <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
+    <div className={hideOnLargeScreen ? 'layout-s:hidden' : ''}>
       {alerte && alerteAAfficher && (
         <SuccessAlert label={alerteAAfficher.title} onAcknowledge={closeAlerte}>
           <>

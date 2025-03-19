@@ -6,7 +6,7 @@ export default function HeaderCGUConseillerCEJ() {
   return (
     <header
       role='banner'
-      className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary_lighten mb-8'
+      className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary-lighten mb-8'
     >
       <IllustrationLogoCEJ
         className='mb-8 mx-auto h-[64px] w-[120px]'

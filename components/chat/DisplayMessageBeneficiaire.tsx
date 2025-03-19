@@ -40,14 +40,14 @@ export default function DisplayMessageBeneficiaire(
   return (
     <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
       {isDeleted(message) && (
-        <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
+        <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary-darken mb-1'>
           Message supprimé
         </div>
       )}
 
       {!isDeleted(message) && (
         <>
-          <div className='text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
+          <div className='text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary-darken mb-1'>
             <span className='sr-only'>{beneficiaireNomComplet} :</span>
 
             {message.type === TypeMessage.MESSAGE_PJ &&
@@ -184,7 +184,7 @@ function MessagePJ({
             conserver de manière sécurisée.
           </p>
           <div className='flex flex-row justify-end items-center break-all'>
-            <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
+            <SpinningLoader className='w-4! h-4! mr-2 fill-primary-lighten' />
             {infoFichier.nom}
           </div>
         </>
@@ -206,7 +206,7 @@ function MessagePJ({
     default:
       return (
         <div className='flex flex-row justify-end items-center break-all'>
-          <SpinningLoader className='w-4! h-4! mr-2 fill-primary_lighten' />
+          <SpinningLoader className='w-4! h-4! mr-2 fill-primary-lighten' />
           {infoFichier.nom}
         </div>
       )

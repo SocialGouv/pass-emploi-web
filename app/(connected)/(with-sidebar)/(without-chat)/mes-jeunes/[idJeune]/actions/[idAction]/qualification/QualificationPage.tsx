@@ -367,7 +367,7 @@ function QualificationPage({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='m-auto w-[180px] h-[180px] fill-success_darken [--secondary-fill:var(--color-success_lighten)]'
+            className='m-auto w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />

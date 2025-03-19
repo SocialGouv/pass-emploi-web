@@ -152,7 +152,7 @@ function TableauBeneficiaires(
 
       {beneficiaires.length > 0 && (
         <>
-          <h2 className='text-m-bold mb-2 text-center text-grey_800'>
+          <h2 className='text-m-bold mb-2 text-center text-grey-800'>
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
             {toShortDate(FIN_PERIODE)}
           </h2>

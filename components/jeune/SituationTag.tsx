@@ -14,13 +14,13 @@ export default function SituationTag({ situation }: TagProps) {
 const situationsStyles: {
   [key in CategorieSituation]: string
 } = {
-  Emploi: 'text-accent_1 bg-accent_1_lighten',
-  'Contrat en Alternance': 'text-accent_1 bg-accent_1_lighten',
-  Formation: 'text-accent_3 bg-accent_3_lighten',
-  Immersion: 'text-accent_1 bg-accent_1_lighten',
-  Pmsmp: 'text-accent_1 bg-accent_1_lighten',
-  'Contrat de volontariat - bénévolat': 'text-accent_3 bg-accent_3_lighten',
-  Scolarité: 'text-accent_3 bg-accent_3_lighten',
-  "Demandeur d'emploi": 'text-grey_800 bg-grey_100',
-  'Sans situation': 'text-grey_800 bg-grey_100',
+  Emploi: 'text-accent-1 bg-accent-1-lighten',
+  'Contrat en Alternance': 'text-accent-1 bg-accent-1-lighten',
+  Formation: 'text-accent-3 bg-accent-3-lighten',
+  Immersion: 'text-accent-1 bg-accent-1-lighten',
+  Pmsmp: 'text-accent-1 bg-accent-1-lighten',
+  'Contrat de volontariat - bénévolat': 'text-accent-3 bg-accent-3-lighten',
+  Scolarité: 'text-accent-3 bg-accent-3-lighten',
+  "Demandeur d'emploi": 'text-grey-800 bg-grey-100',
+  'Sans situation': 'text-grey-800 bg-grey-100',
 }

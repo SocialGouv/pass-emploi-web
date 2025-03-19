@@ -44,8 +44,8 @@ export default function BlocInformationJeune({
 
   return (
     <>
-      <div className='border border-solid rounded-base w-full p-4 border-grey_100 mb-3'>
-        <h2 className='text-m-bold text-grey_800 mb-2'>Bénéficiaire</h2>
+      <div className='border border-solid rounded-base w-full p-4 border-grey-100 mb-3'>
+        <h2 className='text-m-bold text-grey-800 mb-2'>Bénéficiaire</h2>
 
         {conseillerEstMilo && (
           <BoutonChangementDispositif

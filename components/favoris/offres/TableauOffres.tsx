@@ -60,7 +60,7 @@ function OffreRow({ offre }: { offre: Offre }) {
       <TD>
         <TagMetier
           label={offre.type}
-          className='text-primary bg-primary_lighten'
+          className='text-primary bg-primary-lighten'
         />
         {offre.id}
       </TD>

@@ -23,7 +23,7 @@ export default function CreationBeneficiaireErreurModal({
       titleIllustration={IllustrationName.Error}
       onClose={onClose}
     >
-      <p className='mb-12 text-base-regular text-content_color text-center'>
+      <p className='mb-12 text-base-regular text-content-color text-center'>
         Souhaitez-vous bien lier le compte ?
       </p>
       <div className='flex gap-2 justify-center'>

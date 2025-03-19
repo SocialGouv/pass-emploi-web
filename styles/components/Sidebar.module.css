@@ -4,7 +4,7 @@
   display: none;
 }
 
-@variant layout_s {
+@variant layout-s {
   .sidebar {
     width: 10vw;
     flex-shrink: 0;
@@ -18,13 +18,13 @@
   }
 }
 
-@variant layout_base {
+@variant layout-base {
   .sidebar {
     padding: 24px 16px;
   }
 }
 
-@variant layout_l {
+@variant layout-l {
   .sidebar {
     width: 15vw;
   }

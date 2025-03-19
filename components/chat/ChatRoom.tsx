@@ -225,11 +225,11 @@ function ChatRoom(
 
   return (
     <>
-      <div className='relative py-6 gap-4 px-4 bg-white flex flex-wrap justify-between shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_base:my-3'>
+      <div className='relative py-6 gap-4 px-4 bg-white flex flex-wrap justify-between shadow-base mb-6 layout-s:bg-primary-lighten layout-s:shadow-none layout-base:my-3'>
         <nav
           role='navigation'
           aria-label='Menu principal'
-          className='layout_s:hidden'
+          className='layout-s:hidden'
         >
           <button
             type='button'
@@ -239,7 +239,7 @@ function ChatRoom(
           >
             <IconComponent
               name={IconName.Menu}
-              className='w-10 h-10 fill-primary layout_s:hidden'
+              className='w-10 h-10 fill-primary layout-s:hidden'
               aria-hidden={true}
               focusable={false}
             />
@@ -330,7 +330,7 @@ function ChatRoom(
           </div>
 
           <div
-            className='flex justify-center my-8 layout_s:hidden'
+            className='flex justify-center my-8 layout-s:hidden'
             data-testid='form-chat'
           >
             <RechercheBeneficiaire onSearchFilterBy={filtrerConversations} />

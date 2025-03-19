@@ -37,7 +37,7 @@ export default function TableauAnimationsAClore({
                 <TD>
                   <Badge
                     count={ac.nombreInscrits}
-                    className='text-accent_1 bg-accent_1_lighten'
+                    className='text-accent-1 bg-accent-1-lighten'
                   />
                 </TD>
                 <TDLink

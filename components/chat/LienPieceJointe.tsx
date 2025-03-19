@@ -27,7 +27,7 @@ export function LienPieceJointe({
 
   return (
     <div
-      className={`flex flex-row justify-end underline ${isSentByConseiller ? 'hover:text-primary' : 'hover:text-primary_lighten'}`}
+      className={`flex flex-row justify-end underline ${isSentByConseiller ? 'hover:text-primary' : 'hover:text-primary-lighten'}`}
     >
       <IconComponent
         name={IconName.AttachFile}

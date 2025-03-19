@@ -72,7 +72,7 @@ function ListeListesDeDiffusion(
 
       {messagerieEstVisible && (
         <>
-          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+          <div className='hidden layout-s:block w-fit ml-4 mb-8'>
             <ButtonLink
               href='/mes-jeunes/listes-de-diffusion'
               style={ButtonStyle.TERTIARY}
@@ -94,7 +94,7 @@ function ListeListesDeDiffusion(
             {listesDeDiffusion && listesDeDiffusion.length === 0 && (
               <div
                 ref={containerRef}
-                className='bg-grey_100 flex flex-col justify-center items-center'
+                className='bg-grey-100 flex flex-col justify-center items-center'
               >
                 <EmptyState
                   illustrationName={IllustrationName.Send}

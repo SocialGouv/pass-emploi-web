@@ -160,7 +160,7 @@ function PortefeuillePage({
       </PageActionsPortal>
 
       {conseiller.aDesBeneficiairesARecuperer && (
-        <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
+        <div className='bg-primary-lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}
@@ -181,7 +181,7 @@ function PortefeuillePage({
       {conseillerJeunes.length === 0 &&
         !conseiller.aDesBeneficiairesARecuperer && (
           <div className='w-2/3 m-auto relative'>
-            <h2 className='text-m-bold text-content_color text-center mb-8'>
+            <h2 className='text-m-bold text-content-color text-center mb-8'>
               Vous n’avez pas encore de bénéficiaire rattaché à votre
               portefeuille
               {estFTConnect(conseiller.structure)

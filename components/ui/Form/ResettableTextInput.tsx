@@ -71,7 +71,7 @@ function ResettableTextInput(
       />
       <button
         type='reset'
-        className='m-auto w-10 h-10 rounded-full hover:rounded-full hover:bg-primary_lighten'
+        className='m-auto w-10 h-10 rounded-full hover:rounded-full hover:bg-primary-lighten'
         onClick={applyReset}
       >
         <span id={id + '--reset-label'} className='sr-only'>

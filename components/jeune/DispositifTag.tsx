@@ -13,9 +13,9 @@ export default function DispositifTag({ dispositif }: TagProps) {
 function getStyle(dispositif: string): string {
   switch (dispositif) {
     case 'PACEA':
-      return 'text-success bg-success_lighten'
+      return 'text-success bg-success-lighten'
     case 'CEJ':
     default:
-      return 'text-primary bg-primary_lighten'
+      return 'text-primary bg-primary-lighten'
   }
 }

@@ -1,8 +1,8 @@
 <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="245.4" cy="253.1" r="55.6" transform="rotate(-90 245.4 253)" fill="var(--color-warning_lighten)"/>
-    <circle cx="114" cy="106.6" r="55.6" transform="rotate(-90 114 106.6)" fill="var(--color-warning_lighten)"/>
-    <path transform="rotate(-83.2 268 123)" fill="var(--color-warning_lighten)" d="M268.1 122.9H305.8V160.6H268.1z"/>
-    <path transform="rotate(-77.3 50 276.4)" fill="var(--color-warning_lighten)" d="M50 276.4H87.7V314.1H50z"/>
+    <circle cx="245.4" cy="253.1" r="55.6" transform="rotate(-90 245.4 253)" fill="var(--color-warning-lighten)"/>
+    <circle cx="114" cy="106.6" r="55.6" transform="rotate(-90 114 106.6)" fill="var(--color-warning-lighten)"/>
+    <path transform="rotate(-83.2 268 123)" fill="var(--color-warning-lighten)" d="M268.1 122.9H305.8V160.6H268.1z"/>
+    <path transform="rotate(-77.3 50 276.4)" fill="var(--color-warning-lighten)" d="M50 276.4H87.7V314.1H50z"/>
     <path d="M183 95.6c-48.7 0-88.4 39-88.4 86.8A87.7 87.7 0 0 0 183 269c48.7 0 88.4-39 88.4-86.7A87.7 87.7 0 0 0 183 95.6Z"
           fill="var(--color-warning)"/>
     <path

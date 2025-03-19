@@ -125,7 +125,7 @@ export function SelecteurPeriode({
       <button onClick={allerPeriodePrecedente} type='button'>
         <IconComponent
           name={IconName.ChevronLeft}
-          className='w-6 h-6 fill-primary hover:fill-primary_darken'
+          className='w-6 h-6 fill-primary hover:fill-primary-darken'
           focusable={false}
           role='img'
           aria-label={
@@ -175,7 +175,7 @@ export function SelecteurPeriode({
       <button onClick={allerPeriodeSuivante} type='button'>
         <IconComponent
           name={IconName.ChevronRight}
-          className='w-6 h-6 fill-primary hover:fill-primary_darken'
+          className='w-6 h-6 fill-primary hover:fill-primary-darken'
           focusable={false}
           role='img'
           aria-label={

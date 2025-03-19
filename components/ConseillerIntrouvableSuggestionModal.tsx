@@ -37,15 +37,15 @@ export default function ConseillerIntrouvableSuggestionModal({
       titleIcon={IconName.Help}
       onClose={onClose}
     >
-      <p className='mb-4 text-base-bold text-content_color text-center'>
+      <p className='mb-4 text-base-bold text-content-color text-center'>
         La conseillère ou le conseiller en question ne s’est peut-être jamais
         connecté(e) à l’Application{' '}
         {estPassEmploi(conseiller.structure) ? 'pass emploi' : 'du CEJ'}.
       </p>
-      <p className='mb-12 text-base-regular text-content_color text-center'>
+      <p className='mb-12 text-base-regular text-content-color text-center'>
         Nous l’invitons à effectuer une première connexion pour apparaître dans
         les suggestions. Si malgré ça vous rencontrez des difficultés,&nbsp;
-        <span className='text-primary_darken hover:text-primary'>
+        <span className='text-primary-darken hover:text-primary'>
           <ExternalLink
             href={getUrlFormulaireSupport(conseiller.structure)}
             label='contactez le support'

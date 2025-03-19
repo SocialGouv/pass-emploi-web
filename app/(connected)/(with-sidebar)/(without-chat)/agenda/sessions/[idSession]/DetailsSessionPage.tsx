@@ -347,8 +347,8 @@ function DetailsSessionPage({
         </div>
       )}
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations offre</h2>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 mt-6'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations offre</h2>
         <dl>
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Titre :</dt>
@@ -397,8 +397,8 @@ function DetailsSessionPage({
         </dl>
       </section>
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 my-6'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations session</h2>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 my-6'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations session</h2>
         <dl>
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Nom :</dt>
@@ -576,7 +576,7 @@ function DetailsSessionPage({
             <ul
               aria-label='Bénéficiaires inscrits'
               id='selected-beneficiaires'
-              className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
+              className='bg-grey-100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
             >
               {beneficiairesSelectionnes.value.map((beneficiaire) => (
                 <li

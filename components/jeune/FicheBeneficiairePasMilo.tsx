@@ -52,7 +52,7 @@ export default function FicheBeneficiairePasMilo({
         <>
           {afficherSuiviOffres && (
             <>
-              <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+              <h2 className='text-m-bold text-grey-800 mb-4'>Favoris</h2>
               <p className='text-base-regular'>
                 Retrouvez les offres et recherches que votre bénéficiaire a
                 mises en favoris.
@@ -62,7 +62,7 @@ export default function FicheBeneficiairePasMilo({
 
           {afficherSyntheseFavoris && (
             <>
-              <h2 className='text-m-bold text-grey_800 mb-6'>Favoris</h2>
+              <h2 className='text-m-bold text-grey-800 mb-6'>Favoris</h2>
               <p className='mb-4'>
                 Retrouvez la synthèse des offres et recherches que votre
                 bénéficiaire a mises en favoris.

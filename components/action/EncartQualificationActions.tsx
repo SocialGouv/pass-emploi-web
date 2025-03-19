@@ -47,7 +47,7 @@ export default function EncartQualificationActions({
 
   return (
     <>
-      <div className='flex items-center bg-primary_lighten rounded-base p-4 justify-between'>
+      <div className='flex items-center bg-primary-lighten rounded-base p-4 justify-between'>
         <p className='whitespace-pre-wrap'>
           {nombreActionsSelectionnees === 0 &&
             'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'}

@@ -138,7 +138,7 @@ function PaginationItem({
 }: PaginationItemProps) {
   const activeStyle = isActive && 'bg-primary text-white'
   const hoverStyle =
-    !disabled && !isActive && 'hover:bg-primary_lighten hover:text-primary'
+    !disabled && !isActive && 'hover:bg-primary-lighten hover:text-primary'
 
   return (
     <li>
@@ -150,7 +150,7 @@ function PaginationItem({
         disabled={disabled}
         className={`rounded-full ${
           typeof children === 'number' ? 'px-3' : 'px-1'
-        } py-1 fill-primary_darken disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${activeStyle} ${hoverStyle}`}
+        } py-1 fill-primary-darken disabled:cursor-not-allowed disabled:fill-grey-700 disabled:text-grey-700 ${activeStyle} ${hoverStyle}`}
         type='button'
       >
         {children}

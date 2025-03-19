@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
-    <circle cx="81.8" cy="84.7" r="18.5" transform="rotate(-90 81.8 84.7)" fill="var(--color-alert_lighten)"/>
-    <circle cx="38" cy="35.9" transform="rotate(-90 38 35.9)" fill="var(--color-alert_lighten)" r="18.5"/>
-    <path fill="var(--color-alert_lighten)" d="m89.4 41.3 1.5-12.5 12.5 1.5-1.5 12.5zM16.7 92.5l2.8-12.3L31.8 83 29 95.3z"/>
+    <circle cx="81.8" cy="84.7" r="18.5" transform="rotate(-90 81.8 84.7)" fill="var(--color-alert-lighten)"/>
+    <circle cx="38" cy="35.9" transform="rotate(-90 38 35.9)" fill="var(--color-alert-lighten)" r="18.5"/>
+    <path fill="var(--color-alert-lighten)" d="m89.4 41.3 1.5-12.5 12.5 1.5-1.5 12.5zM16.7 92.5l2.8-12.3L31.8 83 29 95.3z"/>
     <path d="M61 32.2c-16.2 0-29.5 13-29.5 29C31.5 77 44.8 90 61 90s29.5-13 29.5-28.9c0-16-13.3-28.9-29.5-28.9Z"
           fill="var(--color-alert)"/>
     <path

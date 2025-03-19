@@ -18,7 +18,7 @@ export default function FailureAlert({
   return (
     <div
       role='alert'
-      className='text-warning bg-warning_lighten p-6 flex flex-col rounded-base mb-8'
+      className='text-warning bg-warning-lighten p-6 flex flex-col rounded-base mb-8'
       ref={shouldFocus ? (e) => e?.focus() : undefined}
       tabIndex={shouldFocus ? -1 : undefined}
     >

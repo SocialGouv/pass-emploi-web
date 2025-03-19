@@ -31,7 +31,7 @@ export default function ChatNav({ onClose }: { onClose: () => void }) {
           type='button'
           onClick={(e) => modalContainerRef.current!.closeModal(e)}
           aria-expanded={true}
-          className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-full'
+          className='w-fit p-1 -ml-4 mb-6 hover:bg-primary-darken hover:rounded-full'
           title='Fermer le menu principal'
         >
           <IconComponent

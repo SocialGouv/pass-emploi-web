@@ -11,8 +11,8 @@ export default function ResumeFavorisBeneficiaire({
   metadonneesFavoris: { offres, recherches },
 }: ResumeFavorisJeuneProps) {
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100 flex flex-wrap gap-6'>
-      <div className='text-content_color text-base-bold'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100 flex flex-wrap gap-6'>
+      <div className='text-content-color text-base-bold'>
         <h3 className='mb-2'>Offres</h3>
         <ul className='flex gap-2'>
           <TileIndicateur
@@ -45,7 +45,7 @@ export default function ResumeFavorisBeneficiaire({
           />
         </ul>
       </div>
-      <div className='text-content_color text-base-bold'>
+      <div className='text-content-color text-base-bold'>
         <h3 className='mb-2'>Recherches</h3>
         <div className='flex gap-2'>
           <TileIndicateur

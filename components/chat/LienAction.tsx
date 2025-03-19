@@ -12,14 +12,14 @@ export default function LienAction({
   idBeneficiaire: string
 }) {
   return (
-    <div className='mt-4 p-4 rounded-base bg-primary_darken'>
+    <div className='mt-4 p-4 rounded-base bg-primary-darken'>
       <p className='text-base-bold text-white'>{infoAction.titre}</p>
 
       <Link
         href={`/mes-jeunes/${idBeneficiaire}/actions/${infoAction.id}`}
         target='_blank'
         rel='noreferrer noopener'
-        className='block mt-4 w-fit ml-auto text-s-regular underline text-white hover:text-primary_lighten'
+        className='block mt-4 w-fit ml-auto text-s-regular underline text-white hover:text-primary-lighten'
       >
         Voir l’action
         <span className='sr-only'> {infoAction.titre} (nouvelle fenêtre)</span>

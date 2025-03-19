@@ -122,7 +122,7 @@ export default function RenseignementAgenceForm({
           className={`mt-2 border border-solid rounded-base w-full ${
             agenceLibre.error
               ? 'border-warning text-warning'
-              : 'border-content_color'
+              : 'border-content-color'
           }`}
         />
       </div>

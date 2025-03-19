@@ -47,16 +47,16 @@ export default function TableauBeneficiairesPasMilo({
         </TR>
       </thead>
 
-      <tbody className='grid grid-cols-[repeat(3,auto)] layout_m:grid-cols-[repeat(4,auto)] gap-y-2'>
+      <tbody className='grid grid-cols-[repeat(3,auto)] layout-m:grid-cols-[repeat(4,auto)] gap-y-2'>
         {beneficiairesAffiches.map(
           (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
             <TR
               key={beneficiaire.id}
-              className='grid grid-cols-subgrid grid-rows-[repeat(2,auto)] layout_m:grid-rows-[auto] col-span-full items-center'
+              className='grid grid-cols-subgrid grid-rows-[repeat(2,auto)] layout-m:grid-rows-[auto] col-span-full items-center'
             >
               <TD
                 isBold
-                className='relative h-full p-2! rounded-tl-base! rounded-bl-none! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""] layout_m:rounded-l-base!'
+                className='relative h-full p-2! rounded-tl-base! rounded-bl-none! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""] layout-m:rounded-l-base!'
               >
                 {beneficiaire.isReaffectationTemporaire && (
                   <span className='self-center mr-2'>
@@ -81,7 +81,7 @@ export default function TableauBeneficiairesPasMilo({
 
               <TD className='h-full p-2!'>
                 <div
-                  className='text-s-regular text-grey_800'
+                  className='text-s-regular text-grey-800'
                   aria-hidden={true}
                 >
                   {messagesColumn}
@@ -91,11 +91,11 @@ export default function TableauBeneficiairesPasMilo({
                 </span>
               </TD>
 
-              <TD className='h-full p-2! row-start-2 col-span-2 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-3 layout_m:col-span-1 layout_m:rounded-none layout_m:flex-col layout_m:gap-0 layout_m:justify-center layout_m:pt-0'>
+              <TD className='h-full p-2! row-start-2 col-span-2 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout-m:row-start-1 layout-m:col-start-3 layout-m:col-span-1 layout-m:rounded-none layout-m:flex-col layout-m:gap-0 layout-m:justify-center layout-m:pt-0'>
                 {beneficiaire.isActivated && (
                   <>
                     <span
-                      className='text-xs-regular text-grey_800'
+                      className='text-xs-regular text-grey-800'
                       aria-hidden={true}
                     >
                       {derniereActiviteColumn}
@@ -115,7 +115,7 @@ export default function TableauBeneficiairesPasMilo({
               <TDLink
                 href={`/mes-jeunes/${beneficiaire.id}`}
                 labelPrefix='Accéder à la fiche de'
-                className='p-2! row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
+                className='p-2! row-span-2 h-full flex items-center justify-center layout-m:row-span-1'
               />
             </TR>
           )

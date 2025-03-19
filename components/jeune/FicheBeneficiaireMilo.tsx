@@ -205,7 +205,7 @@ export default function FicheBeneficiaireMilo({
           aria-labelledby='agenda--tab'
           tabIndex={0}
           id='agenda'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary-lighten'
         >
           <OngletAgendaBeneficiaire
             idBeneficiaire={beneficiaire.id}
@@ -223,7 +223,7 @@ export default function FicheBeneficiaireMilo({
           aria-labelledby='liste-rdvs--tab'
           tabIndex={0}
           id='liste-rdvs'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary-lighten'
         >
           <OngletRdvsBeneficiaire
             beneficiaire={beneficiaire}

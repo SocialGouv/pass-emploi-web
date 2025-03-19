@@ -19,7 +19,7 @@ function Etape(
       ref={ref}
       tabIndex={ref ? -1 : undefined}
     >
-      <legend className='flex items-center text-m-bold text-grey_800 mb-4'>
+      <legend className='flex items-center text-m-bold text-grey-800 mb-4'>
         <IconComponent
           name={getIconNumero(numero)}
           focusable={false}

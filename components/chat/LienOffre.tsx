@@ -16,8 +16,8 @@ export default function LienOffre({
     <div
       className={`mt-4 p-4 rounded-base ${
         isSentByConseiller
-          ? 'text-white bg-primary_darken'
-          : 'text-content_color bg-white'
+          ? 'text-white bg-primary-darken'
+          : 'text-content-color bg-white'
       }`}
     >
       <p className='text-base-bold'>{infoOffre.titre}</p>
@@ -28,8 +28,8 @@ export default function LienOffre({
         rel='noreferrer noopener'
         className={`block mt-4 w-fit ml-auto text-s-regular underline ${
           isSentByConseiller
-            ? 'hover:text-primary_lighten'
-            : 'text-primary hover:text-primary_darken'
+            ? 'hover:text-primary-lighten'
+            : 'text-primary hover:text-primary-darken'
         }`}
       >
         Voir l’offre

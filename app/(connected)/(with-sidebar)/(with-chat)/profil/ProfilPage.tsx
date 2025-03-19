@@ -161,8 +161,8 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
         </div>
       )}
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 mb-8'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations</h2>
 
         {estFTConnect(conseiller.structure) && (
           <InformationMessage label='Changement d’agence ou de dispositif ?'>
@@ -253,7 +253,7 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
 
                 <p className='flex'>
                   Pour ce faire merci de&nbsp;
-                  <span className={'text-primary_darken hover:text-primary'}>
+                  <span className={'text-primary-darken hover:text-primary'}>
                     <ExternalLink
                       href={getUrlFormulaireSupport(conseiller.structure)}
                       label='contacter le support'
@@ -276,9 +276,9 @@ function ProfilPage({ referentielMissionsLocales }: ProfilProps) {
         )}
       </section>
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Notifications</h2>
-        <div className='flex items-center flex-wrap layout_m:flex-nowrap'>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 mb-8'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Notifications</h2>
+        <div className='flex items-center flex-wrap layout-m:flex-nowrap'>
           <label htmlFor='notificationSonore' className='mr-4'>
             Recevoir des notifications sonores pour la réception de nouveaux
             messages

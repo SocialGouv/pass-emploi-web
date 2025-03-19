@@ -24,7 +24,7 @@ export default function OffreCard({
     // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
     // absolute position in grandparent : https://stackoverflow.com/a/25768682
     // tailwindcss replaces rotate-0 with rotate: none
-    <div className='relative block rounded-base shadow-base p-6 cursor-pointer hover:bg-primary_lighten [transform:rotate(0deg)]'>
+    <div className='relative block rounded-base shadow-base p-6 cursor-pointer hover:bg-primary-lighten [transform:rotate(0deg)]'>
       {children}
 
       <Link

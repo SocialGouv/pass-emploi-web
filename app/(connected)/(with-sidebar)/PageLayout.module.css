@@ -22,19 +22,19 @@
   padding: 40px 1rem;
 }
 
-@variant layout_s {
+@variant layout-s {
   .content.content_centered {
     padding: 40px 0;
   }
 }
 
-@variant layout_l {
+@variant layout-l {
   .content.content_fullWidth {
     padding: 1.5rem;
   }
 }
 
-@variant layout_xl {
+@variant layout-xl {
   .content.content_fullWidth {
     padding: 2rem;
   }

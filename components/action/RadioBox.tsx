@@ -22,8 +22,8 @@ export default function RadioBox({
       htmlFor={id}
       className={`flex items-center w-fit px-4 py-2 border border-solid rounded-large text-s-bold ${
         isSelected
-          ? 'border-primary bg-primary_lighten text-primary'
-          : 'border-grey_800 text-grey_800'
+          ? 'border-primary bg-primary-lighten text-primary'
+          : 'border-grey-800 text-grey-800'
       } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'} ${className ?? ''}`}
     >
       <input

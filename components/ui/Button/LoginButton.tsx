@@ -21,9 +21,9 @@ export default function LoginButton(props: LoginButtonProps | LoginLinkProps) {
   const ariaLabel = ['Connexion', props.prefix, props.label].join(' ')
   const style =
     'relative inline-block w-full h-full px-6 py-2 min-h-[60px] ' +
-    'rounded-base border-2 border-primary_darken shadow-base ' +
+    'rounded-base border-2 border-primary-darken shadow-base ' +
     'text-base-bold whitespace-pre-wrap ' +
-    'hover:bg-primary_lighten hover:shadow-m' +
+    'hover:bg-primary-lighten hover:shadow-m' +
     (isLoading ? ' cursor-not-allowed opacity-50' : '')
 
   if (isLink(props)) {

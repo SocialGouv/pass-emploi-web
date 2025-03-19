@@ -23,7 +23,7 @@ export default function ImmersionCard({
     >
       <TagMetier
         label='Immersion'
-        className='text-content_color bg-additional_1_lighten text-s-regular mb-4'
+        className='text-content-color bg-additional-1-lighten text-s-regular mb-4'
       />
 
       <h3 className='text-base-bold mb-2'>{offre.titre}</h3>
@@ -32,7 +32,7 @@ export default function ImmersionCard({
         <dd className='text-s-bold mb-2'>{offre.nomEtablissement}</dd>
 
         <dt className='sr-only'>Ville</dt>
-        <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
+        <dd className='flex items-center text-s-regular text-grey-800 mb-5'>
           <IconComponent
             name={IconName.LocationOn}
             className='w-4 h-4 mr-3 fill-primary'

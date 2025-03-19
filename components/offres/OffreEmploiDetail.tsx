@@ -45,10 +45,10 @@ export default function OffreEmploiDetail({
   )
 
   const sectionTitleStyle =
-    'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
+    'inline-flex items-center w-full text-m-bold text-grey-800 pb-6 border-b border-solid border-primary-lighten'
   const dtStyle = 'mt-6 text-base-bold'
   const ddStyle =
-    'mt-4 text-s-regular pb-4 border-b border-solid border-primary_lighten'
+    'mt-4 text-s-regular pb-4 border-b border-solid border-primary-lighten'
   const ulStyle = 'list-disc list-inside'
   const liStyle = 'mb-4 last:mb-0'
 
@@ -69,14 +69,14 @@ export default function OffreEmploiDetail({
 
       <div className='max-w-2xl mx-auto'>
         {offre.origine && (
-          <p className='text-s-regular text-grey_800 mb-2 flex items-center gap-2'>
+          <p className='text-s-regular text-grey-800 mb-2 flex items-center gap-2'>
             <LogoOrigine {...offre.origine} />
             Source : {offre.origine.nom}
           </p>
         )}
 
         {dateActualisation && (
-          <p className='text-s-regular text-grey_800 mb-2'>
+          <p className='text-s-regular text-grey-800 mb-2'>
             Actualisée le {dateActualisation}
           </p>
         )}
@@ -155,7 +155,7 @@ export default function OffreEmploiDetail({
                 <>
                   <dt className='sr-only'>Lien offre</dt>
                   <dd
-                    className={`${ddStyle} text-primary hover:text-primary_darken`}
+                    className={`${ddStyle} text-primary hover:text-primary-darken`}
                   >
                     <ExternalLink
                       href={offre.urlPostulation}
@@ -292,7 +292,7 @@ export default function OffreEmploiDetail({
               {offre.infoEntreprise!.lien && (
                 <>
                   <dt className='sr-only'>Lien site</dt>
-                  <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
+                  <dd className='mt-4 text-base-regular text-primary hover:text-primary-darken'>
                     <ExternalLink
                       href={offre.infoEntreprise!.lien}
                       label="Site de l'entreprise"
@@ -337,7 +337,7 @@ export default function OffreEmploiDetail({
 }
 
 function LogoOrigine({ logo, nom }: { nom: string; logo?: string }) {
-  const style = 'p-1 rounded-base border border-primary_lighten'
+  const style = 'p-1 rounded-base border border-primary-lighten'
 
   if (nom === 'France Travail')
     return (

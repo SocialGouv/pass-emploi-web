@@ -13,6 +13,6 @@ export default function Dot({ color, className }: DotProps) {
 }
 
 const styles: { [key in DotColor]: string } = {
-  ACCENT: 'bg-accent_1',
-  GREY: 'bg-grey_700',
+  ACCENT: 'bg-accent-1',
+  GREY: 'bg-grey-700',
 }

@@ -8,19 +8,19 @@ const propsStatutsDemarches: {
 } = {
   EN_COURS: {
     label: 'En cours',
-    style: 'text-accent_1 bg-accent_1_lighten',
+    style: 'text-accent-1 bg-accent-1-lighten',
   },
   A_FAIRE: {
     label: 'À faire',
-    style: 'text-primary_darken bg-accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   REALISEE: {
     label: 'Terminée',
-    style: 'text-success bg-success_lighten',
+    style: 'text-success bg-success-lighten',
   },
   ANNULEE: {
     label: 'Annulée',
-    style: 'text-disabled bg-grey_100',
+    style: 'text-disabled bg-grey-100',
   },
 }
 

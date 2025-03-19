@@ -19,7 +19,7 @@ export default function TagStatutAction({
     if (actionEstEnRetard)
       return {
         label: 'En retard',
-        style: 'text-warning bg-warning_lighten',
+        style: 'text-warning bg-warning-lighten',
       }
 
     return propsStatutsActions[status]

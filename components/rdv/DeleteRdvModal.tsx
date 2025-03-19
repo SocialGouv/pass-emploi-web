@@ -40,7 +40,7 @@ export default function DeleteRdvModal({
               label='Celle-ci concerne des bénéficiaires qui ne sont pas dans votre portefeuille.'
             />
           </div>
-          <div className='text-base-regular text-content_color text-center mt-6'>
+          <div className='text-base-regular text-content-color text-center mt-6'>
             <p>
               Le créateur de l’
               {evenementTypeAC ? 'animation collective' : 'événement'} et les
@@ -51,7 +51,7 @@ export default function DeleteRdvModal({
       )}
 
       {!aDesBeneficiairesDUnAutrePortefeuille && (
-        <div className='text-base-regular text-content_color text-center mt-6'>
+        <div className='text-base-regular text-content-color text-center mt-6'>
           <p>Les bénéficiaires seront notifiées de la suppression.</p>
         </div>
       )}

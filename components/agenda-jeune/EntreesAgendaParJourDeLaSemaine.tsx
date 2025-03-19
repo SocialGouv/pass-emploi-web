@@ -25,7 +25,7 @@ export function EntreesAgendaParJourDeLaSemaine({
           <section
             key={`semaine-${numeroSemaine}-jour-${index}`}
             aria-labelledby={`semaine-${numeroSemaine}-jour-${index}`}
-            className='rounded-base border border-grey_100 p-4 mt-6'
+            className='rounded-base border border-grey-100 p-4 mt-6'
           >
             <h3
               id={`semaine-${numeroSemaine}-jour-${index}`}
@@ -34,7 +34,7 @@ export function EntreesAgendaParJourDeLaSemaine({
               {capitalizeFirstLetter(jour)}
             </h3>
             {entrees.length === 0 && (
-              <p className='text-grey_800'>Pas d’action ni de rendez-vous</p>
+              <p className='text-grey-800'>Pas d’action ni de rendez-vous</p>
             )}
             {entrees.length > 0 && (
               <ol>

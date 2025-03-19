@@ -47,7 +47,7 @@ export default function ServiceCiviqueDetail({
   )
 
   const sectionTitleStyle =
-    'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
+    'inline-flex items-center w-full text-m-bold text-grey-800 pb-6 border-b border-solid border-primary-lighten'
   const pStyle = 'mt-4 text-s-regular pb-4 '
 
   return (
@@ -153,7 +153,7 @@ export default function ServiceCiviqueDetail({
                 <>
                   <dt className='sr-only'>Lien offre</dt>
                   <dd
-                    className={`${pStyle} text-primary hover:text-primary_darken`}
+                    className={`${pStyle} text-primary hover:text-primary-darken`}
                   >
                     <ExternalLink
                       href={offre.lienAnnonce}
@@ -186,7 +186,7 @@ export default function ServiceCiviqueDetail({
                 <>
                   <dt className='sr-only'>Lien organisation</dt>
                   <dd
-                    className={`${pStyle} text-primary hover:text-primary_darken`}
+                    className={`${pStyle} text-primary hover:text-primary-darken`}
                   >
                     <ExternalLink
                       href={offre.urlOrganisation}

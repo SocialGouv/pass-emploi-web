@@ -26,9 +26,9 @@ export default function NavLink({
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `relative flex w-full p-2 mb-2 items-center justify-center rounded-base layout_l:justify-start transition-all border-2  ${
+  const linkStyle = `relative flex w-full p-2 mb-2 items-center justify-center rounded-base layout-l:justify-start transition-all border-2  ${
     isActive
-      ? 'bg-primary_lighten border-white text-base-bold'
+      ? 'bg-primary-lighten border-white text-base-bold'
       : 'border-primary hover:border-white text-base-medium'
   }`
 
@@ -38,13 +38,13 @@ export default function NavLink({
         <IconComponent
           focusable={false}
           aria-hidden={true}
-          className={`w-6 h-6 ${showLabelOnSmallScreen ? 'mr-2' : 'mr-0 layout_l:mr-2'} ${
+          className={`w-6 h-6 ${showLabelOnSmallScreen ? 'mr-2' : 'mr-0 layout-l:mr-2'} ${
             isActive ? 'fill-primary' : 'fill-white'
           }`}
           name={iconName}
         />
         <span
-          className={`${showLabelOnSmallScreen ? '' : 'sr-only layout_l:not-sr-only'} text-left break-words ${className ?? ''} ${
+          className={`${showLabelOnSmallScreen ? '' : 'sr-only layout-l:not-sr-only'} text-left break-words ${className ?? ''} ${
             isActive ? 'text-primary' : 'text-white'
           }`}
         >

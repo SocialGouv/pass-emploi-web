@@ -22,7 +22,7 @@ export default function TileIndicateur({
   return (
     <li
       className={`flex flex-col shrink-0 p-3 rounded-base ${
-        parseInt(valeur, 10) > 0 ? styles[color] : 'bg-grey_100 text-grey_800'
+        parseInt(valeur, 10) > 0 ? styles[color] : 'bg-grey-100 text-grey-800'
       }`}
     >
       <span className='text-xl-bold'>{valeur}</span>
@@ -42,9 +42,9 @@ export default function TileIndicateur({
 }
 
 const styles: { [key in TileIndicateurColor]: string } = {
-  ACCENT_2: 'text-accent_2 bg-accent_2_lighten',
-  ACCENT_3: 'text-primary bg-accent_3_lighten',
-  ALERT: 'text-content_color bg-alert_lighten',
-  PRIMARY: 'text-primary_darken bg-primary_lighten',
-  WARNING: 'text-warning bg-warning_lighten',
+  ACCENT_2: 'text-accent-2 bg-accent-2-lighten',
+  ACCENT_3: 'text-primary bg-accent-3-lighten',
+  ALERT: 'text-content-color bg-alert-lighten',
+  PRIMARY: 'text-primary-darken bg-primary-lighten',
+  WARNING: 'text-warning bg-warning-lighten',
 }

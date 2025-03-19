@@ -50,15 +50,15 @@ export function ConversationTile({
         type='button'
       >
         {!beneficiaireChat.seenByConseiller && (
-          <span className='text-accent_1 text-s-regular mb-2'>
+          <span className='text-accent-1 text-s-regular mb-2'>
             <Dot color='ACCENT' className='ml-1 mr-2' />
             Nouveau(x) message(s)
           </span>
         )}
-        <span className='text-base-medium text-primary_darken mb-2 max-w-[90%] flex justify-between'>
+        <span className='text-base-medium text-primary-darken mb-2 max-w-[90%] flex justify-between'>
           {beneficiaireFullname}
         </span>
-        <span className='text-s-regular text-grey_800 mb-2 [word-break:_break-word]'>
+        <span className='text-s-regular text-grey-800 mb-2 [word-break:_break-word]'>
           {' '}
           {beneficiaireChat.lastMessageSentBy ===
           UserType.CONSEILLER.toLowerCase()
@@ -66,7 +66,7 @@ export function ConversationTile({
             : beneficiaireChat.prenom}{' '}
           : {beneficiaireChat.lastMessageContent}
         </span>
-        <span className='text-xs-regular text-content_color self-end'>
+        <span className='text-xs-regular text-content-color self-end'>
           {lastMessageSentAt}{' '}
           {beneficiaireChat.lastMessageSentBy === 'conseiller' && (
             <>
@@ -87,7 +87,7 @@ export function ConversationTile({
                   <span>Non lu </span>
                   <Badge
                     count={beneficiaireChat.newConseillerMessageCount}
-                    className='text-accent_1 bg-accent_1_lighten'
+                    className='text-accent-1 bg-accent-1-lighten'
                   />
                 </>
               )}
@@ -108,7 +108,7 @@ export function ConversationTile({
           actionTitle: 'Suivre la conversation',
         }}
         onToggle={toggleFollowMessage}
-        className='absolute top-3 right-3 w-5 h-5 fill-primary hover:fill-primary_darken'
+        className='absolute top-3 right-3 w-5 h-5 fill-primary hover:fill-primary-darken'
       />
     </div>
   )
