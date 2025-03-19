@@ -47,11 +47,6 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  i18n: {
-    locales: ['fr-FR'],
-    defaultLocale: 'fr-FR',
-  },
-
   rewrites: async () => ({
     beforeFiles: [
       {
