@@ -29,7 +29,7 @@ const ResumeFavorisBeneficiaire = dynamic(
   () => import('components/jeune/ResumeFavorisBeneficiaire')
 )
 
-export default function FicheBeneficiaireMilo({
+export default function OngletsBeneficiaireMilo({
   ongletInitial,
   onSwitchTab,
   lectureSeule,

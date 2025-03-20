@@ -10,7 +10,7 @@ import {
 } from 'fixtures/beneficiaire'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
@@ -19,7 +19,7 @@ jest.mock('services/agenda.service')
 describe('Situations dans la fiche jeune', () => {
   describe('quand l’utilisateur est un conseiller MILO', () => {
     beforeEach(async () => {
-      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
       ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())

@@ -24,7 +24,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
   archiverJeune,
-  getIndicateursJeuneAlleges,
+  getIndicateursBeneficiaire,
   getMotifsSuppression,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
@@ -52,7 +52,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
     motifsSuppression = desMotifsDeSuppression()
     ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
