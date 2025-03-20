@@ -11,10 +11,7 @@ import {
   valeursOngletsMilo,
   valeursOngletsPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
-import {
-  PageFilArianePortal,
-  PageHeaderPortal,
-} from 'components/PageNavigationPortals'
+import { PageFilArianePortal } from 'components/PageNavigationPortals'
 import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
@@ -81,7 +78,6 @@ export default async function FicheBeneficiaire({
   return (
     <>
       <PageFilArianePortal />
-      <PageHeaderPortal header={`${beneficiaire.prenom} ${beneficiaire.nom}`} />
 
       {estMilo(conseiller.structure) &&
         (await renderFicheMilo(
