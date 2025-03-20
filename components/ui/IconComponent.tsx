@@ -55,6 +55,7 @@ import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
 import PeopleOutlineIcon from 'assets/icons/informations/people_outline.svg'
 import ScheduleIcon from 'assets/icons/informations/schedule.svg'
 import ScheduleOutlineIcon from 'assets/icons/informations/schedule_outline.svg'
+import TimerIcon from 'assets/icons/informations/timer.svg'
 import VisibilityOffIcon from 'assets/icons/informations/visibility-off.svg'
 import VisibilityOnIcon from 'assets/icons/informations/visibility-on.svg'
 import WarningIcon from 'assets/icons/informations/warning.svg'
@@ -155,6 +156,7 @@ export enum IconName {
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
   SwapVert = 'SwapVert',
+  Timer = 'Timer',
   VisibilityOn = 'VisibilityOn',
   VisibilityOff = 'VisibilityOff',
   Warning = 'Warning',
@@ -208,6 +210,8 @@ const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.NumberCircleThree]: NumberCircleThreeIcon,
   [IconName.NumberCircleFour]: NumberCircleFourIcon,
   [IconName.NumberCircleFive]: NumberCircleFiveIcon,
+  [IconName.Note]: NoteIcon,
+  [IconName.Notification]: NotificationIcon,
   [IconName.OpenInNew]: OpenInNewIcon,
   [IconName.OutgoingMail]: OutgoingMailIcon,
   [IconName.PageViewFill]: PageViewFillIcon,
@@ -234,10 +238,9 @@ const iconsByName: { [key in IconName]: FC<SVGProps<SVGElement>> } = {
   [IconName.Pending]: PendingIcon,
   [IconName.Refresh]: RefreshIcon,
   [IconName.Remove]: RemoveIcon,
-  [IconName.Note]: NoteIcon,
-  [IconName.Notification]: NotificationIcon,
   [IconName.VisibilityOn]: VisibilityOnIcon,
   [IconName.VisibilityOff]: VisibilityOffIcon,
+  [IconName.Timer]: TimerIcon,
   [IconName.Download]: DownloadIcon,
 }
 

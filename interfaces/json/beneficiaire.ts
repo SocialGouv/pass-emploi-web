@@ -38,6 +38,7 @@ export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   lastActivity?: string
   situationCourante?: Situation
   dateFinCEJ?: string
+  structureMilo?: { id: string }
 }
 
 export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
