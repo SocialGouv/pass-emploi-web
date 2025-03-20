@@ -18,7 +18,7 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { Structure } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -32,7 +32,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
     })
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())

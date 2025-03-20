@@ -14,7 +14,7 @@ import {
 import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -26,7 +26,7 @@ describe('Suivi des offres dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
     })
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())

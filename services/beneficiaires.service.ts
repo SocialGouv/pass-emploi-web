@@ -236,34 +236,21 @@ export async function modifierIdentifiantPartenaire(
   )
 }
 
-export async function getIndicateursJeuneAlleges(
+export async function getIndicateursBeneficiaire(
   idConseiller: string,
   idBeneficiaire: string,
   dateDebut: DateTime,
   dateFin: DateTime
 ): Promise<IndicateursSemaine> {
-  return getIndicateursBeneficiaire(
-    idConseiller,
-    idBeneficiaire,
-    dateDebut,
-    dateFin,
-    true
-  )
-}
+  const session = await getSession()
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
-export async function getIndicateursJeuneComplets(
-  idConseiller: string,
-  idBeneficiaire: string,
-  dateDebut: DateTime,
-  dateFin: DateTime
-): Promise<IndicateursSemaine> {
-  return getIndicateursBeneficiaire(
-    idConseiller,
-    idBeneficiaire,
-    dateDebut,
-    dateFin,
-    false
+  const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
+    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    session!.accessToken
   )
+  return jsonToIndicateursSemaine(indicateurs)
 }
 
 export async function getBeneficiairesDeLEtablissementClientSide(
@@ -334,7 +321,7 @@ export async function rechercheBeneficiairesDeLEtablissement(
 async function getBeneficiairesDuConseiller(
   idConseiller: string,
   accessToken: string
-) {
+): Promise<BeneficiaireFromListe[]> {
   const { content: beneficiaires } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
     accessToken
@@ -360,24 +347,6 @@ async function getConseillersDuBeneficiaire(
       throw e
     }
   }
-}
-
-async function getIndicateursBeneficiaire(
-  idConseiller: string,
-  idBeneficiaire: string,
-  dateDebut: DateTime,
-  dateFin: DateTime,
-  exclureOffresEtFavoris: boolean
-): Promise<IndicateursSemaine> {
-  const session = await getSession()
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-
-  const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
-    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
-    session!.accessToken
-  )
-  return jsonToIndicateursSemaine(indicateurs)
 }
 
 async function getIdentitesBeneficiaires(

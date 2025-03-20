@@ -24,7 +24,7 @@ import {
   qualifierActions,
 } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { MetadonneesPagination } from 'types/pagination'
@@ -102,7 +102,7 @@ describe('Actions dans la fiche jeune', () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
       ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())

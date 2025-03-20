@@ -22,7 +22,7 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/structure'
-import { getIndicateursJeuneComplets } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -92,7 +92,7 @@ function InformationsPage({
       !indicateursSemaine &&
       estMilo(conseiller.structure)
     ) {
-      getIndicateursJeuneComplets(
+      getIndicateursBeneficiaire(
         conseiller.id,
         idBeneficiaire,
         debutSemaine,

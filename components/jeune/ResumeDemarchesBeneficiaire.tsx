@@ -13,7 +13,7 @@ type ResumeIndicateursJeuneProps = {
   demarches: Demarche[]
 }
 
-export function ResumeDemarchesBeneficiaire({
+export default function ResumeDemarchesBeneficiaire({
   debutDeLaSemaine,
   finDeLaSemaine,
   demarches,

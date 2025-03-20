@@ -2,7 +2,7 @@ import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
-import DetailsJeune from 'components/jeune/DetailsJeune'
+import DetailsBeneficiaire from 'components/jeune/DetailsBeneficiaire'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
@@ -29,8 +29,8 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
         conseiller={unConseiller({ structure: structureMilo })}
       />
     )
@@ -53,8 +53,8 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
         conseiller={unConseiller({ structure: structureMilo })}
       />
     )
@@ -69,8 +69,8 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
         conseiller={unConseiller({ structure: structureMilo })}
       />
     )
@@ -89,8 +89,8 @@ describe('<DetailsJeune>', () => {
 
         // When
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
             conseiller={unConseiller({ structure: structureMilo })}
           />
         )
@@ -111,8 +111,8 @@ describe('<DetailsJeune>', () => {
 
         // When
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
             conseiller={unConseiller({
               structure: structureFTCej,
             })}
@@ -137,8 +137,8 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
             conseiller={unConseiller({
               structure: structureFTCej,
             })}
@@ -219,8 +219,8 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
             conseiller={unConseiller({
               structure: structureFTCej,
             })}
@@ -302,8 +302,8 @@ describe('<DetailsJeune>', () => {
 
       // When
       await renderWithContexts(
-        <DetailsJeune
-          jeune={jeune}
+        <DetailsBeneficiaire
+          beneficiaire={jeune}
           conseiller={unConseiller({ structure: structureMilo })}
         />
       )
