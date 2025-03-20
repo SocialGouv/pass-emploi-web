@@ -23,7 +23,7 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
-  getIndicateursJeuneComplets,
+  getIndicateursBeneficiaire,
   modifierDispositif,
 } from 'services/beneficiaires.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
@@ -375,7 +375,7 @@ async function renderPage(
 ): Promise<HTMLElement> {
   const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
   jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-  ;(getIndicateursJeuneComplets as jest.Mock).mockResolvedValue(
+  ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
     desIndicateursSemaine()
   )
 

@@ -36,8 +36,7 @@ import {
   getDemarchesBeneficiaire,
   getIdentitesBeneficiairesClientSide,
   getIdJeuneMilo,
-  getIndicateursJeuneAlleges,
-  getIndicateursJeuneComplets,
+  getIndicateursBeneficiaire,
   getJeuneDetails,
   getJeunesDuConseillerParId,
   getMetadonneesFavorisJeune,
@@ -375,33 +374,7 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getIndicateursJeuneAlleges', () => {
-    it('renvoie les indicateurs allégés du jeune entre une date de début et une date de fin', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desIndicateursSemaineJson(),
-      })
-      const dateDebut = DateTime.fromISO('2022-10-10')
-      const dateFin = DateTime.fromISO('2022-10-17')
-
-      // When
-      const actual = await getIndicateursJeuneAlleges(
-        'id-conseiller',
-        'id-jeune',
-        dateDebut,
-        dateFin
-      )
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=true',
-        'accessToken'
-      )
-      expect(actual).toEqual(desIndicateursSemaine())
-    })
-  })
-
-  describe('.getIndicateursJeuneComplets', () => {
+  describe('.getIndicateursBeneficiaire', () => {
     it('renvoie les indicateurs complets du jeune entre une date de début et une date de fin', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -411,7 +384,7 @@ describe('JeunesApiService', () => {
       const dateFin = DateTime.fromISO('2022-10-17')
 
       // When
-      const actual = await getIndicateursJeuneComplets(
+      const actual = await getIndicateursBeneficiaire(
         'id-conseiller',
         'id-jeune',
         dateDebut,
@@ -420,7 +393,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=false',
+        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual(desIndicateursSemaine())

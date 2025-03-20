@@ -24,7 +24,7 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
-  getIndicateursJeuneAlleges,
+  getIndicateursBeneficiaire,
   modifierDispositif,
 } from 'services/beneficiaires.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -36,7 +36,7 @@ jest.mock('components/ModalContainer')
 
 describe('FicheBeneficiairePage client side', () => {
   beforeEach(async () => {
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
