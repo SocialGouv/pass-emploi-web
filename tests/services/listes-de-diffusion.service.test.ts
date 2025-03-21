@@ -29,7 +29,7 @@ describe('ListesDeDiffusionApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/listes-de-diffusion',
+        '/conseillers/id-conseiller-1/listes-de-diffusion',
         'accessToken'
       )
       expect(actual).toEqual(listesDeDiffusion)
@@ -46,13 +46,13 @@ describe('ListesDeDiffusionApiService', () => {
 
       // When
       const actual = await getListesDeDiffusionServerSide(
-        'idConseiller',
+        'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/listes-de-diffusion',
+        '/conseillers/id-conseiller-1/listes-de-diffusion',
         'accessToken'
       )
       expect(actual).toEqual(listesDeDiffusion)
@@ -69,11 +69,14 @@ describe('ListesDeDiffusionApiService', () => {
       })
 
       // When
-      const actual = await recupererListeDeDiffusion('1', 'accessToken')
+      const actual = await recupererListeDeDiffusion(
+        'id-liste-1',
+        'accessToken'
+      )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/listes-de-diffusion/1',
+        '/listes-de-diffusion/id-liste-1',
         'accessToken'
       )
       expect(actual).toEqual(listeDeDiffusion)
@@ -84,7 +87,7 @@ describe('ListesDeDiffusionApiService', () => {
     it('crée la liste de diffusion', async () => {
       // Given
       const titre = 'Un titre'
-      const idsBeneficiaires = ['id-1', 'id-2']
+      const idsBeneficiaires = ['id-beneficiaire-1', 'id-beneficiaire-2']
 
       // When
       await creerListeDeDiffusion({
@@ -94,7 +97,7 @@ describe('ListesDeDiffusionApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/listes-de-diffusion',
+        '/conseillers/id-conseiller-1/listes-de-diffusion',
         { titre, idsBeneficiaires },
         'accessToken'
       )
@@ -105,7 +108,7 @@ describe('ListesDeDiffusionApiService', () => {
     it('modifie la liste de diffusion', async () => {
       // Given
       const titre = 'Un titre'
-      const idsBeneficiaires = ['id-1', 'id-2']
+      const idsBeneficiaires = ['id-beneficiaire-1', 'id-beneficiaire-2']
 
       // When
       await modifierListeDeDiffusion('id-liste', {

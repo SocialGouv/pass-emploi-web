@@ -69,14 +69,14 @@ describe('SessionsApiService', () => {
 
       // When
       const actual = await getSessionsMissionLocaleClientSide(
-        'id-conseiller',
+        'id-conseiller-1',
         dateDebut,
         dateFin
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/milo/id-conseiller/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
+        `/conseillers/milo/id-conseiller-1/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
       const sessionsMilo: AnimationCollective[] = [
@@ -118,7 +118,7 @@ describe('SessionsApiService', () => {
 
       // When
       const actual = await getSessionsMissionLocaleClientSide(
-        'id-conseiller',
+        'id-conseiller-1',
         dateDebut,
         dateFin
       )
@@ -185,14 +185,14 @@ describe('SessionsApiService', () => {
 
       // When
       const actual = await getSessionsBeneficiaires(
-        'id-conseiller',
+        'id-conseiller-1',
         dateDebut,
         dateFin
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/milo/id-conseiller/agenda/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
+        `/conseillers/milo/id-conseiller-1/agenda/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
       const sessionsMilo: EvenementListItem[] = [
@@ -235,14 +235,14 @@ describe('SessionsApiService', () => {
 
       // When
       const actual = await getDetailsSession(
-        'id-conseiller',
+        'id-conseiller-1',
         'session-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/milo/id-conseiller/sessions/session-1',
+        '/conseillers/milo/id-conseiller-1/sessions/session-1',
         'accessToken'
       )
       const expected = unDetailSession()
@@ -258,7 +258,7 @@ describe('SessionsApiService', () => {
 
       // When
       const actual = await getDetailsSession(
-        'id-conseiller',
+        'id-conseiller-1',
         'id-session',
         'accessToken'
       )
@@ -278,7 +278,7 @@ describe('SessionsApiService', () => {
 
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/milo/idConseiller/sessions/idSession',
+        '/conseillers/milo/id-conseiller-1/sessions/idSession',
         { autoinscription: false, visibilite: true },
         'accessToken'
       )
@@ -294,7 +294,7 @@ describe('SessionsApiService', () => {
 
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/milo/idConseiller/sessions/idSession',
+        '/conseillers/milo/id-conseiller-1/sessions/idSession',
         {
           inscriptions: [
             { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
@@ -314,14 +314,14 @@ describe('SessionsApiService', () => {
       ]
 
       // When
-      await cloreSession('id-conseiller', 'id-session', [
+      await cloreSession('id-conseiller-1', 'id-session', [
         { idJeune: 'id-beneficiaire-1', statut: 'INSCRIT' },
         { idJeune: 'id-beneficiaire-2', statut: 'REFUS_TIERS' },
       ])
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/milo/id-conseiller/sessions/id-session/cloturer',
+        '/conseillers/milo/id-conseiller-1/sessions/id-session/cloturer',
         {
           emargements,
         },

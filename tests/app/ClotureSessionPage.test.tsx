@@ -24,13 +24,13 @@ describe('Cloture Session', () => {
     },
     inscriptions: [
       {
-        idJeune: 'beneficiaire-1',
+        idJeune: 'id-beneficiaire-1',
         nom: 'Beau',
         prenom: 'Harry',
         statut: 'INSCRIT',
       },
       {
-        idJeune: 'beneficiaire-2',
+        idJeune: 'id-beneficiaire-2',
         nom: 'BE',
         prenom: 'Linda',
         statut: 'REFUS_JEUNE',
@@ -155,15 +155,15 @@ describe('Cloture Session', () => {
 
     it('clôt la session', async () => {
       // Then
-      expect(cloreSession).toHaveBeenCalledWith('1', 'session-1', [
+      expect(cloreSession).toHaveBeenCalledWith('id-conseiller-1', 'session-1', [
         {
-          idJeune: 'beneficiaire-1',
+          idJeune: 'id-beneficiaire-1',
           nom: 'Beau',
           prenom: 'Harry',
           statut: 'PRESENT',
         },
         {
-          idJeune: 'beneficiaire-2',
+          idJeune: 'id-beneficiaire-2',
           nom: 'BE',
           prenom: 'Linda',
           statut: 'PRESENT',

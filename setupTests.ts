@@ -34,7 +34,7 @@ jest.mock('next/headers', () => ({
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
     user: {
-      id: 'idConseiller',
+      id: 'id-conseiller-1',
       estSuperviseur: false,
       estSuperviseurResponsable: false,
       structure: 'MILO',
