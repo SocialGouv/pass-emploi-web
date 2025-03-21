@@ -80,7 +80,7 @@ describe('Actions dans la fiche jeune', () => {
         />,
         {
           customConseiller: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             structure: 'POLE_EMPLOI',
           },
         }
@@ -137,7 +137,7 @@ describe('Actions dans la fiche jeune', () => {
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
       expect(replace).toHaveBeenCalledWith(
-        '/mes-jeunes/beneficiaire-1?onglet=actions'
+        '/mes-jeunes/id-beneficiaire-1?onglet=actions'
       )
     })
 
@@ -306,7 +306,7 @@ describe('Actions dans la fiche jeune', () => {
         screen.getByRole('link', { name: 'Créer une action' })
       ).toHaveAttribute(
         'href',
-        '/mes-jeunes/beneficiaire-1/actions/nouvelle-action'
+        '/mes-jeunes/id-beneficiaire-1/actions/nouvelle-action'
       )
     })
 
@@ -372,7 +372,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 2,
             filtres: { statuts: [], categories: [] },
@@ -389,7 +389,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: pageCourante - 1,
             filtres: { statuts: [], categories: [] },
@@ -398,7 +398,7 @@ describe('Actions dans la fiche jeune', () => {
         )
 
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: pageCourante - 2,
             filtres: { statuts: [], categories: [] },
@@ -453,7 +453,7 @@ describe('Actions dans la fiche jeune', () => {
       it('filtre les actions', () => {
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 1,
             filtres: { statuts: [StatutAction.AFaire], categories: [] },
@@ -476,7 +476,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 2,
             filtres: { statuts: [StatutAction.AFaire], categories: [] },
@@ -520,7 +520,7 @@ describe('Actions dans la fiche jeune', () => {
       it('filtre les actions', () => {
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 1,
             filtres: { statuts: [], categories: ['SNP_1'] },
@@ -543,7 +543,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 2,
             filtres: { statuts: [], categories: ['SNP_1'] },
@@ -587,7 +587,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 1,
             filtres: { statuts: [], categories: [] },
@@ -595,7 +595,7 @@ describe('Actions dans la fiche jeune', () => {
           }
         )
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 1,
             filtres: { statuts: [], categories: [] },
@@ -623,7 +623,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // Then
         expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           {
             page: 2,
             filtres: { statuts: [], categories: [] },
@@ -658,7 +658,7 @@ async function renderFicheJeuneMILO({
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: 'MILO',
       },
     }

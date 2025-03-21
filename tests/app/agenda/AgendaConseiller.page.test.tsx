@@ -43,14 +43,14 @@ describe('Agenda - Onglet conseiller', () => {
           id: 'rdv-1',
           date: dateDebut.toISO(),
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
           ],
         }),
         unEvenementListItem({
           id: 'rdv-2',
           date: dateDebut.plus({ day: 1 }).toISO(),
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
           ],
           nombreMaxParticipants: 1,
         }),
@@ -58,7 +58,7 @@ describe('Agenda - Onglet conseiller', () => {
           id: 'rdv-3',
           date: dateDebut.plus({ day: 2 }).toISO(),
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
           ],
           nombreMaxParticipants: 2,
         }),
@@ -66,8 +66,8 @@ describe('Agenda - Onglet conseiller', () => {
           id: 'rdv-4',
           date: dateDebut.plus({ day: 3 }).toISO(),
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
-            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
           ],
           nombreMaxParticipants: 3,
         }),
@@ -80,8 +80,8 @@ describe('Agenda - Onglet conseiller', () => {
           date: dateFin.set({ hour: 14 }).toISO(),
           isSession: true,
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
-            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
           ],
         }),
       ]
@@ -140,12 +140,12 @@ describe('Agenda - Onglet conseiller', () => {
     it('affiche une période de 7 jours à partir de la date du jour', async () => {
       // Then
       expect(getRendezVousConseiller).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
@@ -181,12 +181,12 @@ describe('Agenda - Onglet conseiller', () => {
       await userEvent.click(periodePasseeButton)
       // Then
       expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         AOUT_25_0H,
         AOUT_31_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         AOUT_25_0H,
         AOUT_31_23H
       )
@@ -195,12 +195,12 @@ describe('Agenda - Onglet conseiller', () => {
       await userEvent.click(buttonPeriodeCourante)
       // Then
       expect(getRendezVousConseiller).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
@@ -209,12 +209,12 @@ describe('Agenda - Onglet conseiller', () => {
       await userEvent.click(periodeFutureButton)
       // Then
       expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
       )

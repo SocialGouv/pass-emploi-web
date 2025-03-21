@@ -536,7 +536,7 @@ describe('Reaffectation', () => {
           expect(reaffecter).toHaveBeenCalledWith(
             'id-nils-tavernier',
             'id-neil-armstrong',
-            ['beneficiaire-2'],
+            ['id-beneficiaire-2'],
             false
           )
         })

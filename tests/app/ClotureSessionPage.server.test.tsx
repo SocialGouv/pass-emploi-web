@@ -26,12 +26,12 @@ describe('Cloture Session server side', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: structureMilo },
+        user: { id: 'id-conseiller-1', structure: structureMilo },
         accessToken: 'accessToken',
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureMilo,
           agence: { nom: 'Agence', id: 'id-test' },
           structureMilo: { nom: 'Agence', id: 'id-test' },
@@ -92,7 +92,7 @@ describe('Cloture Session server side', () => {
       expect(getMandatorySessionServerSide).toHaveBeenCalled()
       expect(getConseillerServerSide).toHaveBeenCalled()
       expect(getDetailsSession).toHaveBeenCalledWith(
-        'id-conseiller',
+        'id-conseiller-1',
         'session-1',
         'accessToken'
       )

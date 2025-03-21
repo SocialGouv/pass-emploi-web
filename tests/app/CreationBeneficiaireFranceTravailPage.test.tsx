@@ -183,7 +183,7 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',
-        'beneficiaire-1'
+        'id-beneficiaire-1'
       )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
