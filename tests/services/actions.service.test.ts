@@ -464,7 +464,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/id-jeune/action',
+        '/conseillers/id-conseiller-1/jeunes/id-jeune/action',
         {
           codeQualification: 'CODE',
           content: 'content',
@@ -655,7 +655,7 @@ describe('ActionsApiService', () => {
 
       // WHEN
       const result = await recupereCompteursBeneficiairesPortefeuilleMilo(
-        'id-conseiller',
+        'id-conseiller-1',
         dateDebut,
         dateFin,
         'accessToken'
@@ -663,7 +663,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        `/conseillers/milo/id-conseiller-1/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         'accessToken'
       )
       expect(result).toEqual([

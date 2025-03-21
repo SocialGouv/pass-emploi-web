@@ -150,9 +150,9 @@ describe('MessagesFirebaseAndApiService', () => {
           fn: (chats: { [idJeune: string]: Chat }) => void
         ) =>
           fn({
-            'beneficiaire-1': unChat(),
-            'beneficiaire-2': unChat(),
-            'beneficiaire-3': unChat(),
+            'id-beneficiaire-1': unChat(),
+            'id-beneficiaire-2': unChat(),
+            'id-beneficiaire-3': unChat(),
           })
       )
 
@@ -160,9 +160,9 @@ describe('MessagesFirebaseAndApiService', () => {
       await observeConseillerChats(
         cleChiffrement,
         [
-          { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }) },
-          { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }) },
-          { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }) },
+          { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-1' }) },
+          { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-2' }) },
+          { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-3' }) },
         ],
         updateChats
       )
@@ -171,7 +171,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('finds chat in firebase', async () => {
       // Then
       expect(findAndObserveChatsDuConseiller).toHaveBeenCalledWith(
-        'idConseiller',
+        'id-conseiller-1',
         expect.any(Function)
       )
     })
@@ -179,9 +179,9 @@ describe('MessagesFirebaseAndApiService', () => {
     it('calls provided callback with new beneficiaireChat built from found chat', async () => {
       // Then
       expect(updateChats).toHaveBeenCalledWith([
-        { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }), ...unChat() },
-        { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }), ...unChat() },
-        { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-1' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-2' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'id-beneficiaire-3' }), ...unChat() },
       ])
     })
   })
@@ -200,7 +200,7 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       // Then
-      expect(getMessagesGroupe).toHaveBeenCalledWith('idConseiller', 'id-liste')
+      expect(getMessagesGroupe).toHaveBeenCalledWith('id-conseiller-1', 'id-liste')
       expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
     })
   })
@@ -280,25 +280,25 @@ describe('MessagesFirebaseAndApiService', () => {
     it('retourne nombre de messages nons lus par les jeunes', async () => {
       // Given
       const idsJeunes: string[] = [
-        'beneficiaire-1',
-        'beneficiaire-2',
-        'beneficiaire-3',
+        'id-beneficiaire-1',
+        'id-beneficiaire-2',
+        'id-beneficiaire-3',
       ]
       ;(getChatsDuConseiller as jest.Mock).mockResolvedValue({
-        'beneficiaire-1': unChat({ chatId: `chat-beneficiaire-1` }),
-        'beneficiaire-2': unChat({ chatId: `chat-beneficiaire-2` }),
-        'beneficiaire-3': unChat({ chatId: `chat-beneficiaire-3` }),
+        'id-beneficiaire-1': unChat({ chatId: `chat-beneficiaire-1` }),
+        'id-beneficiaire-2': unChat({ chatId: `chat-beneficiaire-2` }),
+        'id-beneficiaire-3': unChat({ chatId: `chat-beneficiaire-3` }),
       })
 
       //When
       const actual = await countMessagesNotRead(idsJeunes)
 
       //Then
-      expect(getChatsDuConseiller).toHaveBeenCalledWith('idConseiller')
+      expect(getChatsDuConseiller).toHaveBeenCalledWith('id-conseiller-1')
       expect(actual).toEqual({
-        ['beneficiaire-1']: 1,
-        ['beneficiaire-2']: 1,
-        ['beneficiaire-3']: 1,
+        ['id-beneficiaire-1']: 1,
+        ['id-beneficiaire-2']: 1,
+        ['id-beneficiaire-3']: 1,
       })
     })
 
@@ -308,16 +308,16 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //When
       const actual = await countMessagesNotRead([
-        'beneficiaire-1',
-        'beneficiaire-2',
-        'beneficiaire-3',
+        'id-beneficiaire-1',
+        'id-beneficiaire-2',
+        'id-beneficiaire-3',
       ])
 
       //Then
       expect(actual).toEqual({
-        'beneficiaire-1': 0,
-        'beneficiaire-2': 0,
-        'beneficiaire-3': 0,
+        'id-beneficiaire-1': 0,
+        'id-beneficiaire-2': 0,
+        'id-beneficiaire-3': 0,
       })
     })
   })
@@ -345,7 +345,7 @@ describe('MessagesFirebaseAndApiService', () => {
       it('adds a new message to firebase', async () => {
         // Then
         expect(addMessage).toHaveBeenCalledWith(beneficiaireChat.chatId, {
-          idConseiller: 'idConseiller',
+          idConseiller: 'id-conseiller-1',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
             iv: `IV: ${newMessage}`,
@@ -371,7 +371,7 @@ describe('MessagesFirebaseAndApiService', () => {
       it('notifies of a new message', async () => {
         // Then
         expect(apiPost).toHaveBeenCalledWith(
-          `/conseillers/idConseiller/jeunes/notify-messages`,
+          `/conseillers/id-conseiller-1/jeunes/notify-messages`,
           { idsJeunes: [beneficiaireChat.id] },
           accessToken
         )
@@ -386,7 +386,7 @@ describe('MessagesFirebaseAndApiService', () => {
             emetteur: {
               type: 'CONSEILLER',
               structure: 'MILO',
-              id: 'idConseiller',
+              id: 'id-conseiller-1',
             },
           },
           accessToken
@@ -407,7 +407,7 @@ describe('MessagesFirebaseAndApiService', () => {
       it('adds a new message to firebase', async () => {
         // Then
         expect(addMessage).toHaveBeenCalledWith(beneficiaireChat.chatId, {
-          idConseiller: 'idConseiller',
+          idConseiller: 'id-conseiller-1',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
             iv: `IV: ${newMessage}`,
@@ -426,7 +426,7 @@ describe('MessagesFirebaseAndApiService', () => {
             emetteur: {
               type: 'CONSEILLER',
               structure: 'MILO',
-              id: 'idConseiller',
+              id: 'id-conseiller-1',
             },
           },
           accessToken
@@ -459,7 +459,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/messages',
         {
-          idConseiller: 'idConseiller',
+          idConseiller: 'id-conseiller-1',
           idsBeneficiaires,
           idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
@@ -483,7 +483,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/messages',
         {
-          idConseiller: 'idConseiller',
+          idConseiller: 'id-conseiller-1',
           idsBeneficiaires,
           idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
@@ -504,7 +504,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
       newMessage = 'nouveauMessageImportant'
-      idConseiller = 'id-conseiller'
+      idConseiller = 'id-conseiller-1'
       // When
     })
 
@@ -520,7 +520,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // Then
       expect(addMessageImportant).toHaveBeenCalledWith({
-        idConseiller: 'id-conseiller',
+        idConseiller: 'id-conseiller-1',
         message: {
           encryptedText: `Encrypted: ${newMessage}`,
           iv: `IV: ${newMessage}`,
@@ -548,7 +548,7 @@ describe('MessagesFirebaseAndApiService', () => {
       //Given
       const messageSnapshot: FirebaseMessageImportant & { id: string } = {
         id: 'document-id',
-        idConseiller: 'idConseiller',
+        idConseiller: 'id-conseiller-1',
         iv: 'iv-message',
         content: 'contenu-message',
         dateDebut: Timestamp.fromMillis(
@@ -572,7 +572,7 @@ describe('MessagesFirebaseAndApiService', () => {
       const message = await getMessageImportant('cleChiffrement')
 
       //Then
-      expect(findMessageImportant).toHaveBeenCalledWith('idConseiller')
+      expect(findMessageImportant).toHaveBeenCalledWith('id-conseiller-1')
       expect(message).toEqual(expectedMessage)
     })
   })
@@ -611,7 +611,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('récupère les chats du conseiler', () => {
       // Then
-      expect(getChatsDuConseiller).toHaveBeenCalledWith('idConseiller')
+      expect(getChatsDuConseiller).toHaveBeenCalledWith('id-conseiller-1')
     })
 
     it('ajoute un nouveau message à firebase pour chaque destinataire', () => {
@@ -620,7 +620,7 @@ describe('MessagesFirebaseAndApiService', () => {
       Object.values(chats).forEach((chat) => {
         expect(addMessage).toHaveBeenCalledWith(chat.chatId, {
           offre,
-          idConseiller: 'idConseiller',
+          idConseiller: 'id-conseiller-1',
           message: {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
@@ -646,7 +646,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifie envoi de message pour chaque destinataire', () => {
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/jeunes/notify-messages`,
+        `/conseillers/id-conseiller-1/jeunes/notify-messages`,
         { idsJeunes: idsJeunes },
         accessToken
       )
@@ -661,7 +661,7 @@ describe('MessagesFirebaseAndApiService', () => {
           emetteur: {
             type: 'CONSEILLER',
             structure: 'MILO',
-            id: 'idConseiller',
+            id: 'id-conseiller-1',
           },
         },
         accessToken
@@ -690,8 +690,8 @@ describe('MessagesFirebaseAndApiService', () => {
     it('récupère le chat du bénéficiaire avec son conseiller', () => {
       // Then
       expect(getChatDuBeneficiaire).toHaveBeenCalledWith(
-        'idConseiller',
-        'beneficiaire-1'
+        'id-conseiller-1',
+        'id-beneficiaire-1'
       )
     })
 
@@ -700,7 +700,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       expect(addMessage).toHaveBeenCalledWith(chat.chatId, {
         action,
-        idConseiller: 'idConseiller',
+        idConseiller: 'id-conseiller-1',
         message: {
           encryptedText: `Encrypted: ${newMessage}`,
           iv: `IV: ${newMessage}`,
@@ -723,8 +723,8 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifie envoi de message', () => {
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/jeunes/notify-messages`,
-        { idsJeunes: ['beneficiaire-1'] },
+        `/conseillers/id-conseiller-1/jeunes/notify-messages`,
+        { idsJeunes: ['id-beneficiaire-1'] },
         accessToken
       )
     })
@@ -738,7 +738,7 @@ describe('MessagesFirebaseAndApiService', () => {
           emetteur: {
             type: 'CONSEILLER',
             structure: 'MILO',
-            id: 'idConseiller',
+            id: 'id-conseiller-1',
           },
         },
         accessToken
@@ -796,7 +796,7 @@ describe('MessagesFirebaseAndApiService', () => {
           emetteur: {
             type: 'CONSEILLER',
             structure: 'MILO',
-            id: 'idConseiller',
+            id: 'id-conseiller-1',
           },
         },
         accessToken
@@ -869,7 +869,7 @@ describe('MessagesFirebaseAndApiService', () => {
           emetteur: {
             type: 'CONSEILLER',
             structure: 'MILO',
-            id: 'idConseiller',
+            id: 'id-conseiller-1',
           },
         },
         accessToken

@@ -49,7 +49,7 @@ describe('HistoriquePage server side', () => {
     )
     ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
       accessToken: 'accessToken',
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
     })
 
     // When
@@ -80,7 +80,6 @@ describe('HistoriquePage server side', () => {
     expect(HistoriquePage).toHaveBeenCalledWith(
       {
         idBeneficiaire: 'id-beneficiaire',
-        lectureSeule: false,
         situations: listeSituations,
         conseillers: listeConseillers,
         beneficiaire: detailBeneficiaire,

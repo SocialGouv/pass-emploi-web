@@ -66,7 +66,7 @@ describe('ModificationActionPage server side', () => {
           actionsPredefinies,
           situationsNonProfessionnelles: categories,
           returnTo: expect.stringMatching(
-            '/mes-jeunes/beneficiaire-1/actions/id-action-1'
+            '/mes-jeunes/id-beneficiaire-1/actions/id-action-1'
           ),
         },
         undefined

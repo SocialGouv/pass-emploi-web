@@ -241,7 +241,7 @@ describe('ModificationActionPage client side', () => {
               })
             ).toHaveAttribute(
               'href',
-              '/mes-jeunes/beneficiaire-1?onglet=actions'
+              '/mes-jeunes/id-beneficiaire-1?onglet=actions'
             )
           })
         })

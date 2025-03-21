@@ -363,7 +363,7 @@ describe('Agenda - Onglet établissement', () => {
     it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
@@ -535,7 +535,7 @@ describe('Agenda - Onglet établissement', () => {
       await userEvent.click(periodesPasseesButton)
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         AOUT_25_0H,
         AOUT_31_23H
       )
@@ -545,7 +545,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )

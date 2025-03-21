@@ -33,7 +33,7 @@ describe('EtablissementPage client side', () => {
       prenom: 'Albert',
     },
     referent: {
-      id: 'id-conseiller',
+      id: 'id-conseiller-1',
       nom: 'Le Calamar',
       prenom: 'Carlo',
     },

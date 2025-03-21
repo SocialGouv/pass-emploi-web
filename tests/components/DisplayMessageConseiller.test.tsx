@@ -16,7 +16,7 @@ describe('<DiplayMessageConseiller />', () => {
     structure: structureMilo,
     firstName: 'johnny',
     lastName: 'boi',
-    id: 'id-conseiller',
+    id: 'id-conseiller-1',
   })
   const message = unMessage({
     sentBy: 'conseiller',

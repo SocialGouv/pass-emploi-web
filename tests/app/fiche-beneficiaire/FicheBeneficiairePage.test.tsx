@@ -58,7 +58,6 @@ describe('FicheBeneficiairePage client side', () => {
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           ongletInitial='agenda'
-          lectureSeule={false}
         />,
         {
           customChats: [conversation],
@@ -90,7 +89,6 @@ describe('FicheBeneficiairePage client side', () => {
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           ongletInitial='agenda'
-          lectureSeule={true}
         />,
         {
           customConseiller: { id: 'fake-id' },
@@ -223,7 +221,7 @@ describe('FicheBeneficiairePage client side', () => {
 
         // Then
         expect(modifierDispositif).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           'PACEA'
         )
         expect(() =>
@@ -231,18 +229,6 @@ describe('FicheBeneficiairePage client side', () => {
         ).toThrow()
         expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('PACEA')
       })
-    })
-
-    it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
-      // When
-      await renderFicheJeuneMilo()
-
-      // Then
-      expect(
-        screen.getByRole('link', {
-          name: 'Inscrire à une animation collective',
-        })
-      ).toHaveAttribute('href', '/agenda?onglet=etablissement')
     })
 
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
@@ -336,7 +322,6 @@ describe('FicheBeneficiairePage client side', () => {
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
             ongletInitial='agenda'
-            lectureSeule={false}
           />
         )
 
@@ -442,7 +427,6 @@ async function renderFicheJeuneMilo({
       actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
       ongletInitial='agenda'
-      lectureSeule={false}
     />,
     {
       customConseiller: {
@@ -476,7 +460,6 @@ async function renderFicheJeuneNonMilo({
       estMilo={false}
       beneficiaire={unDetailBeneficiaire()}
       ongletInitial={ongletInitial ?? 'offres'}
-      lectureSeule={false}
       metadonneesFavoris={uneMetadonneeFavoris({
         autoriseLePartage: autorisePartageFavoris ?? true,
       })}
