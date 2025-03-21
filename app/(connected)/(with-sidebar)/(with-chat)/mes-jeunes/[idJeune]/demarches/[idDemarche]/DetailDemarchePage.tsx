@@ -5,26 +5,29 @@ import React from 'react'
 
 import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Demarche } from 'interfaces/beneficiaire'
+import { Demarche, DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export type DetailDemarcheProps = {
+  beneficiaire: DetailBeneficiaire
   demarche: Demarche
-  lectureSeule: boolean
   isStale: boolean
 }
 
 function DetailDemarchePage({
+  beneficiaire,
   demarche,
-  lectureSeule,
   isStale,
 }: DetailDemarcheProps) {
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
   useMatomo(
-    `Détail Demarche${lectureSeule ? ' - hors portefeuille' : ''}`,
+    `Détail Demarche${!estConseillerReferent(conseiller, beneficiaire) ? ' - hors portefeuille' : ''}`,
     portefeuille.length > 0
   )
   return (

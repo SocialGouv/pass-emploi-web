@@ -21,6 +21,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { estMilo } from 'interfaces/structure'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -36,7 +37,6 @@ type InformationsPageProps = {
     dateFin?: string
   }>
   conseillers: ConseillerHistorique[]
-  lectureSeule: boolean
   onglet: Onglet
   metadonneesFavoris?: MetadonneesFavoris
 }
@@ -47,7 +47,6 @@ function InformationsPage({
   idBeneficiaire,
   situations,
   conseillers,
-  lectureSeule,
   beneficiaire,
   onglet,
   metadonneesFavoris,
@@ -81,7 +80,8 @@ function InformationsPage({
         trackingLabel += 'Historique conseiller'
         break
     }
-    if (lectureSeule) trackingLabel += ' - hors portefeuille'
+    if (!estConseillerReferent(conseiller, beneficiaire))
+      trackingLabel += ' - hors portefeuille'
 
     return trackingLabel
   }

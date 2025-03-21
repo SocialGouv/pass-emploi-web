@@ -11,7 +11,6 @@ import {
   DetailBeneficiaire,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
 import {
   estConseilDepartemental,
   estMilo,
@@ -20,6 +19,7 @@ import {
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 const UpdateIdentifiantPartenaireModal = dynamic(
   () => import('components/jeune/UpdateIdentifiantPartenaireModal')
@@ -27,24 +27,23 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 
 interface DetailsBeneficiaireProps {
   beneficiaire: DetailBeneficiaire
-  conseiller: Conseiller
+  withCreations: boolean
   demarches?: { data: Demarche[]; isStale: boolean } | null
   indicateursSemaine?: IndicateursSemaine
-  onSupprimerBeneficiaire?: (() => void) | undefined
+  onSupprimerBeneficiaire?: () => void
   className?: string
 }
 
 export default function DetailsBeneficiaire({
   beneficiaire,
-  conseiller,
+  withCreations,
   demarches,
   indicateursSemaine,
   onSupprimerBeneficiaire,
   className,
 }: DetailsBeneficiaireProps) {
   const { id, idPartenaire, dispositif, situations } = beneficiaire
-  const conseillerEstMilo = estMilo(conseiller.structure)
-
+  const [conseiller] = useConseiller()
   const [_, setAlerte] = useAlerte()
 
   const [dispositifActuel, setDispositifActuel] = useState<string>(dispositif)
@@ -104,15 +103,18 @@ export default function DetailsBeneficiaire({
   return (
     <div className={'rounded-large ' + (className ?? '')}>
       <HeaderDetailBeneficiaire
-        nomComplet={`${beneficiaire.prenom} ${beneficiaire.nom}`}
-        conseillerEstMilo={conseillerEstMilo}
+        beneficiaire={{
+          id: beneficiaire.id,
+          nomComplet: `${beneficiaire.prenom} ${beneficiaire.nom}`,
+        }}
         dispositif={dispositifActuel}
         situation={situations[0]?.categorie}
+        withCreations={withCreations}
         onSupprimerBeneficiaire={onSupprimerBeneficiaire}
       />
 
       <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
-        {conseillerEstMilo && (
+        {estMilo(conseiller.structure) && (
           <ResumeIndicateursBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
@@ -130,7 +132,6 @@ export default function DetailsBeneficiaire({
 
         <BlocInformationBeneficiaire
           beneficiaire={beneficiaire}
-          conseiller={conseiller}
           dispositif={dispositifActuel}
           onChangementDispositif={changerDispositif}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}

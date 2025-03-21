@@ -168,7 +168,6 @@ async function renderFicheMilo(
       actionsInitiales={{ ...actions, page }}
       categoriesActions={categoriesActions}
       ongletInitial={ongletInitial}
-      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
       erreurSessions={erreurSessions}
     />
   )
@@ -205,7 +204,6 @@ async function renderFichePasMilo(
       favorisOffres={offres}
       favorisRecherches={recherches}
       ongletInitial={ongletInitial}
-      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
       demarches={demarches}
     />
   )

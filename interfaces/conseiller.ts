@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
 import { MissionLocale } from 'interfaces/referentiel'
 import {
   estMilo,
@@ -88,4 +89,11 @@ export function doitSignerLesCGU(conseiller: Conseiller): boolean {
     !dateIsFuture(dateUpdateCgu) &&
     DateTime.fromISO(conseiller.dateSignatureCGU) < dateUpdateCgu
   )
+}
+
+export function estConseillerReferent(
+  conseiller: Pick<Conseiller, 'id'>,
+  cible: Pick<DetailBeneficiaire, 'idConseiller'>
+): boolean {
+  return conseiller.id === cible.idConseiller
 }

@@ -16,7 +16,7 @@ import { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -37,7 +37,9 @@ const DeleteBeneficiaireModal = dynamic(
 )
 
 function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
-  const { beneficiaire, lectureSeule } = props
+  const [conseiller] = useConseiller()
+  const { beneficiaire } = props
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const estBeneficiaireMilo = estFicheMilo(props)
 
   const router = useRouter()
@@ -49,7 +51,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   const chats = useChats()
   const [chatIsLoaded, setChatIsLoaded] = useState<boolean>(Boolean(chats))
   const [_, setCurrentConversation] = useCurrentConversation()
-  const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
 
   const [indicateursSemaine, setIndicateursSemaine] = useState<
@@ -131,13 +132,13 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
         />
       )}
 
-      <Messages conseiller={conseiller} {...props} />
+      <Messages {...props} />
 
       <DetailsBeneficiaire
         beneficiaire={beneficiaire}
-        conseiller={conseiller}
         demarches={estBeneficiaireMilo ? undefined : props.demarches}
         indicateursSemaine={indicateursSemaine}
+        withCreations={!lectureSeule && estBeneficiaireMilo}
         onSupprimerBeneficiaire={
           !lectureSeule
             ? () => setShowModaleDeleteBeneficiaire(true)
@@ -183,10 +184,10 @@ function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-function Messages(
-  props: FicheBeneficiaireProps & { conseiller: Conseiller }
-): ReactElement {
-  const { beneficiaire, conseiller, lectureSeule } = props
+function Messages(props: FicheBeneficiaireProps): ReactElement {
+  const [conseiller] = useConseiller()
+  const { beneficiaire } = props
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const estBeneficiaireMilo = estFicheMilo(props)
 
   return (
