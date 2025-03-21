@@ -5,13 +5,13 @@ import React from 'react'
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
   erreurSessions?: boolean
 }
 

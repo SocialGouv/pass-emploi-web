@@ -12,7 +12,7 @@ type HeaderDetailBeneficiaireProps = {
   beneficiaire: { id: string; nomComplet: string }
   dispositif: string
   withCreations: boolean
-  situation?: CategorieSituation
+  situation: CategorieSituation
   onSupprimerBeneficiaire?: () => void
 }
 export default function HeaderDetailBeneficiaire({
@@ -38,11 +38,7 @@ export default function HeaderDetailBeneficiaire({
 
             <dt className='sr-only'>Situation</dt>
             <dd>
-              {!situation && (
-                <SituationTag situation={CategorieSituation.SANS_SITUATION} />
-              )}
-
-              {situation && <SituationTag situation={situation} />}
+              <SituationTag situation={situation} />
             </dd>
           </dl>
         )}

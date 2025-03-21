@@ -38,7 +38,7 @@ const DeleteBeneficiaireModal = dynamic(
 
 function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   const [conseiller] = useConseiller()
-  const { beneficiaire } = props
+  const { beneficiaire, historiqueConseillers } = props
   const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const estBeneficiaireMilo = estFicheMilo(props)
 
@@ -136,6 +136,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       <DetailsBeneficiaire
         beneficiaire={beneficiaire}
+        historiqueConseillers={historiqueConseillers}
         demarches={estBeneficiaireMilo ? undefined : props.demarches}
         indicateursSemaine={indicateursSemaine}
         withCreations={!lectureSeule && estBeneficiaireMilo}

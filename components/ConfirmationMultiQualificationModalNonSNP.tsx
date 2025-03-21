@@ -2,11 +2,11 @@ import { MouseEvent, useRef } from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
 interface ConfirmationMultiQualificationModalProps {
   actions: Array<{ idAction: string; codeQualification?: string }>
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
   onConfirmation: () => void
   onCancel: () => void
 }

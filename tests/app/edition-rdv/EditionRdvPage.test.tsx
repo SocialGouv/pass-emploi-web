@@ -17,9 +17,9 @@ import {
   unEvenement,
 } from 'fixtures/evenement'
 import {
-  BaseBeneficiaire,
   BeneficiaireFromListe,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
@@ -43,8 +43,8 @@ describe('EditionRdvPage client side', () => {
   let container: HTMLElement
   describe('Rendez-vous', () => {
     let beneficiairesConseiller: BeneficiaireFromListe[]
-    let beneficiairesAutreConseiller: BaseBeneficiaire[]
-    let beneficiairesEtablissement: BaseBeneficiaire[]
+    let beneficiairesAutreConseiller: IdentiteBeneficiaire[]
+    let beneficiairesEtablissement: IdentiteBeneficiaire[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -1400,8 +1400,8 @@ describe('EditionRdvPage client side', () => {
 
   describe('Animation collective', () => {
     let beneficiairesConseiller: BeneficiaireFromListe[]
-    let beneficiairesAutreConseiller: BaseBeneficiaire[]
-    let beneficiairesEtablissement: BaseBeneficiaire[]
+    let beneficiairesAutreConseiller: IdentiteBeneficiaire[]
+    let beneficiairesEtablissement: IdentiteBeneficiaire[]
 
     let typesRendezVous: TypeEvenementReferentiel[]
 
@@ -1646,8 +1646,8 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('quand on consulte une animation collective close', () => {
-      let beneficiaireAbsent: BaseBeneficiaire & { futPresent: boolean }
-      let beneficiairePresent: BaseBeneficiaire & { futPresent: boolean }
+      let beneficiaireAbsent: IdentiteBeneficiaire & { futPresent: boolean }
+      let beneficiairePresent: IdentiteBeneficiaire & { futPresent: boolean }
 
       beforeEach(async () => {
         beneficiaireAbsent = {

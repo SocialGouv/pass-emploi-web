@@ -25,9 +25,9 @@ import RecapitulatifErreursFormulaire, {
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import {
-  BaseBeneficiaire,
   compareParId,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -44,7 +44,7 @@ import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
-  beneficiairesConseiller: BaseBeneficiaire[]
+  beneficiairesConseiller: IdentiteBeneficiaire[]
   typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
@@ -56,7 +56,7 @@ interface EditionRdvFormProps {
   onChanges: (hasChanges: boolean) => void
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   showConfirmationModal: (payload: EvenementFormData) => void
-  recupererBeneficiairesDeLEtablissement: () => Promise<BaseBeneficiaire[]>
+  recupererBeneficiairesDeLEtablissement: () => Promise<IdentiteBeneficiaire[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
 }
 
@@ -83,7 +83,7 @@ export function EditionRdvForm({
 
   const defaultBeneficiaires = initBeneficiairesFromRdvOrIdBeneficiaire()
   const [beneficiairesEtablissement, setBeneficiairesEtablissement] = useState<
-    BaseBeneficiaire[]
+    IdentiteBeneficiaire[]
   >([])
   const [idsJeunes, setIdsJeunes] = useState<ValueWithError<string[]>>({
     value: defaultBeneficiaires.map(({ id }) => id),

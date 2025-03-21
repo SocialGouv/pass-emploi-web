@@ -119,6 +119,7 @@ describe('FicheBeneficiairePage server side', () => {
           beneficiaire: unDetailBeneficiaire({
             structureMilo: { id: 'id-test' },
           }),
+          historiqueConseillers: desConseillersBeneficiaire(),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),

@@ -27,9 +27,9 @@ import {
 } from 'clients/firebase.client'
 import { Action } from 'interfaces/action'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   Chat,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -137,7 +137,7 @@ export async function toggleFlag(
 
 export async function observeConseillerChats(
   cleChiffrement: string,
-  jeunes: BaseBeneficiaire[],
+  jeunes: IdentiteBeneficiaire[],
   updateChats: (chats: BeneficiaireEtChat[]) => void
 ): Promise<() => void> {
   const session = await getSession()
