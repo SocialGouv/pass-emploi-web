@@ -40,7 +40,7 @@ describe('ActionPage server side', () => {
     beforeEach(async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { structure: 'MILO', id: 'id-conseiller' },
+        user: { structure: 'MILO', id: 'id-conseiller-1' },
       })
       ;(headers as jest.Mock).mockReturnValue(
         new Map([['referer', '/whatever']])
@@ -52,7 +52,7 @@ describe('ActionPage server side', () => {
       ;(getAction as jest.Mock).mockResolvedValue(action)
 
       // When
-      const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
+      const params = { idJeune: 'id-beneficiaire-1', idAction: 'id-action' }
       const metadata = await generateMetadata({
         params: Promise.resolve(params),
       })
@@ -64,11 +64,7 @@ describe('ActionPage server side', () => {
         title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - Portefeuille`,
       })
       expect(DetailActionPage).toHaveBeenCalledWith(
-        {
-          action,
-          lectureSeule: false,
-          from: 'beneficiaire',
-        },
+        { action, from: 'beneficiaire' },
         undefined
       )
     })
@@ -82,7 +78,7 @@ describe('ActionPage server side', () => {
         )
 
         // When
-        const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
+        const params = { idJeune: 'id-beneficiaire-1', idAction: 'id-action' }
         const metadata = await generateMetadata({
           params: Promise.resolve(params),
         })
@@ -94,11 +90,7 @@ describe('ActionPage server side', () => {
           title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - Portefeuille`,
         })
         expect(DetailActionPage).toHaveBeenCalledWith(
-          {
-            action,
-            lectureSeule: false,
-            from: 'pilotage',
-          },
+          { action, from: 'pilotage' },
           undefined
         )
       })

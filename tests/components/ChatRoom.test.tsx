@@ -74,7 +74,7 @@ describe('<ChatRoom />', () => {
           onOuvertureMenu={() => {}}
         />,
         {
-          customConseiller: unConseiller({ id: 'id-conseiller' }),
+          customConseiller: unConseiller({ id: 'id-conseiller-1' }),
         }
       )
 
@@ -110,7 +110,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 
@@ -136,7 +136,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 
@@ -175,7 +175,7 @@ describe('<ChatRoom />', () => {
                 onOuvertureMenu={() => {}}
               />,
               {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
+                customConseiller: unConseiller({ id: 'id-conseiller-1' }),
               }
             )
 
@@ -219,7 +219,7 @@ describe('<ChatRoom />', () => {
               cleChiffrement: 'cleChiffrement',
               dateDebut: DateTime.fromISO('2024-04-24'),
               dateFin: DateTime.fromISO('2024-04-30'),
-              idConseiller: 'id-conseiller',
+              idConseiller: 'id-conseiller-1',
               newMessage: messageImportant,
             })
           })
@@ -271,7 +271,7 @@ describe('<ChatRoom />', () => {
                 onOuvertureMenu={() => {}}
               />,
               {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
+                customConseiller: unConseiller({ id: 'id-conseiller-1' }),
               }
             )
 
@@ -323,7 +323,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 

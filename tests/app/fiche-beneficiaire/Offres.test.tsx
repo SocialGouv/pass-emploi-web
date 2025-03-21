@@ -88,7 +88,7 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
       lectureSeule={false}
     />,
     {
-      customConseiller: { id: 'id-conseiller' },
+      customConseiller: { id: 'id-conseiller-1' },
     }
   )
 }

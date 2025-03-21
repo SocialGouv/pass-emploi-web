@@ -73,7 +73,7 @@ describe('ProfilPage server side', () => {
   async function renderPageForConseiller(conseiller: Conseiller) {
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
       accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: conseiller.structure },
+      user: { id: 'id-conseiller-1', structure: conseiller.structure },
     })
     ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
     ;(getAgencesServerSide as jest.Mock).mockResolvedValue(

@@ -58,7 +58,7 @@ describe('Agenda de la fiche jeune', () => {
         />,
         {
           customConseiller: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             structure: structureFTCej,
           },
         }
@@ -469,7 +469,7 @@ async function renderFicheJeuneMILO() {
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
       },
     }

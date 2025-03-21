@@ -26,7 +26,7 @@ describe('Partage Recherche', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller' },
+        user: { id: 'id-conseiller-1' },
         accessToken: 'accessToken',
       })
       ;(headers as jest.Mock).mockReturnValue(

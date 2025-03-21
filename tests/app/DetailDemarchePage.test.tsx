@@ -5,7 +5,7 @@ import React from 'react'
 
 import DetailDemarchePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/demarches/[idDemarche]/DetailDemarchePage'
 import propsStatutsDemarches from 'components/action/propsStatutsDemarches'
-import { uneDemarche } from 'fixtures/beneficiaire'
+import { unDetailBeneficiaire, uneDemarche } from 'fixtures/beneficiaire'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toLongMonthDate } from 'utils/date'
@@ -19,7 +19,7 @@ describe('DetailDemarchePage client side', () => {
       ;({ container } = await renderWithContexts(
         <DetailDemarchePage
           demarche={demarche}
-          lectureSeule={false}
+          beneficiaire={unDetailBeneficiaire()}
           isStale={false}
         />
       ))
@@ -64,7 +64,7 @@ describe('DetailDemarchePage client side', () => {
       ;({ container } = await renderWithContexts(
         <DetailDemarchePage
           demarche={demarche}
-          lectureSeule={false}
+          beneficiaire={unDetailBeneficiaire()}
           isStale={false}
         />
       ))

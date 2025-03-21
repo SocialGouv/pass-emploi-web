@@ -19,7 +19,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
   beforeEach(() => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
       accessToken: 'accessToken',
     })
     ;(headers as jest.Mock).mockReturnValue(new Map())
@@ -50,7 +50,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
     )
 
     // When
-    const searchParams = { idListe: '1' }
+    const searchParams = { idListe: 'id-liste-1' }
     const metadata = await generateMetadata({
       searchParams: Promise.resolve(searchParams),
     })
@@ -61,7 +61,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
     )
 
     // Then
-    expect(recupererListeDeDiffusion).toHaveBeenCalledWith('1', 'accessToken')
+    expect(recupererListeDeDiffusion).toHaveBeenCalledWith(
+      'id-liste-1',
+      'accessToken'
+    )
     expect(metadata).toEqual({
       title:
         'Modifier liste de diffusion Liste export international - Portefeuille',

@@ -69,7 +69,7 @@ export function typesEvenementCEJ(): TypeEvenementReferentiel[] {
 
 export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
   const defaults: Evenement = {
-    id: '1',
+    id: 'id-evenement-1',
     titre: 'Prise de nouvelles par téléphone',
     jeunes: [uneBaseBeneficiaire()],
     type: { code: 'AUTRE', label: 'Autre' },
@@ -82,7 +82,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
     presenceConseiller: false,
     invitation: true,
     commentaire: 'Rendez-vous avec Kenji',
-    createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    createur: { id: 'id-conseiller-1', nom: 'Tavernier', prenom: 'Nils' },
     historique: [
       {
         date: '2021-10-23T10:00:00.000Z',
@@ -106,10 +106,10 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
 export function desEvenementsListItems(): EvenementListItem[] {
   return [
     unEvenementListItem({
-      beneficiaires: [{ id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' }],
+      beneficiaires: [{ id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' }],
     }),
     {
-      id: '2',
+      id: 'id-evenement-2',
       labelBeneficiaires: 'Jirac Raja',
       type: 'Atelier',
       modality: 'En agence',
@@ -118,7 +118,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
       createur: {
         id: '2',
       },
-      beneficiaires: [{ id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
+      beneficiaires: [{ id: 'id-beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
       source: structureMilo,
     },
   ]
@@ -128,14 +128,14 @@ export function unEvenementListItem(
   overrides: Partial<EvenementListItem> = {}
 ): EvenementListItem {
   const defaults: EvenementListItem = {
-    id: '1',
+    id: 'id-evenement-1',
     labelBeneficiaires: 'Jirac Kenji',
     type: 'Autre',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
     duree: 125,
     createur: {
-      id: '1',
+      id: 'id-conseiller-1',
       nom: 'Tavernier',
       prenom: 'Nils',
     },
@@ -165,31 +165,31 @@ export const uneListeDAnimationCollectiveAClore =
   (): AnimationCollectivePilotage[] => {
     return [
       {
-        id: '1',
+        id: 'id-ac-1',
         titre: 'titre 1',
         date: '2018-11-21T06:20:32.232Z',
         nombreInscrits: 3,
       },
       {
-        id: '2',
+        id: 'id-ac-2',
         titre: 'titre 2',
         date: '2018-11-22T06:20:32.232Z',
         nombreInscrits: 12,
       },
       {
-        id: '3',
+        id: 'id-ac-3',
         titre: 'titre 3',
         date: '2018-11-23T06:20:32.232Z',
         nombreInscrits: 5,
       },
       {
-        id: '4',
+        id: 'id-ac-4',
         titre: 'titre 4',
         date: '2018-11-24T06:20:32.232Z',
         nombreInscrits: 7,
       },
       {
-        id: '5',
+        id: 'id-ac-5',
         titre: 'titre 5',
         date: '2018-11-25T06:20:32.232Z',
         nombreInscrits: 9,
@@ -201,10 +201,10 @@ export function unEvenementJson(
   overrides: Partial<EvenementJson> = {}
 ): EvenementJson {
   const defaults: EvenementJson = {
-    id: '1',
+    id: 'id-evenement-1',
     jeunes: [
       {
-        id: 'beneficiaire-1',
+        id: 'id-beneficiaire-1',
         prenom: 'Kenji',
         nom: 'Jirac',
       },
@@ -221,7 +221,7 @@ export function unEvenementJson(
     presenceConseiller: false,
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
-    createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    createur: { id: 'id-conseiller-1', nom: 'Tavernier', prenom: 'Nils' },
     historique: [
       {
         date: '2021-10-23T10:00:00.000Z',
@@ -248,12 +248,12 @@ export function uneListeDEvenementJson() {
     unEvenementJson({
       jeunes: [
         {
-          id: '1',
+          id: 'id-beneficiaire-1',
           prenom: 'Kenji',
           nom: 'Jirac',
         },
         {
-          id: '2',
+          id: 'id-beneficiaire-2',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
         },
@@ -266,7 +266,7 @@ export function unEvenementJeuneJson(
   overrides: Partial<EvenementJeuneJson> = {}
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
-    id: '1',
+    id: 'id-evenement-1',
     type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
@@ -278,7 +278,7 @@ export function unEvenementJeuneJson(
     presenceConseiller: false,
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
-    createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    createur: { id: 'id-conseiller-1', nom: 'Tavernier', prenom: 'Nils' },
     historique: [
       {
         date: '2021-10-21T10:00:00.000Z',

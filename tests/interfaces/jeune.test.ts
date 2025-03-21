@@ -42,26 +42,26 @@ describe('Jeune', () => {
     it('trie d’abord par messages non lus, puis suivis, puis anté-chrnonologique', () => {
       // Given
       const unJeuneChatNonLu = unBeneficiaireChat({
-        id: 'beneficiaire-1',
+        id: 'id-beneficiaire-1',
         seenByConseiller: false,
         flaggedByConseiller: false,
       })
 
       const unJeuneChatSuivi = unBeneficiaireChat({
-        id: 'beneficiaire-2',
+        id: 'id-beneficiaire-2',
         seenByConseiller: true,
         flaggedByConseiller: true,
       })
 
       const unJeuneChatRecent = unBeneficiaireChat({
-        id: 'beneficiaire-3',
+        id: 'id-beneficiaire-3',
         seenByConseiller: true,
         flaggedByConseiller: false,
         lastMessageSentAt: DateTime.local(2022, 1, 10),
       })
 
       const unJeuneChatVieux = unBeneficiaireChat({
-        id: 'beneficiaire-4',
+        id: 'id-beneficiaire-4',
         seenByConseiller: true,
         flaggedByConseiller: false,
         lastMessageSentAt: DateTime.local(2022, 1, 1),

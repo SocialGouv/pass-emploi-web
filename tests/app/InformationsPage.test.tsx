@@ -154,7 +154,7 @@ describe('InformationsPage client side', () => {
 
           // Then
           expect(modifierDispositif).toHaveBeenCalledWith(
-            'beneficiaire-1',
+            'id-beneficiaire-1',
             'PACEA'
           )
           expect(() =>

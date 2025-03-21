@@ -66,7 +66,7 @@ describe('Situations dans la fiche jeune', () => {
         screen.getByRole('link', { name: 'Voir plus d’informations' })
       ).toHaveAttribute(
         'href',
-        '/mes-jeunes/beneficiaire-1/informations?onglet=informations'
+        '/mes-jeunes/id-beneficiaire-1/informations?onglet=informations'
       )
     })
   })

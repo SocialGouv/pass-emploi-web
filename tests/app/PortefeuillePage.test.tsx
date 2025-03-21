@@ -234,7 +234,7 @@ describe('PortefeuillePage client side', () => {
     const beneficiaireAvecStructureDifferente =
       unBeneficiaireAvecActionsNonTerminees({
         prenom: 'Aline',
-        id: 'beneficiaire-autre-structure',
+        id: 'id-beneficiaire-autre-structure',
         structureMilo: { id: '2' },
         dispositif: 'PACEA',
       })
@@ -250,7 +250,7 @@ describe('PortefeuillePage client side', () => {
         {
           customConseiller: {
             structure: structureMilo,
-            structureMilo: { nom: 'Agence', id: '1' },
+            structureMilo: { nom: 'Agence', id: 'id-agence' },
           },
         }
       ))

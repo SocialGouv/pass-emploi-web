@@ -50,7 +50,7 @@ describe('FicheBeneficiairePage server side', () => {
       date: '2022-09-01T11:00:00.000Z',
       duree: 120,
       createur: {
-        id: '1',
+        id: 'id-conseiller-1',
       },
       isSession: true,
     },
@@ -89,14 +89,14 @@ describe('FicheBeneficiairePage server side', () => {
     })
     ;(getConseillerServerSide as jest.Mock).mockReturnValue(
       unConseiller({
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
     )
     ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
       accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: 'MILO' },
+      user: { id: 'id-conseiller-1', structure: 'MILO' },
     })
   })
 
@@ -124,7 +124,6 @@ describe('FicheBeneficiairePage server side', () => {
           metadonneesFavoris: expect.objectContaining({}),
           favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
-          lectureSeule: false,
           erreurSessions: false,
         },
         undefined
@@ -134,12 +133,12 @@ describe('FicheBeneficiairePage server side', () => {
     it('récupère les rendez-vous à venir du jeune', async () => {
       // Then
       expect(getRendezVousJeune).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         'FUTURS',
         'accessToken'
       )
       expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         'accessToken',
         now.startOf('day')
       )
@@ -162,7 +161,7 @@ describe('FicheBeneficiairePage server side', () => {
     })
 
     it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
+      expect(getOffres).toHaveBeenCalledWith('id-beneficiaire-1', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({
           favorisOffres: uneListeDOffres(),
@@ -174,7 +173,7 @@ describe('FicheBeneficiairePage server side', () => {
     it('récupère la première page des actions du jeune', async () => {
       // Then
       expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         1,
         'accessToken'
       )
@@ -208,7 +207,7 @@ describe('FicheBeneficiairePage server side', () => {
 
       // Then
       expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         3,
         'accessToken'
       )
@@ -250,7 +249,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureFTCej,
         })
       )
@@ -287,7 +286,7 @@ describe('FicheBeneficiairePage server side', () => {
     })
 
     it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
+      expect(getOffres).toHaveBeenCalledWith('id-beneficiaire-1', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({
           favorisOffres: uneListeDOffres(),
@@ -298,7 +297,7 @@ describe('FicheBeneficiairePage server side', () => {
 
     it('récupère les recherches favorites', async () => {
       expect(getRecherchesSauvegardees).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         'accessToken'
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
@@ -319,7 +318,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: 'CONSEIL_DEPT',
         })
       )
@@ -333,9 +332,9 @@ describe('FicheBeneficiairePage server side', () => {
 
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         DateTime.now().minus({ day: 30 }).startOf('day'),
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
@@ -345,30 +344,6 @@ describe('FicheBeneficiairePage server side', () => {
             isStale: false,
           },
         }),
-        undefined
-      )
-    })
-  })
-
-  describe('Quand le conseiller est observateur', () => {
-    it('prépare la page en lecture seule', async () => {
-      // Given
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-        unConseiller({ id: 'id-observateur' })
-      )
-
-      // When
-      render(
-        await FicheBeneficiaire({
-          params: Promise.resolve({ idJeune: 'id-jeune' }),
-        })
-      )
-
-      // Then
-      expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
-
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ lectureSeule: true }),
         undefined
       )
     })

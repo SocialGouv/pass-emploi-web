@@ -23,7 +23,7 @@ describe('NouvelleActionPage server side', () => {
   it('prépare les métadonnées', async () => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
       accessToken: 'accessToken',
     })
     ;(getIdentitesBeneficiairesServerSide as jest.Mock).mockResolvedValue([
@@ -42,7 +42,7 @@ describe('NouvelleActionPage server side', () => {
     // Then
     expect(getIdentitesBeneficiairesServerSide).toHaveBeenCalledWith(
       ['id-beneficiaire'],
-      'id-conseiller',
+      'id-conseiller-1',
       'accessToken'
     )
     expect(metadata).toEqual({

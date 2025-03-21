@@ -55,11 +55,11 @@ describe('EditionRdvPage client side', () => {
       beneficiairesConseiller = desItemsBeneficiaires()
       beneficiairesAutreConseiller = [
         uneBaseBeneficiaire({
-          id: 'beneficiaire-etablissement-1',
+          id: 'id-beneficiaire-etablissement-1',
           prenom: 'Beneficiaire Etablissement 1',
         }),
         uneBaseBeneficiaire({
-          id: 'beneficiaire-etablissement-2',
+          id: 'id-beneficiaire-etablissement-2',
           prenom: 'Beneficiaire Etablissement 2',
         }),
       ]
@@ -1171,7 +1171,7 @@ describe('EditionRdvPage client side', () => {
           nom: beneficiairesConseiller[0].nom,
         }
         const beneficiaireAutreConseiller = {
-          id: 'beneficiaire-autre-conseiller',
+          id: 'id-beneficiaire-autre-conseiller',
           prenom: 'Michel',
           nom: 'Dupont',
         }
@@ -1312,7 +1312,7 @@ describe('EditionRdvPage client side', () => {
           expect(updateRendezVous).toHaveBeenCalledWith(evenement.id, {
             jeunesIds: [
               beneficiairesConseiller[0].id,
-              'beneficiaire-autre-conseiller',
+              'id-beneficiaire-autre-conseiller',
             ],
             type: 'AUTRE',
             titre: 'Prise de nouvelles par téléphone',
@@ -1411,11 +1411,11 @@ describe('EditionRdvPage client side', () => {
       beneficiairesConseiller = desItemsBeneficiaires()
       beneficiairesAutreConseiller = [
         uneBaseBeneficiaire({
-          id: 'beneficiaire-etablissement-1',
+          id: 'id-beneficiaire-etablissement-1',
           prenom: 'beneficiaire Etablissement 1',
         }),
         uneBaseBeneficiaire({
-          id: 'beneficiaire-etablissement-2',
+          id: 'id-beneficiaire-etablissement-2',
           prenom: 'beneficiaire Etablissement 2',
         }),
       ]
