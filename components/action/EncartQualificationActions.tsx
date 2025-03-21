@@ -4,12 +4,12 @@ import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQua
 import ConfirmationMultiQualificationModalNonSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { ActionAQualifier } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
 type EncartQualificationActionsProps = {
   actionsSelectionnees: ActionAQualifier[]
   boutonsDisabled: boolean
-  jeune?: BaseBeneficiaire
+  jeune?: IdentiteBeneficiaire
   nombreActionsSelectionnees: number
   onLienExterne: (label: string) => void
   onQualification: (

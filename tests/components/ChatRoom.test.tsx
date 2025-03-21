@@ -13,9 +13,9 @@ import {
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
@@ -30,7 +30,7 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/ModalContainer')
 
 describe('<ChatRoom />', () => {
-  const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+  const beneficiaires: IdentiteBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
   let beneficiairesChats: BeneficiaireEtChat[]

@@ -3,12 +3,12 @@ import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
+  IdentiteBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
@@ -41,13 +41,13 @@ export async function getIdentitesBeneficiairesServerSide(
   idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   return getIdentitesBeneficiaires(idsBeneficiaires, idConseiller, accessToken)
 }
 
 export async function getIdentitesBeneficiairesClientSide(
   idsBeneficiaires: string[]
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   const session = await getSession()
   return getIdentitesBeneficiaires(
     idsBeneficiaires,
@@ -117,7 +117,7 @@ export async function createCompteJeuneFranceTravail(newJeune: {
   firstName: string
   lastName: string
   email: string
-}): Promise<BaseBeneficiaire> {
+}): Promise<IdentiteBeneficiaire> {
   const session = await getSession()
   const { content } = await apiPost<BaseBeneficiaireJson>(
     `/conseillers/pole-emploi/jeunes`,
@@ -255,7 +255,7 @@ export async function getIndicateursBeneficiaire(
 
 export async function getBeneficiairesDeLEtablissementClientSide(
   idEtablissement: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   const session = await getSession()
   return getBeneficiairesDeLEtablissement(idEtablissement, session!.accessToken)
 }
@@ -353,11 +353,11 @@ async function getIdentitesBeneficiaires(
   idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   if (!idsBeneficiaires.length) return []
   const queryParam = idsBeneficiaires.map((id) => 'ids=' + id).join('&')
 
-  const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
+  const { content: beneficiaires } = await apiGet<IdentiteBeneficiaire[]>(
     `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
     accessToken
   )

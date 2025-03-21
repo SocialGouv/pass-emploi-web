@@ -1,13 +1,12 @@
 import {
-  BaseBeneficiaire,
-  CategorieSituation,
-  DetailBeneficiaire,
-  EtatSituation,
-  IndicateursSemaine,
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
-  MetadonneesFavoris,
+  CategorieSituation,
   Demarche,
+  DetailBeneficiaire,
+  IdentiteBeneficiaire,
+  IndicateursSemaine,
+  MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 
 export enum StatutDemarche {
@@ -57,7 +56,7 @@ export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
 }
 
 export type BeneficiaireEtablissementJson = {
-  jeune: BaseBeneficiaire
+  jeune: IdentiteBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: string
   dateDerniereActivite?: string
@@ -134,19 +133,6 @@ export function jsonToDemarche(json: DemarcheJson): Demarche {
   }
 }
 
-function toEtatSituation(etat: string): EtatSituation | undefined {
-  switch (etat) {
-    case 'EN_COURS':
-      return EtatSituation.EN_COURS
-    case 'PREVU':
-      return EtatSituation.PREVU
-    case 'terminée':
-      return EtatSituation.TERMINE
-    default:
-      return undefined
-  }
-}
-
 function toCategorieSituation(categorie?: string): CategorieSituation {
   switch (categorie) {
     case 'Emploi':
@@ -171,7 +157,7 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
 
 export function jsonToBaseBeneficiaire(
   beneficiaire: BaseBeneficiaireJson
-): BaseBeneficiaire {
+): IdentiteBeneficiaire {
   return {
     id: beneficiaire.id,
     prenom: beneficiaire.firstName,
@@ -206,12 +192,9 @@ export function jsonToDetailBeneficiaire({
     prenom: firstName,
     nom: lastName,
     idConseiller: conseiller.id,
-    situations:
-      beneficiaire.situations?.map((situation) => ({
-        ...situation,
-        categorie: toCategorieSituation(situation.categorie),
-        etat: toEtatSituation(situation.etat),
-      })) ?? [],
+    situationCourante: toCategorieSituation(
+      beneficiaire.situations?.at(0)?.categorie
+    ),
     idPartenaire: beneficiaire.idPartenaire ?? '',
   }
 }
