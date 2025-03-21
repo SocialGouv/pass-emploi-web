@@ -209,7 +209,7 @@ describe('Partage Recherche', () => {
 
         // Then
         expect(partagerRechercheOffreEmploi).toHaveBeenCalledWith({
-          idsJeunes: ['beneficiaire-2', 'beneficiaire-1'],
+          idsJeunes: ['id-beneficiaire-2', 'id-beneficiaire-1'],
           titre: TITRE,
           motsCles: MOTS_CLES,
           labelLocalite: LABEL_LOCALITE,
@@ -275,7 +275,7 @@ describe('Partage Recherche', () => {
 
         // Then
         expect(partagerRechercheAlternance).toHaveBeenCalledWith({
-          idsJeunes: ['beneficiaire-2', 'beneficiaire-1'],
+          idsJeunes: ['id-beneficiaire-2', 'id-beneficiaire-1'],
           titre: TITRE,
           motsCles: MOTS_CLES,
           labelLocalite: LABEL_LOCALITE,
@@ -342,7 +342,7 @@ describe('Partage Recherche', () => {
 
         // Then
         expect(partagerRechercheImmersion).toHaveBeenCalledWith({
-          idsJeunes: ['beneficiaire-2', 'beneficiaire-1'],
+          idsJeunes: ['id-beneficiaire-2', 'id-beneficiaire-1'],
           titre: TITRE,
           labelMetier: LABEL_METIER,
           codeMetier: CODE_METIER,
@@ -410,7 +410,7 @@ describe('Partage Recherche', () => {
 
         // Then
         expect(partagerRechercheServiceCivique).toHaveBeenCalledWith({
-          idsJeunes: ['beneficiaire-2', 'beneficiaire-1'],
+          idsJeunes: ['id-beneficiaire-2', 'id-beneficiaire-1'],
           titre: TITRE,
           labelLocalite: LABEL_LOCALITE,
           latitude: Number(LATITUDE),

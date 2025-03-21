@@ -20,7 +20,7 @@ describe('CloturePage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
+        user: { id: 'id-conseiller-1', structure: 'MILO' },
         accessToken: 'accessToken',
       })
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
@@ -47,7 +47,8 @@ describe('CloturePage server side', () => {
           evenement: unEvenement({
             statut: StatutAnimationCollective.AClore,
           }),
-          returnTo: '/mes-jeunes/edition-rdv?idRdv=1&redirectUrl=redirectUrl',
+          returnTo:
+            '/mes-jeunes/edition-rdv?idRdv=id-evenement-1&redirectUrl=redirectUrl',
         },
         undefined
       )

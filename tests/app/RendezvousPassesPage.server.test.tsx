@@ -31,7 +31,7 @@ describe('RendezVousPassesPage server side', () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
         accessToken: 'accessToken',
-        user: { id: 'id-conseiller', structure: 'MILO' },
+        user: { id: 'id-conseiller-1', structure: 'MILO' },
       })
 
       // When
@@ -50,11 +50,7 @@ describe('RendezVousPassesPage server side', () => {
       )
       expect(metadata).toEqual({ title: 'Rendez-vous passés - Jirac Kenji' })
       expect(RendezVousPassesPage).toHaveBeenCalledWith(
-        {
-          beneficiaire: unDetailBeneficiaire(),
-          rdvs: [unEvenementListItem()],
-          lectureSeule: false,
-        },
+        { beneficiaire: unDetailBeneficiaire(), rdvs: [unEvenementListItem()] },
         undefined
       )
     })

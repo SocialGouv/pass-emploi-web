@@ -41,7 +41,7 @@ describe('Page Partage Offre', () => {
     serviceCivique = unDetailServiceCivique()
     immersion = unDetailImmersion()
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
       accessToken: 'accessToken',
     })
     ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(offreEmploi)

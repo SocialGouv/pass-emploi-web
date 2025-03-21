@@ -19,7 +19,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
     render(
       <TableauRdvsBeneficiaire
         rdvs={[]}
-        idConseiller='1'
+        idConseiller='id-conseiller-1'
         beneficiaire={uneBaseBeneficiaire()}
       />
     )
@@ -44,7 +44,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
         render(
           <TableauRdvsBeneficiaire
             rdvs={listeRdv}
-            idConseiller='1'
+            idConseiller='id-conseiller-1'
             beneficiaire={uneBaseBeneficiaire()}
           />
         )
