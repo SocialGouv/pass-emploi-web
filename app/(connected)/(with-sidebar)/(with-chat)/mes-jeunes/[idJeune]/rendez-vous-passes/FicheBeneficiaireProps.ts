@@ -12,7 +12,6 @@ export type Onglet = OngletMilo | OngletPasMilo
 export type BaseFiche = {
   estMilo: boolean
   beneficiaire: DetailBeneficiaire
-  lectureSeule: boolean
   metadonneesFavoris?: MetadonneesFavoris
   favorisOffres?: Offre[]
 }

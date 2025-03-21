@@ -2,29 +2,34 @@ import React from 'react'
 
 import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation } from 'interfaces/beneficiaire'
+import { estMilo } from 'interfaces/structure'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 type HeaderDetailBeneficiaireProps = {
-  nomComplet: string
-  conseillerEstMilo: boolean
+  beneficiaire: { id: string; nomComplet: string }
   dispositif: string
-  situation: CategorieSituation | undefined
-  onSupprimerBeneficiaire: (() => void) | undefined
+  withCreations: boolean
+  situation?: CategorieSituation
+  onSupprimerBeneficiaire?: () => void
 }
 export default function HeaderDetailBeneficiaire({
-  nomComplet,
-  conseillerEstMilo,
+  beneficiaire,
   dispositif,
   onSupprimerBeneficiaire,
   situation,
+  withCreations,
 }: HeaderDetailBeneficiaireProps) {
-  return (
-    <div className='rounded-t-[inherit] bg-primary-lighten px-6 py-4 flex flex-row justify-between items-center'>
-      <div>
-        <h1 className='text-m-bold'>{nomComplet}</h1>
+  const [conseiller] = useConseiller()
 
-        {conseillerEstMilo && (
+  return (
+    <div className='rounded-t-[inherit] bg-primary-lighten px-6 py-4 flex flex-row gap-2 justify-between items-center'>
+      <div>
+        <h1 className='text-m-bold'>{beneficiaire.nomComplet}</h1>
+
+        {estMilo(conseiller.structure) && (
           <dl className='mt-3 flex flex-row gap-1'>
             <dt className='sr-only'>Dispositif</dt>
             <dd>
@@ -43,22 +48,52 @@ export default function HeaderDetailBeneficiaire({
         )}
       </div>
 
-      {onSupprimerBeneficiaire && (
-        <button
-          onClick={onSupprimerBeneficiaire}
-          type='button'
-          title='Supprimer ce compte'
-          className='rounded-full hover:bg-primary hover:fill-white hover:shadow-base'
-        >
-          <IconComponent
-            name={IconName.Delete}
-            focusable={false}
-            aria-hidden={true}
-            className='m-1 w-6 h-6'
-          />
-          <span className='sr-only'>Supprimer ce compte</span>
-        </button>
-      )}
+      <div className='flex gap-2 items-center justify-end flex-wrap layout-base:flex-nowrap'>
+        {withCreations && (
+          <>
+            <ButtonLink
+              href={`/mes-jeunes/edition-rdv?idJeune=${beneficiaire.id}`}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable={false}
+                aria-hidden={true}
+                className='shrink-0 mr-2 w-4 h-4'
+              />
+              Créer un rendez-vous
+            </ButtonLink>
+
+            <ButtonLink
+              href={`/mes-jeunes/${beneficiaire.id}/actions/nouvelle-action`}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable={false}
+                aria-hidden={true}
+                className='shrink-0 mr-2 w-4 h-4'
+              />
+              Créer une action
+            </ButtonLink>
+          </>
+        )}
+
+        {onSupprimerBeneficiaire && (
+          <button
+            onClick={onSupprimerBeneficiaire}
+            type='button'
+            title='Supprimer ce compte'
+            className='h-fit rounded-full hover:bg-primary hover:fill-white hover:shadow-base'
+          >
+            <IconComponent
+              name={IconName.Delete}
+              focusable={false}
+              aria-hidden={true}
+              className='shrink-0 m-1 w-6 h-6'
+            />
+            <span className='sr-only'>Supprimer ce compte</span>
+          </button>
+        )}
+      </div>
     </div>
   )
 }

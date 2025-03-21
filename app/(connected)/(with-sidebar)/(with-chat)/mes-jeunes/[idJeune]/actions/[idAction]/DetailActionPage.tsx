@@ -23,21 +23,24 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { estCEJ } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate } from 'utils/date'
 import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export type DetailActionProps = {
   action: Action
-  lectureSeule: boolean
   from: 'pilotage' | 'beneficiaire'
 }
 
-function DetailActionPage({ action, lectureSeule, from }: DetailActionProps) {
+function DetailActionPage({ action, from }: DetailActionProps) {
+  const [conseiller] = useConseiller()
   const { beneficiaire } = action
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
 
   const router = useRouter()
   const [portefeuille] = usePortefeuille()
