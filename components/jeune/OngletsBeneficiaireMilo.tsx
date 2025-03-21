@@ -6,9 +6,7 @@ import {
   FicheMiloProps,
   OngletMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
-import { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { Action, StatutAction } from 'interfaces/action'
@@ -32,7 +30,6 @@ const ResumeFavorisBeneficiaire = dynamic(
 export default function OngletsBeneficiaireMilo({
   ongletInitial,
   onSwitchTab,
-  lectureSeule,
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
@@ -100,53 +97,6 @@ export default function OngletsBeneficiaireMilo({
 
   return (
     <>
-      <div className='flex justify-between mt-6 mb-4'>
-        <div className='flex'>
-          {!lectureSeule && (
-            <>
-              <ButtonLink
-                href={`/mes-jeunes/edition-rdv?idJeune=${beneficiaire.id}`}
-              >
-                <IconComponent
-                  name={IconName.Add}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-                Créer un rendez-vous
-              </ButtonLink>
-
-              <ButtonLink
-                href={`/mes-jeunes/${beneficiaire.id}/actions/nouvelle-action`}
-                className='ml-4'
-              >
-                <IconComponent
-                  name={IconName.Add}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-                Créer une action
-              </ButtonLink>
-            </>
-          )}
-
-          <ButtonLink
-            href='/agenda?onglet=etablissement'
-            className='ml-4'
-            style={ButtonStyle.TERTIARY}
-          >
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Inscrire à une animation collective
-          </ButtonLink>
-        </div>
-      </div>
-
       <TabList
         label={`Activités de ${beneficiaire.prenom} ${beneficiaire.nom}`}
         className='mt-10'
@@ -245,7 +195,6 @@ export default function OngletsBeneficiaireMilo({
             beneficiaire={beneficiaire}
             categories={categoriesActions}
             actionsInitiales={actionsInitiales}
-            lectureSeule={lectureSeule}
             getActions={chargerActions}
             onLienExterne={onLienExterne}
           />

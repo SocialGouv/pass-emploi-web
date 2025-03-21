@@ -7,6 +7,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { getJeuneDetails } from 'services/beneficiaires.service'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
@@ -25,20 +26,18 @@ export async function generateMetadata({
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
-  const lectureSeule = beneficiaire.idConseiller !== user.id
+  const lectureSeule = !estConseillerReferent(user, beneficiaire)
   return {
     title: `Favoris - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
 }
 
 export default async function Favoris({ params }: { params: FavorisParams }) {
-  const { user, accessToken } = await getMandatorySessionServerSide()
+  const { accessToken } = await getMandatorySessionServerSide()
 
   const { idJeune } = await params
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
-
-  const lectureSeule = beneficiaire.idConseiller !== user.id
 
   try {
     const [offres, recherches] = await Promise.all([
@@ -54,7 +53,6 @@ export default async function Favoris({ params }: { params: FavorisParams }) {
           beneficiaire={beneficiaire}
           offres={offres}
           recherches={recherches}
-          lectureSeule={lectureSeule}
         />
       </>
     )
