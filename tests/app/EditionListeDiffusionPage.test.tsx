@@ -8,8 +8,8 @@ import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-c
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
-  BaseBeneficiaire,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -25,7 +25,7 @@ jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
-  let beneficiaires: BaseBeneficiaire[]
+  let beneficiaires: IdentiteBeneficiaire[]
   let container: HTMLElement
 
   let alerteSetter: (alert: AlerteParam | undefined) => void

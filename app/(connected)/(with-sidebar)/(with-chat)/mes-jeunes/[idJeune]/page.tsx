@@ -12,7 +12,11 @@ import {
   valeursOngletsPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
 import { PageFilArianePortal } from 'components/PageNavigationPortals'
-import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
+import {
+  ConseillerHistorique,
+  DetailBeneficiaire,
+  MetadonneesFavoris,
+} from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre } from 'interfaces/favoris'
@@ -22,6 +26,7 @@ import {
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import {
+  getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
@@ -60,11 +65,13 @@ export default async function FicheBeneficiaire({
   const { user, accessToken } = await getMandatorySessionServerSide()
   const { idJeune } = await params
 
-  const [conseiller, beneficiaire, metadonneesFavoris] = await Promise.all([
-    getConseillerServerSide(user, accessToken),
-    getJeuneDetails(idJeune, accessToken),
-    getMetadonneesFavorisJeune(idJeune, accessToken),
-  ])
+  const [conseiller, beneficiaire, metadonneesFavoris, historiqueConseillers] =
+    await Promise.all([
+      getConseillerServerSide(user, accessToken),
+      getJeuneDetails(idJeune, accessToken),
+      getMetadonneesFavorisJeune(idJeune, accessToken),
+      getConseillersDuJeuneServerSide(idJeune, accessToken),
+    ])
   if (!beneficiaire) notFound()
 
   let offres
@@ -86,6 +93,7 @@ export default async function FicheBeneficiaire({
           accessToken,
           page ? parseInt(page) : 1,
           ongletInitial,
+          historiqueConseillers,
           metadonneesFavoris,
           offres
         ))}
@@ -96,6 +104,7 @@ export default async function FicheBeneficiaire({
           beneficiaire,
           accessToken,
           ongletInitial,
+          historiqueConseillers,
           metadonneesFavoris,
           offres
         ))}
@@ -126,6 +135,7 @@ async function renderFicheMilo(
   accessToken: string,
   page: number,
   ongletInitial: OngletMilo,
+  historiqueConseillers: ConseillerHistorique[],
   metadonneesFavoris?: MetadonneesFavoris,
   offres?: Offre[]
 ): Promise<ReactElement> {
@@ -161,6 +171,7 @@ async function renderFicheMilo(
   return (
     <FicheBeneficiairePage
       beneficiaire={beneficiaire}
+      historiqueConseillers={historiqueConseillers}
       estMilo={true}
       metadonneesFavoris={metadonneesFavoris}
       favorisOffres={offres}
@@ -178,6 +189,7 @@ async function renderFichePasMilo(
   beneficiaire: DetailBeneficiaire,
   accessToken: string,
   ongletInitial: OngletPasMilo,
+  historiqueConseillers: ConseillerHistorique[],
   metadonneesFavoris?: MetadonneesFavoris,
   offres?: Offre[]
 ): Promise<ReactElement> {
@@ -199,6 +211,7 @@ async function renderFichePasMilo(
   return (
     <FicheBeneficiairePage
       beneficiaire={beneficiaire}
+      historiqueConseillers={historiqueConseillers}
       estMilo={false}
       metadonneesFavoris={metadonneesFavoris}
       favorisOffres={offres}

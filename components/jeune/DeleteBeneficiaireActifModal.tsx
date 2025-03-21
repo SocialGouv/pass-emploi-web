@@ -21,8 +21,8 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import {
-  BaseBeneficiaire,
   BeneficiaireWithActivity,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
@@ -106,7 +106,7 @@ const ModalConfirmation = forwardRef(
       onNext,
       onClose,
     }: {
-      beneficiaire: BaseBeneficiaire
+      beneficiaire: IdentiteBeneficiaire
       onNext: (e: MouseEvent<HTMLButtonElement>) => void
       onClose: () => void
     },

@@ -2,8 +2,8 @@ import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
 import {
-  BaseBeneficiaire,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import {
   AnimationCollective,
@@ -26,7 +26,7 @@ export type EvenementJson = {
   date: string
   duration: number
   type: TypeEvenement
-  jeunes: Array<BaseBeneficiaire & { futPresent?: boolean }>
+  jeunes: Array<IdentiteBeneficiaire & { futPresent?: boolean }>
   title: string
   createur: Auteur
   invitation: boolean

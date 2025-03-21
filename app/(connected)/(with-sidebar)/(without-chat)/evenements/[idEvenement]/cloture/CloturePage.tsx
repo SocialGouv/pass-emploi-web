@@ -13,8 +13,8 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
-  BaseBeneficiaire,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { Evenement } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -32,7 +32,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
 
-  function selectionnerBeneficiaire(jeune: BaseBeneficiaire) {
+  function selectionnerBeneficiaire(jeune: IdentiteBeneficiaire) {
     let nouvelleSelection
     if (idsSelectionnes.includes(jeune.id)) {
       nouvelleSelection = idsSelectionnes.filter((id) => id !== jeune.id)
@@ -122,7 +122,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
             </TR>
           </tbody>
           <tbody>
-            {evenement.jeunes.map((jeune: BaseBeneficiaire) => (
+            {evenement.jeunes.map((jeune: IdentiteBeneficiaire) => (
               <TR key={jeune.id}>
                 <TD>
                   <input

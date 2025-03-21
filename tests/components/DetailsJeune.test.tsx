@@ -29,7 +29,11 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />,
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
+      />,
       { customConseiller: unConseiller({ structure: structureMilo }) }
     )
 
@@ -51,7 +55,11 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
+      />
     )
 
     // Then
@@ -64,7 +72,11 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
+      />
     )
 
     // Then
@@ -80,7 +92,11 @@ describe('<DetailsJeune>', () => {
 
       // When
       await renderWithContexts(
-        <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />
+        <DetailsBeneficiaire
+          beneficiaire={jeune}
+          historiqueConseillers={[]}
+          withCreations={false}
+        />
       )
 
       // Then
@@ -104,7 +120,11 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />,
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
+            historiqueConseillers={[]}
+            withCreations={false}
+          />,
           {
             customConseiller: unConseiller({ structure: structureFTCej }),
             customAlerte: { setter: alerteSetter },
@@ -182,7 +202,11 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />,
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
+            historiqueConseillers={[]}
+            withCreations={false}
+          />,
           {
             customConseiller: unConseiller({ structure: structureFTCej }),
             customAlerte: { setter: alerteSetter },
@@ -261,7 +285,11 @@ describe('<DetailsJeune>', () => {
 
       // When
       await renderWithContexts(
-        <DetailsBeneficiaire beneficiaire={jeune} withCreations={false} />
+        <DetailsBeneficiaire
+          beneficiaire={jeune}
+          historiqueConseillers={[]}
+          withCreations={false}
+        />
       )
 
       // Then

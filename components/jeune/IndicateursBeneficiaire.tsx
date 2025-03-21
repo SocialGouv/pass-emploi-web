@@ -5,16 +5,16 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
-type ResumeIndicateursBeneficiaireProps = {
+type IndicateursBeneficiaireProps = {
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
 }
-export default function ResumeIndicateursBeneficiaire({
+export default function IndicateursBeneficiaire({
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
-}: ResumeIndicateursBeneficiaireProps) {
+}: IndicateursBeneficiaireProps) {
   return (
     <div className='grow shrink border-r border-grey-500 px-6'>
       <h2

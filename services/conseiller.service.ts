@@ -3,7 +3,7 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
+import { DossierMilo, IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { Conseiller, SimpleConseiller } from 'interfaces/conseiller'
 import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
@@ -103,9 +103,9 @@ export async function getDossierJeune(
 export async function createCompteJeuneMilo(
   newJeune: BeneficiaireMiloFormData,
   { surcharge }: { surcharge: boolean }
-): Promise<BaseBeneficiaire> {
+): Promise<IdentiteBeneficiaire> {
   const session = await getSession()
-  const { content } = await apiPost<BaseBeneficiaire>(
+  const { content } = await apiPost<IdentiteBeneficiaire>(
     `/conseillers/milo/jeunes`,
     {
       ...newJeune,

@@ -54,6 +54,7 @@ describe('FicheBeneficiairePage client side', () => {
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={beneficiaire}
+          historiqueConseillers={[]}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
@@ -85,6 +86,7 @@ describe('FicheBeneficiairePage client side', () => {
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={unDetailBeneficiaire()}
+          historiqueConseillers={[]}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
@@ -166,6 +168,7 @@ describe('FicheBeneficiairePage client side', () => {
     describe('changement de dispositif', () => {
       beforeEach(async () => {
         // Given
+        ;(modifierDispositif as jest.Mock).mockResolvedValue(undefined)
         await renderFicheJeuneMilo()
 
         // When
@@ -318,6 +321,7 @@ describe('FicheBeneficiairePage client side', () => {
           <FicheBeneficiairePage
             estMilo={true}
             beneficiaire={unDetailBeneficiaire({ isActivated: false })}
+            historiqueConseillers={[]}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -416,13 +420,14 @@ async function renderFicheJeuneMilo({
 } = {}): Promise<HTMLElement> {
   const beneficiaire = unDetailBeneficiaire({
     isActivated: isActivated ?? true,
-    situations: situation ? [{ categorie: situation }] : [],
+    situationCourante: situation ?? CategorieSituation.SANS_SITUATION,
   })
 
   const { container } = await renderWithContexts(
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={beneficiaire}
+      historiqueConseillers={[]}
       rdvs={[]}
       actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
@@ -459,6 +464,7 @@ async function renderFicheJeuneNonMilo({
     <FicheBeneficiairePage
       estMilo={false}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       ongletInitial={ongletInitial ?? 'offres'}
       metadonneesFavoris={uneMetadonneeFavoris({
         autoriseLePartage: autorisePartageFavoris ?? true,

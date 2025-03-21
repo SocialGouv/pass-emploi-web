@@ -1,5 +1,6 @@
 import { Action, SituationNonProfessionnelle } from 'interfaces/action'
 import {
+  ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
   MetadonneesFavoris,
@@ -12,6 +13,7 @@ export type Onglet = OngletMilo | OngletPasMilo
 export type BaseFiche = {
   estMilo: boolean
   beneficiaire: DetailBeneficiaire
+  historiqueConseillers: ConseillerHistorique[]
   metadonneesFavoris?: MetadonneesFavoris
   favorisOffres?: Offre[]
 }

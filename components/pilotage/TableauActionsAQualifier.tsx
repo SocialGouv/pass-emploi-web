@@ -18,7 +18,7 @@ import {
   ActionPilotage,
   SituationNonProfessionnelle,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
@@ -54,7 +54,7 @@ export default function TableauActionsAQualifier({
     ActionAQualifier[]
   >([])
   const [beneficiaireSelectionne, setBeneficiaireSelectionne] =
-    useState<BaseBeneficiaire>()
+    useState<IdentiteBeneficiaire>()
 
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
@@ -129,8 +129,11 @@ export default function TableauActionsAQualifier({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function recupererBeneficiairesSelectionnes(): Map<string, BaseBeneficiaire> {
-    const mapBeneficiaires = new Map<string, BaseBeneficiaire>()
+  function recupererBeneficiairesSelectionnes(): Map<
+    string,
+    IdentiteBeneficiaire
+  > {
+    const mapBeneficiaires = new Map<string, IdentiteBeneficiaire>()
     actionsSelectionnees.forEach(({ idAction }) => {
       const { beneficiaire } = actionsFiltrees.find(
         ({ id }) => idAction === id

@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 
 import {
-  BaseBeneficiaire,
   BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireEtChat,
   BeneficiaireFromListe,
@@ -11,6 +10,7 @@ import {
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
+  IdentiteBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
@@ -26,9 +26,9 @@ import {
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 
 export const uneBaseBeneficiaire = (
-  overrides: Partial<BaseBeneficiaire> = {}
-): BaseBeneficiaire => {
-  const defaults: BaseBeneficiaire = {
+  overrides: Partial<IdentiteBeneficiaire> = {}
+): IdentiteBeneficiaire => {
+  const defaults: IdentiteBeneficiaire = {
     id: 'id-beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
@@ -60,7 +60,7 @@ export const unDetailBeneficiaire = (
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2023-04-12T05:42:07.756Z',
-    situations: [],
+    situationCourante: CategorieSituation.SANS_SITUATION,
     idConseiller: 'id-conseiller-1',
     estAArchiver: false,
     dispositif: 'CEJ',
@@ -280,7 +280,7 @@ export const unConseillerHistorique = (
     id: 'conseiller-1',
     nom: 'Dublon',
     prenom: 'Nicolas',
-    depuis: '12/03/2022',
+    depuis: '2022-03-12',
   }
   return { ...defaults, ...overrides }
 }

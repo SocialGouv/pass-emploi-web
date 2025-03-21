@@ -10,9 +10,9 @@ import {
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   BeneficiaireFromListe,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { getBeneficiairesDuConseillerClientSide } from 'services/beneficiaires.service'
 import { observeConseillerChats, signIn } from 'services/messages.service'
@@ -44,7 +44,7 @@ describe('Intégration notifications sonores', () => {
       (_cleChiffrement, jeunes, fn) => {
         updateChatsRef = fn
         updateChatsRef(
-          jeunes.map((jeune: BaseBeneficiaire) =>
+          jeunes.map((jeune: IdentiteBeneficiaire) =>
             unBeneficiaireChat({
               ...jeune,
               chatId: `chat-${jeune.id}`,

@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 import { unMessageListeDiffusion } from 'fixtures/message'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -23,12 +23,12 @@ describe('DetailMessageListeDeDiffusion', () => {
     message = unMessageListeDiffusion({
       idsDestinataires: ['id-destinataire-1', 'id-destinataire-2'],
     })
-    const destinataire1: BaseBeneficiaire = {
+    const destinataire1: IdentiteBeneficiaire = {
       id: 'id-destinataire-1',
       prenom: 'Marie',
       nom: 'Curie',
     }
-    const destinataire2: BaseBeneficiaire = {
+    const destinataire2: IdentiteBeneficiaire = {
       id: 'id-destinataire-2',
       prenom: 'Ada',
       nom: 'Lovelace',

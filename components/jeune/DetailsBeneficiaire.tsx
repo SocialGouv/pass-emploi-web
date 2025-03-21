@@ -1,12 +1,16 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import BlocInformationBeneficiaire from 'components/jeune/BlocInformationBeneficiaire'
+import ChangementDispositifBeneficiaireModal from 'components/jeune/ChangementDispositifBeneficiaireModal' // FIXME should use dynamic(() => import() but issue with jest
 import HeaderDetailBeneficiaire from 'components/jeune/HeaderDetailBeneficiaire'
+import IndicateursBeneficiaire from 'components/jeune/IndicateursBeneficiaire'
 import ResumeDemarchesBeneficiaire from 'components/jeune/ResumeDemarchesBeneficiaire'
-import ResumeIndicateursBeneficiaire from 'components/jeune/ResumeIndicateursBeneficiaire'
+import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal' // FIXME should use dynamic(() => import() but issue with jest
+import { ModalHandles } from 'components/ModalContainer'
 import {
+  ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
   IndicateursSemaine,
@@ -21,12 +25,13 @@ import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
-const UpdateIdentifiantPartenaireModal = dynamic(
-  () => import('components/jeune/UpdateIdentifiantPartenaireModal')
+const HistoriqueConseillersModal = dynamic(
+  () => import('components/jeune/HistoriqueConseillersModal')
 )
 
 interface DetailsBeneficiaireProps {
   beneficiaire: DetailBeneficiaire
+  historiqueConseillers: ConseillerHistorique[]
   withCreations: boolean
   demarches?: { data: Demarche[]; isStale: boolean } | null
   indicateursSemaine?: IndicateursSemaine
@@ -36,13 +41,14 @@ interface DetailsBeneficiaireProps {
 
 export default function DetailsBeneficiaire({
   beneficiaire,
+  historiqueConseillers,
   withCreations,
   demarches,
   indicateursSemaine,
   onSupprimerBeneficiaire,
   className,
 }: DetailsBeneficiaireProps) {
-  const { id, idPartenaire, dispositif, situations } = beneficiaire
+  const { id, idPartenaire, dispositif, situationCourante } = beneficiaire
   const [conseiller] = useConseiller()
   const [_, setAlerte] = useAlerte()
 
@@ -50,20 +56,19 @@ export default function DetailsBeneficiaire({
   const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(idPartenaire)
+
+  const modalDispositifRef = useRef<ModalHandles>(null)
+  const [showChangementDispositif, setShowChangementDispositif] =
+    useState<boolean>(false)
+  const modalIdentifiantPartenaireRef = useRef<ModalHandles>(null)
   const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
+    useState<boolean>(false)
+  const [showHistoriqueConseillers, setShowHistoriqueConseillers] =
     useState<boolean>(false)
 
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
   const finSemaine = aujourdHui.endOf('week')
-
-  function openIdentifiantPartenaireModal() {
-    setShowIdentifiantPartenaireModal(true)
-  }
-
-  function closeIdentifiantPartenaireModal() {
-    setShowIdentifiantPartenaireModal(false)
-  }
 
   async function updateIdentifiantPartenaire(
     nouvelleValeur: string
@@ -71,23 +76,25 @@ export default function DetailsBeneficiaire({
     const { modifierIdentifiantPartenaire } = await import(
       'services/beneficiaires.service'
     )
-    modifierIdentifiantPartenaire(id, nouvelleValeur)
-      .then(() => {
-        setIdentifiantPartenaire(nouvelleValeur)
-        setShowIdentifiantPartenaireModal(false)
-        setAlerte(AlerteParam.modificationIdentifiantPartenaire)
-      })
-      .catch(() => {
-        setShowIdentifiantPartenaireModal(false)
-      })
+    try {
+      await modifierIdentifiantPartenaire(id, nouvelleValeur)
+      setIdentifiantPartenaire(nouvelleValeur)
+      setAlerte(AlerteParam.modificationIdentifiantPartenaire)
+    } finally {
+      modalIdentifiantPartenaireRef.current!.closeModal()
+    }
   }
 
   async function changerDispositif(nouveauDispositif: string): Promise<void> {
     const { modifierDispositif } = await import(
       'services/beneficiaires.service'
     )
-    await modifierDispositif(id, nouveauDispositif)
-    setDispositifActuel(nouveauDispositif)
+    try {
+      await modifierDispositif(id, nouveauDispositif)
+      setDispositifActuel(nouveauDispositif)
+    } finally {
+      modalDispositifRef.current!.closeModal()
+    }
   }
 
   function trackEventOnCopieIdentifiantPartenaire() {
@@ -101,52 +108,75 @@ export default function DetailsBeneficiaire({
   }
 
   return (
-    <div className={'rounded-large ' + (className ?? '')}>
-      <HeaderDetailBeneficiaire
-        beneficiaire={{
-          id: beneficiaire.id,
-          nomComplet: `${beneficiaire.prenom} ${beneficiaire.nom}`,
-        }}
-        dispositif={dispositifActuel}
-        situation={situations[0]?.categorie}
-        withCreations={withCreations}
-        onSupprimerBeneficiaire={onSupprimerBeneficiaire}
-      />
-
-      <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
-        {estMilo(conseiller.structure) && (
-          <ResumeIndicateursBeneficiaire
-            debutDeLaSemaine={debutSemaine}
-            finDeLaSemaine={finSemaine}
-            indicateursSemaine={indicateursSemaine}
-          />
-        )}
-
-        {estConseilDepartemental(conseiller.structure) && demarches && (
-          <ResumeDemarchesBeneficiaire
-            debutDeLaSemaine={debutSemaine}
-            finDeLaSemaine={finSemaine}
-            demarches={demarches.data}
-          />
-        )}
-
-        <BlocInformationBeneficiaire
-          beneficiaire={beneficiaire}
+    <>
+      <div className={'rounded-large ' + (className ?? '')}>
+        <HeaderDetailBeneficiaire
+          beneficiaire={{
+            id: beneficiaire.id,
+            nomComplet: `${beneficiaire.prenom} ${beneficiaire.nom}`,
+          }}
           dispositif={dispositifActuel}
-          onChangementDispositif={changerDispositif}
-          onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
-          identifiantPartenaire={identifiantPartenaire}
-          onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
+          situation={situationCourante}
+          withCreations={withCreations}
+          onSupprimerBeneficiaire={onSupprimerBeneficiaire}
         />
+
+        <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
+          {estMilo(conseiller.structure) && (
+            <IndicateursBeneficiaire
+              debutDeLaSemaine={debutSemaine}
+              finDeLaSemaine={finSemaine}
+              indicateursSemaine={indicateursSemaine}
+            />
+          )}
+
+          {estConseilDepartemental(conseiller.structure) && demarches && (
+            <ResumeDemarchesBeneficiaire
+              debutDeLaSemaine={debutSemaine}
+              finDeLaSemaine={finSemaine}
+              demarches={demarches.data}
+            />
+          )}
+
+          <BlocInformationBeneficiaire
+            beneficiaire={beneficiaire}
+            onChangementDispositif={() => setShowChangementDispositif(true)}
+            onIdentifiantPartenaireCopie={
+              trackEventOnCopieIdentifiantPartenaire
+            }
+            identifiantPartenaire={identifiantPartenaire}
+            onIdentifiantPartenaireClick={() =>
+              setShowIdentifiantPartenaireModal(true)
+            }
+            onHistoriqueConseillers={() => setShowHistoriqueConseillers(true)}
+          />
+        </div>
       </div>
+
+      {showChangementDispositif && (
+        <ChangementDispositifBeneficiaireModal
+          ref={modalDispositifRef}
+          dispositif={dispositifActuel}
+          onConfirm={changerDispositif}
+          onCancel={() => setShowChangementDispositif(false)}
+        />
+      )}
 
       {showIdentifiantPartenaireModal && (
         <UpdateIdentifiantPartenaireModal
+          ref={modalIdentifiantPartenaireRef}
           identifiantPartenaire={identifiantPartenaire}
           updateIdentifiantPartenaire={updateIdentifiantPartenaire}
-          onClose={closeIdentifiantPartenaireModal}
+          onClose={() => setShowIdentifiantPartenaireModal(false)}
         />
       )}
-    </div>
+
+      {showHistoriqueConseillers && (
+        <HistoriqueConseillersModal
+          conseillers={historiqueConseillers}
+          onClose={() => setShowHistoriqueConseillers(false)}
+        />
+      )}
+    </>
   )
 }
