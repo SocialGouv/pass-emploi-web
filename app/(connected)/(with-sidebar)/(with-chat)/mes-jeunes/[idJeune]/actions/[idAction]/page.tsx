@@ -1,15 +1,16 @@
 import { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { Session } from 'next-auth'
 import React from 'react'
 
-import DetailActionPage, {
-  DetailActionProps,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
+import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { Action } from 'interfaces/action'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { estMilo } from 'interfaces/structure'
 import { getAction } from 'services/actions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
@@ -21,11 +22,13 @@ export async function generateMetadata({
 }: {
   params: DetailActionParams
 }): Promise<Metadata> {
-  const { action, lectureSeule } = await buildProps(params)
+  const { action, user } = await buildProps(params)
 
   return {
     title: `${action.titre} - Actions de ${action.beneficiaire.prenom} ${action.beneficiaire.nom} - ${
-      lectureSeule ? 'Etablissement' : 'Portefeuille'
+      estConseillerReferent(user, action.beneficiaire)
+        ? 'Portefeuille'
+        : 'Etablissement'
     }`,
   }
 }
@@ -35,7 +38,7 @@ export default async function DetailAction({
 }: {
   params: DetailActionParams
 }) {
-  const props = await buildProps(params)
+  const { action } = await buildProps(params)
 
   const referer = (await headers()).get('referer')
   const from =
@@ -46,14 +49,14 @@ export default async function DetailAction({
       <PageFilArianePortal />
       <PageHeaderPortal header='Détails de l’action' />
 
-      <DetailActionPage from={from} {...props} />
+      <DetailActionPage from={from} action={action} />
     </>
   )
 }
 
 async function buildProps(
   params: DetailActionParams
-): Promise<Omit<DetailActionProps, 'from'>> {
+): Promise<{ action: Action; user: Session.HydratedUser }> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estMilo(user.structure)) notFound()
   const { idJeune, idAction } = await params
@@ -62,7 +65,5 @@ async function buildProps(
   if (!action) notFound()
   if (idJeune !== action.beneficiaire.id) notFound()
 
-  const lectureSeule = action.beneficiaire.idConseiller !== user.id
-
-  return { action, lectureSeule }
+  return { action, user }
 }

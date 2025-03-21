@@ -12,10 +12,12 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface OngletActionsProps {
   beneficiaire: DetailBeneficiaire
@@ -31,7 +33,6 @@ interface OngletActionsProps {
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
   onLienExterne: (label: string) => void
-  lectureSeule?: boolean
 }
 
 export enum TRI {
@@ -45,9 +46,10 @@ export default function OngletActions({
   getActions,
   beneficiaire,
   onLienExterne,
-  lectureSeule,
 }: OngletActionsProps) {
   const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
 
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions

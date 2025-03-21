@@ -7,9 +7,11 @@ import TableauOffres from 'components/favoris/offres/TableauOffres'
 import TableauRecherches from 'components/favoris/recherches/TableauRecherches'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum OngletFavoris {
@@ -18,18 +20,14 @@ export enum OngletFavoris {
 }
 
 type FavorisProps = {
-  beneficiaire: BaseBeneficiaire
-  lectureSeule: boolean
+  beneficiaire: DetailBeneficiaire
   offres: Offre[]
   recherches: Recherche[]
 }
 
-function FavorisPage({
-  beneficiaire,
-  offres,
-  recherches,
-  lectureSeule,
-}: FavorisProps) {
+function FavorisPage({ beneficiaire, offres, recherches }: FavorisProps) {
+  const [conseiller] = useConseiller()
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const [portefeuille] = usePortefeuille()
 
   const [currentTab, setCurrentTab] = useState<OngletFavoris>(

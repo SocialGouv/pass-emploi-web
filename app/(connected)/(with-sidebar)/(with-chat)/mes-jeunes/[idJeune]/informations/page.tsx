@@ -10,6 +10,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { estMilo } from 'interfaces/structure'
 import {
   getConseillersDuJeuneServerSide,
@@ -33,7 +34,7 @@ export async function generateMetadata({
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
-  const lectureSeule = user.id !== beneficiaire.idConseiller
+  const lectureSeule = !estConseillerReferent(user, beneficiaire)
   return {
     title: `Informations - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
@@ -53,7 +54,6 @@ export default async function Informations({
     getConseillersDuJeuneServerSide(beneficiaire.id, accessToken),
   ])
 
-  const lectureSeule = beneficiaire.idConseiller !== user.id
   const { onglet } = (await searchParams) ?? {}
   return (
     <>
@@ -64,7 +64,6 @@ export default async function Informations({
         conseillers={conseillers}
         idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
-        lectureSeule={lectureSeule}
         beneficiaire={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
         onglet={searchParamToOnglet(onglet, estMilo(user.structure))}
