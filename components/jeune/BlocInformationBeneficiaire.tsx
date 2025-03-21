@@ -9,20 +9,19 @@ import { toRelativeDateTime, toShortDate } from 'utils/date'
 interface BlocInformationBeneficiaireProps {
   beneficiaire: DetailBeneficiaire
   onHistoriqueConseillers: () => void
+  identifiantPartenaire: {
+    value: string | undefined
+    onClick: () => void
+    onCopy: () => void
+  }
   onChangementDispositif?: () => void
-  // TODO refactor : regrouper
-  onIdentifiantPartenaireCopie?: () => void
-  identifiantPartenaire?: string
-  onIdentifiantPartenaireClick?: () => void
 }
 
 export default function BlocInformationBeneficiaire({
   beneficiaire,
   onHistoriqueConseillers,
   onChangementDispositif,
-  onIdentifiantPartenaireCopie,
   identifiantPartenaire,
-  onIdentifiantPartenaireClick,
 }: BlocInformationBeneficiaireProps) {
   const [conseiller] = useConseiller()
 
@@ -73,15 +72,7 @@ export default function BlocInformationBeneficiaire({
             <LienDossierMilo href={urlDossier} />
           )}
 
-          {aIdentifiantFT &&
-            onIdentifiantPartenaireCopie &&
-            onIdentifiantPartenaireClick && (
-              <IdentifiantFT
-                identifiantPartenaire={identifiantPartenaire}
-                onCopy={onIdentifiantPartenaireCopie}
-                onClick={onIdentifiantPartenaireClick}
-              />
-            )}
+          {aIdentifiantFT && <IdentifiantFT {...identifiantPartenaire} />}
         </dl>
 
         {onChangementDispositif && (
@@ -152,19 +143,19 @@ function LienDossierMilo({ href }: { href: string }) {
 }
 
 export function IdentifiantFT({
-  identifiantPartenaire,
+  value,
   onClick,
   onCopy,
 }: {
-  identifiantPartenaire: string | undefined
+  value: string | undefined
   onCopy: () => void
   onClick: () => void
 }) {
   return (
     <div className='flex gap-1 items-center'>
-      <dt>Identifiant France Travail :</dt>
-      <dd className='text-base-bold inline-flex items-center' onCopy={onCopy}>
-        {identifiantPartenaire ?? (
+      <dt className='text-s-regular'>Identifiant France Travail :</dt>
+      <dd className='text-s-bold inline-flex items-center' onCopy={onCopy}>
+        {value ?? (
           <>
             <span className='sr-only'>non renseigné</span>
             <span>-</span>
@@ -173,7 +164,7 @@ export function IdentifiantFT({
         <button
           className='ml-1 inline-flex items-center text-primary'
           aria-label={
-            identifiantPartenaire
+            value
               ? 'Modifier l’identifiant France Travail'
               : 'Ajouter l’identifiant France Travail'
           }
@@ -185,7 +176,7 @@ export function IdentifiantFT({
             focusable={false}
             className='w-4 h-4 mr-1 fill-primary'
           />
-          {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+          {value ? 'Modifier' : 'Ajouter'}
         </button>
       </dd>
     </div>

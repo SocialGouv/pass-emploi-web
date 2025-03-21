@@ -140,15 +140,17 @@ export default function DetailsBeneficiaire({
 
           <BlocInformationBeneficiaire
             beneficiaire={beneficiaire}
-            onChangementDispositif={() => setShowChangementDispositif(true)}
-            onIdentifiantPartenaireCopie={
-              trackEventOnCopieIdentifiantPartenaire
-            }
-            identifiantPartenaire={identifiantPartenaire}
-            onIdentifiantPartenaireClick={() =>
-              setShowIdentifiantPartenaireModal(true)
-            }
+            identifiantPartenaire={{
+              value: identifiantPartenaire,
+              onClick: () => setShowIdentifiantPartenaireModal(true),
+              onCopy: trackEventOnCopieIdentifiantPartenaire,
+            }}
             onHistoriqueConseillers={() => setShowHistoriqueConseillers(true)}
+            onChangementDispositif={
+              estMilo(conseiller.structure)
+                ? () => setShowChangementDispositif(true)
+                : undefined
+            }
           />
         </div>
       </div>
