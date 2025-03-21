@@ -23,10 +23,10 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
 interface TableauActionsBeneficiaireProps {
-  jeune: BaseBeneficiaire
+  jeune: IdentiteBeneficiaire
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean

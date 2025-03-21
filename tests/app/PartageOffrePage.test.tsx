@@ -11,7 +11,7 @@ import {
   unDetailOffreEmploi,
   unDetailServiceCivique,
 } from 'fixtures/offre'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import {
   DetailImmersion,
   DetailOffre,
@@ -29,7 +29,7 @@ describe('PartageOffrePage client side', () => {
   let container: HTMLElement
   describe('commun', () => {
     let offre: DetailOffre
-    let jeunes: BaseBeneficiaire[]
+    let jeunes: IdentiteBeneficiaire[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: () => void

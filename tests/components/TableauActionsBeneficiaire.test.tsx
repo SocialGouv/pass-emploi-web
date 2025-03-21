@@ -7,7 +7,7 @@ import TableauActionsBeneficiaire from 'components/action/TableauActionsBenefici
 import { desCategories, uneAction, uneListeDActions } from 'fixtures/action'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { Action, StatutAction } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { qualifierActions } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -18,7 +18,7 @@ describe('TableauActionsJeune', () => {
   let actions: Action[]
   let actionSansCategorie: Action
   let actionAvecCategorie: Action
-  let jeune: BaseBeneficiaire
+  let jeune: IdentiteBeneficiaire
 
   beforeEach(async () => {
     actions = uneListeDActions()

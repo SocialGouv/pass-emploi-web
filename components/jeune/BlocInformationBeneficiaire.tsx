@@ -1,10 +1,5 @@
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React from 'react'
 
-import ChangementDispositifBeneficiaireModal from 'components/ChangementDispositifBeneficiaireModal' // FIXME should use dynamic(() => import() but issue with jest
-import { IdentifiantPartenaire } from 'components/jeune/BlocInformationJeune'
-import { ModalHandles } from 'components/Modal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { estFTConnect, estMilo } from 'interfaces/structure'
@@ -13,9 +8,8 @@ import { toRelativeDateTime, toShortDate } from 'utils/date'
 
 interface BlocInformationBeneficiaireProps {
   beneficiaire: DetailBeneficiaire
-  // TODO refactor : regrouper
-  dispositif: string
-  onChangementDispositif?: (nouveauDispositif: string) => Promise<void>
+  onHistoriqueConseillers: () => void
+  onChangementDispositif?: () => void
   // TODO refactor : regrouper
   onIdentifiantPartenaireCopie?: () => void
   identifiantPartenaire?: string
@@ -24,7 +18,7 @@ interface BlocInformationBeneficiaireProps {
 
 export default function BlocInformationBeneficiaire({
   beneficiaire,
-  dispositif,
+  onHistoriqueConseillers,
   onChangementDispositif,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
@@ -32,22 +26,10 @@ export default function BlocInformationBeneficiaire({
 }: BlocInformationBeneficiaireProps) {
   const [conseiller] = useConseiller()
 
-  const pathPrefix = usePathname()?.startsWith('/etablissement')
-    ? '/etablissement/beneficiaires'
-    : '/mes-jeunes'
   const conseillerEstMilo = estMilo(conseiller.structure)
   const aIdentifiantFT = estFTConnect(conseiller.structure)
-  const { dateFinCEJ, email, id, isActivated, lastActivity, urlDossier } =
+  const { dateFinCEJ, email, isActivated, lastActivity, urlDossier } =
     beneficiaire
-
-  const [afficherChangementDispositif, setAfficherChangementDispositif] =
-    useState<boolean>(false)
-  const modalRef = useRef<ModalHandles>(null)
-
-  async function changerDispositif(nouveauDispositif: string) {
-    await onChangementDispositif!(nouveauDispositif)
-    modalRef.current!.closeModal()
-  }
 
   return (
     <>
@@ -94,7 +76,7 @@ export default function BlocInformationBeneficiaire({
           {aIdentifiantFT &&
             onIdentifiantPartenaireCopie &&
             onIdentifiantPartenaireClick && (
-              <IdentifiantPartenaire
+              <IdentifiantFT
                 identifiantPartenaire={identifiantPartenaire}
                 onCopy={onIdentifiantPartenaireCopie}
                 onClick={onIdentifiantPartenaireClick}
@@ -103,34 +85,35 @@ export default function BlocInformationBeneficiaire({
         </dl>
 
         {onChangementDispositif && (
-          <BoutonChangementDispositif
-            onClick={() => setAfficherChangementDispositif(true)}
+          <UnderlinedButton
+            label='Changer le bénéficiaire de dispositif'
+            onClick={onChangementDispositif}
           />
         )}
 
-        <LienVersInformations idBeneficiaire={id} pathPrefix={pathPrefix} />
-      </div>
-
-      {afficherChangementDispositif && (
-        <ChangementDispositifBeneficiaireModal
-          ref={modalRef}
-          dispositif={dispositif}
-          onConfirm={changerDispositif}
-          onCancel={() => setAfficherChangementDispositif(false)}
+        <UnderlinedButton
+          label='Consulter l’historique des conseillers'
+          onClick={onHistoriqueConseillers}
         />
-      )}
+      </div>
     </>
   )
 }
 
-function BoutonChangementDispositif({ onClick }: { onClick: () => void }) {
+function UnderlinedButton({
+  label,
+  onClick,
+}: {
+  label: string
+  onClick: () => void
+}) {
   return (
     <button
       type='button'
       onClick={onClick}
-      className='underline text-s-regular mb-1 hover:text-primary'
+      className='block underline text-s-regular mb-1 hover:text-primary'
     >
-      Changer le bénéficiaire de dispositif
+      {label}
       <IconComponent
         name={IconName.ChevronRight}
         className='inline-block w-4 h-5 fill-current'
@@ -138,29 +121,6 @@ function BoutonChangementDispositif({ onClick }: { onClick: () => void }) {
         focusable={false}
       />
     </button>
-  )
-}
-
-function LienVersInformations({
-  idBeneficiaire,
-  pathPrefix,
-}: {
-  idBeneficiaire: string
-  pathPrefix: string
-}) {
-  return (
-    <Link
-      href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=informations`}
-      className='flex items-center underline text-s-regular hover:text-primary'
-    >
-      Voir plus d’informations
-      <IconComponent
-        name={IconName.ChevronRight}
-        className='w-4 h-5 fill-current'
-        aria-hidden={true}
-        focusable={false}
-      />
-    </Link>
   )
 }
 
@@ -188,5 +148,46 @@ function LienDossierMilo({ href }: { href: string }) {
         </a>
       </dl>
     </>
+  )
+}
+
+export function IdentifiantFT({
+  identifiantPartenaire,
+  onClick,
+  onCopy,
+}: {
+  identifiantPartenaire: string | undefined
+  onCopy: () => void
+  onClick: () => void
+}) {
+  return (
+    <div className='flex gap-1 items-center'>
+      <dt>Identifiant France Travail :</dt>
+      <dd className='text-base-bold inline-flex items-center' onCopy={onCopy}>
+        {identifiantPartenaire ?? (
+          <>
+            <span className='sr-only'>non renseigné</span>
+            <span>-</span>
+          </>
+        )}
+        <button
+          className='ml-1 inline-flex items-center text-primary'
+          aria-label={
+            identifiantPartenaire
+              ? 'Modifier l’identifiant France Travail'
+              : 'Ajouter l’identifiant France Travail'
+          }
+          onClick={onClick}
+        >
+          <IconComponent
+            name={IconName.Edit}
+            aria-hidden={true}
+            focusable={false}
+            className='w-4 h-4 mr-1 fill-primary'
+          />
+          {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+        </button>
+      </dd>
+    </div>
   )
 }
