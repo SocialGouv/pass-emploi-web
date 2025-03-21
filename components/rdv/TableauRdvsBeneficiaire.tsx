@@ -8,13 +8,13 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauRdvsBeneficiaireProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
   additionalColumn?: ColumnHeaderLabel
 }
 
@@ -90,7 +90,7 @@ function StateAucunRendezvous({
   isRdvPasses,
   pathPrefix,
 }: {
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
   isRdvPasses: boolean
   pathPrefix: string
 }): ReactElement {

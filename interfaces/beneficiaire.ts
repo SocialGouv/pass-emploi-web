@@ -2,12 +2,6 @@ import { DateTime } from 'luxon'
 
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 
-export enum EtatSituation {
-  EN_COURS = 'en cours',
-  PREVU = 'prévue',
-  TERMINE = 'terminée',
-}
-
 export enum CategorieSituation {
   EMPLOI = 'Emploi',
   CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
@@ -22,13 +16,13 @@ export enum CategorieSituation {
 
 export type Portefeuille = BeneficiaireWithActivity[]
 
-export type BaseBeneficiaire = {
+export type IdentiteBeneficiaire = {
   id: string
   prenom: string
   nom: string
 }
 
-export type BeneficiaireWithActivity = BaseBeneficiaire & {
+export type BeneficiaireWithActivity = IdentiteBeneficiaire & {
   creationDate: string
   estAArchiver: boolean
   isActivated: boolean
@@ -36,36 +30,26 @@ export type BeneficiaireWithActivity = BaseBeneficiaire & {
   dateFinCEJ?: string
 }
 
-export type BeneficiaireFromListe = BeneficiaireWithActivity & {
+type BaseBeneficiaire = BeneficiaireWithActivity & {
   isReaffectationTemporaire: boolean
   situationCourante: CategorieSituation
   dispositif: string
+  structureMilo?: { id: string }
+}
+
+export type BeneficiaireFromListe = BaseBeneficiaire & {
   conseillerPrecedent?: {
     nom: string
     prenom: string
     email?: string
   }
-  structureMilo?: { id: string }
 }
 
 export type DetailBeneficiaire = BaseBeneficiaire & {
-  creationDate: string
-  isActivated: boolean
-  isReaffectationTemporaire: boolean
   idConseiller: string
-  situations: Array<{
-    categorie: CategorieSituation
-    etat?: EtatSituation
-    dateFin?: string
-  }>
-  estAArchiver: boolean
-  dispositif: string
-  lastActivity?: string
   email?: string
   urlDossier?: string
-  dateFinCEJ?: string
   idPartenaire?: string
-  structureMilo?: { id: string }
 }
 
 export type MetadonneesFavoris = {
@@ -97,7 +81,7 @@ export type BeneficiaireAvecInfosComplementaires =
   }
 
 export type BeneficiaireEtablissement = {
-  base: BaseBeneficiaire
+  base: IdentiteBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: CategorieSituation
   dateDerniereActivite?: string
@@ -116,7 +100,7 @@ export type Chat = {
   lastMessageIv: string | undefined
 }
 
-export type BeneficiaireEtChat = BaseBeneficiaire & Chat
+export type BeneficiaireEtChat = IdentiteBeneficiaire & Chat
 
 export type DossierMilo = {
   id: string
@@ -167,8 +151,8 @@ export function estCEJ({ dispositif }: { dispositif: string }): boolean {
 }
 
 export function compareBeneficiairesByNom(
-  beneficiaire1: BaseBeneficiaire,
-  beneficiaire2: BaseBeneficiaire
+  beneficiaire1: IdentiteBeneficiaire,
+  beneficiaire2: IdentiteBeneficiaire
 ): number {
   return `${beneficiaire1.nom}${beneficiaire1.prenom}`.localeCompare(
     `${beneficiaire2.nom}${beneficiaire2.prenom}`
@@ -196,7 +180,7 @@ export function compareBeneficiaireChat(
 }
 
 export function getNomBeneficiaireComplet(
-  b: Pick<BaseBeneficiaire, 'nom' | 'prenom'>
+  b: Pick<IdentiteBeneficiaire, 'nom' | 'prenom'>
 ): string {
   return `${b.nom} ${b.prenom}`
 }
@@ -237,8 +221,8 @@ function comparerParDate(a: BeneficiaireEtChat, b: BeneficiaireEtChat): number {
 }
 
 export function extractBaseBeneficiaire(
-  base: BaseBeneficiaire
-): BaseBeneficiaire {
+  base: IdentiteBeneficiaire
+): IdentiteBeneficiaire {
   return { id: base.id, nom: base.nom, prenom: base.prenom }
 }
 

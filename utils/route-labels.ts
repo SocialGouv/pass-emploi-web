@@ -1,6 +1,5 @@
 const labelFicheBeneficiaire = 'Fiche bénéficiaire'
 const labelFavoris = 'Favoris'
-const labelInformations = 'Informations'
 const labelRdvPasses = 'Rendez-vous passés'
 const labelAction = 'Détail action'
 const labelDemarche = 'Détail démarche'
@@ -19,7 +18,6 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/mes-jeunes\/creation-jeune$/, 'Création'],
   [/\/mes-jeunes\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/mes-jeunes\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/mes-jeunes\/[\w-]+\/informations$/, labelInformations],
   [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, labelRdvPasses],
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
   [/\/mes-jeunes\/[\w-]+\/demarches\/[\w-]+$/, labelDemarche],
@@ -28,7 +26,6 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/etablissement$/, 'Bénéficiaires'],
   [/\/etablissement\/beneficiaires\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/informations$/, labelInformations],
   [
     /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,
     labelRdvPasses,

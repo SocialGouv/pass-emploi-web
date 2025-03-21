@@ -9,9 +9,9 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -30,7 +30,7 @@ jest.mock('components/chat/ConversationBeneficiaire', () =>
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatContainer />', () => {
-  const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+  const beneficiaires: IdentiteBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
   let beneficiairesChats: BeneficiaireEtChat[]

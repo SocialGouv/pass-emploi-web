@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { structureMilo } from 'interfaces/structure'
 
 export type TypeEvenement = {
@@ -49,7 +49,7 @@ export type EvenementListItem = {
   createur?: Createur
   modality?: string
   labelBeneficiaires?: string
-  beneficiaires?: Array<BaseBeneficiaire & { futPresent?: boolean }>
+  beneficiaires?: Array<IdentiteBeneficiaire & { futPresent?: boolean }>
   source?: string
   futPresent?: boolean
   isSession?: boolean
@@ -61,7 +61,7 @@ export type Modification = { date: string; auteur: Auteur }
 export type Evenement = {
   id: string
   titre: string
-  jeunes: Array<BaseBeneficiaire & { futPresent?: boolean }>
+  jeunes: Array<IdentiteBeneficiaire & { futPresent?: boolean }>
   type: TypeEvenement
   date: string
   duree: number

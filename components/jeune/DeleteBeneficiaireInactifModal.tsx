@@ -8,12 +8,12 @@ import React, {
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneInactifModalProps {
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
   onClose: () => void
   onDelete: () => Promise<void>
 }
