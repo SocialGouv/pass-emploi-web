@@ -123,16 +123,11 @@ export type IndicateursSemaine = {
     creees: number
     enRetard: number
     terminees: number
-    aEcheance: number
   }
   rendezVous: number
   offres: {
-    consultees: number
-    partagees: number
-  }
-  favoris: {
-    offresSauvegardees: number
-    recherchesSauvegardees: number
+    sauvegardees: number
+    postulees: number
   }
 }
 
