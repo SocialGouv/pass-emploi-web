@@ -65,17 +65,17 @@ export default function IndicateursBeneficiaire({
         />
         <Indicateur
           iconName={IconName.BookmarkOutline}
-          count={indicateursSemaine?.offres.consultees}
-          label='offres consultées'
-          labelSingulier='offre consultée'
-          colors='PRIMARY'
-        />
-        <Indicateur
-          iconName={IconName.BookmarkOutline}
-          count={indicateursSemaine?.favoris.offresSauvegardees}
+          count={indicateursSemaine?.offres.sauvegardees}
           label='offres enregistrées'
           labelSingulier='offre enregistrée'
           colors='PRIMARY'
+        />
+        <Indicateur
+          iconName={IconName.Check}
+          count={indicateursSemaine?.offres.postulees}
+          label='offres postulées'
+          labelSingulier='offre postulée'
+          colors='SUCCESS'
         />
       </ul>
     </div>

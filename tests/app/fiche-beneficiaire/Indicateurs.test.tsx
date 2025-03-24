@@ -34,12 +34,12 @@ describe('Indicateurs dans la fiche jeune', () => {
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={unDetailBeneficiaire()}
+          historiqueConseillers={[]}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           metadonneesFavoris={uneMetadonneeFavoris()}
           ongletInitial='agenda'
-          lectureSeule={false}
         />,
         {}
       )
@@ -64,7 +64,10 @@ describe('Indicateurs dans la fiche jeune', () => {
       expect(getByTextContent('3RDV et ateliers', indicateurs)).toHaveRole(
         'listitem'
       )
-      expect(getByTextContent('6offres enregistrées', indicateurs)).toHaveRole(
+      expect(getByTextContent('10offres enregistrées', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('4offres postulées', indicateurs)).toHaveRole(
         'listitem'
       )
     })

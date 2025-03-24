@@ -91,18 +91,13 @@ export type IndicateursSemaineJson = {
     creees: number
     enRetard: number
     terminees: number
-    aEcheance: number
   }
   rendezVous: {
     planifies: number
   }
   offres: {
-    consultees: number
-    partagees: number
-  }
-  favoris: {
-    offresSauvegardees: number
-    recherchesSauvegardees: number
+    sauvegardees: number
+    postulees: number
   }
 }
 
@@ -246,16 +241,11 @@ export function jsonToIndicateursSemaine(
       creees: indicateursJson.actions.creees,
       enRetard: indicateursJson.actions.enRetard,
       terminees: indicateursJson.actions.terminees,
-      aEcheance: indicateursJson.actions.aEcheance,
     },
     rendezVous: indicateursJson.rendezVous.planifies,
     offres: {
-      partagees: indicateursJson.offres.partagees,
-      consultees: indicateursJson.offres.consultees,
-    },
-    favoris: {
-      offresSauvegardees: indicateursJson.favoris.offresSauvegardees,
-      recherchesSauvegardees: indicateursJson.favoris.recherchesSauvegardees,
+      sauvegardees: indicateursJson.offres.sauvegardees,
+      postulees: indicateursJson.offres.postulees,
     },
   }
 }
