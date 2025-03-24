@@ -37,7 +37,7 @@ describe('EmargementRdvPage server side', () => {
   beforeEach(() => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: structureMilo },
+      user: { id: 'id-conseiller-1', structure: structureMilo },
       accessToken: 'accessToken',
     })
     ;(getDetailsEvenement as jest.Mock).mockResolvedValue(acAEmarger)
@@ -110,7 +110,7 @@ describe('EmargementRdvPage server side', () => {
       //Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         user: {
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureFTCej,
         },
         accessToken: 'accessToken',

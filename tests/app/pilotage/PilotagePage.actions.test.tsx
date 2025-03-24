@@ -173,11 +173,14 @@ describe('PilotagePage client side - Actions', () => {
       )
 
       // Then
-      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-        page: 1,
-        tri: 'BENEFICIAIRE_ALPHABETIQUE',
-        filtres: [],
-      })
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        {
+          page: 1,
+          tri: 'BENEFICIAIRE_ALPHABETIQUE',
+          filtres: [],
+        }
+      )
       expect(
         screen.getByText('Action page 1 BENEFICIAIRE_ALPHABETIQUE 0filtres')
       ).toBeInTheDocument()
@@ -198,11 +201,14 @@ describe('PilotagePage client side - Actions', () => {
       )
 
       // Then
-      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-        page: 1,
-        tri: 'BENEFICIAIRE_INVERSE',
-        filtres: [],
-      })
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        {
+          page: 1,
+          tri: 'BENEFICIAIRE_INVERSE',
+          filtres: [],
+        }
+      )
       expect(
         screen.getByText('Action page 1 BENEFICIAIRE_INVERSE 0filtres')
       ).toBeInTheDocument()
@@ -213,11 +219,14 @@ describe('PilotagePage client side - Actions', () => {
           name: 'Afficher la liste des actions triées par date de réalisation décroissante',
         })
       )
-      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-        page: 1,
-        tri: 'REALISATION_ANTICHRONOLOGIQUE',
-        filtres: [],
-      })
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        {
+          page: 1,
+          tri: 'REALISATION_ANTICHRONOLOGIQUE',
+          filtres: [],
+        }
+      )
       expect(
         screen.getByText('Action page 1 REALISATION_ANTICHRONOLOGIQUE 0filtres')
       ).toBeInTheDocument()
@@ -227,11 +236,14 @@ describe('PilotagePage client side - Actions', () => {
           name: 'Afficher la liste des actions triées par date de réalisation croissante',
         })
       )
-      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-        page: 1,
-        tri: 'REALISATION_CHRONOLOGIQUE',
-        filtres: [],
-      })
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        {
+          page: 1,
+          tri: 'REALISATION_CHRONOLOGIQUE',
+          filtres: [],
+        }
+      )
       expect(
         screen.getByText('Action page 1 REALISATION_CHRONOLOGIQUE 0filtres')
       ).toBeInTheDocument()
@@ -270,11 +282,14 @@ describe('PilotagePage client side - Actions', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-          page: 1,
-          tri: 'BENEFICIAIRE_ALPHABETIQUE',
-          filtres: ['SNP_1', 'SNP_2'],
-        })
+        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+          'id-conseiller-1',
+          {
+            page: 1,
+            tri: 'BENEFICIAIRE_ALPHABETIQUE',
+            filtres: ['SNP_1', 'SNP_2'],
+          }
+        )
         expect(
           screen.getByText('Action page 1 BENEFICIAIRE_ALPHABETIQUE 2filtres')
         ).toBeInTheDocument()
@@ -285,11 +300,14 @@ describe('PilotagePage client side - Actions', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-          page: 2,
-          tri: 'BENEFICIAIRE_ALPHABETIQUE',
-          filtres: ['SNP_1', 'SNP_2'],
-        })
+        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+          'id-conseiller-1',
+          {
+            page: 2,
+            tri: 'BENEFICIAIRE_ALPHABETIQUE',
+            filtres: ['SNP_1', 'SNP_2'],
+          }
+        )
         expect(
           screen.getByText('Action page 2 BENEFICIAIRE_ALPHABETIQUE 2filtres')
         ).toBeInTheDocument()
@@ -313,11 +331,14 @@ describe('PilotagePage client side - Actions', () => {
       await userEvent.click(screen.getByLabelText('Page 2'))
 
       // Then
-      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
-        page: 2,
-        tri: 'BENEFICIAIRE_ALPHABETIQUE',
-        filtres: ['SNP_1'],
-      })
+      expect(getActionsAQualifierClientSide).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        {
+          page: 2,
+          tri: 'BENEFICIAIRE_ALPHABETIQUE',
+          filtres: ['SNP_1'],
+        }
+      )
       expect(
         screen.getByText('Action page 2 BENEFICIAIRE_ALPHABETIQUE 1filtres')
       ).toBeInTheDocument()

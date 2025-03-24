@@ -24,7 +24,7 @@ describe('HomePage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: '1' },
+        user: { id: 'id-conseiller-1' },
         accessToken: 'accessToken',
       })
 

@@ -39,7 +39,7 @@ describe('QualificationPage client side', () => {
       <QualificationPage
         action={action}
         categories={categories}
-        returnTo='/mes-jeunes/beneficiaire-1/actions/id-action-1'
+        returnTo='/mes-jeunes/id-beneficiaire-1/actions/id-action-1'
         returnToListe='/pilotage'
       />,
       {
@@ -252,7 +252,7 @@ describe('QualificationPage client side', () => {
             screen.getByRole('link', { name: 'Voir le détail' })
           ).toHaveAttribute(
             'href',
-            '/mes-jeunes/beneficiaire-1/actions/id-action-1'
+            '/mes-jeunes/id-beneficiaire-1/actions/id-action-1'
           )
         })
 

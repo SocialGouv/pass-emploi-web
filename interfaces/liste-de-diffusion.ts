@@ -1,10 +1,10 @@
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
 export type ListeDeDiffusion = {
   id: string
   titre: string
   beneficiaires: Array<
-    BaseBeneficiaire & {
+    IdentiteBeneficiaire & {
       estDansLePortefeuille: boolean
     }
   >

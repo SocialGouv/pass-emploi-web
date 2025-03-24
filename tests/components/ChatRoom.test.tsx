@@ -13,9 +13,9 @@ import {
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
@@ -30,7 +30,7 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/ModalContainer')
 
 describe('<ChatRoom />', () => {
-  const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+  const beneficiaires: IdentiteBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
   let beneficiairesChats: BeneficiaireEtChat[]
@@ -74,7 +74,7 @@ describe('<ChatRoom />', () => {
           onOuvertureMenu={() => {}}
         />,
         {
-          customConseiller: unConseiller({ id: 'id-conseiller' }),
+          customConseiller: unConseiller({ id: 'id-conseiller-1' }),
         }
       )
 
@@ -110,7 +110,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 
@@ -136,7 +136,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 
@@ -175,7 +175,7 @@ describe('<ChatRoom />', () => {
                 onOuvertureMenu={() => {}}
               />,
               {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
+                customConseiller: unConseiller({ id: 'id-conseiller-1' }),
               }
             )
 
@@ -219,7 +219,7 @@ describe('<ChatRoom />', () => {
               cleChiffrement: 'cleChiffrement',
               dateDebut: DateTime.fromISO('2024-04-24'),
               dateFin: DateTime.fromISO('2024-04-30'),
-              idConseiller: 'id-conseiller',
+              idConseiller: 'id-conseiller-1',
               newMessage: messageImportant,
             })
           })
@@ -271,7 +271,7 @@ describe('<ChatRoom />', () => {
                 onOuvertureMenu={() => {}}
               />,
               {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
+                customConseiller: unConseiller({ id: 'id-conseiller-1' }),
               }
             )
 
@@ -323,7 +323,7 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
+            customConseiller: unConseiller({ id: 'id-conseiller-1' }),
           }
         )
 

@@ -4,22 +4,21 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import {
   estFicheMilo,
   FicheBeneficiaireProps,
   Onglet,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
-import DetailsJeune from 'components/jeune/DetailsJeune'
-import PageActionsPortal from 'components/PageActionsPortal'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import DetailsBeneficiaire from 'components/jeune/DetailsBeneficiaire'
+import { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChats } from 'utils/chat/chatsContext'
@@ -27,18 +26,20 @@ import { useCurrentConversation } from 'utils/chat/currentConversationContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-const FicheBeneficiaireMilo = dynamic(
-  () => import('components/jeune/FicheBeneficiaireMilo')
+const OngletsBeneficiaireMilo = dynamic(
+  () => import('components/jeune/OngletsBeneficiaireMilo')
 )
-const FicheBeneficiairePasMilo = dynamic(
-  () => import('components/jeune/FicheBeneficiairePasMilo')
+const OngletsBeneficiairePasMilo = dynamic(
+  () => import('components/jeune/OngletsBeneficiairePasMilo')
 )
 const DeleteBeneficiaireModal = dynamic(
   () => import('components/jeune/DeleteBeneficiaireModal')
 )
 
 function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
-  const { beneficiaire, lectureSeule, metadonneesFavoris } = props
+  const [conseiller] = useConseiller()
+  const { beneficiaire, historiqueConseillers } = props
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const estBeneficiaireMilo = estFicheMilo(props)
 
   const router = useRouter()
@@ -50,7 +51,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   const chats = useChats()
   const [chatIsLoaded, setChatIsLoaded] = useState<boolean>(Boolean(chats))
   const [_, setCurrentConversation] = useCurrentConversation()
-  const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
 
   const [indicateursSemaine, setIndicateursSemaine] = useState<
@@ -103,7 +103,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   useEffect(() => {
     if (estBeneficiaireMilo) {
-      getIndicateursJeuneAlleges(
+      getIndicateursBeneficiaire(
         conseiller.id,
         beneficiaire.id,
         debutSemaine,
@@ -125,24 +125,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   return (
     <>
-      {!lectureSeule && (
-        <PageActionsPortal>
-          <Button
-            onClick={() => setShowModaleDeleteBeneficiaire(true)}
-            style={ButtonStyle.SECONDARY}
-            type='button'
-          >
-            <IconComponent
-              name={IconName.Delete}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Supprimer ce compte
-          </Button>
-        </PageActionsPortal>
-      )}
-
       {showSuppressionCompteBeneficiaireError && (
         <FailureAlert
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
@@ -150,6 +132,67 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
         />
       )}
 
+      <Messages {...props} />
+
+      <DetailsBeneficiaire
+        beneficiaire={beneficiaire}
+        historiqueConseillers={historiqueConseillers}
+        demarches={estBeneficiaireMilo ? undefined : props.demarches}
+        indicateursSemaine={indicateursSemaine}
+        withCreations={!lectureSeule && estBeneficiaireMilo}
+        onSupprimerBeneficiaire={
+          !lectureSeule
+            ? () => setShowModaleDeleteBeneficiaire(true)
+            : undefined
+        }
+        className='mb-6'
+      />
+
+      {estBeneficiaireMilo && (
+        <OngletsBeneficiaireMilo
+          onSwitchTab={switchTab}
+          onLienExterne={setTrackingLabel}
+          {...props}
+        />
+      )}
+
+      {!estBeneficiaireMilo && (
+        <OngletsBeneficiairePasMilo onSwitchTab={switchTab} {...props} />
+      )}
+
+      {showModaleDeleteBeneficiaire && (
+        <DeleteBeneficiaireModal
+          beneficiaire={beneficiaire}
+          onSuccess={() => router.push('/mes-jeunes')}
+          onClose={() => setShowModaleDeleteBeneficiaire(false)}
+          onError={() => {
+            setShowSuppressionCompteBeneficiaireError(true)
+            setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
+          }}
+          labelSuccess='Revenir à mon portefeuille'
+        />
+      )}
+    </>
+  )
+}
+
+export default withTransaction(
+  FicheBeneficiairePage.name,
+  'page'
+)(FicheBeneficiairePage)
+
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function Messages(props: FicheBeneficiaireProps): ReactElement {
+  const [conseiller] = useConseiller()
+  const { beneficiaire } = props
+  const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
+  const estBeneficiaireMilo = estFicheMilo(props)
+
+  return (
+    <>
       {beneficiaire.estAArchiver && (
         <FailureAlert label='La récupération des informations de ce bénéficiaire depuis i-milo a échoué.'>
           <p className='pl-8'>
@@ -239,49 +282,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
           </InformationMessage>
         </div>
       )}
-
-      <div className='mb-6'>
-        <DetailsJeune
-          jeune={beneficiaire}
-          conseiller={conseiller}
-          demarches={estBeneficiaireMilo ? undefined : props.demarches}
-          indicateursSemaine={indicateursSemaine}
-        />
-      </div>
-
-      {estBeneficiaireMilo && (
-        <FicheBeneficiaireMilo
-          onSwitchTab={switchTab}
-          onLienExterne={setTrackingLabel}
-          {...props}
-        />
-      )}
-
-      {!estBeneficiaireMilo && (props.demarches || metadonneesFavoris) && (
-        <FicheBeneficiairePasMilo onSwitchTab={switchTab} {...props} />
-      )}
-
-      {showModaleDeleteBeneficiaire && (
-        <DeleteBeneficiaireModal
-          beneficiaire={beneficiaire}
-          onSuccess={() => router.push('/mes-jeunes')}
-          onClose={() => setShowModaleDeleteBeneficiaire(false)}
-          onError={() => {
-            setShowSuppressionCompteBeneficiaireError(true)
-            setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
-          }}
-          labelSuccess='Revenir à mon portefeuille'
-        />
-      )}
     </>
   )
-}
-
-export default withTransaction(
-  FicheBeneficiairePage.name,
-  'page'
-)(FicheBeneficiairePage)
-
-function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }

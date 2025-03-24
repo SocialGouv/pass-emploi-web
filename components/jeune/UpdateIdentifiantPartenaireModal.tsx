@@ -1,11 +1,16 @@
-import { useRef, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import useMatomo from 'utils/analytics/useMatomo'
-import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface UpdateIdentifiantPartenaireModalProps {
   identifiantPartenaire: string | undefined
@@ -13,19 +18,22 @@ interface UpdateIdentifiantPartenaireModalProps {
   onClose: () => void
 }
 
-export default function UpdateIdentifiantPartenaireModal({
-  identifiantPartenaire,
-  updateIdentifiantPartenaire,
-  onClose,
-}: UpdateIdentifiantPartenaireModalProps) {
+function UpdateIdentifiantPartenaireModal(
+  {
+    identifiantPartenaire,
+    updateIdentifiantPartenaire,
+    onClose,
+  }: UpdateIdentifiantPartenaireModalProps,
+  ref: ForwardedRef<ModalHandles>
+) {
   const MAX_INPUT_LENGTH = 11
 
-  const [portefeuille] = usePortefeuille()
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(identifiantPartenaire)
 
   const modalRef = useRef<ModalHandles>(null)
+  useImperativeHandle(ref, () => modalRef.current!)
 
   function identifiantPartenaireEstValide() {
     return (
@@ -44,7 +52,7 @@ export default function UpdateIdentifiantPartenaireModal({
     identifiantPartenaire
       ? 'Détail jeune - modification identifiant PE'
       : 'Détail jeune - ajout identifiant PE',
-    portefeuille.length > 0
+    true
   )
 
   const titre = identifiantPartenaire
@@ -90,3 +98,5 @@ export default function UpdateIdentifiantPartenaireModal({
     </Modal>
   )
 }
+
+export default forwardRef(UpdateIdentifiantPartenaireModal)

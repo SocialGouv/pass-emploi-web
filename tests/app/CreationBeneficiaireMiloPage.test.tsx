@@ -178,7 +178,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',
-        'beneficiaire-1'
+        'id-beneficiaire-1'
       )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })

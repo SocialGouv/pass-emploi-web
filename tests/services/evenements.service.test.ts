@@ -91,7 +91,7 @@ describe('EvenementsApiService', () => {
     it('met à jour un rendez vous déja existant', async () => {
       // Given
       const rdvFormData: EvenementFormData = {
-        jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
+        jeunesIds: ['id-beneficiaire-1', 'id-beneficiaire-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
         modality: modalites[0],
@@ -113,7 +113,7 @@ describe('EvenementsApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/rendezvous/id-rdv',
         {
-          jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
+          jeunesIds: ['id-beneficiaire-1', 'id-beneficiaire-2'],
           modality: modalites[0],
           date: '2022-03-03T09:30:00.000Z',
           duration: 157,
@@ -132,18 +132,18 @@ describe('EvenementsApiService', () => {
   describe('.getRendezVousConseiller', () => {
     it('url encode les date en paramètres et renvoie les rendez-vous d’un conseiller sur une période définie', async () => {
       // Given
-      const idConseiller = 'idConseiller'
+      const idConseiller = 'id-conseiller-1'
       const listeRdvs = [
         unEvenementJson(),
         unEvenementJson({
           jeunes: [
             {
-              id: '1',
+              id: 'id-beneficiaire-1',
               prenom: 'Kenji',
               nom: 'Jirac',
             },
             {
-              id: '2',
+              id: 'id-beneficiaire-2',
               prenom: 'Nadia',
               nom: 'Sanfamiye',
             },
@@ -166,21 +166,21 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/v2/conseillers/idConseiller/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
+        `/v2/conseillers/id-conseiller-1/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
       expect(actual).toEqual([
         unEvenementListItem({
           beneficiaires: [
-            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
           ],
           nombreMaxParticipants: 10,
         }),
         unEvenementListItem({
           labelBeneficiaires: 'Bénéficiaires multiples',
           beneficiaires: [
-            { id: '1', nom: 'Jirac', prenom: 'Kenji' },
-            { id: '2', nom: 'Sanfamiye', prenom: 'Nadia' },
+            { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'id-beneficiaire-2', nom: 'Sanfamiye', prenom: 'Nadia' },
           ],
           nombreMaxParticipants: 10,
         }),
@@ -357,7 +357,7 @@ describe('EvenementsApiService', () => {
     it('crée un nouvel événement', async () => {
       // Given
       const rdvFormData: EvenementFormData = {
-        jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
+        jeunesIds: ['id-beneficiaire-1', 'id-beneficiaire-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
         modality: modalites[0],
@@ -379,9 +379,9 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/rendezvous',
+        '/conseillers/id-conseiller-1/rendezvous',
         {
-          jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
+          jeunesIds: ['id-beneficiaire-1', 'id-beneficiaire-2'],
           modality: modalites[0],
           type: 'AUTRE',
           date: '2022-03-03T09:30:00.000Z',
@@ -416,7 +416,7 @@ describe('EvenementsApiService', () => {
   describe('.cloreAnimationCollective', () => {
     it('clôt une animation collective', async () => {
       // Given
-      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
 
       // When
       await cloreAnimationCollective('id-rdv', idsJeunes)
@@ -425,7 +425,7 @@ describe('EvenementsApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/structures-milo/animations-collectives/id-rdv/cloturer',
         {
-          idsJeunes: ['beneficiaire-1', 'beneficiaire-2'],
+          idsJeunes: ['id-beneficiaire-1', 'id-beneficiaire-2'],
         },
         'accessToken'
       )

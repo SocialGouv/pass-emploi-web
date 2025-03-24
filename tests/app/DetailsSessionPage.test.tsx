@@ -287,12 +287,12 @@ describe('Détails Session Page Client', () => {
       beneficaires = [
         {
           base: uneBaseBeneficiaire({
-            id: 'beneficiaire-1',
+            id: 'id-beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
           referent: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             nom: 'Le Calamar',
             prenom: 'Carlo',
           },
@@ -301,12 +301,12 @@ describe('Détails Session Page Client', () => {
         },
         {
           base: uneBaseBeneficiaire({
-            id: 'beneficiaire-2',
+            id: 'id-beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
           referent: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             nom: 'Le Calamar',
             prenom: 'Carlo',
           },
@@ -315,12 +315,12 @@ describe('Détails Session Page Client', () => {
         },
         {
           base: uneBaseBeneficiaire({
-            id: 'beneficiaire-3',
+            id: 'id-beneficiaire-3',
             prenom: 'Maggy',
             nom: 'Carpe',
           }),
           referent: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             nom: 'Le Calamar',
             prenom: 'Carlo',
           },
@@ -329,12 +329,12 @@ describe('Détails Session Page Client', () => {
         },
         {
           base: uneBaseBeneficiaire({
-            id: 'beneficiaire-4',
+            id: 'id-beneficiaire-4',
             prenom: 'Tom',
             nom: 'Sawyer',
           }),
           referent: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             nom: 'Le Calamar',
             prenom: 'Carlo',
           },
@@ -353,19 +353,19 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'beneficiaire-3',
+              idJeune: 'id-beneficiaire-3',
               nom: 'Carpe',
               prenom: 'Maggy',
               statut: 'REFUS_JEUNE',
             },
             {
-              idJeune: 'beneficiaire-2',
+              idJeune: 'id-beneficiaire-2',
               nom: 'Puce',
               prenom: 'Octo',
               statut: 'REFUS_TIERS',
             },
             {
-              idJeune: 'beneficiaire-1',
+              idJeune: 'id-beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -451,7 +451,7 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'beneficiaire-1',
+              idJeune: 'id-beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -481,12 +481,12 @@ describe('Détails Session Page Client', () => {
         expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
           {
             commentaire: undefined,
-            idJeune: 'beneficiaire-2',
+            idJeune: 'id-beneficiaire-2',
             statut: 'INSCRIT',
           },
           {
             commentaire: undefined,
-            idJeune: 'beneficiaire-1',
+            idJeune: 'id-beneficiaire-1',
             statut: 'INSCRIT',
           },
         ])
@@ -604,7 +604,7 @@ describe('Détails Session Page Client', () => {
         },
         inscriptions: [
           {
-            idJeune: 'beneficiaire-2',
+            idJeune: 'id-beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
             statut: 'INSCRIT',

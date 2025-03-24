@@ -49,14 +49,14 @@ export function uneListeDOffres(): Offre[] {
 export function uneListeDeRecherches(): Recherche[] {
   return [
     {
-      id: '1',
+      id: 'id-recherche-1',
       titre: 'recherche 1',
       type: 'Offres d’emploi',
       metier: 'metier',
       localisation: 'localisation',
     },
     {
-      id: '2',
+      id: 'id-recherche-2',
       titre: 'recherche 2',
       type: 'Alternances',
       metier: 'metier',
@@ -106,14 +106,14 @@ export function uneListeDOffresJson(): OffreJson[] {
 export function uneListeDeRecherchesJson(): RechercheJson[] {
   return [
     {
-      id: '1',
+      id: 'id-recherche-1',
       titre: 'recherche 1',
       type: 'OFFRES_EMPLOI',
       metier: 'metier',
       localisation: 'localisation',
     },
     {
-      id: '2',
+      id: 'id-recherche-2',
       titre: 'recherche 2',
       type: 'OFFRES_ALTERNANCE',
       metier: 'metier',

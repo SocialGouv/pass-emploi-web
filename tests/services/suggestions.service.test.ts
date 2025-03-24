@@ -12,7 +12,7 @@ describe('SuggestionsApiService', () => {
   describe('.partagerRechercheOffreEmploi', () => {
     it('envoie les bons paramètres de suggestions d’offre d’emploi', async () => {
       // Given
-      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
       const titre = 'Prof - Paris'
       const labelLocalite = 'Paris'
       const motsCles = 'Prof'
@@ -29,7 +29,7 @@ describe('SuggestionsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recherches/suggestions/offres-emploi',
+        '/conseillers/id-conseiller-1/recherches/suggestions/offres-emploi',
         {
           idsJeunes: idsJeunes,
           titre: titre,
@@ -46,7 +46,7 @@ describe('SuggestionsApiService', () => {
   describe('.partagerRechercheAlternance', () => {
     it('envoie les bons paramètres de suggestions d’alternance', async () => {
       // Given
-      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
       const titre = 'Prof - Paris'
       const labelLocalite = 'Paris'
       const motsCles = 'Prof'
@@ -63,7 +63,7 @@ describe('SuggestionsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recherches/suggestions/offres-emploi',
+        '/conseillers/id-conseiller-1/recherches/suggestions/offres-emploi',
         {
           idsJeunes: idsJeunes,
           titre: titre,
@@ -80,7 +80,7 @@ describe('SuggestionsApiService', () => {
   describe('.partagerRechercheImmersion', () => {
     it('envoie les bons paramètres de suggestions d’immersion', async () => {
       // Given
-      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
       const titre = 'Vendeur - Paris'
       const labelMetier = 'Vendeur'
       const codeMetier = 'E1101'
@@ -101,7 +101,7 @@ describe('SuggestionsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recherches/suggestions/immersions',
+        '/conseillers/id-conseiller-1/recherches/suggestions/immersions',
         {
           idsJeunes: idsJeunes,
           titre: titre,
@@ -119,7 +119,7 @@ describe('SuggestionsApiService', () => {
   describe('.partagerRechercheServiceCivique', () => {
     it('envoie les bons paramètres de suggestions de service civique', async () => {
       // Given
-      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
       const titre = 'Paris'
       const labelLocalite = 'Paris'
       const latitude = 2.323026
@@ -136,7 +136,7 @@ describe('SuggestionsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recherches/suggestions/services-civique',
+        '/conseillers/id-conseiller-1/recherches/suggestions/services-civique',
         {
           idsJeunes: idsJeunes,
           titre: titre,

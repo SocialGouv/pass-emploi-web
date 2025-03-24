@@ -24,7 +24,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
   archiverJeune,
-  getIndicateursJeuneAlleges,
+  getIndicateursBeneficiaire,
   getMotifsSuppression,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
@@ -52,7 +52,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
     motifsSuppression = desMotifsDeSuppression()
     ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
@@ -257,7 +257,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           )
 
           // Then
-          expect(archiverJeune).toHaveBeenCalledWith('beneficiaire-1', {
+          expect(archiverJeune).toHaveBeenCalledWith('id-beneficiaire-1', {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
             dateFinAccompagnement,
@@ -311,7 +311,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         )
 
         // Then
-        expect(supprimerJeuneInactif).toHaveBeenCalledWith('beneficiaire-1')
+        expect(supprimerJeuneInactif).toHaveBeenCalledWith('id-beneficiaire-1')
 
         expect(portefeuilleSetter).toHaveBeenCalledWith([
           portefeuille[1],
@@ -370,7 +370,7 @@ async function renderFicheBeneficiaire(
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
       },
       customPortefeuille: { setter: portefeuilleSetter },

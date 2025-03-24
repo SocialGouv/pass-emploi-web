@@ -13,7 +13,10 @@ import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import SpinningLoader from 'components/ui/SpinningLoader'
-import { BaseBeneficiaire, BeneficiaireEtChat } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  IdentiteBeneficiaire,
+} from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { toShortDate } from 'utils/date'
@@ -58,7 +61,7 @@ function DetailMessageListeDeDiffusion(
 
   useEffect(() => {
     function getChatsDestinataires(
-      beneficiaires: BaseBeneficiaire[]
+      beneficiaires: IdentiteBeneficiaire[]
     ): BeneficiaireEtChat[] {
       return chats!.filter((beneficiaireChat) =>
         beneficiaires.some(

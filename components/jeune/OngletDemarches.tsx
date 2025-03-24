@@ -19,7 +19,7 @@ import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
-import { BaseBeneficiaire, Demarche } from 'interfaces/beneficiaire'
+import { Demarche, IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { compareDates, compareDatesDesc, toLongMonthDate } from 'utils/date'
 
@@ -30,7 +30,7 @@ export enum TRI {
 
 interface OngletDemarchesProps {
   demarches: { data: Demarche[]; isStale: boolean } | null
-  jeune: BaseBeneficiaire
+  jeune: IdentiteBeneficiaire
 }
 
 export default function OngletDemarches({
@@ -69,7 +69,7 @@ function TableauDemarche({
   beneficiaire,
 }: {
   demarches: Demarche[]
-  beneficiaire: BaseBeneficiaire
+  beneficiaire: IdentiteBeneficiaire
 }) {
   const listeDemarchesRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)

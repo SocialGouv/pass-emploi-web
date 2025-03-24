@@ -9,8 +9,8 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
-  BaseBeneficiaire,
   compareBeneficiairesByNom,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { Evenement } from 'interfaces/evenement'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
@@ -23,7 +23,7 @@ export type EmargementRdvPageProps = {
 
 function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
   const isSession = assertIsSession(evenement)
-  const inscriptions: Array<BaseBeneficiaire> = isSession
+  const inscriptions: Array<IdentiteBeneficiaire> = isSession
     ? evenement.inscriptions
         .filter(
           (beneficiaire) => beneficiaire.statut === StatutBeneficiaire.INSCRIT

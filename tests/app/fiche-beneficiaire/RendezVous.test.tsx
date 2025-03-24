@@ -18,7 +18,7 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { Structure } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -32,7 +32,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
     })
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
@@ -79,7 +79,7 @@ describe('Rendez-vous de la fiche jeune', () => {
           screen.getByRole('link', { name: 'Voir les événements passés' })
         ).toHaveAttribute(
           'href',
-          '/mes-jeunes/beneficiaire-1/rendez-vous-passes'
+          '/mes-jeunes/id-beneficiaire-1/rendez-vous-passes'
         )
       })
 
@@ -89,7 +89,7 @@ describe('Rendez-vous de la fiche jeune', () => {
           screen.getByRole('link', { name: 'Créer un rendez-vous' })
         ).toHaveAttribute(
           'href',
-          '/mes-jeunes/edition-rdv?idJeune=beneficiaire-1'
+          '/mes-jeunes/edition-rdv?idJeune=id-beneficiaire-1'
         )
       })
     })
@@ -113,7 +113,7 @@ describe('Rendez-vous de la fiche jeune', () => {
             date: '2022-09-01T11:00:00.000Z',
             duree: 120,
             createur: {
-              id: '1',
+              id: 'id-conseiller-1',
             },
             isSession: true,
           },
@@ -168,7 +168,7 @@ async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: 'MILO',
         structureMilo: { id: 'id-test', nom: 'Milo Agence' },
       },
@@ -194,7 +194,7 @@ async function renderFicheJeuneFT(
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structure,
       },
     }

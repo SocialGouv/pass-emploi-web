@@ -10,9 +10,9 @@ import {
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { structureFTCej } from 'interfaces/structure'
@@ -29,7 +29,7 @@ jest.mock('services/listes-de-diffusion.service')
 
 describe('MessageriePage client side', () => {
   let container: HTMLElement
-  const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+  const jeunes: IdentiteBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
   let beneficiairesChats: BeneficiaireEtChat[]

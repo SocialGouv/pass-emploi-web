@@ -17,7 +17,7 @@ import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
@@ -36,7 +36,7 @@ describe('Agenda de la fiche jeune', () => {
     jest.spyOn(DateTime, 'now').mockReturnValue(LUNDI_JANVIER_3)
     replace = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ replace })
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
@@ -58,7 +58,7 @@ describe('Agenda de la fiche jeune', () => {
         />,
         {
           customConseiller: {
-            id: 'id-conseiller',
+            id: 'id-conseiller-1',
             structure: structureFTCej,
           },
         }
@@ -469,7 +469,7 @@ async function renderFicheJeuneMILO() {
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
       },
     }

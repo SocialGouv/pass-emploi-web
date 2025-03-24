@@ -24,7 +24,7 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
-  getIndicateursJeuneAlleges,
+  getIndicateursBeneficiaire,
   modifierDispositif,
 } from 'services/beneficiaires.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -36,7 +36,7 @@ jest.mock('components/ModalContainer')
 
 describe('FicheBeneficiairePage client side', () => {
   beforeEach(async () => {
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
@@ -54,11 +54,11 @@ describe('FicheBeneficiairePage client side', () => {
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={beneficiaire}
+          historiqueConseillers={[]}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           ongletInitial='agenda'
-          lectureSeule={false}
         />,
         {
           customChats: [conversation],
@@ -86,11 +86,11 @@ describe('FicheBeneficiairePage client side', () => {
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={unDetailBeneficiaire()}
+          historiqueConseillers={[]}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           ongletInitial='agenda'
-          lectureSeule={true}
         />,
         {
           customConseiller: { id: 'fake-id' },
@@ -168,6 +168,7 @@ describe('FicheBeneficiairePage client side', () => {
     describe('changement de dispositif', () => {
       beforeEach(async () => {
         // Given
+        ;(modifierDispositif as jest.Mock).mockResolvedValue(undefined)
         await renderFicheJeuneMilo()
 
         // When
@@ -223,7 +224,7 @@ describe('FicheBeneficiairePage client side', () => {
 
         // Then
         expect(modifierDispositif).toHaveBeenCalledWith(
-          'beneficiaire-1',
+          'id-beneficiaire-1',
           'PACEA'
         )
         expect(() =>
@@ -231,18 +232,6 @@ describe('FicheBeneficiairePage client side', () => {
         ).toThrow()
         expect(getByDescriptionTerm('Dispositif')).toHaveTextContent('PACEA')
       })
-    })
-
-    it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
-      // When
-      await renderFicheJeuneMilo()
-
-      // Then
-      expect(
-        screen.getByRole('link', {
-          name: 'Inscrire à une animation collective',
-        })
-      ).toHaveAttribute('href', '/agenda?onglet=etablissement')
     })
 
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
@@ -332,11 +321,11 @@ describe('FicheBeneficiairePage client side', () => {
           <FicheBeneficiairePage
             estMilo={true}
             beneficiaire={unDetailBeneficiaire({ isActivated: false })}
+            historiqueConseillers={[]}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
             ongletInitial='agenda'
-            lectureSeule={false}
           />
         )
 
@@ -431,18 +420,18 @@ async function renderFicheJeuneMilo({
 } = {}): Promise<HTMLElement> {
   const beneficiaire = unDetailBeneficiaire({
     isActivated: isActivated ?? true,
-    situations: situation ? [{ categorie: situation }] : [],
+    situationCourante: situation ?? CategorieSituation.SANS_SITUATION,
   })
 
   const { container } = await renderWithContexts(
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={beneficiaire}
+      historiqueConseillers={[]}
       rdvs={[]}
       actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
       ongletInitial='agenda'
-      lectureSeule={false}
     />,
     {
       customConseiller: {
@@ -475,8 +464,8 @@ async function renderFicheJeuneNonMilo({
     <FicheBeneficiairePage
       estMilo={false}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       ongletInitial={ongletInitial ?? 'offres'}
-      lectureSeule={false}
       metadonneesFavoris={uneMetadonneeFavoris({
         autoriseLePartage: autorisePartageFavoris ?? true,
       })}

@@ -5,26 +5,23 @@ import { ReactElement } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import {
+  FicheMiloProps,
+  FichePasMiloProps,
   Onglet,
-  OngletMilo,
-  OngletPasMilo,
   valeursOngletsMilo,
   valeursOngletsPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
-import {
-  PageFilArianePortal,
-  PageHeaderPortal,
-} from 'components/PageNavigationPortals'
-import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { PageFilArianePortal } from 'components/PageNavigationPortals'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
-import { Offre } from 'interfaces/favoris'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import {
   getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import {
+  getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
@@ -63,46 +60,45 @@ export default async function FicheBeneficiaire({
   const { user, accessToken } = await getMandatorySessionServerSide()
   const { idJeune } = await params
 
-  const [conseiller, beneficiaire, metadonneesFavoris] = await Promise.all([
-    getConseillerServerSide(user, accessToken),
-    getJeuneDetails(idJeune, accessToken),
-    getMetadonneesFavorisJeune(idJeune, accessToken),
-  ])
+  const [conseiller, beneficiaire, metadonneesFavoris, historiqueConseillers] =
+    await Promise.all([
+      getConseillerServerSide(user, accessToken),
+      getJeuneDetails(idJeune, accessToken),
+      getMetadonneesFavorisJeune(idJeune, accessToken),
+      getConseillersDuJeuneServerSide(idJeune, accessToken),
+    ])
   if (!beneficiaire) notFound()
 
-  let offres
+  let favorisOffres
   if (metadonneesFavoris?.autoriseLePartage) {
-    offres = await getOffres(beneficiaire.id, accessToken)
+    favorisOffres = await getOffres(beneficiaire.id, accessToken)
   }
 
   const { page, onglet } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
 
+  const props = {
+    beneficiaire,
+    ongletInitial,
+    historiqueConseillers,
+    metadonneesFavoris,
+    favorisOffres,
+  }
+
   return (
     <>
       <PageFilArianePortal />
-      <PageHeaderPortal header={`${beneficiaire.prenom} ${beneficiaire.nom}`} />
 
       {estMilo(conseiller.structure) &&
         (await renderFicheMilo(
           conseiller,
-          beneficiaire,
           accessToken,
           page ? parseInt(page) : 1,
-          ongletInitial,
-          metadonneesFavoris,
-          offres
+          props
         ))}
 
       {!estMilo(conseiller.structure) &&
-        (await renderFichePasMilo(
-          conseiller,
-          beneficiaire,
-          accessToken,
-          ongletInitial,
-          metadonneesFavoris,
-          offres
-        ))}
+        (await renderFichePasMilo(conseiller, accessToken, props))}
     </>
   )
 }
@@ -126,16 +122,24 @@ function getOngletInitial(
 
 async function renderFicheMilo(
   conseiller: Conseiller,
-  beneficiaire: DetailBeneficiaire,
   accessToken: string,
   page: number,
-  ongletInitial: OngletMilo,
-  metadonneesFavoris?: MetadonneesFavoris,
-  offres?: Offre[]
+  props: Pick<
+    FicheMiloProps,
+    | 'beneficiaire'
+    | 'ongletInitial'
+    | 'historiqueConseillers'
+    | 'metadonneesFavoris'
+    | 'favorisOffres'
+  >
 ): Promise<ReactElement> {
   const [rdvs, actions, categoriesActions] = await Promise.all([
-    getRendezVousJeune(beneficiaire.id, PeriodeEvenements.FUTURS, accessToken),
-    getActionsBeneficiaireServerSide(beneficiaire.id, page, accessToken),
+    getRendezVousJeune(
+      props.beneficiaire.id,
+      PeriodeEvenements.FUTURS,
+      accessToken
+    ),
+    getActionsBeneficiaireServerSide(props.beneficiaire.id, page, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])
 
@@ -143,11 +147,11 @@ async function renderFicheMilo(
   let erreurSessions = false
   if (
     peutAccederAuxSessions(conseiller) &&
-    conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
+    conseiller.structureMilo!.id === props.beneficiaire.structureMilo?.id
   ) {
     try {
       sessionsMilo = await getSessionsMiloBeneficiaire(
-        beneficiaire.id,
+        props.beneficiaire.id,
         accessToken,
         DateTime.now().startOf('day')
       )
@@ -164,15 +168,11 @@ async function renderFicheMilo(
 
   return (
     <FicheBeneficiairePage
-      beneficiaire={beneficiaire}
+      {...props}
       estMilo={true}
-      metadonneesFavoris={metadonneesFavoris}
-      favorisOffres={offres}
       rdvs={rdvsEtSessionsTriesParDate}
       actionsInitiales={{ ...actions, page }}
       categoriesActions={categoriesActions}
-      ongletInitial={ongletInitial}
-      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
       erreurSessions={erreurSessions}
     />
   )
@@ -180,16 +180,20 @@ async function renderFicheMilo(
 
 async function renderFichePasMilo(
   conseiller: Conseiller,
-  beneficiaire: DetailBeneficiaire,
   accessToken: string,
-  ongletInitial: OngletPasMilo,
-  metadonneesFavoris?: MetadonneesFavoris,
-  offres?: Offre[]
+  props: Pick<
+    FichePasMiloProps,
+    | 'beneficiaire'
+    | 'ongletInitial'
+    | 'historiqueConseillers'
+    | 'metadonneesFavoris'
+    | 'favorisOffres'
+  >
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
   const demarches = estConseilDepartemental(conseiller.structure)
     ? await getDemarchesBeneficiaire(
-        beneficiaire.id,
+        props.beneficiaire.id,
         trenteJoursAvant,
         conseiller.id,
         accessToken
@@ -197,19 +201,18 @@ async function renderFichePasMilo(
     : undefined
 
   let recherches
-  if (metadonneesFavoris?.autoriseLePartage) {
-    recherches = await getRecherchesSauvegardees(beneficiaire.id, accessToken)
+  if (props.metadonneesFavoris?.autoriseLePartage) {
+    recherches = await getRecherchesSauvegardees(
+      props.beneficiaire.id,
+      accessToken
+    )
   }
 
   return (
     <FicheBeneficiairePage
-      beneficiaire={beneficiaire}
+      {...props}
       estMilo={false}
-      metadonneesFavoris={metadonneesFavoris}
-      favorisOffres={offres}
       favorisRecherches={recherches}
-      ongletInitial={ongletInitial}
-      lectureSeule={beneficiaire.idConseiller !== conseiller.id}
       demarches={demarches}
     />
   )

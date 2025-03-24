@@ -3,28 +3,26 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type RendezVousPassesProps = {
-  beneficiaire: BaseBeneficiaire
-  lectureSeule: boolean
+  beneficiaire: DetailBeneficiaire
   rdvs: EvenementListItem[]
 }
 
-function RendezVousPassesPage({
-  beneficiaire,
-  lectureSeule,
-  rdvs,
-}: RendezVousPassesProps) {
+function RendezVousPassesPage({ beneficiaire, rdvs }: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
   const trackingLabel = `Détail jeune - Rendez-vous passés ${
-    lectureSeule ? ' - hors portefeuille' : ''
+    !estConseillerReferent(conseiller, beneficiaire)
+      ? ' - hors portefeuille'
+      : ''
   }`
   useMatomo(trackingLabel, portefeuille.length > 0)
 

@@ -28,7 +28,7 @@ describe('Favoris', () => {
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
     ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
       accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: 'MILO' },
+      user: { id: 'id-conseiller-1', structure: 'MILO' },
     })
   })
 
@@ -51,12 +51,7 @@ describe('Favoris', () => {
 
     expect(metadata).toEqual({ title: 'Favoris - Jirac Kenji - Portefeuille' })
     expect(FavorisPage).toHaveBeenCalledWith(
-      {
-        beneficiaire: unDetailBeneficiaire(),
-        offres,
-        recherches,
-        lectureSeule: false,
-      },
+      { beneficiaire: unDetailBeneficiaire(), offres, recherches },
       undefined
     )
   })

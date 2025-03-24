@@ -55,11 +55,7 @@ export default async function RendezVousPasses({
         }
       />
 
-      <RendezVousPassesPage
-        beneficiaire={beneficiaire}
-        rdvs={rdvs}
-        lectureSeule={beneficiaire.idConseiller !== user.id}
-      />
+      <RendezVousPassesPage beneficiaire={beneficiaire} rdvs={rdvs} />
     </>
   )
 }

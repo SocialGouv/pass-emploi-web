@@ -2,20 +2,21 @@ import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 
-type TagProps = {
+type DispositifTagProps = {
   dispositif: string
+  onWhite?: boolean
 }
 
-export default function DispositifTag({ dispositif }: TagProps) {
-  return <TagMetier label={dispositif} className={getStyle(dispositif)} />
+export default function DispositifTag(props: DispositifTagProps) {
+  return <TagMetier label={props.dispositif} className={getStyle(props)} />
 }
 
-function getStyle(dispositif: string): string {
+function getStyle({ dispositif, onWhite }: DispositifTagProps): string {
   switch (dispositif) {
     case 'PACEA':
       return 'text-success bg-success-lighten'
     case 'CEJ':
     default:
-      return 'text-primary bg-primary-lighten'
+      return 'text-primary ' + (onWhite ? 'bg-white' : 'bg-primary-lighten')
   }
 }
