@@ -135,7 +135,7 @@ const CreationEtape = forwardRef(
   ({ etape }: { etape: 1 | 2 }, ref: ForwardedRef<HTMLDivElement>) => {
     return (
       <p
-        className='bg-primary_lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'
+        className='bg-primary-lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'
         ref={ref}
         tabIndex={-1}
       >

@@ -179,13 +179,13 @@ function PilotagePage({
 
   return (
     <>
-      <div className='border border-solid border-grey_100 p-4'>
-        <h2 className='text-m-bold text-grey_800'>Nouvelles activités</h2>
+      <div className='border border-solid border-grey-100 p-4'>
+        <h2 className='text-m-bold text-grey-800'>Nouvelles activités</h2>
 
         <dl className='mt-4 flex gap-8'>
           <div>
             <dt className='text-base-bold'>Les actions</dt>
-            <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+            <dd className='mt-2 rounded-base px-3 py-2 bg-primary-lighten text-primary-darken'>
               <div className='text-xl-bold'>
                 {actions.metadonnees.nombreTotal}
               </div>
@@ -197,7 +197,7 @@ function PilotagePage({
             <>
               <div>
                 <dt className='text-base-bold'>Les animations</dt>
-                <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                <dd className='mt-2 rounded-base px-3 py-2 bg-primary-lighten text-primary-darken'>
                   <div className='text-xl-bold'>
                     {totalAnimationsCollectives}
                   </div>
@@ -209,7 +209,7 @@ function PilotagePage({
                 <div>
                   <dt className='text-base-bold'>Sessions i-milo</dt>
                   {!sessions && (
-                    <dd className='mt-2 rounded-base px-3 py-2 text-warning bg-warning_lighten'>
+                    <dd className='mt-2 rounded-base px-3 py-2 text-warning bg-warning-lighten'>
                       <div className='text-xl-bold flex gap-2 items-center'>
                         <IconComponent
                           name={IconName.Error}
@@ -225,7 +225,7 @@ function PilotagePage({
                     </dd>
                   )}
                   {sessions && (
-                    <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                    <dd className='mt-2 rounded-base px-3 py-2 bg-primary-lighten text-primary-darken'>
                       <div className='text-xl-bold'>{sessions?.length}</div>
                       <span className='text-base-bold'> À clore</span>
                     </dd>
@@ -238,7 +238,7 @@ function PilotagePage({
           <div>
             <dt className='text-base-bold'>Bénéficiaires</dt>
             <dd
-              className={`mt-2 rounded-base px-3 py-2 ${aDesBeneficiairesAArchiver ? 'bg-warning_lighten text-warning' : 'bg-primary_lighten text-primary_darken'}`}
+              className={`mt-2 rounded-base px-3 py-2 ${aDesBeneficiairesAArchiver ? 'bg-warning-lighten text-warning' : 'bg-primary-lighten text-primary-darken'}`}
             >
               <div className='text-xl-bold'>{nbBeneficiairesAArchiver}</div>
               <span className='text-base-bold'> À archiver</span>
@@ -292,7 +292,7 @@ function PilotagePage({
           aria-labelledby='liste-actions-à-qualifier--tab'
           tabIndex={0}
           id='liste-actions-à-qualifier'
-          className='mt-6 pb-8 border-b border-primary_lighten'
+          className='mt-6 pb-8 border-b border-primary-lighten'
         >
           <OngletActionsPilotage
             categories={categoriesActions}
@@ -310,7 +310,7 @@ function PilotagePage({
           aria-labelledby='liste-animations-collectives-a-clore--tab'
           tabIndex={0}
           id='liste-animations-collectives-a-clore'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary-lighten'
         >
           {!animationsCollectivesAffichees && (
             <EncartMissionLocaleRequise
@@ -340,7 +340,7 @@ function PilotagePage({
             aria-labelledby='liste-sessions-i-milo-a-clore--tab'
             tabIndex={0}
             id='liste-sessions-i-milo-a-clore'
-            className='mt-8 pb-8 border-b border-primary_lighten'
+            className='mt-8 pb-8 border-b border-primary-lighten'
           >
             {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
           </div>
@@ -352,7 +352,7 @@ function PilotagePage({
           aria-labelledby='liste-beneficiaires-a-archiver--tab'
           tabIndex={0}
           id='liste-beneficiaires-a-archiver'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary-lighten'
         >
           <OngletBeneficiairesAArchiverPilotage
             beneficiaires={beneficiairesAArchiver}

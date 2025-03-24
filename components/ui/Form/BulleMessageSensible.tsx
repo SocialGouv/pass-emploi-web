@@ -2,7 +2,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { unsafeRandomId } from 'utils/helpers'
 
 export default function BulleMessageSensible() {
-  // TODO toggletip https://inclusive-components.design/tooltips-toggletips/
+  // TODO toggletip https://inclusive-components.design/tooltips-toggletips/ ?
   const labelId = 'warning-propos-' + unsafeRandomId()
   const texte =
     'Attention à nos propos. Ne sont autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.'

@@ -5,15 +5,13 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
+import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import TableauBeneficiaires from 'components/jeune/TableauBeneficiaires'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   BeneficiaireAvecCompteursActionsRdvs,
@@ -162,7 +160,7 @@ function PortefeuillePage({
       </PageActionsPortal>
 
       {conseiller.aDesBeneficiairesARecuperer && (
-        <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
+        <div className='bg-primary-lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}
@@ -183,7 +181,7 @@ function PortefeuillePage({
       {conseillerJeunes.length === 0 &&
         !conseiller.aDesBeneficiairesARecuperer && (
           <div className='w-2/3 m-auto relative'>
-            <h2 className='text-m-bold text-content_color text-center mb-8'>
+            <h2 className='text-m-bold text-content-color text-center mb-8'>
               Vous n’avez pas encore de bénéficiaire rattaché à votre
               portefeuille
               {estFTConnect(conseiller.structure)
@@ -191,9 +189,8 @@ function PortefeuillePage({
                 : ''}
               .
             </h2>
-            <IllustrationComponent
-              name={IllustrationName.CurvyArrow}
-              className='absolute top-0 -right-16 fill-primary w-[100px] [--secondary-fill:theme(colors.primary\_lighten)]'
+            <IllustrationCurvyArrow
+              className='absolute top-0 -right-16 fill-primary w-[100px]'
               aria-hidden={true}
               focusable={false}
             />

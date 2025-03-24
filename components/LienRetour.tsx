@@ -24,7 +24,7 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
     <nav aria-label="Fil d'ariane">
       <Link
         href={returnUrlOrPath}
-        className='flex items-center text-s-regular text-content_color underline hover:text-primary'
+        className='flex items-center text-s-regular text-content-color underline hover:text-primary'
       >
         <IconComponent
           name={IconName.ArrowBackward}

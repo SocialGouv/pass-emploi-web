@@ -79,7 +79,7 @@ function FiltresDispositifs(
         />
         {dispositifSelectionne && (
           <>
-            <Badge count={1} bgColor='primary' textColor='white' size={6} />
+            <Badge count={1} className='text-white bg-primary' />
             <span className='sr-only'> filtre sélectionné</span>
           </>
         )}

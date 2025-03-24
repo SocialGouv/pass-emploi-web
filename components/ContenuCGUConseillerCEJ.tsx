@@ -167,7 +167,7 @@ export default function ContenuCGUConseillerCEJ() {
         L’accès à la Plateforme est ouvert à tout conseiller en Mission Locale
         et conseiller France Travail.
       </p>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         A- Conseiller en Mission Locale
       </h3>
       <p className='mb-4'>
@@ -180,7 +180,7 @@ export default function ContenuCGUConseillerCEJ() {
         d’authentification. Si l’Utilisateur n’est pas encore authentifié dans
         son i-Milo, il s’authentifie via la mire de connexion i-Milo.
       </p>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         B- Conseiller France Travail
       </h3>
       <p className='mb-4'>
@@ -223,7 +223,7 @@ export default function ContenuCGUConseillerCEJ() {
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
         Présentation des Services
       </h2>
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Gestion des bénéficiaires
       </h3>
       <p className='mb-4'>Les Utilisateurs peuvent :</p>
@@ -255,15 +255,15 @@ export default function ContenuCGUConseillerCEJ() {
         </li>
       </ul>
 
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>Module messagerie</h3>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>Module messagerie</h3>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Réception de notifications
       </h4>
       <p className='mb-4'>
         Les Utilisateurs peuvent recevoir des notifications dès lors qu’un
         Usager a interagi avec eux, en leur envoyant un message via le chat.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Ouverture d’une discussion direct afin d’échanger avec l’Usager
       </h4>
       <p className='mb-4'>
@@ -275,21 +275,21 @@ export default function ContenuCGUConseillerCEJ() {
         et inversement, l’Usager est également informé lorsque son conseiller a
         bien lu son message.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Envoi de pièces jointes et de liens URL
       </h4>
       <p className='mb-4'>
         Les Utilisateurs ont la possibilité d’envoyer des pièces-jointes et des
         liens URL à son bénéficiaire.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Envoi de messages multi-destinataires
       </h4>
       <p className='mb-4'>
         Les Utilisateurs peuvent envoyer des messages à un ou plusieurs
         destinataires, ainsi qu’à une liste de diffusion.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Paramétrage d’un message important
       </h4>
       <p className='mb-4'>
@@ -297,28 +297,28 @@ export default function ContenuCGUConseillerCEJ() {
         entre deux plages de dates afin qu’il s’affiche en bandeau dans la
         messagerie.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Masquage de la messagerie
       </h4>
       <p className='mb-4'>
         Les Utilisateurs ont la possibilité de masquer la messagerie pour plus
         de confidentialité.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Recherche dans un message
       </h4>
       <p className='mb-4'>
         Les Utilisateurs ont la possibilité d’effectuer une recherche par mot
         clés dans chaque message.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Gestion des messages
       </h4>
       <p className='mb-4'>
         Les Utilisateurs peuvent modifier ou supprimer un message envoyé.
       </p>
 
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Fonctionnalité agenda pour les conseillers en Mission Locales uniquement
       </h3>
       <p className='mb-4'>
@@ -326,7 +326,7 @@ export default function ContenuCGUConseillerCEJ() {
         emploi du temps, celui des Usagers, ainsi que celui de la Mission
         Locale.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>Les rendez-vous</h4>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>Les rendez-vous</h4>
       <p className='mb-4'>
         Les Utilisateurs peuvent modifier ou supprimer un message envoyé.
       </p>
@@ -353,7 +353,7 @@ export default function ContenuCGUConseillerCEJ() {
         une notification au bénéficiaire.
       </p>
 
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Les ateliers et informations collectives
       </h4>
       <p className='mb-4'>
@@ -386,7 +386,7 @@ export default function ContenuCGUConseillerCEJ() {
         l’application du CEJ.
       </p>
 
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Création et visualisation des actions
       </h3>
       <p className='mb-4'>
@@ -400,7 +400,7 @@ export default function ContenuCGUConseillerCEJ() {
         Tout comme l’Usager, le conseiller peut modifier l’état de l’action,
         passant de « à faire » à « terminée ».
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         La création de SNP depuis la Plateforme
       </h4>
       <p className='mb-4'>
@@ -419,7 +419,7 @@ export default function ContenuCGUConseillerCEJ() {
         administratif dans i-milo.
       </p>
 
-      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Autres fonctionnalités
       </h3>
       <p className='mb-4'>

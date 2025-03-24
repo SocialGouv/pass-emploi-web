@@ -1,6 +1,9 @@
+import Image from 'next/image'
 import React from 'react'
 
+import IllustrationLogoFT from 'assets/images/logo-ft-full.svg'
 import LienPartageOffre from 'components/offres/LienPartageOffre'
+import SectionTitleDot from 'components/offres/SectionTitleDot'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -42,10 +45,10 @@ export default function OffreEmploiDetail({
   )
 
   const sectionTitleStyle =
-    'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
+    'inline-flex items-center w-full text-m-bold text-grey-800 pb-6 border-b border-solid border-primary-lighten'
   const dtStyle = 'mt-6 text-base-bold'
   const ddStyle =
-    'mt-4 text-s-regular pb-4 border-b border-solid border-primary_lighten'
+    'mt-4 text-s-regular pb-4 border-b border-solid border-primary-lighten'
   const ulStyle = 'list-disc list-inside'
   const liStyle = 'mb-4 last:mb-0'
 
@@ -65,9 +68,18 @@ export default function OffreEmploiDetail({
       )}
 
       <div className='max-w-2xl mx-auto'>
-        <p className='text-s-regular mb-2'>
-          {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
-        </p>
+        {offre.origine && (
+          <p className='text-s-regular text-grey-800 mb-2 flex items-center gap-2'>
+            <LogoOrigine {...offre.origine} />
+            Source : {offre.origine.nom}
+          </p>
+        )}
+
+        {dateActualisation && (
+          <p className='text-s-regular text-grey-800 mb-2'>
+            Actualisée le {dateActualisation}
+          </p>
+        )}
         <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 
         <section aria-labelledby='heading-info' className='mt-6'>
@@ -143,7 +155,7 @@ export default function OffreEmploiDetail({
                 <>
                   <dt className='sr-only'>Lien offre</dt>
                   <dd
-                    className={`${ddStyle} text-primary hover:text-primary_darken`}
+                    className={`${ddStyle} text-primary hover:text-primary-darken`}
                   >
                     <ExternalLink
                       href={offre.urlPostulation}
@@ -280,7 +292,7 @@ export default function OffreEmploiDetail({
               {offre.infoEntreprise!.lien && (
                 <>
                   <dt className='sr-only'>Lien site</dt>
-                  <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
+                  <dd className='mt-4 text-base-regular text-primary hover:text-primary-darken'>
                     <ExternalLink
                       href={offre.infoEntreprise!.lien}
                       label="Site de l'entreprise"
@@ -324,13 +336,22 @@ export default function OffreEmploiDetail({
   )
 }
 
-function SectionTitleDot() {
-  return (
-    <IconComponent
-      name={IconName.DecorativePoint}
-      focusable={false}
-      aria-hidden={true}
-      className='inline w-2 h-2 fill-primary mr-4'
-    />
-  )
+function LogoOrigine({ logo, nom }: { nom: string; logo?: string }) {
+  const style = 'p-1 rounded-base border border-primary-lighten'
+
+  if (nom === 'France Travail')
+    return (
+      <IllustrationLogoFT
+        aria-hidden={true}
+        focusable={false}
+        className={style + ' h-10'}
+      />
+    )
+  else if (!logo) return null
+  else
+    return (
+      <span aria-hidden={true} className={style + ' relative block h-20 w-20'}>
+        <Image src={logo} alt='' fill={true} className='object-cover' />
+      </span>
+    )
 }

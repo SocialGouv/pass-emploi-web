@@ -8,13 +8,14 @@ import React, {
   useState,
 } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-send-grey.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
+import EmptyState from 'components/EmptyState'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion, OfDay } from 'interfaces/message'
@@ -109,7 +110,7 @@ function MessagesListeDeDiffusion(
 
       {messagerieEstVisible && (
         <>
-          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+          <div className='hidden layout-s:block w-fit ml-4 mb-8'>
             <ButtonLink
               href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
               style={ButtonStyle.TERTIARY}
@@ -129,15 +130,11 @@ function MessagesListeDeDiffusion(
             {!messages && <SpinningLoader />}
 
             {messages && messages.length === 0 && (
-              <div className='flex flex-col justify-center items-center'>
-                <EmptyStateImage
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-[360px] h-[200px]'
+              <div className='bg-grey-100 flex flex-col justify-center items-center'>
+                <EmptyState
+                  illustrationName={IllustrationName.Send}
+                  titre='Vous n’avez envoyé aucun message à cette liste de diffusion'
                 />
-                <p className='mt-4 text-base-medium w-2/3 text-center'>
-                  Vous n’avez envoyé aucun message à cette liste de diffusion
-                </p>
               </div>
             )}
 

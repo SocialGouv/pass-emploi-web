@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'

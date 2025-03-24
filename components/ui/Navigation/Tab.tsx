@@ -33,7 +33,7 @@ export default function Tab({
         aria-controls={controls}
         aria-selected={selected}
         onClick={onSelectTab}
-        className={`h-full text-base-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
+        className={`h-full text-base-medium text-grey-800 px-4 pb-2 flex items-center cursor-pointer ${
           selected
             ? 'text-base-bold border-b-4 border-b-primary'
             : 'hover:font-bold'
@@ -47,7 +47,7 @@ export default function Tab({
             className={`shrink-0 w-4 h-4 mr-2 ${
               selected
                 ? 'fill-primary stroke-primary'
-                : 'fill-grey_800 stroke-grey_800'
+                : 'fill-grey-800 stroke-grey-800'
             }`}
           />
         )}
@@ -57,10 +57,12 @@ export default function Tab({
             <span className='sr-only'> </span>
             <Badge
               count={count}
-              textColor={accentuer ? 'white' : 'primary'}
-              bgColor={accentuer ? 'warning' : 'primary_lighten'}
-              style='shrink-0 ml-4'
-              size={6}
+              className={
+                'shrink-0 ml-4 ' +
+                (accentuer
+                  ? 'text-white bg-warning'
+                  : 'text-primary bg-primary-lighten')
+              }
             />
             <span className='sr-only'> éléments</span>
           </>

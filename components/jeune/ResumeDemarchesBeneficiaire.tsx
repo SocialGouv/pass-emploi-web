@@ -51,35 +51,32 @@ export function ResumeDemarchesBeneficiaire({
     )
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800'>Cette semaine</h2>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h2 className='text-m-bold text-grey-800'>Cette semaine</h2>
       <p className='mb-4'>
         du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
       <div
         className={`flex flex-wrap gap-6 ${!demarches ? 'animate-pulse' : ''}`}
       >
-        <div className='text-content_color text-base-bold'>
+        <div className='text-content-color text-base-bold'>
           <h3 className='mb-2'>Les démarches</h3>
           <ul className='flex gap-2'>
             <TileIndicateur
               valeur={demarchesCrees.length.toString() ?? '-'}
               label={demarchesCrees.length !== 1 ? 'Créées' : 'Créée'}
-              bgColor='primary_lighten'
-              textColor='primary_darken'
+              color='PRIMARY'
             />
             <TileIndicateur
               valeur={demarchesTerminees.length.toString() ?? '-'}
               label={demarchesTerminees.length !== 1 ? 'Terminées' : 'Terminée'}
-              bgColor='accent_3_lighten'
-              textColor='primary'
+              color='ACCENT_3'
               iconName={IconName.CheckCircleFill}
             />
             <TileIndicateur
               valeur={demarchesEnRetard.length.toString() ?? '-'}
               label='En retard'
-              bgColor='warning_lighten'
-              textColor='warning'
+              color='WARNING'
               iconName={IconName.Error}
             />
           </ul>

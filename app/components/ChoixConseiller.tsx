@@ -9,7 +9,7 @@ import React, {
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
@@ -161,13 +161,13 @@ function ChoixConseiller(
           )}
           <fieldset
             ref={listeRef}
-            className='grid grid-cols-[auto,1fr,2fr] gap-2 pb-2'
+            className='grid grid-cols-[auto_1fr_2fr] gap-2 pb-2'
           >
             <legend className='sr-only'>Choix du conseiller {name}</legend>
             {choixConseillers.map((conseiller) => (
               <label
                 key={conseiller.id}
-                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary_lighten shadow-m' : 'shadow-base'} focus-within:bg-primary_lighten hover:bg-primary_lighten`}
+                className={`grid grid-cols-subgrid grid-rows-1 col-span-3 cursor-pointer rounded-base p-4 ${idConseillerSelectionne === conseiller.id ? 'bg-primary-lighten shadow-m' : 'shadow-base'} focus-within:bg-primary-lighten hover:bg-primary-lighten`}
               >
                 <input
                   type='radio'

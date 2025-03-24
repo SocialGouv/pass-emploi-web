@@ -1,3 +1,5 @@
+import { StatutAnimationCollective } from 'interfaces/evenement'
+
 export type Session = {
   session: {
     id: string
@@ -11,7 +13,7 @@ export type Session = {
     autoinscription: boolean
     animateur?: string
     commentaire?: string
-    statut: string
+    statut: StatutAnimationCollective
   }
   offre: {
     titre: string

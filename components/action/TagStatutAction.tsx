@@ -13,25 +13,17 @@ export default function TagStatutAction({
   status,
   actionEstEnRetard,
 }: TagStatutActionProps) {
-  const { label, color, altColor: backgroundColor } = determineAttributs()
+  const { label, style } = determineAttributs()
 
   function determineAttributs() {
     if (actionEstEnRetard)
       return {
         label: 'En retard',
-        color: 'warning',
-        altColor: 'warning_lighten',
+        style: 'text-warning bg-warning-lighten',
       }
 
     return propsStatutsActions[status]
   }
 
-  return (
-    <TagStatut
-      label={label}
-      color={color}
-      backgroundColor={backgroundColor}
-      className='text-s-bold'
-    />
-  )
+  return <TagStatut label={label} className={style + ' text-s-bold'} />
 }

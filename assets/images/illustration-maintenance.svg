@@ -1,10 +1,10 @@
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 181 180">
-    <circle cx="123.2" cy="127" r="27.8" transform="rotate(-90 123.2 127)" fill="#FFC6A6"/>
-    <circle cx="57.5" cy="53.8" r="27.8" transform="rotate(-90 57.5 53.8)" fill="#FFC6A6"/>
-    <path transform="rotate(-83.2 134.5 62)" fill="#FFC6A6" d="M134.5 62H153.3V80.8H134.5z"/>
-    <path transform="rotate(-77.3 25.5 138.7)" fill="#FFC6A6" d="M25.5 138.7H44.3V157.5H25.5z"/>
+<svg fill="var(--color-alert)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 181 180">
+    <circle cx="123.2" cy="127" r="27.8" transform="rotate(-90 123.2 127)" fill="var(--secondary-fill)"/>
+    <circle cx="57.5" cy="53.8" r="27.8" transform="rotate(-90 57.5 53.8)" fill="var(--secondary-fill)"/>
+    <path transform="rotate(-83.2 134.5 62)" fill="var(--secondary-fill)" d="M134.5 62H153.3V80.8H134.5z"/>
+    <path transform="rotate(-77.3 25.5 138.7)" fill="var(--secondary-fill)" d="M25.5 138.7H44.3V157.5H25.5z"/>
     <path d="M92 48.3a43.8 43.8 0 0 0-44.2 43.4c0 23.9 19.8 43.3 44.2 43.3a43.8 43.8 0 0 0 44.2-43.3c0-24-19.8-43.4-44.2-43.4Z"
-          fill="#FF975C"/>
+          fill="inherit"/>
     <path d="m107.4 111.6-.7-.1-.5-.4-11.8-11.9-.4-.5-.1-.6v-.6l.5-.6 4-4 .6-.5h.6a1.5 1.5 0 0 1 1.2.4l11.8 11.9.4.5.1.6v.6l-.5.6-4 4.1-.6.4h-.6Zm-28.2 0-.7-.1-.5-.4-4.1-4-.4-.6a1.9 1.9 0 0 1 0-1.3l.4-.5L85 93.6h4.2l1.8-1.8-8.6-8.6h-2.8l-6.2-6.3 5-5 6.3 6.2V81l8.5 8.5 6.4-6.3-3.3-3.3 2.7-2.6h-5.5l-1-1 6.5-6.5 1 1v5.4l2.7-2.7 8.4 8.4c.5.5.9 1.1 1.2 1.8a5.6 5.6 0 0 1 0 4c-.2.7-.5 1.2-1 1.7l-4.1-4.2-2.8 2.8-2.6-2.6-10.3 10.4v4.2L80.3 111l-.5.4h-.6Z"
-          fill="#fff"/>
+          fill="var(--color-white)"/>
 </svg>

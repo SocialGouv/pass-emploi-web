@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React from 'react'
 
-import { LienVersFavoris } from 'components/jeune/BlocFavoris'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/beneficiaire'
@@ -25,7 +24,7 @@ export function BlocIndicateurs({
 }) {
   return (
     <>
-      <h2 className='text-m-bold text-grey_800 mb-6'>
+      <h2 className='text-m-bold text-grey-800 mb-6'>
         Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
       </h2>
       <IndicateursActions
@@ -55,34 +54,30 @@ function IndicateursActions({
   pathPrefix,
 }: IndicateursActionsProps) {
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
+    <div className='border border-solid rounded-base w-full p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les actions</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur
           valeur={actions?.creees.toString() ?? '-'}
           label={actions?.creees !== 1 ? 'Créées' : 'Créée'}
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={actions?.enRetard.toString() ?? '-'}
           label='En retard'
-          bgColor='alert_lighten'
-          textColor='content_color'
+          color='ALERT'
           iconName={IconName.Error}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}
           label={actions?.terminees !== 1 ? 'Terminées' : 'Terminée'}
-          bgColor='accent_2_lighten'
-          textColor='accent_2'
+          color='ACCENT_2'
           iconName={IconName.CheckCircleFill}
         />
         <TileIndicateur
           valeur={actions?.aEcheance.toString() ?? '-'}
           label='Échéance cette semaine'
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
       <LienVersActions
@@ -97,14 +92,13 @@ function IndicateursRendezvous({
   rendezVous,
 }: Pick<IndicateursSemaine, 'rendezVous'>) {
   return (
-    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les événements</h3>
       <ul className='flex'>
         <TileIndicateur
           valeur={rendezVous?.toString() ?? '-'}
           label='Cette semaine'
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
     </div>
@@ -125,16 +119,15 @@ function IndicateursOffres({
   metadonneesFavoris,
 }: IndicateursOffresProps) {
   return (
-    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey-100'>
+      <h3 className='text-m-bold text-content-color mb-4'>Les offres</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur
           valeur={offres?.consultees.toString() ?? '-'}
           label={
             offres?.consultees !== 1 ? 'Offres consultées' : 'Offre consultée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={favoris?.offresSauvegardees.toString() ?? '-'}
@@ -143,16 +136,14 @@ function IndicateursOffres({
               ? 'Favoris ajoutés'
               : 'Favori ajouté'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={offres?.partagees.toString() ?? '-'}
           label={
             offres?.partagees !== 1 ? 'Offres partagées' : 'Offre partagée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
         <TileIndicateur
           valeur={favoris?.recherchesSauvegardees.toString() ?? '-'}
@@ -161,8 +152,7 @@ function IndicateursOffres({
               ? 'Recherches sauvegardées'
               : 'Recherche sauvegardée'
           }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
+          color='PRIMARY'
         />
       </ul>
       {metadonneesFavoris?.autoriseLePartage && (
@@ -174,6 +164,7 @@ function IndicateursOffres({
     </div>
   )
 }
+
 function LienVersActions({
   idBeneficiaire,
   pathPrefix,
@@ -185,9 +176,34 @@ function LienVersActions({
     <div className='flex justify-end mt-4'>
       <Link
         href={`${pathPrefix}/${idBeneficiaire}?onglet=actions`}
-        className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
+        className='flex float-right items-center text-content-color underline hover:text-primary hover:fill-primary'
       >
         Voir toutes les actions
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </Link>
+    </div>
+  )
+}
+
+export function LienVersFavoris({
+  idBeneficiaire,
+  pathPrefix,
+}: {
+  idBeneficiaire: string
+  pathPrefix: string
+}) {
+  return (
+    <div className='flex justify-end mt-4'>
+      <Link
+        href={`${pathPrefix}/${idBeneficiaire}/favoris`}
+        className='flex items-center text-content-color underline hover:text-primary hover:fill-primary'
+      >
+        Voir tous les favoris
         <IconComponent
           name={IconName.ChevronRight}
           className='w-4 h-5 fill-[inherit]'

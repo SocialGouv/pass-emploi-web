@@ -40,19 +40,19 @@ function DetailDemarchePage({
         </div>
       )}
 
-      <div className='border-b-2 border-solid border-primary_lighten mb-5 pb-5'>
-        <h2 className='text-m-bold text-grey_800 mb-6'>Statut</h2>
+      <div className='border-b-2 border-solid border-primary-lighten mb-5 pb-5'>
+        <h2 className='text-m-bold text-grey-800 mb-6'>Statut</h2>
         <span className='text-base-bold'>
           {propsStatutsDemarches[demarche.statut].label}
         </span>
       </div>
 
-      <div className='border-b-2 border-primary_lighten mt-8'>
-        <h2 className='text-m-bold text-grey_800 mb-5'>
+      <div className='border-b-2 border-primary-lighten mt-8'>
+        <h2 className='text-m-bold text-grey-800 mb-5'>
           Informations sur la démarche
         </h2>
 
-        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)] gap-6 pb-6'>
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,auto)] gap-6 pb-6'>
           <dt className='text-base-bold'>Catégorie :</dt>
           <dd className='text-base-regular'>{demarche.label}</dd>
 

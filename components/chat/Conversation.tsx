@@ -15,7 +15,7 @@ import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
@@ -48,7 +48,6 @@ type ConversationProps = {
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
   beneficiaireChat: BeneficiaireEtChat
-  shouldFocusOnFirstRender: boolean
   toggleAfficherRecherche: () => void
 }
 
@@ -57,7 +56,6 @@ export function Conversation({
   onBack,
   getConseillerNomComplet,
   beneficiaireChat,
-  shouldFocusOnFirstRender,
   toggleAfficherRecherche,
 }: ConversationProps) {
   const NB_MESSAGES_PAR_PAGE = 10
@@ -304,12 +302,12 @@ export function Conversation({
   useEffect(() => {
     if (!nombrePagesChargees) return
 
-    if (!messagesByDay!.length && shouldFocusOnFirstRender) {
+    if (!messagesByDay!.length) {
       headerChatRef.current!.focusRetour()
       return
     }
 
-    if (nombrePagesChargees === 1 && shouldFocusOnFirstRender) {
+    if (nombrePagesChargees === 1) {
       focusDernierMessage()
       return
     }
@@ -432,11 +430,11 @@ export function Conversation({
 
                 {messagesByDay.length === 0 && (
                   <>
-                    <p className='text-base-bold text-center text-content_color'>
+                    <p className='text-base-bold text-center text-content-color'>
                       Ceci est le début de votre conversation avec votre
                       bénéficiaire.
                     </p>
-                    <p className='text-base-regular text-center text-content_color mt-4'>
+                    <p className='text-base-regular text-center text-content-color mt-4'>
                       Écrivez votre premier message !
                     </p>
                     <div className='text-primary text-center mt-4'>
@@ -456,10 +454,10 @@ export function Conversation({
                       </p>
                     </div>
                     <IllustrationComponent
-                      name={IllustrationName.SendWhite}
+                      name={IllustrationName.Send}
                       focusable={false}
                       aria-hidden={true}
-                      className='w-48 h-48 m-auto mt-8 [--secondary-fill:theme(colors.grey\_100)]'
+                      className='w-48 h-48 m-auto mt-8 fill-disabled [--secondary-fill:var(--color-white)]'
                     />
                   </>
                 )}
@@ -579,11 +577,11 @@ export function Conversation({
               )}
 
               <div
-                className='p-4 bg-white rounded-base border text-base-bold border-grey_700 focus-within:[outline:auto]'
+                className='p-4 bg-white rounded-base border text-base-bold border-grey-700 focus-within:[outline:auto]'
                 onClick={() => inputRef.current!.focus()}
               >
                 {uploadedFileInfo && (
-                  <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
+                  <div className='flex px-2 py-1 rounded-base bg-primary-lighten w-fit mb-4'>
                     <p className='break-all overflow-y-auto max-h-56'>
                       {uploadedFileInfo.nom}
                     </p>
@@ -611,7 +609,7 @@ export function Conversation({
                 <textarea
                   ref={inputRef}
                   id='input-new-message'
-                  className='w-full outline-none text-base-regular'
+                  className='w-full outline-hidden text-base-regular'
                   onFocus={() => setReadByConseiller(beneficiaireChat.chatId)}
                   onChange={(e) => setUserInput(e.target.value)}
                   title='Écrivez votre message ici...'
@@ -625,7 +623,7 @@ export function Conversation({
                   aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
                   title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
                   disabled={!userInput && !Boolean(uploadedFileInfo)}
-                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
+                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey-500 disabled:cursor-not-allowed absolute bottom-0'
                 >
                   <IconComponent
                     name={IconName.Send}

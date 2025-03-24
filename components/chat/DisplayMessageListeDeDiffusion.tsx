@@ -26,8 +26,8 @@ export default function DisplayMessageListeDeDiffusion({
     <>
       <div
         id={id}
-        className={`text-base-regular break-words p-4 rounded-base text-content_color ${
-          messagerieFullScreen ? 'bg-grey_100' : 'bg-white'
+        className={`text-base-regular break-words p-4 rounded-base text-content-color ${
+          messagerieFullScreen ? 'bg-grey-100' : 'bg-white'
         } mb-1`}
       >
         <p className='whitespace-pre-wrap'>
@@ -36,12 +36,11 @@ export default function DisplayMessageListeDeDiffusion({
 
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
-          message.infoPiecesJointes.map(({ id: idPieceJointe, nom }) => (
+          message.infoPiecesJointes.map((infoFichier) => (
             <LienPieceJointe
-              key={idPieceJointe}
-              id={id}
-              nom={nom}
-              className='fill-primary'
+              key={infoFichier.id}
+              infoFichier={infoFichier}
+              isSentByConseiller={true}
             />
           ))}
 

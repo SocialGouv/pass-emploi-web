@@ -39,7 +39,7 @@ function DeleteBeneficiaireInactifModal(
       onClose={onClose}
       titleIllustration={IllustrationName.Delete}
     >
-      <p className='mt-6 text-base-regular text-content_color text-center'>
+      <p className='mt-6 text-base-regular text-content-color text-center'>
         Une fois confirmée toutes les informations liées à ce compte jeune
         seront supprimées.
       </p>

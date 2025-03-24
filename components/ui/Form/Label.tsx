@@ -25,7 +25,7 @@ export default function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className='flex flex-wrap items-baseline text-content_color mb-3'
+      className='flex flex-wrap items-baseline text-content-color mb-3'
     >
       <span className='text-base-regular'>
         {inputRequired && <span>*&nbsp;</span>}

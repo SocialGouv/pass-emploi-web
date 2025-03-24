@@ -35,7 +35,7 @@ export default function FicheBeneficiairePasMilo({
 }) {
   const conseillerEstCD = demarches !== undefined
 
-  const afficherFavoris = metadonneesFavoris?.autoriseLePartage
+  const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
@@ -50,9 +50,9 @@ export default function FicheBeneficiairePasMilo({
     <>
       {!conseillerEstCD && (
         <>
-          {afficherFavoris && (
+          {afficherSuiviOffres && (
             <>
-              <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+              <h2 className='text-m-bold text-grey-800 mb-4'>Favoris</h2>
               <p className='text-base-regular'>
                 Retrouvez les offres et recherches que votre bénéficiaire a
                 mises en favoris.
@@ -62,7 +62,7 @@ export default function FicheBeneficiairePasMilo({
 
           {afficherSyntheseFavoris && (
             <>
-              <h2 className='text-m-bold text-grey_800 mb-6'>Favoris</h2>
+              <h2 className='text-m-bold text-grey-800 mb-6'>Favoris</h2>
               <p className='mb-4'>
                 Retrouvez la synthèse des offres et recherches que votre
                 bénéficiaire a mises en favoris.
@@ -86,10 +86,10 @@ export default function FicheBeneficiairePasMilo({
             iconName={IconName.ChecklistRtlFill}
           />
         )}
-        {afficherFavoris && (
+        {afficherSuiviOffres && (
           <>
             <Tab
-              label='Offres'
+              label='Suivi des offres'
               count={favorisOffres!.length}
               selected={currentTab === 'offres'}
               controls='liste-offres'
@@ -104,7 +104,7 @@ export default function FicheBeneficiairePasMilo({
             />
           </>
         )}
-        {afficherSyntheseFavoris && (
+        {!afficherSuiviOffres && afficherSyntheseFavoris && (
           <Tab
             label='Synthèse des favoris'
             count={
@@ -121,9 +121,9 @@ export default function FicheBeneficiairePasMilo({
       {currentTab === 'demarches' && demarches !== undefined && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-offres--tab'
+          aria-labelledby='liste-demarches--tab'
           tabIndex={0}
-          id='liste-offres'
+          id='liste-demarches'
           className='mt-8 pb-8'
         >
           <OngletDemarches demarches={demarches} jeune={beneficiaire} />
@@ -154,7 +154,7 @@ export default function FicheBeneficiairePasMilo({
         </div>
       )}
 
-      {currentTab === 'favoris' && metadonneesFavoris && (
+      {currentTab === 'favoris' && (
         <div
           role='tabpanel'
           aria-labelledby='favoris--tab'
@@ -162,7 +162,7 @@ export default function FicheBeneficiairePasMilo({
           id='favoris'
           className='mt-8 pb-8'
         >
-          <ResumeFavorisBeneficiaire metadonneesFavoris={metadonneesFavoris} />
+          <ResumeFavorisBeneficiaire metadonneesFavoris={metadonneesFavoris!} />
         </div>
       )}
     </>

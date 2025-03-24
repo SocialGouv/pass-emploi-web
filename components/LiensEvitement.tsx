@@ -23,7 +23,7 @@ export default function LiensEvitement() {
       <li>
         <a
           href={`#${ID_CONTENU}`}
-          className='text-primary_darken hover:text-primary'
+          className='text-primary-darken hover:text-primary'
         >
           Aller au contenu
         </a>
@@ -31,7 +31,7 @@ export default function LiensEvitement() {
       <li>
         <a
           href={`#${ID_MENU}`}
-          className='text-primary_darken hover:text-primary'
+          className='text-primary-darken hover:text-primary'
         >
           Aller au menu
         </a>
@@ -40,7 +40,7 @@ export default function LiensEvitement() {
         <li>
           <a
             href={`#${ID_CHAT}`}
-            className='text-primary_darken hover:text-primary'
+            className='text-primary-darken hover:text-primary'
           >
             Aller aux conversations
           </a>

@@ -12,7 +12,6 @@ import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
-import { StatutAnimationCollective } from 'interfaces/evenement'
 import {
   estAClore,
   InformationBeneficiaireSession,
@@ -118,8 +117,7 @@ function ClotureSessionPage({
   function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
     const isChecked = tailleSelection === session.inscriptions.length
-    const isIndeterminate =
-      tailleSelection !== session.inscriptions.length && tailleSelection > 0
+    const isIndeterminate = !isChecked && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -199,9 +197,6 @@ function ClotureSessionPage({
             <TR isHeader={true}>
               <TH>
                 <input
-                  disabled={
-                    session.session.statut === StatutAnimationCollective.Close
-                  }
                   id='cloture-tout-selectionner'
                   type='checkbox'
                   title='Tout sélectionner'
@@ -226,11 +221,9 @@ function ClotureSessionPage({
                     className={`${
                       beneficiaire.statut === StatutBeneficiaire.PRESENT
                         ? 'text-disabled'
-                        : 'before:fixed before:inset-0 before:z-10 cursor-pointer'
+                        : 'before:absolute before:inset-0 before:z-10 cursor-pointer'
                     }`}
                   >
-                    {/* FIXME title != label */}
-                    {/* FIXME title pas hoverable à cause de "before:z-10" ? */}
                     <input
                       disabled={
                         beneficiaire.statut === StatutBeneficiaire.PRESENT
@@ -241,10 +234,6 @@ function ClotureSessionPage({
                         Boolean(
                           idsSelectionnes.includes(beneficiaire.idJeune)
                         ) || beneficiaire.statut === StatutBeneficiaire.PRESENT
-                      }
-                      title={
-                        'Sélectionner ' +
-                        `${beneficiaire.prenom} ${beneficiaire.nom}`
                       }
                       onChange={() => modifierStatutBeneficiaire(beneficiaire)}
                       className='mr-4'

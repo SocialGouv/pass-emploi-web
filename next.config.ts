@@ -47,11 +47,6 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  i18n: {
-    locales: ['fr-FR'],
-    defaultLocale: 'fr-FR',
-  },
-
   rewrites: async () => ({
     beforeFiles: [
       {
@@ -84,6 +79,17 @@ const nextConfig: NextConfig = {
     )
 
     return config
+  },
+
+  images: {
+    remotePatterns: (process.env.LOGO_AUTHORIZED_URL ?? '')
+      .split(',')
+      .map((authorizedUrl) => ({
+        protocol: 'https',
+        hostname: authorizedUrl,
+        port: '',
+        search: '',
+      })),
   },
 }
 

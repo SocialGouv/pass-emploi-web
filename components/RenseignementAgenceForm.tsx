@@ -1,7 +1,7 @@
 import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
@@ -122,7 +122,7 @@ export default function RenseignementAgenceForm({
           className={`mt-2 border border-solid rounded-base w-full ${
             agenceLibre.error
               ? 'border-warning text-warning'
-              : 'border-content_color'
+              : 'border-content-color'
           }`}
         />
       </div>

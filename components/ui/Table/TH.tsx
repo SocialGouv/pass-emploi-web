@@ -11,8 +11,8 @@ export function TH({
   estCliquable = false,
   title,
 }: THProps): ReactElement {
-  const style = `text-s-medium text-left text-content_color ${
-    estCliquable ? 'hover:rounded-base hover:bg-primary_lighten' : 'p-4'
+  const style = `text-s-medium text-left text-content-color ${
+    estCliquable ? 'hover:rounded-base hover:bg-primary-lighten' : 'p-4'
   }`
 
   return (

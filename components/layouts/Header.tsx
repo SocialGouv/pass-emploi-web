@@ -12,7 +12,7 @@ export default function Header() {
       id={ID_CONTENU}
       tabIndex={-1}
       role='banner'
-      className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'
+      className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary-lighten'
     >
       <div id={PAGE_NAVIGATION_ROOT_ID} />
       <div id={PAGE_ACTIONS_ROOT_ID} className='flex gap-6' />

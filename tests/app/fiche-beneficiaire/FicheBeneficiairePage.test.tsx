@@ -16,7 +16,11 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { CategorieSituation, Demarche } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireEtChat,
+  CategorieSituation,
+  Demarche,
+} from 'interfaces/beneficiaire'
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { recupererAgenda } from 'services/agenda.service'
 import {
@@ -25,7 +29,6 @@ import {
 } from 'services/beneficiaires.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { CurrentConversation } from 'utils/chat/currentConversationContext'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
@@ -65,17 +68,14 @@ describe('FicheBeneficiairePage client side', () => {
       )
 
       // Then
-      expect(setCurrentConversation).toHaveBeenCalledWith({
-        conversation,
-        shouldFocusOnRender: false,
-      })
+      expect(setCurrentConversation).toHaveBeenCalledWith(conversation)
     })
   })
 
   describe('pour les conseillers non référent', () => {
     let container: HTMLElement
     let setCurrentConversation: Dispatch<
-      SetStateAction<CurrentConversation | undefined>
+      SetStateAction<BeneficiaireEtChat | undefined>
     >
     beforeEach(async () => {
       // Given
@@ -306,7 +306,7 @@ describe('FicheBeneficiairePage client side', () => {
       await renderFicheJeuneNonMilo()
 
       // Then
-      expect(screen.getByText('Offres')).toBeInTheDocument()
+      expect(screen.getByText('Suivi des offres')).toBeInTheDocument()
       expect(screen.getByText('Recherches')).toBeInTheDocument()
     })
 

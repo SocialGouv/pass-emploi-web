@@ -16,7 +16,7 @@ export default function InformationMessage({
   onAcknowledge,
 }: InformationMessageProps) {
   return (
-    <div className='p-6 bg-primary_lighten rounded-base text-primary'>
+    <div className='p-6 bg-primary-lighten rounded-base text-primary'>
       <div className='flex justify-between'>
         <div className='flex items-center'>
           <IconComponent
@@ -44,7 +44,7 @@ export default function InformationMessage({
         )}
       </div>
       {children && (
-        <div className='mt-2 [&_a]:hover:text-primary_darken'>{children}</div>
+        <div className='mt-2 [&_a]:hover:text-primary-darken'>{children}</div>
       )}
     </div>
   )

@@ -21,11 +21,11 @@ export function DataTag({
   function getBackground(): string {
     switch (style) {
       case 'primary':
-        return 'bg-primary_lighten'
+        return 'bg-primary-lighten'
       case 'secondary':
         return 'bg-white'
       case 'additional':
-        return 'bg-additional_5_lighten'
+        return 'bg-additional-5-lighten'
     }
   }
 
@@ -35,7 +35,7 @@ export function DataTag({
       case 'secondary':
         return 'text-primary'
       case 'additional':
-        return 'text-content_color'
+        return 'text-content-color'
     }
   }
 

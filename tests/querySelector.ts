@@ -51,7 +51,7 @@ export function getByTextContent(
 ): HTMLElement {
   const root = parent ? within(parent) : screen
   return root.getByText((_, element) => {
-    const hasText = (element: Element | null) => element?.textContent === text
+    const hasText = (el: Element | null) => el?.textContent === text
     const elementHasText = hasText(element)
     const childrenDontHaveText = Array.from(element?.children || []).every(
       (child) => !hasText(child)

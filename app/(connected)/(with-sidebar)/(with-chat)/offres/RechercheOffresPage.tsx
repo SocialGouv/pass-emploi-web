@@ -299,13 +299,13 @@ function RechercheOffresPage() {
         />
       )}
 
-      <div className='bg-primary_lighten p-6 mb-10 rounded-base'>
+      <div className='bg-primary-lighten p-6 mb-10 rounded-base'>
         <div className={`flex justify-between ${collapsed ? '' : 'mb-5'}`}>
           <h2 className='text-m-medium text-primary'>Ma recherche</h2>
           <button
             type='button'
             onClick={() => setCollapsed(!collapsed)}
-            className='p-2 hover:bg-white hover:rounded-l'
+            className='p-2 hover:bg-white hover:rounded-full'
           >
             <IconComponent
               name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}
@@ -321,7 +321,7 @@ function RechercheOffresPage() {
           </button>
         </div>
         <FormRechercheOffres
-          hasResults={isSearching || offres !== undefined}
+          isSearching={isSearching}
           collapsed={collapsed}
           fetchMetiers={fetchMetiers}
           fetchCommunes={fetchCommunes}

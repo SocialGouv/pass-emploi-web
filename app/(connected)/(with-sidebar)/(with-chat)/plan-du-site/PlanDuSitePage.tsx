@@ -60,7 +60,7 @@ function LiensMilo({
         <ul className='list-disc text-primary underline mb-4'>
           <li>
             <Link href='/mes-jeunes'>Portefeuille</Link>
-            <ul className='list-circle ml-4'>
+            <ul className='list-[circle] ml-4'>
               <li>
                 <Link href='/mes-jeunes/creation-jeune'>
                   Ajouter un bénéficiaire
@@ -70,7 +70,7 @@ function LiensMilo({
           </li>
           <li>
             <Link href='/agenda'>Agenda</Link>
-            <ul className='list-circle ml-4'>
+            <ul className='list-[circle] ml-4'>
               <li>
                 <Link href='/agenda?onglet=etablissement'>
                   Agenda - Onglet Agenda Etablissement
@@ -96,7 +96,7 @@ function LiensMilo({
           </li>
           <li>
             <Link href='/pilotage'>Pilotage</Link>
-            <ul className='list-circle ml-4'>
+            <ul className='list-[circle] ml-4'>
               <li>
                 <Link href='/pilotage?onglet=actions'>
                   Pilotage - Onglet Actions
@@ -132,7 +132,7 @@ function LiensMilo({
             <Link href='/mes-jeunes/listes-de-diffusion'>
               Mes listes de diffusion
             </Link>
-            <ul className='list-circle ml-4'>
+            <ul className='list-[circle] ml-4'>
               <li>
                 <Link href='/mes-jeunes/listes-de-diffusion/edition-liste'>
                   Créer une liste de diffusion
@@ -154,7 +154,7 @@ function LiensMilo({
         {liensFooterCEJ.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='hover:text-primary_darken'
+            className='hover:text-primary-darken'
           >
             <ExternalLink
               key={url}
@@ -182,7 +182,7 @@ function LiensFT({
         <ul className='list-disc text-primary underline mb-4'>
           <li>
             <Link href='/mes-jeunes'>Portefeuille</Link>
-            <ul className='list-circle ml-4'>
+            <ul className='list-[circle] ml-4'>
               <li>
                 <Link href='/mes-jeunes/creation-jeune'>
                   Ajouter un bénéficiaire
@@ -221,7 +221,7 @@ function LiensFT({
         {liensFooterPassEmploi.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='hover:text-primary_darken'
+            className='hover:text-primary-darken'
           >
             <ExternalLink
               key={url}

@@ -67,8 +67,8 @@ function formateTexteAvecLien(texteAFormater: string, lighten?: boolean) {
             aria-label={`${lien} (nouvelle fenêtre)`}
             className={`underline [word-break:_break-word] ${
               lighten
-                ? 'text-white hover:text-primary_lighten'
-                : 'text-content_color hover:text-primary'
+                ? 'text-white hover:text-primary-lighten'
+                : 'text-content-color hover:text-primary'
             }`}
             onClick={(e) => confirmationRedirectionLienExterne(e, lien)}
           >

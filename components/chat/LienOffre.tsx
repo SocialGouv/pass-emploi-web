@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InfoOffre } from 'interfaces/message'
 import { TypeOffre } from 'interfaces/offre'
 
@@ -14,26 +15,31 @@ export default function LienOffre({
   return (
     <div
       className={`mt-4 p-4 rounded-base ${
-        isSentByConseiller ? 'bg-primary_darken' : 'bg-white'
+        isSentByConseiller
+          ? 'text-white bg-primary-darken'
+          : 'text-content-color bg-white'
       }`}
     >
-      <p
-        className={`text-base-bold ${
-          isSentByConseiller ? 'text-white' : 'text-content_color'
-        }`}
-      >
-        {infoOffre.titre}
-      </p>
+      <p className='text-base-bold'>{infoOffre.titre}</p>
 
       <Link
         href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
-        className={`mt-4 w-max ml-auto text-s-regular ${
+        target='_blank'
+        rel='noreferrer noopener'
+        className={`block mt-4 w-fit ml-auto text-s-regular underline ${
           isSentByConseiller
-            ? 'text-white underline hover:text-primary_lighten'
-            : 'text-primary_darken hover:text-primary'
+            ? 'hover:text-primary-lighten'
+            : 'text-primary hover:text-primary-darken'
         }`}
       >
-        Voir l’offre<span className='sr-only'> {infoOffre.titre}</span>
+        Voir l’offre
+        <span className='sr-only'> {infoOffre.titre} (nouvelle fenêtre)</span>
+        <IconComponent
+          name={IconName.OpenInNew}
+          className='inline shrink-0 w-4 h-4 ml-1 fill-current'
+          focusable={false}
+          aria-hidden={true}
+        />
       </Link>
     </div>
   )

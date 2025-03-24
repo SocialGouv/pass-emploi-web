@@ -17,7 +17,7 @@ export default function OnboardingListItem({
         name={illustration}
         focusable={false}
         aria-hidden={true}
-        className='inline-block fill-primary w-[56px] h-[56px] [--secondary-fill:theme(colors.additional\_4\_lighten)]'
+        className='inline-block fill-primary w-[56px] h-[56px] [--secondary-fill:var(--color-additional-4-lighten)]'
       />
       {item}
     </li>

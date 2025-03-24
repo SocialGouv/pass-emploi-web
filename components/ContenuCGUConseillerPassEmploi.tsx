@@ -93,7 +93,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         l’affectation d’un Usager à un Conseiller déterminé.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.1 L’authentification
       </h3>
       <p className='mb-4'>
@@ -112,7 +112,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         temporaire pour en créer un nouveau.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.2 Création et gestion des démarches possibles
       </h3>
       <p className='mb-4'>
@@ -122,7 +122,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         bénéficiaire via son application mobile.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.3 Prise et organisation de rendez-vous
       </h3>
       <p className='mb-4'>
@@ -136,7 +136,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         Cette action sera notifiée à l’Usager.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.4 Réception de notifications
       </h3>
       <p className='mb-4'>
@@ -144,7 +144,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         a interagi avec eux, en leur envoyant un message via le chat.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.5 Ouvrir un chat de discussion direct
       </h3>
       <p className='mb-4'>
@@ -154,7 +154,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         avec leur Conseiller.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.6 Organisation des affectations
       </h3>
       <p className='mb-4'>
@@ -165,7 +165,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         Usager doit donner lieu à une affectation à un autre Conseiller.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.7 Autres fonctionnalités
       </h3>
       <p className='mb-4'>
@@ -184,10 +184,10 @@ export default function ContenuCGUConseillerPassEmploi() {
         <li>Envoyer des pièces jointes ouvrables par les Usagers.</li>
       </ul>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         4.8 Suppressions du compte
       </h3>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         A – Suppression par l’Usager
       </h4>
       <p className='mb-4'>
@@ -199,7 +199,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         conseiller de France Travail) seront toutefois conservés dans l’outil
         France Travail.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         B – Suppression par le Conseiller
       </h4>
       <p className='mb-4'>
@@ -224,7 +224,7 @@ export default function ContenuCGUConseillerPassEmploi() {
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
         Article 5 – Responsabilités
       </h2>
-      <h3 className='text-base-bold text-content_color mb-2'>5.1 L’éditeur</h3>
+      <h3 className='text-base-bold text-content-color mb-2'>5.1 L’éditeur</h3>
       <p className='mb-4'>
         France Travail a qualité d’éditeur de l’application « pass emploi ».
       </p>
@@ -253,7 +253,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         autre motif jugé nécessaire.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         5.2 Le Conseiller
       </h3>
       <p className='mb-4'>
@@ -288,7 +288,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         la plateforme, et ce, sans préavis.
       </p>
 
-      <h3 className='text-base-bold text-content_color mb-2'>
+      <h3 className='text-base-bold text-content-color mb-2'>
         5.3 Le Superviseur
       </h3>
       <p className='mb-4'>

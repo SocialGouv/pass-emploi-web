@@ -2,7 +2,7 @@ import { ForwardedRef, forwardRef, useRef, useState } from 'react'
 
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
@@ -50,7 +50,7 @@ function ChangementDispositifBeneficiaireModal(
       onClose={onCancel}
       titleIllustration={IllustrationName.ArrowForward}
     >
-      <p className='p-6 flex gap-2 rounded-base bg-warning_lighten text-warning text-base-bold'>
+      <p className='p-6 flex gap-2 rounded-base bg-warning-lighten text-warning text-base-bold'>
         <IconComponent
           name={IconName.Error}
           className='shrink-0 w-6 h-6 fill-current'

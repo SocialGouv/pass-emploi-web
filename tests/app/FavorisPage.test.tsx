@@ -49,7 +49,7 @@ describe('FavorisPage client side', () => {
   it('permet d’accéder à l’offre d’emploi', async () => {
     // Then
     const offre = screen.getByRole('link', {
-      name: 'Ouvrir l’offre offre 1 idOffre1 offre 1 organisation Offre d’emploi',
+      name: 'Ouvrir l’offre Offre d’emploi idOffre1 offre 1 organisation Postulée le 07/03/2025',
     })
 
     expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre1')
@@ -58,7 +58,7 @@ describe('FavorisPage client side', () => {
   it('permet d’accéder à l’offre de service civique', async () => {
     // Then
     const offre = screen.getByRole('link', {
-      name: 'Ouvrir l’offre offre 2 idOffre2 offre 2 organisation Service civique',
+      name: 'Ouvrir l’offre Service civique idOffre2 offre 2 organisation Enregistrée le 01/03/2025',
     })
 
     expect(offre).toHaveAttribute('href', '/offres/service-civique/idOffre2')
@@ -67,7 +67,7 @@ describe('FavorisPage client side', () => {
   it('permet d’accéder à l’offre d’immersion', async () => {
     // Then
     const offre = screen.getByRole('link', {
-      name: 'Ouvrir l’offre offre 3 idOffre3 offre 3 organisation Immersion',
+      name: 'Ouvrir l’offre Immersion idOffre3 offre 3 organisation Enregistrée le 27/02/2025',
     })
 
     expect(offre).toHaveAttribute('href', '/offres/immersion/idOffre3')
@@ -76,7 +76,7 @@ describe('FavorisPage client side', () => {
   it('permet d’accéder à l’offre d’alternance', async () => {
     // Then
     const offre = screen.getByRole('link', {
-      name: 'Ouvrir l’offre offre 4 idOffre4 offre 4 organisation Alternance',
+      name: 'Ouvrir l’offre Alternance idOffre4 offre 4 organisation Enregistrée le 22/02/2025',
     })
 
     expect(offre).toHaveAttribute('href', '/offres/alternance/idOffre4')

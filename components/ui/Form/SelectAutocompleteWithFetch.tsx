@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { useDebounce } from 'utils/hooks/useDebounce'
 

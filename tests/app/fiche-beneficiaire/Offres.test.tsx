@@ -11,15 +11,17 @@ import {
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
 
-describe('Favoris dans la fiche jeune', () => {
+describe('Suivi des offres dans la fiche jeune', () => {
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
@@ -30,34 +32,23 @@ describe('Favoris dans la fiche jeune', () => {
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   })
 
-  it('affiche les informations des favoris du jeune', async () => {
-    // Given
-    await renderFicheJeune(uneMetadonneeFavoris())
-
-    // Then
-    expect(screen.getByText('Favoris')).toBeInTheDocument()
-  })
-
-  describe('quand on sélectionne l’onglet des favoris', () => {
-    it('affiche les informations des offres et des recherches sauvegardées', async () => {
+  describe('quand on sélectionne l’onglet de suivi des offres', () => {
+    it('affiche le suivi des offres', async () => {
       // Given
       await renderFicheJeune(uneMetadonneeFavoris())
 
       // When
-      await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
+      await userEvent.click(
+        screen.getByRole('tab', { name: 'Suivi des offres 12 éléments' })
+      )
 
       // Then
-      expect(screen.getByText(/Offres/)).toBeInTheDocument()
-      expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
-      expect(screen.getByText('Alternance :')).toBeInTheDocument()
-      expect(screen.getByText('Immersion :')).toBeInTheDocument()
-      expect(screen.getByText('Service civique :')).toBeInTheDocument()
       expect(
-        screen.getByRole('link', { name: 'Voir tous les favoris' })
-      ).toHaveAttribute('href', '/mes-jeunes/beneficiaire-1/favoris')
+        screen.getByRole('table', { name: 'Liste des offres en favoris' })
+      ).toBeInTheDocument()
     })
 
-    it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', async () => {
+    it('affiche le résumé des favoris quand le jeune n’a pas autorisé le partage', async () => {
       // Given
       const metadonneesFavoris = uneMetadonneeFavoris({
         autoriseLePartage: false,
@@ -68,7 +59,17 @@ describe('Favoris dans la fiche jeune', () => {
       await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
 
       // Then
-      expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'Offres' })
+      ).toBeInTheDocument()
+      expect(getByTextContent('3Emplois')).toBeInTheDocument()
+      expect(getByTextContent('3Alternances')).toBeInTheDocument()
+      expect(getByTextContent('3Immersions')).toBeInTheDocument()
+      expect(getByTextContent('3Services civiques')).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { level: 3, name: 'Recherches' })
+      ).toBeInTheDocument()
+      expect(getByTextContent('8Alertes')).toBeInTheDocument()
     })
   })
 })
@@ -82,6 +83,7 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
       actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
       metadonneesFavoris={metadonneesFavoris}
+      favorisOffres={uneListeDOffres()}
       ongletInitial='agenda'
       lectureSeule={false}
     />,

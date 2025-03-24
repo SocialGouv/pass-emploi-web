@@ -297,7 +297,7 @@ function EditionRdvPage({
           )}
 
           <dl>
-            <div className='mt-6 border border-solid border-grey_100 rounded-base p-4'>
+            <div className='mt-6 border border-solid border-grey-100 rounded-base p-4'>
               <dt className='sr-only'>Type de l’événement</dt>
               <dd className='text-base-bold mb-2'>{evenement.type.label}</dd>
 
@@ -311,7 +311,7 @@ function EditionRdvPage({
 
             {!estCreeParSiMILO(evenement) &&
               Boolean(historiqueModif?.length) && (
-                <div className='mt-4 border border-solid border-grey_100 rounded-base p-4'>
+                <div className='mt-4 border border-solid border-grey-100 rounded-base p-4'>
                   <dt className='text-base-bold'>
                     Historique des modifications
                   </dt>

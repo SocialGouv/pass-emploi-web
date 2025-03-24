@@ -15,11 +15,11 @@ export default function HistoriqueAction({ action }: HistoriqueActionProps) {
 
   return (
     <Details summary='Historique'>
-      <div className='bg-white border border-solid border-grey_100 rounded-base p-4 mb-8'>
-        <h3 className='text-m-bold text-grey_800 mb-6 mt-2'>
+      <div className='bg-white border border-solid border-grey-100 rounded-base p-4 mb-8'>
+        <h3 className='text-m-bold text-grey-800 mb-6 mt-2'>
           Historique de l’action
         </h3>
-        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,auto)]'>
           <InfoAction label="Créateur de l'action" isInline={true}>
             {action.creator}
           </InfoAction>

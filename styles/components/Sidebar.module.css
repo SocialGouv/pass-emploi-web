@@ -1,8 +1,10 @@
+@reference "../tailwind.css";
+
 .sidebar {
   display: none;
 }
 
-@media screen and (min-width: theme('screens.layout_s')) {
+@variant layout-s {
   .sidebar {
     width: 10vw;
     flex-shrink: 0;
@@ -12,17 +14,17 @@
     overflow-x: hidden; /* Disable horizontal scroll */
     padding: 24px 12px;
     text-align: center;
-    background-color: theme('colors.primary');
+    background-color: var(--color-primary);
   }
 }
 
-@media screen and (min-width: theme('screens.layout_base')) {
+@variant layout-base {
   .sidebar {
     padding: 24px 16px;
   }
 }
 
-@media screen and (min-width: theme('screens.layout_l')) {
+@variant layout-l {
   .sidebar {
     width: 15vw;
   }

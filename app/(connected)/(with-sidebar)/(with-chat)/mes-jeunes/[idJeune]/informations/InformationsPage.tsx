@@ -193,7 +193,7 @@ function InformationsPage({
           id='liste-conseillers'
           className='mt-8 pb-8'
         >
-          <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
+          <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey-100'>
             <ListeConseillersJeune
               id='liste-conseillers'
               conseillers={conseillers}

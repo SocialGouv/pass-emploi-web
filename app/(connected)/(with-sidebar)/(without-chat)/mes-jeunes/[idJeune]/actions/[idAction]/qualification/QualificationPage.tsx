@@ -9,7 +9,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Etape from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
@@ -367,7 +367,7 @@ function QualificationPage({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='m-auto fill-success_darken w-[180px] h-[180px]'
+            className='m-auto w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />

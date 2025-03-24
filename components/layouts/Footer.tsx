@@ -39,11 +39,11 @@ export default function Footer({
   return (
     <footer
       role='contentinfo'
-      className='flex justify-center py-4 px-0 border-solid border-primary_lighten border-t-2'
+      className='flex justify-center py-4 px-0 border-solid border-primary-lighten border-t-2'
     >
-      <ul className='flex px-4 flex-wrap flex-col layout_base:flex-row'>
+      <ul className='flex px-4 flex-wrap flex-col layout-base:flex-row'>
         {withPlanDuSite && (
-          <li className='mr-4 text-s-regular text-primary hover:text-primary_darken inline-flex items-center whitespace-nowrap underline'>
+          <li className='mr-4 text-s-regular text-primary hover:text-primary-darken inline-flex items-center whitespace-nowrap underline'>
             <Link href='/plan-du-site'>Plan du site</Link>
           </li>
         )}
@@ -51,7 +51,7 @@ export default function Footer({
         {liensAffiches.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='mr-4 text-s-regular text-primary hover:text-primary_darken'
+            className='mr-4 text-s-regular text-primary hover:text-primary-darken'
           >
             <ExternalLink
               key={url}

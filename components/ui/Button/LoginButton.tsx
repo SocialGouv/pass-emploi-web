@@ -1,14 +1,11 @@
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { FC, SVGProps, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
 
 type BaseProps = {
   label: string
-  illustrationName?: IllustrationName
+  Illustration?: FC<SVGProps<SVGElement>>
   prefix?: string
 }
 type LoginButtonProps = BaseProps & {
@@ -24,9 +21,9 @@ export default function LoginButton(props: LoginButtonProps | LoginLinkProps) {
   const ariaLabel = ['Connexion', props.prefix, props.label].join(' ')
   const style =
     'relative inline-block w-full h-full px-6 py-2 min-h-[60px] ' +
-    'rounded-base border-2 border-primary_darken shadow-base ' +
+    'rounded-base border-2 border-primary-darken shadow-base ' +
     'text-base-bold whitespace-pre-wrap ' +
-    'hover:bg-primary_lighten hover:shadow-m' +
+    'hover:bg-primary-lighten hover:shadow-m' +
     (isLoading ? ' cursor-not-allowed opacity-50' : '')
 
   if (isLink(props)) {
@@ -59,7 +56,7 @@ export default function LoginButton(props: LoginButtonProps | LoginLinkProps) {
 }
 
 function Content({
-  illustrationName,
+  Illustration,
   label,
   isLoading,
 }: BaseProps & { isLoading: boolean }) {
@@ -70,15 +67,14 @@ function Content({
       <span
         className={`flex gap-4 items-center ${isLoading ? 'invisible' : ''}`}
       >
-        {illustrationName && (
-          <IllustrationComponent
-            name={illustrationName}
+        {Illustration && (
+          <Illustration
             focusable={false}
             aria-hidden={true}
             className='inline h-[40px] shrink-0'
           />
         )}
-        <span className={!illustrationName ? 'w-full text-center' : ''}>
+        <span className={!Illustration ? 'w-full text-center' : ''}>
           {label}
         </span>
       </span>

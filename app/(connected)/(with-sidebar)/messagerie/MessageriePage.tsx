@@ -3,7 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import ConversationImage from 'assets/images/conversation.svg'
+import ImageConversation from 'assets/images/conversation.svg'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
@@ -46,7 +46,7 @@ function MessageriePage() {
       !listeSelectionnee.liste &&
       !showRubriqueListesDeDiffusion
     ) {
-      getConseillersDuJeuneClientSide(currentConversation.conversation.id).then(
+      getConseillersDuJeuneClientSide(currentConversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
     }
@@ -72,7 +72,7 @@ function MessageriePage() {
         <>
           {!currentConversation && (
             <div className='flex flex-col justify-center items-center h-full'>
-              <ConversationImage focusable={false} aria-hidden={true} />
+              <ImageConversation focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
                 Bienvenue dans votre espace de messagerie.
               </p>
@@ -80,18 +80,15 @@ function MessageriePage() {
           )}
 
           {currentConversation && (
-            <div className='px-6 bg-grey_100 h-full min-h-0'>
+            <div className='px-6 bg-grey-100 h-full min-h-0'>
               <ConversationBeneficiaire
                 onBack={() => {
                   document
-                    .getElementById(
-                      'chat-' + currentConversation.conversation.id
-                    )
+                    .getElementById('chat-' + currentConversation.id)
                     ?.focus()
                   setCurrentConversation(undefined)
                 }}
-                beneficiaireChat={currentConversation.conversation}
-                shouldFocusOnFirstRender={true}
+                beneficiaireChat={currentConversation}
                 conseillers={conseillers}
               />
             </div>
@@ -103,7 +100,7 @@ function MessageriePage() {
         <>
           {!listeSelectionnee.liste && (
             <div className='flex flex-col justify-center items-center h-full'>
-              <ConversationImage focusable={false} aria-hidden={true} />
+              <ImageConversation focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
                 Veuillez sélectionner une liste de diffusion.
               </p>

@@ -65,7 +65,7 @@ export default function TableauBeneficiairesAArchiver({
 
               <TD>
                 <div
-                  className='text-s-regular text-grey_800'
+                  className='text-s-regular text-grey-800'
                   aria-hidden={true}
                 >
                   {dateFinCEJColumn}
@@ -91,7 +91,7 @@ export default function TableauBeneficiairesAArchiver({
                 {beneficiaire.isActivated && (
                   <>
                     <div
-                      className='text-xs-regular text-grey_800'
+                      className='text-xs-regular text-grey-800'
                       aria-hidden={true}
                     >
                       {derniereActiviteColumn}

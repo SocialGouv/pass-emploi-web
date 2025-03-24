@@ -13,7 +13,7 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -252,7 +252,7 @@ function EditionListeDiffusionPage({
         ref={formErrorsRef}
       />
 
-      <p className='text-s-bold text-content_color mb-4'>
+      <p className='text-s-bold text-content-color mb-4'>
         Tous les champs sont obligatoires
       </p>
 

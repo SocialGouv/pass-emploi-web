@@ -34,13 +34,13 @@ export function BeneficiaireIndicationPortefeuille({
 }: BeneficiaireIndicationProps) {
   const infoLabel = 'Ce bénéficiaire n’est pas dans votre portefeuille'
   return (
-    <p className='flex items-center text-base-bold text-accent_3'>
+    <p className='flex items-center text-base-bold text-accent-3'>
       <IconComponent
         name={IconName.Info}
         focusable={false}
         role='img'
         aria-labelledby={`icon-indication-portefeuille-${id}`}
-        className='w-6 h-6 fill-accent_3 mr-2'
+        className='w-6 h-6 fill-accent-3 mr-2'
         title={infoLabel}
       />
       <span id={`icon-indication-portefeuille-${id}`} className='sr-only'>
@@ -81,13 +81,13 @@ export function BeneficiaireIndicationReaffectaction({
   const infoLabel =
     'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
   return (
-    <p className='flex items-center text-base-bold text-accent_3'>
+    <p className='flex items-center text-base-bold text-accent-3'>
       <IconComponent
         name={IconName.Info}
         focusable={false}
         role='img'
         aria-labelledby={`icon-indication-reaffectation-${id}`}
-        className='w-6 h-6 fill-accent_3 mr-2'
+        className='w-6 h-6 fill-accent-3 mr-2'
         title={infoLabel}
       />
       <span id={`icon-indication-reaffectation-${id}`} className='sr-only'>

@@ -1,28 +1,31 @@
 import IconComponent, { IconName } from './IconComponent'
 
+type TileIndicateurColor =
+  | 'PRIMARY'
+  | 'ALERT'
+  | 'WARNING'
+  | 'ACCENT_2'
+  | 'ACCENT_3'
+type TileIndicateurProps = {
+  valeur: string
+  label: string
+  color: TileIndicateurColor
+  iconName?: IconName
+}
+
 export default function TileIndicateur({
   valeur,
   label,
-  bgColor,
-  textColor,
+  color,
   iconName,
-}: {
-  valeur: string
-  label: string
-  bgColor: string
-  textColor: string
-  iconName?: IconName
-}) {
+}: TileIndicateurProps) {
   return (
     <li
       className={`flex flex-col shrink-0 p-3 rounded-base ${
-        parseInt(valeur, 10) > 0
-          ? `bg-${bgColor} text-${textColor}`
-          : 'bg-grey_100 text-grey_800'
+        parseInt(valeur, 10) > 0 ? styles[color] : 'bg-grey-100 text-grey-800'
       }`}
     >
       <span className='text-xl-bold'>{valeur}</span>
-
       <span className='flex items-center gap-1'>
         {iconName && (
           <IconComponent
@@ -36,4 +39,12 @@ export default function TileIndicateur({
       </span>
     </li>
   )
+}
+
+const styles: { [key in TileIndicateurColor]: string } = {
+  ACCENT_2: 'text-accent-2 bg-accent-2-lighten',
+  ACCENT_3: 'text-primary bg-accent-3-lighten',
+  ALERT: 'text-content-color bg-alert-lighten',
+  PRIMARY: 'text-primary-darken bg-primary-lighten',
+  WARNING: 'text-warning bg-warning-lighten',
 }

@@ -9,19 +9,22 @@ import React, {
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/SelectButton.module.css'
 
+type SelectButtonProps = {
+  id: string
+  children: ReactNode
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => Promise<void>
+  value: string
+  disabled: boolean
+  className: string
+}
 export default function SelectButton({
   id,
   children,
   onChange,
   value,
+  disabled,
   className,
-}: {
-  id: string
-  children: ReactNode
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => Promise<void>
-  value: string
-  className?: string
-}): ReactElement {
+}: SelectButtonProps): ReactElement {
   const selectRef = useRef<HTMLSelectElement>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -56,7 +59,13 @@ export default function SelectButton({
         )}
       </span>
 
-      <select id={id} ref={selectRef} onChange={triggerChange} value={value}>
+      <select
+        id={id}
+        ref={selectRef}
+        onChange={triggerChange}
+        value={value}
+        disabled={disabled}
+      >
         {children}
       </select>
     </div>

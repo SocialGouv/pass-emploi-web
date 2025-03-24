@@ -97,8 +97,8 @@ export function estAClore(animationCollective: Evenement) {
   return animationCollective.statut === 'AClore'
 }
 
-export function estClos(animationCollective: Evenement) {
-  return animationCollective.statut === 'Close'
+export function estClos({ statut }: Pick<Evenement, 'statut'>) {
+  return statut === 'Close'
 }
 
 export function estCreeParSiMILO(evenement: Evenement) {

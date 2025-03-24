@@ -2,11 +2,8 @@ import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
 import LienAction from 'components/chat/LienAction'
-import LienEvenement from 'components/chat/LienEvenement'
-import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
-import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -108,7 +105,7 @@ export default function DisplayMessageConseiller(
 
 function MessageSupprime() {
   return (
-    <div className='text-xs-regular text-grey_800 max-w-[90%] p-4 rounded-base w-max text-left bg-white mt-0 mr-0 mb-1 ml-auto'>
+    <div className='text-xs-regular text-grey-800 max-w-[90%] p-4 rounded-base w-max text-left bg-white mt-0 mr-0 mb-1 ml-auto'>
       Vous avez supprimé ce message
     </div>
   )
@@ -126,8 +123,8 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
   return (
     <div
       className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-white mt-0 mr-0 mb-1 ml-auto ${
-        isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
-      } ${isEnCoursDeModification ? 'border-2 border-solid border-primary_darken' : ''}`}
+        isConseillerCourant ? 'text-primary-darken' : 'text-accent-2'
+      } ${isEnCoursDeModification ? 'border-2 border-solid border-primary-darken' : ''}`}
     >
       <p className='text-s-bold capitalize mb-1'>
         {isConseillerCourant ? 'Vous' : conseillerNomComplet}
@@ -151,31 +148,13 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
         />
       )}
 
-      {message.type === TypeMessage.MESSAGE_SESSION_MILO &&
-        message.infoSessionMilo && (
-          <LienSessionMilo infoSessionMilo={message.infoSessionMilo} />
-        )}
-
-      {message.type === TypeMessage.MESSAGE_EVENEMENT &&
-        message.infoEvenement && (
-          <LienEvenement infoEvenement={message.infoEvenement} />
-        )}
-
-      {message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
-        message.infoEvenementEmploi && (
-          <LienEvenementEmploi
-            infoEvenementEmploi={message.infoEvenementEmploi}
-          />
-        )}
-
       {message.type === TypeMessage.MESSAGE_PJ &&
         message.infoPiecesJointes &&
-        message.infoPiecesJointes.map(({ id, nom }) => (
+        message.infoPiecesJointes.map((infoFichier) => (
           <LienPieceJointe
-            key={id}
-            id={id}
-            nom={nom}
-            className='fill-primary'
+            key={infoFichier.id}
+            infoFichier={infoFichier}
+            isSentByConseiller={true}
             highlight={
               highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }
@@ -255,7 +234,7 @@ function FooterMessage({
           className={
             afficherMenuEdition
               ? 'bg-primary rounded-full fill-white'
-              : 'fill-grey_800 hover:rounded-full hover:shadow-m'
+              : 'fill-grey-800 hover:rounded-full hover:shadow-m'
           }
         >
           <IconComponent
@@ -284,7 +263,7 @@ function FooterMessage({
           <button
             type='button'
             onClick={modifierMessage}
-            className='p-2 flex items-center text-s-bold gap-2 hover:text-primary hover:rounded-base hover:bg-primary_lighten hover:shadow-m'
+            className='p-2 flex items-center text-s-bold gap-2 hover:text-primary hover:rounded-base hover:bg-primary-lighten hover:shadow-m'
           >
             <IconComponent
               focusable={false}

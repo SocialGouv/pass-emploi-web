@@ -75,7 +75,7 @@ function HeaderChat(
         <button
           ref={retourRef}
           id='chat-bouton-retour'
-          className={`border-none rounded-full mr-2 ${messagerieFullScreen ? '' : 'bg-primary_lighten'} flex items-center hover:text-primary focus:pr-2`}
+          className={`border-none rounded-full mr-2 ${messagerieFullScreen ? '' : 'bg-primary-lighten'} flex items-center hover:text-primary focus:pr-2`}
           aria-label={labelRetour}
           onClick={onBack}
           type='button'

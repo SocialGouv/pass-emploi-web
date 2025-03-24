@@ -60,19 +60,19 @@ export default function EmptyState({
         name={illustrationName}
         focusable={false}
         aria-hidden={true}
-        className='w-48 h-48 m-auto mt-12 [--secondary-fill:theme(colors.grey\_100)]'
+        className='w-48 h-48 m-auto mt-12 [--secondary-fill:var(--color-grey-100)]'
       />
 
       <p
         tabIndex={shouldFocus ? -1 : undefined}
         ref={shouldFocus ? (e) => e?.focus() : undefined}
-        className='text-base-bold text-center text-content_color mt-8'
+        className='text-base-bold text-center text-content-color mt-8'
       >
         {titre}
       </p>
 
       {sousTitre && (
-        <p className='text-base-regular text-center text-content_color mt-4'>
+        <p className='text-base-regular text-center text-content-color mt-4'>
           {sousTitre}
         </p>
       )}

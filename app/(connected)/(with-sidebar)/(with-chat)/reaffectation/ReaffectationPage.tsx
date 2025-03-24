@@ -8,7 +8,7 @@ import ChoixConseiller from 'app/components/ChoixConseiller'
 import RadioBox from 'components/action/RadioBox'
 import Button from 'components/ui/Button/Button'
 import Etape, { NumeroEtape } from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -419,7 +419,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         </FailureAlert>
       )}
 
-      <p className='text-s-bold text-content_color mb-6'>
+      <p className='text-s-bold text-content-color mb-6'>
         Tous les champs sont obligatoires
       </p>
 
@@ -498,7 +498,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
           <button
             type='button'
             onClick={() => setShowModalConseillerIntrouvable(true)}
-            className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+            className='flex text-s-medium text-primary-darken hover:text-primary items-center'
           >
             Le conseiller n’apparaît pas dans la liste déroulante. Que faire
             ?&nbsp;
@@ -538,7 +538,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                   }
                 >
                   <li>
-                    <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                    <label className='rounded-base p-4 flex items-center focus-within:bg-primary-lighten shadow-base mb-2 cursor-pointer hover:bg-primary-lighten'>
                       <input
                         type='checkbox'
                         className='mr-4'
@@ -551,7 +551,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
                   {beneficiaires.map((beneficiaire: BeneficiaireFromListe) => (
                     <li key={beneficiaire.id}>
-                      <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                      <label className='rounded-base p-4 flex items-center focus-within:bg-primary-lighten shadow-base mb-2 cursor-pointer hover:bg-primary-lighten'>
                         <input
                           type='checkbox'
                           checked={idsBeneficiairesSelected.value.includes(
@@ -599,7 +599,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 <button
                   type='button'
                   onClick={() => setShowModalConseillerIntrouvable(true)}
-                  className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+                  className='flex text-s-medium text-primary-darken hover:text-primary items-center'
                 >
                   Le conseiller n’apparaît pas dans la liste déroulante. Que
                   faire ?&nbsp;
@@ -621,7 +621,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                       name={IconName.Error}
                       focusable={false}
                       aria-hidden={true}
-                      className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                      className='fill-warning w-6 h-6 mr-2 shrink-0'
                     />
                     <p className='text-warning'>{erreurReaffectation}</p>
                   </div>

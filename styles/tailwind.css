@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-lighten: #eef1f8;
+  --color-primary-darken: var(--primary-darken);
+  --color-primary-darken-strong: #172b5a;
+  --color-success: #0d7f50;
+  --color-success-lighten: #e5f6ef;
+  --color-success-darken: #033c24;
+  --color-warning: #d31140;
+  --color-warning-lighten: #fdeaef;
+  --color-alert: #ff975c;
+  --color-alert-lighten: #ffc6a6;
+  --color-accent-1: #950eff;
+  --color-accent-1-lighten: #f4e5ff;
+  --color-accent-2: #4a526d;
+  --color-accent-2-lighten: #f6f6f6;
+  --color-accent-3: #0c7a81;
+  --color-accent-3-lighten: #dffdff;
+  --color-additional-1: #fcbf49;
+  --color-additional-1-lighten: #ffd88d;
+  --color-additional-2: #15616d;
+  --color-additional-2-lighten: #ddffed;
+  --color-additional-3: #5149a8;
+  --color-additional-3-lighten: #d2cef6;
+  --color-additional-4: #2186c7;
+  --color-additional-4-lighten: #dbedf9;
+  --color-additional-5: #49bbbf;
+  --color-additional-5-lighten: #cef0f1;
+  --color-content-color: #161616;
+  --color-gray-*: initial; /* disables default color gray */
+  --color-grey-100: #f1f1f1;
+  --color-grey-500: #b2b2b2;
+  --color-grey-700: #878787;
+  --color-grey-800: #646464;
+  --color-disabled: #73758d;
+
+  --breakpoint-layout-xs: 375px;
+  --breakpoint-layout-s: 600px;
+  --breakpoint-layout-base: 900px;
+  --breakpoint-layout-m: 1024px;
+  --breakpoint-layout-l: 1200px;
+  --breakpoint-layout-xl: 1425px;
+
+  --radius-base: 8px;
+  --radius-large: 24px;
+  --radius-full: 9999px;
+
+  --shadow-base: 0 4px 12px 0px rgba(39, 73, 150, 0.12);
+  --shadow-m: 0 8px 12px 0px rgba(39, 73, 150, 0.24);
+}
+
+@custom-variant short (@media (max-height: 350px));

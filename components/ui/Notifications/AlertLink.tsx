@@ -13,7 +13,7 @@ export default function AlertLink({ href, label, onClick }: AlertLinkProps) {
   return (
     <Link
       href={href}
-      className='flex items-center text-base-regular whitespace-nowrap underline text-success fill-success hover:text-success_darken'
+      className='flex items-center text-base-regular whitespace-nowrap underline text-success fill-success hover:text-success-darken'
       onClick={onClick}
     >
       {label}

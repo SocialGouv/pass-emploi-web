@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -253,7 +253,7 @@ export default function MessageImportantModal({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='mx-auto my-8 fill-success_darken w-[180px] h-[180px]'
+            className='mx-auto my-8 w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />
@@ -265,7 +265,7 @@ export default function MessageImportantModal({
         <div className='text-center'>
           <IllustrationComponent
             name={IllustrationName.Check}
-            className='mx-auto my-8 fill-success_darken w-[180px] h-[180px]'
+            className='mx-auto my-8 w-[180px] h-[180px] fill-success-darken [--secondary-fill:var(--color-success-lighten)]'
             aria-hidden={true}
             focusable={false}
           />

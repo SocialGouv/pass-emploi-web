@@ -3,34 +3,28 @@ import { StatutAction } from 'interfaces/action'
 const propsStatutsActions: {
   [key in StatutAction]: {
     label: string
-    color: string
-    altColor: string
+    style: string
   }
 } = {
   Annulee: {
     label: 'Annulée',
-    color: 'disabled',
-    altColor: 'grey_100',
+    style: 'text-disabled bg-grey-100',
   },
   AFaire: {
     label: 'À faire',
-    color: 'primary_darken',
-    altColor: 'accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   Terminee: {
     label: 'Terminée',
-    color: 'primary_darken',
-    altColor: 'accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeAQualifier: {
     label: 'Terminée - À qualifier',
-    color: 'primary_darken',
-    altColor: 'accent_3_lighten',
+    style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeQualifiee: {
     label: 'Qualifiée',
-    color: 'success',
-    altColor: 'success_lighten',
+    style: 'text-success bg-success-lighten',
   },
 }
 

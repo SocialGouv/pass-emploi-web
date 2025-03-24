@@ -18,6 +18,7 @@ import {
 import { DetailBeneficiaire, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { Offre } from 'interfaces/favoris'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import {
   getActionsBeneficiaireServerSide,
@@ -69,6 +70,11 @@ export default async function FicheBeneficiaire({
   ])
   if (!beneficiaire) notFound()
 
+  let offres
+  if (metadonneesFavoris?.autoriseLePartage) {
+    offres = await getOffres(beneficiaire.id, accessToken)
+  }
+
   const { page, onglet } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
 
@@ -84,7 +90,8 @@ export default async function FicheBeneficiaire({
           accessToken,
           page ? parseInt(page) : 1,
           ongletInitial,
-          metadonneesFavoris
+          metadonneesFavoris,
+          offres
         ))}
 
       {!estMilo(conseiller.structure) &&
@@ -93,7 +100,8 @@ export default async function FicheBeneficiaire({
           beneficiaire,
           accessToken,
           ongletInitial,
-          metadonneesFavoris
+          metadonneesFavoris,
+          offres
         ))}
     </>
   )
@@ -122,7 +130,8 @@ async function renderFicheMilo(
   accessToken: string,
   page: number,
   ongletInitial: OngletMilo,
-  metadonneesFavoris?: MetadonneesFavoris
+  metadonneesFavoris?: MetadonneesFavoris,
+  offres?: Offre[]
 ): Promise<ReactElement> {
   const [rdvs, actions, categoriesActions] = await Promise.all([
     getRendezVousJeune(beneficiaire.id, PeriodeEvenements.FUTURS, accessToken),
@@ -158,6 +167,7 @@ async function renderFicheMilo(
       beneficiaire={beneficiaire}
       estMilo={true}
       metadonneesFavoris={metadonneesFavoris}
+      favorisOffres={offres}
       rdvs={rdvsEtSessionsTriesParDate}
       actionsInitiales={{ ...actions, page }}
       categoriesActions={categoriesActions}
@@ -173,7 +183,8 @@ async function renderFichePasMilo(
   beneficiaire: DetailBeneficiaire,
   accessToken: string,
   ongletInitial: OngletPasMilo,
-  metadonneesFavoris?: MetadonneesFavoris
+  metadonneesFavoris?: MetadonneesFavoris,
+  offres?: Offre[]
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
   const demarches = estConseilDepartemental(conseiller.structure)
@@ -185,12 +196,9 @@ async function renderFichePasMilo(
       )
     : undefined
 
-  let offres, recherches
+  let recherches
   if (metadonneesFavoris?.autoriseLePartage) {
-    ;[offres, recherches] = await Promise.all([
-      getOffres(beneficiaire.id, accessToken),
-      getRecherchesSauvegardees(beneficiaire.id, accessToken),
-    ])
+    recherches = await getRecherchesSauvegardees(beneficiaire.id, accessToken)
   }
 
   return (

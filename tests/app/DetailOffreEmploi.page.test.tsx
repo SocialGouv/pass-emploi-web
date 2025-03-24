@@ -40,6 +40,11 @@ describe('OffrePage client side - Emploi', () => {
     ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
   })
 
+  it("affiche la source de l'offre", () => {
+    // Then
+    expect(screen.getByText('Source : Source offre')).toBeInTheDocument()
+  })
+
   it("affiche la date d'actualisation de l'offre", () => {
     // Then
     expect(

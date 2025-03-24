@@ -11,31 +11,30 @@ export default function LienSessionMilo({
 }) {
   return (
     <div className='mt-4 p-4 rounded-base bg-white'>
-      <div className='text-base-bold text-content_color'>
+      <div className='text-base-bold text-content-color'>
         <dl>
           <dt className='sr-only'>Titre de la session :</dt>
           <dd>{infoSessionMilo.titre}</dd>
         </dl>
       </div>
-      <div className='mt-4 w-max ml-auto text-s-regular text-primary_darken hover:text-primary'>
-        <Link
-          href={`/agenda/sessions/${infoSessionMilo.id}`}
-          target='_blank'
-          rel='noreferrer noopener'
-          className='underline text-primary hover:primary_darken flex items-center'
-        >
-          Voir les détails de la session{' '}
-          <span className='sr-only'>
-            {infoSessionMilo.titre} (nouvelle fenêtre)
-          </span>
-          <IconComponent
-            name={IconName.OpenInNew}
-            className='w-4 h-4 ml-1 fill-current'
-            focusable={false}
-            aria-hidden={true}
-          />
-        </Link>
-      </div>
+
+      <Link
+        href={`/agenda/sessions/${infoSessionMilo.id}`}
+        target='_blank'
+        rel='noreferrer noopener'
+        className='block w-fit ml-auto mt-4 underline text-s-regular text-primary hover:text-primary-darken'
+      >
+        Voir les détails de la session
+        <span className='sr-only'>
+          {infoSessionMilo.titre} (nouvelle fenêtre)
+        </span>
+        <IconComponent
+          name={IconName.OpenInNew}
+          className='inline shrink-0 w-4 h-4 ml-1 fill-current'
+          focusable={false}
+          aria-hidden={true}
+        />
+      </Link>
     </div>
   )
 }

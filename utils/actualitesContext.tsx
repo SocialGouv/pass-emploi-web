@@ -11,14 +11,12 @@ import {
   useState,
 } from 'react'
 
-import { ActualitesParsees } from 'interfaces/actualites'
+import { Article } from 'interfaces/actualites'
 import { getActualites } from 'services/actualites.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { minutesEntreDeuxDates } from 'utils/date'
 
-const ActualitesContext = createContext<ActualitesParsees | undefined>(
-  undefined
-)
+const ActualitesContext = createContext<Article[] | undefined>(undefined)
 
 const DEFAULT_FREQUENCE = 15
 
@@ -31,7 +29,7 @@ export function ActualitesProvider({ children }: { children: ReactNode }) {
   const envVal = Number.parseInt(envVar, 10)
   const frequenceUpdateEnMn = envVal > 0 ? envVal : DEFAULT_FREQUENCE
   const [lastUpdate, setLastUpdate] = useState<DateTime>()
-  const [actualites, setActualites] = useState<ActualitesParsees | undefined>()
+  const [actualites, setActualites] = useState<Article[] | undefined>()
 
   useEffect(() => {
     if (
@@ -59,7 +57,7 @@ export function ActualitesProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export function useActualites(): ActualitesParsees | undefined {
+export function useActualites(): Article[] | undefined {
   return useContext(ActualitesContext)
 }
 

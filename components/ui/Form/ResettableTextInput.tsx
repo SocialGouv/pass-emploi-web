@@ -64,14 +64,14 @@ function ResettableTextInput(
         ref={inputRef}
         value={value}
         onChange={applyChange}
-        className='flex-1 p-3 bg-white rounded-l-base outline-none'
+        className='flex-1 p-3 bg-white rounded-l-base outline-hidden'
         required={required}
         aria-describedby={invalid ? id + '--error' : undefined}
         aria-invalid={invalid || undefined}
       />
       <button
         type='reset'
-        className='m-auto w-10 h-10 rounded-full hover:rounded-full hover:bg-primary_lighten'
+        className='m-auto w-10 h-10 rounded-full hover:rounded-full hover:bg-primary-lighten'
         onClick={applyReset}
       >
         <span id={id + '--reset-label'} className='sr-only'>

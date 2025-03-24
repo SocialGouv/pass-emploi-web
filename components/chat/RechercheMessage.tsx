@@ -11,7 +11,7 @@ import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import MessagesDuJour from 'components/chat/MessagesDuJour'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
@@ -101,8 +101,7 @@ function HeaderRechercheMessage({
   return (
     <button
       id='chat-bouton-retour'
-      className='m-4 border-none rounded-full bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
-      aria-label='Retourner à la discussion'
+      className='m-4 border-none rounded-large bg-primary-lighten flex items-center text-content hover:text-primary focus:pr-2'
       onClick={messageSelectionne ? onRetourMessage : onFermerRecherche}
     >
       <IconComponent
@@ -273,7 +272,7 @@ function ResultatsRecherche({
             name={IllustrationName.Search}
             focusable={false}
             aria-hidden={true}
-            className='mx-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.white)]'
+            className='mx-auto w-[200px] h-[200px] [--secondary-fill:var(--color-white)]'
           />
           <span className='sr-only'>
             Aucun résultat trouvé pour cette recherche

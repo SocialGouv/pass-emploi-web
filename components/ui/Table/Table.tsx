@@ -34,17 +34,12 @@ function Caption({
 }) {
   return (
     <caption
-      className={`text-m-bold text-grey_800 ${visible ? 'text-left' : 'sr-only'}`}
+      className={`text-m-bold text-grey-800 ${visible ? 'text-left' : 'sr-only'}`}
       aria-label={count ? `${text} (${count} éléments)` : text}
     >
       {text}{' '}
       {count !== undefined && (
-        <Badge
-          count={count}
-          textColor='primary'
-          bgColor='primary_lighten'
-          size={6}
-        />
+        <Badge count={count} className='text-primary bg-primary-lighten' />
       )}
     </caption>
   )

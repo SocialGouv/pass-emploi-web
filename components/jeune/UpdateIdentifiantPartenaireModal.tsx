@@ -67,7 +67,7 @@ export default function UpdateIdentifiantPartenaireModal({
         />
       </div>
 
-      <div className='h-[1px] bg-primary_lighten' />
+      <div className='h-[1px] bg-primary-lighten' />
       <div className='flex justify-center mt-4'>
         <Button
           type='button'

@@ -7,10 +7,9 @@ import React, {
   useState,
 } from 'react'
 
-import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import CreationBeneficiaireErreurModal from 'components/CreationBeneficiaireErreurModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/beneficiaire'
@@ -99,8 +98,8 @@ function DossierBeneficiaireMilo(
 
   return (
     <>
-      <div className='mt-6 border border-primary_lighten rounded-base p-4'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+      <div className='mt-6 border border-primary-lighten rounded-base p-4'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations</h2>
         <dl>
           <div className='flex items-center mb-1 gap-1'>
             <dt className='text-base-regular'>Prénom :</dt>
@@ -137,8 +136,8 @@ function DossierBeneficiaireMilo(
         </dl>
       </div>
 
-      <form className='mt-6 border border-primary_lighten rounded-base p-4'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Dispositif</h2>
+      <form className='mt-6 border border-primary-lighten rounded-base p-4'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Dispositif</h2>
         <fieldset>
           {erreurDispositif && (
             <InputError id='dispositif--error' ref={(e) => e?.focus()}>
@@ -251,7 +250,8 @@ function DossierBeneficiaireMilo(
 
           {!dossier.email && (
             <Button type='button' onClick={onRefresh}>
-              <RefreshIcon
+              <IconComponent
+                name={IconName.Refresh}
                 className='w-4 h-4 mr-2.5'
                 aria-hidden={true}
                 focusable={false}

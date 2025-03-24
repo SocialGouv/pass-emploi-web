@@ -22,7 +22,7 @@ export function unDetailSessionJson(
       commentaire: 'bla',
       estVisible: true,
       autoinscription: true,
-      statut: 'CLOTUREE',
+      statut: 'A_VENIR',
     },
     offre: {
       id: '5522561',
@@ -61,7 +61,7 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
       estVisible: true,
       autoinscription: true,
       nbPlacesDisponibles: 20,
-      statut: StatutAnimationCollective.Close,
+      statut: StatutAnimationCollective.AVenir,
     },
     offre: {
       titre: 'aide',

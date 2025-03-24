@@ -9,11 +9,7 @@ import {
 
 import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
 
-export type CurrentConversation = {
-  conversation: BeneficiaireEtChat
-  shouldFocusOnRender: boolean
-}
-type CurrentConversationState = CurrentConversation | undefined
+type CurrentConversationState = BeneficiaireEtChat | undefined
 type CurrentConversationStateHook = [
   CurrentConversationState,
   Dispatch<SetStateAction<CurrentConversationState>>,
@@ -29,7 +25,7 @@ export function CurrentConversationProvider({
   setterForTests,
 }: {
   children: ReactNode
-  stateForTests?: CurrentConversation
+  stateForTests?: BeneficiaireEtChat
   setterForTests?: Dispatch<SetStateAction<CurrentConversationState>>
 }) {
   const [currentConversation, setCurrentConversation] = useState<

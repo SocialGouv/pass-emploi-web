@@ -11,7 +11,7 @@ import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Etape from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
+import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
@@ -20,7 +20,12 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireEtablissement } from 'interfaces/beneficiaire'
-import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
+import {
+  estAClore,
+  estClose,
+  Session,
+  StatutBeneficiaire,
+} from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -327,6 +332,7 @@ function DetailsSessionPage({
           </ButtonLink>
         </PageActionsPortal>
       )}
+
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       {dateLimiteInscriptionDepassee && (
@@ -341,8 +347,8 @@ function DetailsSessionPage({
         </div>
       )}
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations offre</h2>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 mt-6'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations offre</h2>
         <dl>
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Titre :</dt>
@@ -391,8 +397,8 @@ function DetailsSessionPage({
         </dl>
       </section>
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 my-6'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>Informations session</h2>
+      <section className='border border-solid rounded-base w-full p-4 border-grey-100 my-6'>
+        <h2 className='text-m-bold text-grey-800 mb-4'>Informations session</h2>
         <dl>
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Nom :</dt>
@@ -476,7 +482,7 @@ function DetailsSessionPage({
 
       <form>
         <Etape numero={1} titre='Configurez la session'>
-          <div className='grid grid-cols-[1fr,auto] auto-rows-fr items-center'>
+          <div className='grid grid-cols-[1fr_auto] auto-rows-fr items-center'>
             <Label htmlFor='visibilite-session'>
               Rendre visible la session aux bénéficiaires de la Mission Locale
             </Label>
@@ -485,7 +491,7 @@ function DetailsSessionPage({
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
               isLoading={loadingChangerConfiguration}
-              disabled={autoinscriptionSession}
+              disabled={autoinscriptionSession || estClose(session)}
             />
 
             <Label htmlFor='autoinscription-session'>
@@ -497,6 +503,7 @@ function DetailsSessionPage({
               checked={autoinscriptionSession}
               onChange={handleChangerAutoinscriptionSession}
               isLoading={loadingChangerConfiguration}
+              disabled={estClose(session)}
             />
           </div>
         </Etape>
@@ -569,12 +576,12 @@ function DetailsSessionPage({
             <ul
               aria-label='Bénéficiaires inscrits'
               id='selected-beneficiaires'
-              className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
+              className='bg-grey-100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
             >
               {beneficiairesSelectionnes.value.map((beneficiaire) => (
                 <li
                   key={beneficiaire.id}
-                  className='bg-white w-full rounded-full px-8 py-4 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
+                  className='bg-white w-full rounded-large px-8 py-4 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
                   aria-atomic={true}
                 >
                   <BeneficiaireItemList
