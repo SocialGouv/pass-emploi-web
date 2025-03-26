@@ -5,6 +5,7 @@ import EmptyState from 'components/EmptyState'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
@@ -42,7 +43,7 @@ export default function OngletAgendaConseiller({
 
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
-  const [failed, setFailed] = useState<boolean>(false)
+  const [failed, setFailed] = useState<string>()
 
   async function chargerNouvellePeriode(
     nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
@@ -53,46 +54,47 @@ export default function OngletAgendaConseiller({
       nouvellePeriode.dateFin
     )
     setLabelPeriode(opts.label)
-    changerPeriode(nouvellePeriode.index)
     setShouldFocus(opts.shouldFocus)
+    changerPeriode(nouvellePeriode.index)
   }
 
   async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
-    setFailed(false)
-
-    try {
-      const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
-      setEvenements(evenementsPeriode)
-    } catch {
-      setFailed(true)
-    } finally {
-      setPeriode({ debut: dateDebut, fin: dateFin })
-    }
+    const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
+    setEvenements(evenementsPeriode)
+    setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
   async function chargerEvenements(
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<EvenementListItem[]> {
-    const rdvs = await recupererRdvs(conseiller.id, dateDebut, dateFin)
+    setFailed(undefined)
+    let erreurs
+
+    let rdvs: EvenementListItem[] = []
+    try {
+      rdvs = await recupererRdvs(conseiller.id, dateDebut, dateFin)
+    } catch {
+      erreurs = 'rdvs'
+    }
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
-      sessions = await recupererSessionsBeneficiaires(
-        conseiller.id,
-        dateDebut,
-        dateFin
-      )
+      try {
+        sessions = await recupererSessionsBeneficiaires(
+          conseiller.id,
+          dateDebut,
+          dateFin
+        )
+      } catch {
+        erreurs = erreurs ? 'all' : 'sessions'
+      }
     }
 
-    return rdvs
-      .concat(sessions)
-      .sort((event1, event2) =>
-        compareDates(
-          DateTime.fromISO(event1.date),
-          DateTime.fromISO(event2.date)
-        )
-      )
+    setFailed(erreurs)
+    return [...rdvs, ...sessions].sort((event1, event2) =>
+      compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
+    )
   }
 
   useEffect(() => {
@@ -115,20 +117,13 @@ export default function OngletAgendaConseiller({
         />
       )}
 
-      {!evenements && failed && (
-        <EmptyState
-          shouldFocus={shouldFocus}
-          illustrationName={IllustrationName.Maintenance}
-          titre='L’affichage de votre agenda a échoué.'
-          sousTitre='Si le problème persiste, contactez notre support.'
-          bouton={{
-            onClick: () => initEvenementsPeriode(periode!.debut, periode!.fin),
-            label: 'Réessayer',
-          }}
-        />
-      )}
+      <ErreursRecuperation
+        failed={failed}
+        shouldFocus={shouldFocus}
+        onRetry={() => initEvenementsPeriode(periode!.debut, periode!.fin)}
+      />
 
-      {evenements?.length === 0 && (
+      {failed !== 'all' && evenements?.length === 0 && (
         <EmptyState
           shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Checklist}
@@ -145,9 +140,61 @@ export default function OngletAgendaConseiller({
         <TableauEvenementsConseiller
           ref={tableRef}
           evenements={evenements}
-          periodeLabel={labelPeriode!}
+          labelPeriode={labelPeriode!}
         />
       )}
     </>
   )
+}
+
+function ErreursRecuperation({
+  failed,
+  shouldFocus,
+  onRetry,
+}: {
+  failed: string | undefined
+  shouldFocus: boolean
+  onRetry: () => Promise<void>
+}) {
+  const labelContactSupport =
+    'Si le problème persiste, contactez notre support.'
+
+  switch (failed) {
+    case 'rdvs':
+      return (
+        <FailureAlert
+          label='La récupération de vos rendez-vous a échoué.'
+          className='mt-4'
+        >
+          <p className='pl-8'>{labelContactSupport}</p>
+        </FailureAlert>
+      )
+
+    case 'sessions':
+      return (
+        <FailureAlert
+          label='La récupération de vos sessions depuis i-milo a échoué.'
+          className='mt-4'
+        >
+          <p className='pl-8'>{labelContactSupport}</p>
+        </FailureAlert>
+      )
+
+    case 'all':
+      return (
+        <EmptyState
+          shouldFocus={shouldFocus}
+          illustrationName={IllustrationName.Maintenance}
+          titre='L’affichage de votre agenda a échoué.'
+          sousTitre={labelContactSupport}
+          bouton={{
+            onClick: onRetry,
+            label: 'Réessayer',
+          }}
+        />
+      )
+
+    default:
+      return null
+  }
 }

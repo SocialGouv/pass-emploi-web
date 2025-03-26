@@ -72,8 +72,8 @@ function LiensMilo({
             <Link href='/agenda'>Agenda</Link>
             <ul className='list-[circle] ml-4'>
               <li>
-                <Link href='/agenda?onglet=etablissement'>
-                  Agenda - Onglet Agenda Etablissement
+                <Link href='/agenda?onglet=mission-locale'>
+                  Agenda - Onglet Agenda Mission Locale
                 </Link>
               </li>
               <li>

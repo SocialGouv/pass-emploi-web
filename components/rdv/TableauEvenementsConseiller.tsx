@@ -6,16 +6,16 @@ import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauEvenementsConseillerProps = {
   evenements: EvenementListItem[]
-  periodeLabel: string
+  labelPeriode: string
 }
 
 function TableauEvenementsConseiller(
-  { evenements, periodeLabel }: TableauEvenementsConseillerProps,
+  { evenements, labelPeriode }: TableauEvenementsConseillerProps,
   ref: ForwardedRef<HTMLTableElement>
 ) {
   return (
     <Table
-      caption={{ text: 'Liste de mes événements ' + periodeLabel }}
+      caption={{ text: 'Liste de mes événements ' + labelPeriode }}
       ref={ref}
     >
       <thead className='sr-only'>

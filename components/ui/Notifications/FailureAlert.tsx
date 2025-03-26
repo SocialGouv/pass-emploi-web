@@ -6,6 +6,7 @@ type FailureMessageProps = {
   label: string
   onAcknowledge?: () => void
   shouldFocus?: boolean
+  className?: string
   children?: ReactNode
 }
 
@@ -13,12 +14,16 @@ export default function FailureAlert({
   label,
   onAcknowledge,
   shouldFocus,
+  className,
   children,
 }: FailureMessageProps) {
   return (
     <div
       role='alert'
-      className='text-warning bg-warning-lighten p-6 flex flex-col rounded-base mb-8'
+      className={
+        'text-warning bg-warning-lighten p-6 flex flex-col rounded-base mb-8 ' +
+        (className ?? '')
+      }
       ref={shouldFocus ? (e) => e?.focus() : undefined}
       tabIndex={shouldFocus ? -1 : undefined}
     >

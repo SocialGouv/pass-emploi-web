@@ -26,11 +26,11 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 const OngletAgendaConseiller = dynamic(
   () => import('components/rdv/OngletAgendaConseiller')
 )
-const OngletAgendaEtablissement = dynamic(
-  () => import('components/rdv/OngletAgendaEtablissement')
+const OngletAgendaMissionLocale = dynamic(
+  () => import('components/rdv/OngletAgendaMissionLocale')
 )
 
-type Onglet = 'CONSEILLER' | 'ETABLISSEMENT'
+type Onglet = 'CONSEILLER' | 'MISSION_LOCALE'
 type AgendaPageProps = {
   onglet: Onglet
   periodeIndexInitial: number
@@ -50,8 +50,8 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
   } = {
     CONSEILLER: { queryParam: 'conseiller', trackingLabel: 'conseiller' },
-    ETABLISSEMENT: {
-      queryParam: 'etablissement',
+    MISSION_LOCALE: {
+      queryParam: 'mission-locale',
       trackingLabel: 'Mission Locale',
     },
   }
@@ -206,9 +206,9 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
       >
         <Tab
           label='Agenda Mission Locale'
-          selected={currentTab === 'ETABLISSEMENT'}
-          controls='agenda-etablissement'
-          onSelectTab={() => switchTab('ETABLISSEMENT')}
+          selected={currentTab === 'MISSION_LOCALE'}
+          controls='agenda-mission-locale'
+          onSelectTab={() => switchTab('MISSION_LOCALE')}
           iconName={IconName.EventFill}
         />
         <Tab
@@ -220,15 +220,15 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
         />
       </TabList>
 
-      {currentTab === 'ETABLISSEMENT' && (
+      {currentTab === 'MISSION_LOCALE' && (
         <div
           role='tabpanel'
-          aria-labelledby='agenda-etablissement--tab'
+          aria-labelledby='agenda-mission-locale--tab'
           tabIndex={0}
-          id='agenda-etablissement'
+          id='agenda-mission-locale'
         >
           {conseiller.agence && (
-            <OngletAgendaEtablissement
+            <OngletAgendaMissionLocale
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
