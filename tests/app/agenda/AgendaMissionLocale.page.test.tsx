@@ -28,7 +28,7 @@ jest.mock('services/sessions.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
-describe('Agenda - Onglet établissement', () => {
+describe('Agenda - Onglet Mission Locale', () => {
   let container: HTMLElement
   let replace: jest.Mock
   const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
@@ -121,7 +121,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // When
       ;({ container } = await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        <AgendaPage onglet='MISSION_LOCALE' periodeIndexInitial={0} />,
         {
           customConseiller: conseiller,
         }
@@ -352,7 +352,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // When
       await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        <AgendaPage onglet='MISSION_LOCALE' periodeIndexInitial={0} />,
         {
           customConseiller: conseiller,
         }
@@ -568,7 +568,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // When
       await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        <AgendaPage onglet='MISSION_LOCALE' periodeIndexInitial={0} />,
         {
           customConseiller: { structure: structureMilo },
         }
