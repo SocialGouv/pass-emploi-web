@@ -37,7 +37,11 @@ function FiltresCategories(
   function renderFiltres(categorie: Categorie) {
     const id = `categorie-${categorie.code}`
     return (
-      <label key={id} htmlFor={id} className='flex items-center pb-4'>
+      <label
+        key={id}
+        htmlFor={id}
+        className='p-2 cursor-pointer flex gap-5 items-center hover:bg-primary-lighten'
+      >
         <input
           type='checkbox'
           value={categorie.code}
@@ -48,7 +52,7 @@ function FiltresCategories(
           )}
           onChange={actionnerCategorie}
         />
-        <span className='pl-5'>{categorie.label}</span>
+        {categorie.label}
       </label>
     )
   }
@@ -109,11 +113,11 @@ function FiltresCategories(
 
       {afficherFiltres && (
         <form
-          className='absolute w-max right-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max right-0 z-30 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-categories'
           onSubmit={filtrer}
         >
-          <fieldset className='flex flex-col p-2'>
+          <fieldset className='flex flex-col'>
             <legend className='sr-only'>
               Choisir une ou plusieurs catégories à filtrer
             </legend>

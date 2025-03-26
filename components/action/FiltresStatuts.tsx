@@ -41,7 +41,11 @@ function FiltresStatuts(
   function renderFiltresStatuts(statut: string): ReactElement {
     const id = `statut-${statut.toLowerCase()}`
     return (
-      <label key={id} htmlFor={id} className='flex items-center pb-4'>
+      <label
+        key={id}
+        htmlFor={id}
+        className='p-2 cursor-pointer flex items-center gap-5 hover:bg-primary-lighten'
+      >
         <input
           type='radio'
           value={statut}
@@ -51,7 +55,7 @@ function FiltresStatuts(
           checked={statutsSelectionnes.includes(statut)}
           onChange={actionnerStatut}
         />
-        <span className='pl-5'>{propsStatuts[statut].label}</span>
+        {propsStatuts[statut].label}
       </label>
     )
   }
@@ -103,16 +107,16 @@ function FiltresStatuts(
 
       {afficherFiltresStatuts && (
         <form
-          className='absolute w-max left-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max left-0 z-30 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrer}
         >
-          <fieldset className='flex flex-col p-2'>
+          <fieldset className='flex flex-col'>
             <legend className='sr-only'>Choisir un statut à filtrer</legend>
             <label
               key='statut-tout-selectionner'
               htmlFor='statut-tout-selectionner'
-              className='flex items-center pb-4 text-base-bold'
+              className='flex items-center gap-5 p-2 text-base-bold hover:bg-primary-lighten'
             >
               <input
                 type='radio'
@@ -123,7 +127,7 @@ function FiltresStatuts(
                 checked={statutsSelectionnes.length === 0}
                 onChange={actionnerStatut}
               />
-              <span className='pl-5'>Tout sélectionner</span>
+              Tout sélectionner
             </label>
             {statuts.map(renderFiltresStatuts)}
           </fieldset>
