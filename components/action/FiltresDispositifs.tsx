@@ -28,7 +28,11 @@ function FiltresDispositifs(
   function renderFiltres(dispositif: string): ReactElement {
     const id = `dispositif-${dispositif.toLowerCase()}`
     return (
-      <label key={id} htmlFor={id} className='flex items-center pb-4'>
+      <label
+        key={id}
+        htmlFor={id}
+        className='cursor-pointer p-2 flex items-center gap-5 hover:bg-primary-lighten'
+      >
         <input
           type='radio'
           value={dispositif}
@@ -38,7 +42,7 @@ function FiltresDispositifs(
           checked={dispositifSelectionne === dispositif}
           onChange={actionnerDispositif}
         />
-        <span className='pl-5'>{dispositif}</span>
+        {dispositif}
       </label>
     )
   }
@@ -87,16 +91,16 @@ function FiltresDispositifs(
 
       {afficherFiltres && (
         <form
-          className='absolute w-max left-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max left-0 z-30 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-dispositifs'
           onSubmit={filtrer}
         >
-          <fieldset className='flex flex-col p-2'>
+          <fieldset className='flex flex-col'>
             <legend className='sr-only'>Choisir un dispositif à filtrer</legend>
             <label
               key='dispositif-tout-selectionner'
               htmlFor='dispositif-tout-selectionner'
-              className='flex items-center pb-4 text-base-bold'
+              className='p-2 cursor-pointer flex items-center gap-5 text-base-bold hover:bg-primary-lighten'
             >
               <input
                 type='radio'
@@ -107,7 +111,7 @@ function FiltresDispositifs(
                 checked={dispositifSelectionne === undefined}
                 onChange={actionnerDispositif}
               />
-              <span className='pl-5'>Tous les dispositifs</span>
+              Tous les dispositifs
             </label>
             {dispositifs.map(renderFiltres)}
           </fieldset>
