@@ -18,7 +18,7 @@ describe('<TableauRdvsConseiller>', () => {
       await renderWithContexts(
         <TableauEvenementsConseiller
           evenements={listeRdv}
-          periodeLabel='du dd/mm/yyyy au dd/mm/yyyy'
+          labelPeriode='du dd/mm/yyyy au dd/mm/yyyy'
         />
       )
     })
