@@ -67,7 +67,7 @@ function FiltresStatutAnimationsCollectives(
         aria-expanded={afficherFiltres}
         aria-controls='filtres-statut'
         title='Filtrer les animations collectives par statut'
-        className='text-s-regular flex items-center p-4 gap-2 w-full h-full'
+        className='text-s-regular flex items-center gap-2 w-full h-full'
         type='button'
       >
         Statuts
@@ -90,11 +90,11 @@ function FiltresStatutAnimationsCollectives(
 
       {afficherFiltres && (
         <form
-          className='absolute w-max right-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max right-0 z-30 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrer}
         >
-          <fieldset className='flex flex-col p-2'>
+          <fieldset className='flex flex-col'>
             <legend className='sr-only'>
               Choisir un ou plusieurs statuts à filtrer
             </legend>
@@ -138,7 +138,11 @@ function FiltreStatut({
 }): ReactElement {
   const id = `statut-${statut.toLowerCase()}`
   return (
-    <label key={id} htmlFor={id} className='flex pb-8'>
+    <label
+      key={id}
+      htmlFor={id}
+      className='cursor-pointer flex gap-5 p-2 hover:bg-primary-lighten'
+    >
       <input
         type='checkbox'
         value={statut}
@@ -147,7 +151,7 @@ function FiltreStatut({
         checked={checked}
         onChange={onChange}
       />
-      <span className='pl-5'>{label(statut)}</span>
+      {label(statut)}
     </label>
   )
 }
