@@ -35,13 +35,13 @@ describe('AgendaPage server side', () => {
       // When
       render(
         await Agenda({
-          searchParams: Promise.resolve({ onglet: 'etablissement' }),
+          searchParams: Promise.resolve({ onglet: 'mission-locale' }),
         })
       )
 
       // Then
       expect(AgendaPage).toHaveBeenCalledWith(
-        { onglet: 'ETABLISSEMENT', periodeIndexInitial: 0 },
+        { onglet: 'MISSION_LOCALE', periodeIndexInitial: 0 },
         undefined
       )
     })

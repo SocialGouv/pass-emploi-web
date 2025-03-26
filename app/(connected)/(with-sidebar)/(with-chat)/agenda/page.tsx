@@ -29,7 +29,7 @@ export default async function Agenda({
 
       <AgendaPage
         periodeIndexInitial={periodeIndex ? parseInt(periodeIndex) : 0}
-        onglet={onglet === 'conseiller' ? 'CONSEILLER' : 'ETABLISSEMENT'}
+        onglet={onglet === 'conseiller' ? 'CONSEILLER' : 'MISSION_LOCALE'}
       />
     </>
   )
