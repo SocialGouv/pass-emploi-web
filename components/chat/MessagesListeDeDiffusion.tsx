@@ -129,7 +129,7 @@ function MessagesListeDeDiffusion(
           <div ref={containerRef}>
             {!messages && <SpinningLoader />}
 
-            {messages && messages.length === 0 && (
+            {messages && messages.days.length === 0 && (
               <div className='bg-grey-100 flex flex-col justify-center items-center'>
                 <EmptyState
                   illustrationName={IllustrationName.Send}
@@ -138,7 +138,7 @@ function MessagesListeDeDiffusion(
               </div>
             )}
 
-            {messages && messages.length > 0 && (
+            {messages && messages.days.length > 0 && (
               <>
                 <span className='sr-only' id='description-messages'>
                   Messages envoyés à la liste de diffusion

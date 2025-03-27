@@ -45,7 +45,7 @@ export interface MessageListeDiffusion {
 }
 
 export interface ByDay<T extends { id: string }> {
-  length: number
+  countMessagesFetched: number
   days: OfDay<T>[]
 }
 
@@ -106,9 +106,9 @@ export function fromConseiller(message: Message): boolean {
 
 export function getPreviousItemId<T extends { id: string }>(
   idCible: string,
-  { length, days }: ByDay<T>
+  { days }: ByDay<T>
 ): string | undefined {
-  if (length === 0) return
+  if (days.length === 0) return
 
   let indexDay = 0,
     indexItem = 0,

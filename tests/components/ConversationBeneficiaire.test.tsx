@@ -58,7 +58,7 @@ describe('<ConversationBeneficiaire />', () => {
           unMessage({ id: 'message-page-' + Math.min(pages, 2) }),
           ...messagesPagines[0].messages,
         ]
-        fn({ length: 10, days: messagesPagines })
+        fn({ countMessagesFetched: 10, days: messagesPagines })
         return unsubscribe
       }
     )

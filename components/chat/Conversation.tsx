@@ -91,7 +91,7 @@ export function Conversation({
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>()
   const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
-  const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
+  const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
   const idPrecedentPremierMessage = useRef<string | undefined>(undefined)
 
@@ -116,8 +116,9 @@ export function Conversation({
         (messagesGroupesParJour: ByDay<Message>) => {
           setMessagesByDay(messagesGroupesParJour)
           setNombrePagesChargees(nombreDePages)
-          setHasNoMoreMessages(
-            messagesGroupesParJour.length < nombreDePages * NB_MESSAGES_PAR_PAGE
+          setHasMoreMessages(
+            messagesGroupesParJour.countMessagesFetched ===
+              nombreDePages * NB_MESSAGES_PAR_PAGE
           )
 
           setLoadingMoreMessages(false)
@@ -302,7 +303,7 @@ export function Conversation({
   useEffect(() => {
     if (!nombrePagesChargees) return
 
-    if (!messagesByDay!.length) {
+    if (!messagesByDay!.days.length) {
       headerChatRef.current!.focusRetour()
       return
     }
@@ -397,9 +398,9 @@ export function Conversation({
 
             {messagesByDay && conseiller && (
               <>
-                {messagesByDay.length !== 0 && (
+                {messagesByDay.days.length !== 0 && (
                   <>
-                    {hasNoMoreMessages && (
+                    {!hasMoreMessages && (
                       <p
                         id={idNoMoreMessage}
                         className='text-xs-regular text-center block mb-3'
@@ -408,7 +409,7 @@ export function Conversation({
                       </p>
                     )}
 
-                    {!hasNoMoreMessages && (
+                    {hasMoreMessages && (
                       <Button
                         onClick={chargerPlusDeMessages}
                         style={ButtonStyle.TERTIARY}
@@ -428,7 +429,7 @@ export function Conversation({
                   </>
                 )}
 
-                {messagesByDay.length === 0 && (
+                {messagesByDay.days.length === 0 && (
                   <>
                     <p className='text-base-bold text-center text-content-color'>
                       Ceci est le début de votre conversation avec votre
@@ -462,7 +463,7 @@ export function Conversation({
                   </>
                 )}
 
-                {messagesByDay.length > 0 && (
+                {messagesByDay.days.length > 0 && (
                   <ul ref={conteneurMessagesRef}>
                     {messagesByDay.days.map(
                       (messagesOfADay: OfDay<Message>) => (

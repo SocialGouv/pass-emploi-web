@@ -114,7 +114,7 @@ export const desMessagesAntechronologiques = (): Message[] => [
 ]
 
 export const desMessagesParJour = (): ByDay<Message> => ({
-  length: 10,
+  countMessagesFetched: 10,
   days: [
     {
       date: DateTime.local(2021, 12, 22),
@@ -269,7 +269,7 @@ export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
 
 export const desMessagesListeDeDiffusionParJour =
   (): ByDay<MessageListeDiffusion> => ({
-    length: 4,
+    countMessagesFetched: 4,
     days: [
       {
         date: DateTime.local(2021, 12, 22),

@@ -16,7 +16,10 @@ describe('<RubriqueListesDeDiffusion />', () => {
   describe('quand le conseiller a des listes de diffusion', () => {
     beforeEach(async () => {
       // Given
-      ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue([])
+      ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue({
+        countMessagesFetched: 0,
+        days: [],
+      })
       listesDeDiffusion = desListesDeDiffusion()
 
       // When
