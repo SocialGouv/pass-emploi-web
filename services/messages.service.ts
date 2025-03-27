@@ -678,7 +678,12 @@ function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
       messagesByDay[day] = messagesOfDay
     })
 
-  return { length: messages.length, days: Object.values(messagesByDay) }
+  console.log('>>>', messagesByDay)
+
+  return {
+    countMessagesFetched: messages.length,
+    days: Object.values(messagesByDay),
+  }
 }
 
 function decryptContentAndFilename(
