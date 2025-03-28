@@ -30,6 +30,7 @@ interface TableauActionsBeneficiaireProps {
   categories: SituationNonProfessionnelle[]
   actions: Action[]
   isLoading: boolean
+  labelSemaine: string
   avecQualification?: {
     onQualification: (
       qualificationSNP: boolean,
@@ -48,6 +49,7 @@ export default function TableauActionsBeneficiaire({
   actions,
   isLoading,
   avecQualification,
+  labelSemaine,
 }: TableauActionsBeneficiaireProps) {
   const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
@@ -257,7 +259,7 @@ export default function TableauActionsBeneficiaire({
           <Table
             ref={listeActionsRef}
             caption={{
-              text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
+              text: `Liste des actions de ${jeune.prenom} ${jeune.nom} ${labelSemaine}`,
             }}
           >
             <thead>

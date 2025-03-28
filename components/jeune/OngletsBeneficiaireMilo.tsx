@@ -50,22 +50,23 @@ export default function OngletsBeneficiaireMilo({
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
-  const [periode, setPeriode] = useState<{
+  const [semaine, setSemaine] = useState<{
     index: number
     debut: DateTime
     fin: DateTime
   }>()
+  const [labelSemaine, setLabelSemaine] = useState<string>()
 
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
 
-  async function chargerNouvellePeriode(
-    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime }
-    // opts: { label: string; shouldFocus: boolean }
+  async function chargerNouvelleSemaine(
+    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
+    opts: { label: string; shouldFocus: boolean }
   ) {
-    setPeriode(nouvellePeriode)
-    // setLabelPeriode(opts.label) // TODO periode dans caption tableau
+    setSemaine(nouvellePeriode)
+    setLabelSemaine(opts.label)
     // setShouldFocus(opts.shouldFocus) // TODO focus on click semaine courante (tableau et empty states)
     onChangementSemaine(currentTab, nouvellePeriode.index)
   }
@@ -73,13 +74,13 @@ export default function OngletsBeneficiaireMilo({
   function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
     setCurrentTab(newTab)
-    onSwitchTab(newTab, periode!.index)
+    onSwitchTab(newTab, semaine!.index)
   }
 
   const chargerActions = useCallback(async (): Promise<Action[]> => {
     const { getActionsBeneficiaire } = await import('services/actions.service')
-    return getActionsBeneficiaire(beneficiaire.id, periode!)
-  }, [periode])
+    return getActionsBeneficiaire(beneficiaire.id, semaine!)
+  }, [semaine])
 
   async function recupererAgenda(): Promise<Agenda> {
     const { recupererAgenda: _recupererAgenda } = await import(
@@ -103,7 +104,7 @@ export default function OngletsBeneficiaireMilo({
       <SelecteurPeriode
         jourReference={LUNDI}
         periodeInitiale={0}
-        onNouvellePeriode={chargerNouvellePeriode}
+        onNouvellePeriode={chargerNouvelleSemaine}
         trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
         className='m-auto'
       />
@@ -193,7 +194,7 @@ export default function OngletsBeneficiaireMilo({
         </div>
       )}
 
-      {currentTab === 'actions' && periode && (
+      {currentTab === 'actions' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions--tab'
@@ -206,6 +207,7 @@ export default function OngletsBeneficiaireMilo({
             categories={categoriesActions}
             getActions={chargerActions}
             onLienExterne={onLienExterne}
+            labelSemaine={labelSemaine}
           />
         </div>
       )}
