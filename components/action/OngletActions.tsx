@@ -23,6 +23,7 @@ interface OngletActionsProps {
   categories: SituationNonProfessionnelle[]
   getActions: () => Promise<Action[]>
   onLienExterne: (label: string) => void
+  labelSemaine?: string
 }
 
 export default function OngletActions({
@@ -30,6 +31,7 @@ export default function OngletActions({
   getActions,
   beneficiaire,
   onLienExterne,
+  labelSemaine,
 }: OngletActionsProps) {
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
@@ -134,6 +136,7 @@ export default function OngletActions({
           categories={categories}
           actions={actions}
           isLoading={isLoading}
+          labelSemaine={labelSemaine!}
           avecQualification={
             estCEJ(beneficiaire)
               ? {
