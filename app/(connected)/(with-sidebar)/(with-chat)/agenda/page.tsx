@@ -23,12 +23,16 @@ export default async function Agenda({
   if (!estMilo(user.structure)) notFound()
 
   const { periodeIndex, onglet } = (await searchParams) ?? {}
+  const periodeIndexInitial = periodeIndex ? parseInt(periodeIndex) : 0
+
   return (
     <>
       <PageHeaderPortal header='Agenda' />
 
       <AgendaPage
-        periodeIndexInitial={periodeIndex ? parseInt(periodeIndex) : 0}
+        periodeIndexInitial={
+          isNaN(periodeIndexInitial) ? 0 : periodeIndexInitial
+        }
         onglet={onglet === 'conseiller' ? 'CONSEILLER' : 'MISSION_LOCALE'}
       />
     </>
