@@ -8,7 +8,6 @@ import FiltresCategories, {
 import FiltresStatuts from 'components/action/FiltresStatuts'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import EmptyState from 'components/EmptyState'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
@@ -29,6 +28,7 @@ interface TableauActionsBeneficiaireProps {
   jeune: IdentiteBeneficiaire
   categories: SituationNonProfessionnelle[]
   actions: Action[]
+  shouldFocus: boolean
   isLoading: boolean
   labelSemaine: string
   avecQualification?: {
@@ -47,10 +47,12 @@ export default function TableauActionsBeneficiaire({
   jeune,
   categories,
   actions,
+  shouldFocus,
   isLoading,
   avecQualification,
   labelSemaine,
 }: TableauActionsBeneficiaireProps) {
+  const isFirstRender = useRef<boolean>(true)
   const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
@@ -142,6 +144,13 @@ export default function TableauActionsBeneficiaire({
   }
 
   useEffect(() => {
+    isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
+  }, [])
+
+  useEffect(() => {
     let actionsFiltreesParCategories = actions
     if (categoriesValidees.length)
       actionsFiltreesParCategories = actions.filter((action) =>
@@ -165,11 +174,13 @@ export default function TableauActionsBeneficiaire({
   }, [actionsFiltrees])
 
   useEffect(() => {
-    if (aReinitialiseLesFiltres && actionsFiltrees.length) {
+    if (isFirstRender.current) return
+
+    if (actionsFiltrees.length && (aReinitialiseLesFiltres || shouldFocus)) {
       listeActionsRef.current!.focus()
       setAReinitialiseLesFiltres(false)
     }
-  }, [aReinitialiseLesFiltres, actionsFiltrees])
+  }, [aReinitialiseLesFiltres, shouldFocus])
 
   useEffect(() => {
     setActionsTriees(
@@ -212,22 +223,16 @@ export default function TableauActionsBeneficiaire({
       {isLoading && <SpinningLoader alert={true} />}
 
       {actionsFiltrees.length === 0 && (
-        <div className='flex flex-col justify-center'>
-          <EmptyState
-            shouldFocus={true}
-            illustrationName={IllustrationName.Search}
-            titre='Aucun résultat.'
-            sousTitre='Modifiez vos filtres.'
-          />
-          <Button
-            type='button'
-            style={ButtonStyle.PRIMARY}
-            onClick={reinitialiserFiltres}
-            className='mx-auto mt-8'
-          >
-            Réinitialiser les filtres
-          </Button>
-        </div>
+        <EmptyState
+          shouldFocus={shouldFocus}
+          illustrationName={IllustrationName.Search}
+          titre='Aucun résultat.'
+          sousTitre='Modifiez vos filtres.'
+          bouton={{
+            onClick: async () => reinitialiserFiltres(),
+            label: 'Réinitialiser les filtres',
+          }}
+        />
       )}
 
       {actionsFiltrees.length > 0 && (
