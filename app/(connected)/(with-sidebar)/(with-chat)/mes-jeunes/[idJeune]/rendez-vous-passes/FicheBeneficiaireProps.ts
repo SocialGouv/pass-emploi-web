@@ -1,4 +1,4 @@
-import { Action, SituationNonProfessionnelle } from 'interfaces/action'
+import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
   ConseillerHistorique,
   Demarche,
@@ -7,7 +7,6 @@ import {
 } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesPagination } from 'types/pagination'
 
 export type Onglet = OngletMilo | OngletPasMilo
 export type BaseFiche = {
@@ -38,11 +37,6 @@ export type OngletMilo = (typeof valeursOngletsMilo)[number]
 type DonneesMilo = {
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
-  actionsInitiales: {
-    actions: Action[]
-    metadonnees: MetadonneesPagination
-    page: number
-  }
   erreurSessions?: boolean
 }
 export type FicheMiloProps = BaseFiche &

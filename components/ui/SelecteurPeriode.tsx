@@ -7,24 +7,30 @@ import { toLongMonthDate, toShortDate } from 'utils/date'
 import { useDebounce } from 'utils/hooks/useDebounce'
 
 type SelecteurPeriodeProps = {
+  jourReference: 1 | 2 | 3 | 4 | 5 | 6 | 7
+  periodeInitiale: number
   onNouvellePeriode: (
     periode: { index: number; dateDebut: DateTime; dateFin: DateTime },
     opts: { label: string; shouldFocus: boolean }
   ) => void
   trackNavigation: (append?: string) => void
-  periodeCourante: number
+  className?: string
 }
 
 export function SelecteurPeriode({
+  jourReference,
+  periodeInitiale,
   onNouvellePeriode,
   trackNavigation,
-  periodeCourante,
+  className,
 }: SelecteurPeriodeProps): ReactElement {
-  const AUJOURDHUI = DateTime.now().startOf('day')
+  const REFERENCE = DateTime.now()
+    .set({ weekday: jourReference })
+    .startOf('day')
   const isFirstRender = useRef<boolean>(true)
 
   const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
-    periodeCourante ?? 0
+    periodeInitiale ?? 0
   )
   const [periodeAffichee, setPeriodeAffichee] = useState<{
     debut: DateTime
@@ -46,7 +52,7 @@ export function SelecteurPeriode({
   const [shouldFocusOnChange, setShouldFocusOnChange] = useState<boolean>(false)
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
-    return AUJOURDHUI.plus({
+    return REFERENCE.plus({
       day: 7 * indexPeriode,
     })
   }
@@ -86,9 +92,9 @@ export function SelecteurPeriode({
     if (!regexDate.test(debutPeriodeInput)) return
 
     const debutPeriode = DateTime.fromISO(debutPeriodeInput).set({
-      weekday: AUJOURDHUI.weekday,
+      weekday: jourReference,
     })
-    setIndexPeriodeAffichee(debutPeriode.diff(AUJOURDHUI, 'week').weeks)
+    setIndexPeriodeAffichee(debutPeriode.diff(REFERENCE, 'week').weeks)
     setShouldFocusOnChange(true)
     trackNavigation('manuel')
   }
@@ -117,7 +123,9 @@ export function SelecteurPeriode({
   }, [])
 
   return (
-    <fieldset className='flex flex-wrap items-center gap-2 w-fit'>
+    <fieldset
+      className={'flex flex-wrap items-center gap-2 w-fit ' + (className ?? '')}
+    >
       <legend className='sr-only' aria-live='polite' aria-atomic={true}>
         Période : {periodeAffichee.longLabel}
       </legend>

@@ -187,7 +187,6 @@ export default function TableauActionsAQualifier({
         actionsSelectionnees={actionsSelectionnees}
         boutonsDisabled={boutonsDisabled}
         jeune={beneficiaireSelectionne}
-        nombreActionsSelectionnees={actionsSelectionnees.length}
         onLienExterne={onLienExterne}
         onQualification={onQualification}
       />

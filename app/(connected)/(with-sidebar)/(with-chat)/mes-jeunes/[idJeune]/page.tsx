@@ -16,10 +16,7 @@ import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
-import {
-  getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
@@ -34,7 +31,7 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 import { compareDates } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
-type FicheBeneficiaireSearchParams = Promise<{ page?: string; onglet?: string }>
+type FicheBeneficiaireSearchParams = Promise<{ onglet?: string }>
 type RouteProps = {
   params: FicheBeneficiaireParams
   searchParams?: FicheBeneficiaireSearchParams
@@ -74,7 +71,7 @@ export default async function FicheBeneficiaire({
     favorisOffres = await getOffres(beneficiaire.id, accessToken)
   }
 
-  const { page, onglet } = (await searchParams) ?? {}
+  const { onglet } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
 
   const props = {
@@ -90,12 +87,7 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(
-          conseiller,
-          accessToken,
-          page ? parseInt(page) : 1,
-          props
-        ))}
+        (await renderFicheMilo(conseiller, accessToken, props))}
 
       {!estMilo(conseiller.structure) &&
         (await renderFichePasMilo(conseiller, accessToken, props))}
@@ -123,7 +115,6 @@ function getOngletInitial(
 async function renderFicheMilo(
   conseiller: Conseiller,
   accessToken: string,
-  page: number,
   props: Pick<
     FicheMiloProps,
     | 'beneficiaire'
@@ -133,13 +124,12 @@ async function renderFicheMilo(
     | 'favorisOffres'
   >
 ): Promise<ReactElement> {
-  const [rdvs, actions, categoriesActions] = await Promise.all([
+  const [rdvs, categoriesActions] = await Promise.all([
     getRendezVousJeune(
       props.beneficiaire.id,
       PeriodeEvenements.FUTURS,
       accessToken
     ),
-    getActionsBeneficiaireServerSide(props.beneficiaire.id, page, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])
 
@@ -171,7 +161,6 @@ async function renderFicheMilo(
       {...props}
       estMilo={true}
       rdvs={rdvsEtSessionsTriesParDate}
-      actionsInitiales={{ ...actions, page }}
       categoriesActions={categoriesActions}
       erreurSessions={erreurSessions}
     />

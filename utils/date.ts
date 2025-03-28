@@ -1,6 +1,8 @@
 import { DateTime, Duration } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
+export const LUNDI = 1
+
 export function dateIsToday(dateToCheck: DateTime): boolean {
   return DateTime.now().hasSame(dateToCheck, 'day')
 }
