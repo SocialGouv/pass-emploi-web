@@ -38,37 +38,42 @@ export default function OngletsBeneficiaireMilo({
   categoriesActions,
   erreurSessions,
   onLienExterne,
+  onChangementSemaine,
+  trackChangementSemaine,
 }: FicheMiloProps & {
-  onSwitchTab: (tab: OngletMilo) => void
+  onSwitchTab: (newTab: OngletMilo, currentSemaineIndex: number) => void
   onLienExterne: (label: string) => void
+  onChangementSemaine: (currentTab: OngletMilo, newSemaineIndex: number) => void
+  trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
-  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [periode, setPeriode] = useState<{
+    index: number
+    debut: DateTime
+    fin: DateTime
+  }>()
 
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
 
   async function chargerNouvellePeriode(
-    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime }
+    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime }
     // opts: { label: string; shouldFocus: boolean }
   ) {
-    setPeriode({
-      debut: nouvellePeriode.dateDebut,
-      fin: nouvellePeriode.dateFin,
-    })
+    setPeriode(nouvellePeriode)
     // setLabelPeriode(opts.label) // TODO periode dans caption tableau
     // setShouldFocus(opts.shouldFocus) // TODO focus on click semaine courante (tableau et empty states)
-    // changerPeriode(nouvellePeriode.index) // TODO queryparam url
+    onChangementSemaine(currentTab, nouvellePeriode.index)
   }
 
-  function switchTab(tab: OngletMilo, { withFocus = false } = {}) {
+  function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
-    setCurrentTab(tab)
-    onSwitchTab(tab)
+    setCurrentTab(newTab)
+    onSwitchTab(newTab, periode!.index)
   }
 
   const chargerActions = useCallback(async (): Promise<Action[]> => {
@@ -99,7 +104,7 @@ export default function OngletsBeneficiaireMilo({
         jourReference={LUNDI}
         periodeInitiale={0}
         onNouvellePeriode={chargerNouvellePeriode}
-        trackNavigation={() => {}} // TODO track navigation
+        trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
         className='m-auto'
       />
 

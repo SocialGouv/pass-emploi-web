@@ -91,12 +91,27 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  function switchTab(tab: Onglet) {
-    setTrackingLabel(
-      `${pageTracking} - Consultation ${capitalizeFirstLetter(tab)}`
-    )
+  function updateTabInUrl(newTab: Onglet, semaineIndex?: number) {
+    setTrackingLabel(getOngletTrackingLabel(newTab))
 
-    router.replace(`${pathPrefix}/${beneficiaire.id}?onglet=${tab}`)
+    let newUrl = `${pathPrefix}/${beneficiaire.id}?onglet=${newTab}`
+    if (semaineIndex) newUrl += `&semaineIndex=${semaineIndex}`
+    router.replace(newUrl)
+  }
+
+  function updateSemaineInUrl(currentTab: Onglet, newSemaineIndex: number) {
+    router.replace(
+      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&semaineIndex=${newSemaineIndex}`
+    )
+  }
+
+  function trackChangementSemaine(tab: Onglet, append?: string) {
+    const ongletTrackingLabel = getOngletTrackingLabel(tab)
+    setTrackingLabel(ongletTrackingLabel + (append ? ` - ${append}` : ''))
+  }
+
+  function getOngletTrackingLabel(tab: string) {
+    return `${pageTracking} - Consultation ${capitalizeFirstLetter(tab)}`
   }
 
   useMatomo(trackingLabel, portefeuille.length > 0)
@@ -150,14 +165,16 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
       {estBeneficiaireMilo && (
         <OngletsBeneficiaireMilo
-          onSwitchTab={switchTab}
+          onSwitchTab={updateTabInUrl}
           onLienExterne={setTrackingLabel}
+          onChangementSemaine={updateSemaineInUrl}
+          trackChangementSemaine={trackChangementSemaine}
           {...props}
         />
       )}
 
       {!estBeneficiaireMilo && (
-        <OngletsBeneficiairePasMilo onSwitchTab={switchTab} {...props} />
+        <OngletsBeneficiairePasMilo onSwitchTab={updateTabInUrl} {...props} />
       )}
 
       {showModaleDeleteBeneficiaire && (

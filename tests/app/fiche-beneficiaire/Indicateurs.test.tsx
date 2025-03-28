@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -27,6 +28,7 @@ describe('Indicateurs dans la fiche jeune', () => {
         desIndicateursSemaine()
       )
       ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+      ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
       // When
       await renderWithContexts(
