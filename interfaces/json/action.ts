@@ -52,12 +52,6 @@ export interface QualificationActionJson {
   heures?: number
 }
 
-export interface MetadonneesActionsJson {
-  nombreTotal: number
-  nombreFiltrees: number
-  nombreActionsParPage: number
-}
-
 export interface CompteursPortefeuilleJson {
   idBeneficiaire: string
   actions: number

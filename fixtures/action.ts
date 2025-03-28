@@ -6,7 +6,6 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { ActionJson, ActionPilotageJson } from 'interfaces/json/action'
-import { MetadonneesPagination } from 'types/pagination'
 
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
   const defaults: Action = {
@@ -62,6 +61,11 @@ export const uneListeDActions = (): Action[] => [
     status: StatutAction.TermineeAQualifier,
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    qualification: {
+      libelle: 'Santé',
+      code: 'SANTE',
+      isSituationNonProfessionnelle: true,
+    },
     beneficiaire: {
       id: 'id-beneficiaire-1',
       prenom: 'Kenji',
@@ -325,6 +329,10 @@ export const uneListeDActionsJson = (
     etat: 'A_QUALIFIER',
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    qualification: {
+      libelle: 'Santé',
+      code: 'SANTE',
+    },
     jeune: {
       id: 'id-beneficiaire-1',
       firstName: 'Kenji',
@@ -359,18 +367,6 @@ export const uneListeDActionsJson = (
   },
   ...supplementaryActions,
 ]
-
-export const desActionsInitiales = (): {
-  actions: Action[]
-  metadonnees: MetadonneesPagination
-  page: number
-} => {
-  return {
-    actions: [],
-    page: 0,
-    metadonnees: { nombreTotal: 0, nombrePages: 0 },
-  }
-}
 
 export const desCategories = (): SituationNonProfessionnelle[] => [
   { code: 'SNP_1', label: 'SNP 1' },

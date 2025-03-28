@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import {
   FicheMiloProps,
@@ -9,9 +9,10 @@ import {
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { Action, StatutAction } from 'interfaces/action'
+import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { Action } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { MetadonneesPagination } from 'types/pagination'
+import { LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
 const OngletAgendaBeneficiaire = dynamic(
@@ -33,7 +34,6 @@ export default function OngletsBeneficiaireMilo({
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
-  actionsInitiales,
   rdvs,
   categoriesActions,
   erreurSessions,
@@ -46,13 +46,24 @@ export default function OngletsBeneficiaireMilo({
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
+  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
 
-  const [totalActions, setTotalActions] = useState<number>(
-    actionsInitiales.metadonnees.nombreTotal
-  )
+  async function chargerNouvellePeriode(
+    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime }
+    // opts: { label: string; shouldFocus: boolean }
+  ) {
+    setPeriode({
+      debut: nouvellePeriode.dateDebut,
+      fin: nouvellePeriode.dateFin,
+    })
+    // setLabelPeriode(opts.label) // TODO periode dans caption tableau
+    // setShouldFocus(opts.shouldFocus) // TODO focus on click semaine courante (tableau et empty states)
+    // changerPeriode(nouvellePeriode.index) // TODO queryparam url
+  }
 
   function switchTab(tab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
@@ -60,23 +71,10 @@ export default function OngletsBeneficiaireMilo({
     onSwitchTab(tab)
   }
 
-  async function chargerActions(
-    page: number,
-    filtres: { statuts: StatutAction[]; categories: string[] },
-    tri: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-    const { getActionsBeneficiaireClientSide } = await import(
-      'services/actions.service'
-    )
-    const result = await getActionsBeneficiaireClientSide(beneficiaire.id, {
-      page,
-      filtres,
-      tri,
-    })
-
-    setTotalActions(result.metadonnees.nombreTotal)
-    return result
-  }
+  const chargerActions = useCallback(async (): Promise<Action[]> => {
+    const { getActionsBeneficiaire } = await import('services/actions.service')
+    return getActionsBeneficiaire(beneficiaire.id, periode!)
+  }, [periode])
 
   async function recupererAgenda(): Promise<Agenda> {
     const { recupererAgenda: _recupererAgenda } = await import(
@@ -97,13 +95,20 @@ export default function OngletsBeneficiaireMilo({
 
   return (
     <>
+      <SelecteurPeriode
+        jourReference={LUNDI}
+        periodeInitiale={0}
+        onNouvellePeriode={chargerNouvellePeriode}
+        trackNavigation={() => {}} // TODO track navigation
+        className='m-auto'
+      />
+
       <TabList
         label={`Activités de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-        className='mt-10'
+        className='mt-6'
       >
         <Tab
           label='Actions'
-          count={totalActions}
           selected={currentTab === 'actions'}
           controls='liste-actions'
           onSelectTab={() => switchTab('actions')}
@@ -183,7 +188,7 @@ export default function OngletsBeneficiaireMilo({
         </div>
       )}
 
-      {currentTab === 'actions' && (
+      {currentTab === 'actions' && periode && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions--tab'
@@ -194,7 +199,6 @@ export default function OngletsBeneficiaireMilo({
           <OngletActions
             beneficiaire={beneficiaire}
             categories={categoriesActions}
-            actionsInitiales={actionsInitiales}
             getActions={chargerActions}
             onLienExterne={onLienExterne}
           />

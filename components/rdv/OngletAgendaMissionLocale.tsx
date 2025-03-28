@@ -155,8 +155,9 @@ export default function OngletAgendaMissionLocale({
       <RechercheAgendaForm onSearch={setRecherche} />
       <nav className='flex justify-between items-center'>
         <SelecteurPeriode
+          jourReference={DateTime.now().weekday}
+          periodeInitiale={periodeIndex}
           onNouvellePeriode={modifierPeriode}
-          periodeCourante={periodeIndex}
           trackNavigation={trackNavigation}
         />
 

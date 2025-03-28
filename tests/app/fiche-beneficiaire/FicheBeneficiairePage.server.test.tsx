@@ -3,7 +3,6 @@ import { DateTime } from 'luxon'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
-import { uneAction } from 'fixtures/action'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
@@ -11,11 +10,10 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
+import { now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
-import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
@@ -70,15 +68,6 @@ describe('FicheBeneficiairePage server side', () => {
     ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
       sessionsAVenir,
     ])
-    ;(getActionsBeneficiaireServerSide as jest.Mock).mockResolvedValue({
-      actions: [
-        uneAction({ creationDate: now.toISO() }),
-        uneAction({ creationDate: datePasseeLoin.toISO() }),
-        uneAction({ creationDate: dateFuture.toISO() }),
-        uneAction({ creationDate: dateFutureLoin.toISO() }),
-      ],
-      metadonnees: { nombreTotal: 14, nombrePages: 2 },
-    })
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
     ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(
       uneListeDeRecherches()
@@ -170,57 +159,6 @@ describe('FicheBeneficiairePage server side', () => {
         undefined
       )
     })
-
-    it('récupère la première page des actions du jeune', async () => {
-      // Then
-      expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'id-beneficiaire-1',
-        1,
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          actionsInitiales: {
-            actions: [
-              uneAction({ creationDate: now.toISO() }),
-              uneAction({ creationDate: datePasseeLoin.toISO() }),
-              uneAction({ creationDate: dateFuture.toISO() }),
-              uneAction({ creationDate: dateFutureLoin.toISO() }),
-            ],
-            page: 1,
-            metadonnees: { nombreTotal: 14, nombrePages: 2 },
-          },
-        }),
-        undefined
-      )
-    })
-  })
-
-  describe('Quand on demande une page d’actions spécifique', () => {
-    it('récupère la page demandée des actions du jeune', async () => {
-      // When
-      render(
-        await FicheBeneficiaire({
-          params: Promise.resolve({ idJeune: 'id-jeune' }),
-          searchParams: Promise.resolve({ page: '3' }),
-        })
-      )
-
-      // Then
-      expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'id-beneficiaire-1',
-        3,
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          actionsInitiales: expect.objectContaining({
-            page: 3,
-          }),
-        }),
-        undefined
-      )
-    })
   })
 
   describe('Quand on veut accéder à un onglet spécifique', () => {
@@ -269,19 +207,6 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.not.objectContaining({ rdvs: expect.arrayContaining([]) }),
-        undefined
-      )
-    })
-
-    it('ne recupère pas les actions', async () => {
-      // Then
-      expect(getActionsBeneficiaireServerSide).not.toHaveBeenCalled()
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.not.objectContaining({
-          actionsInitiales: expect.objectContaining({
-            actions: expect.arrayContaining([]),
-          }),
-        }),
         undefined
       )
     })

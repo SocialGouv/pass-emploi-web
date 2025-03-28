@@ -176,15 +176,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   )
 }
 
-export default withTransaction(
-  FicheBeneficiairePage.name,
-  'page'
-)(FicheBeneficiairePage)
-
-function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
 function Messages(props: FicheBeneficiaireProps): ReactElement {
   const [conseiller] = useConseiller()
   const { beneficiaire } = props
@@ -285,3 +276,12 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
     </>
   )
 }
+
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export default withTransaction(
+  FicheBeneficiairePage.name,
+  'page'
+)(FicheBeneficiairePage)
