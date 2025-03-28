@@ -31,7 +31,10 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 import { compareDates } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
-type FicheBeneficiaireSearchParams = Promise<{ onglet?: string }>
+type FicheBeneficiaireSearchParams = Promise<{
+  onglet?: string
+  semaineIndex?: string
+}>
 type RouteProps = {
   params: FicheBeneficiaireParams
   searchParams?: FicheBeneficiaireSearchParams
@@ -71,8 +74,9 @@ export default async function FicheBeneficiaire({
     favorisOffres = await getOffres(beneficiaire.id, accessToken)
   }
 
-  const { onglet } = (await searchParams) ?? {}
+  const { onglet, semaineIndex } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
+  const semaineIndexInitial = semaineIndex ? parseInt(semaineIndex) : 0
 
   const props = {
     beneficiaire,
@@ -87,10 +91,20 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(conseiller, accessToken, props))}
+        (await renderFicheMilo(
+          conseiller,
+          accessToken,
+          semaineIndexInitial,
+          props
+        ))}
 
       {!estMilo(conseiller.structure) &&
-        (await renderFichePasMilo(conseiller, accessToken, props))}
+        (await renderFichePasMilo(
+          conseiller,
+          accessToken,
+          semaineIndexInitial,
+          props
+        ))}
     </>
   )
 }
@@ -115,6 +129,7 @@ function getOngletInitial(
 async function renderFicheMilo(
   conseiller: Conseiller,
   accessToken: string,
+  semaineIndexInitial: number,
   props: Pick<
     FicheMiloProps,
     | 'beneficiaire'
@@ -159,6 +174,7 @@ async function renderFicheMilo(
   return (
     <FicheBeneficiairePage
       {...props}
+      semaineIndexInitial={isNaN(semaineIndexInitial) ? 0 : semaineIndexInitial}
       estMilo={true}
       rdvs={rdvsEtSessionsTriesParDate}
       categoriesActions={categoriesActions}
@@ -170,6 +186,7 @@ async function renderFicheMilo(
 async function renderFichePasMilo(
   conseiller: Conseiller,
   accessToken: string,
+  semaineIndexInitial: number,
   props: Pick<
     FichePasMiloProps,
     | 'beneficiaire'
@@ -200,6 +217,7 @@ async function renderFichePasMilo(
   return (
     <FicheBeneficiairePage
       {...props}
+      semaineIndexInitial={isNaN(semaineIndexInitial) ? 0 : semaineIndexInitial}
       estMilo={false}
       favorisRecherches={recherches}
       demarches={demarches}

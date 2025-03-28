@@ -38,6 +38,7 @@ export default function OngletsBeneficiaireMilo({
   categoriesActions,
   erreurSessions,
   onLienExterne,
+  semaineIndexInitial,
   onChangementSemaine,
   trackChangementSemaine,
 }: FicheMiloProps & {
@@ -50,8 +51,8 @@ export default function OngletsBeneficiaireMilo({
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
+  const [semaineIndex, setSemaineIndex] = useState<number>(semaineIndexInitial)
   const [semaine, setSemaine] = useState<{
-    index: number
     debut: DateTime
     fin: DateTime
   }>()
@@ -66,7 +67,8 @@ export default function OngletsBeneficiaireMilo({
     nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
     opts: { label: string; shouldFocus: boolean }
   ) {
-    setSemaine(nouvellePeriode)
+    setSemaineIndex(nouvellePeriode.index)
+    setSemaine({ debut: nouvellePeriode.debut, fin: nouvellePeriode.fin })
     setLabelSemaine(opts.label)
     setShouldFocus(opts.shouldFocus)
     onChangementSemaine(currentTab, nouvellePeriode.index)
@@ -75,7 +77,7 @@ export default function OngletsBeneficiaireMilo({
   function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
     setCurrentTab(newTab)
-    onSwitchTab(newTab, semaine!.index)
+    onSwitchTab(newTab, semaineIndex)
   }
 
   const chargerActions = useCallback(async (): Promise<Action[]> => {
@@ -104,7 +106,7 @@ export default function OngletsBeneficiaireMilo({
     <>
       <SelecteurPeriode
         jourReference={LUNDI}
-        periodeInitiale={0}
+        periodeInitiale={semaineIndex}
         onNouvellePeriode={chargerNouvelleSemaine}
         trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
         className='m-auto'

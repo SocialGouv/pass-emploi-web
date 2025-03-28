@@ -59,7 +59,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [showModaleDeleteBeneficiaire, setShowModaleDeleteBeneficiaire] =
     useState<boolean>(false)
-
   const [
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,

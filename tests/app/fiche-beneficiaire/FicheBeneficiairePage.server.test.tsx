@@ -114,6 +114,7 @@ describe('FicheBeneficiairePage server side', () => {
           metadonneesFavoris: expect.objectContaining({}),
           favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
+          semaineIndexInitial: 0,
           erreurSessions: false,
         },
         undefined
@@ -174,6 +175,24 @@ describe('FicheBeneficiairePage server side', () => {
       // Then
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ ongletInitial: 'rdvs' }),
+        undefined
+      )
+    })
+  })
+
+  describe('Quand on veut accéder à une période spécifique', () => {
+    it('récupère la période sur laquelle ouvrir la page', async () => {
+      // When
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+          searchParams: Promise.resolve({ semaineIndex: '4' }),
+        })
+      )
+
+      // Then
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.objectContaining({ semaineIndexInitial: 4 }),
         undefined
       )
     })
