@@ -28,9 +28,6 @@ jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
-
-// TODO tester périodes, tri, filtres
-
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions()
 

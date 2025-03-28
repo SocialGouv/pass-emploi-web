@@ -58,13 +58,10 @@ export default function OngletAgendaMissionLocale({
   const [failed, setFailed] = useState<string>()
 
   async function modifierPeriode(
-    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
     opts: { label: string; shouldFocus: boolean }
   ) {
-    await chargerEvenementsPeriode(
-      nouvellePeriode.dateDebut,
-      nouvellePeriode.dateFin
-    )
+    await chargerEvenementsPeriode(nouvellePeriode.debut, nouvellePeriode.fin)
     setLabelPeriode(opts.label)
     changerPeriode(nouvellePeriode.index)
     setShouldFocus(opts.shouldFocus)

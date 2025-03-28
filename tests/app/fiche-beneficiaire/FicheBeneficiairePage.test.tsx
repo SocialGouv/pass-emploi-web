@@ -2,6 +2,7 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -39,6 +40,7 @@ describe('FicheBeneficiairePage client side', () => {
       desIndicateursSemaine()
     )
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
   })
 
   describe('pour tous les conseillers', () => {
