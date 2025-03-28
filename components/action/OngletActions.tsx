@@ -22,6 +22,7 @@ interface OngletActionsProps {
   beneficiaire: DetailBeneficiaire
   categories: SituationNonProfessionnelle[]
   getActions: () => Promise<Action[]>
+  shouldFocus: boolean
   onLienExterne: (label: string) => void
   labelSemaine?: string
 }
@@ -29,6 +30,7 @@ interface OngletActionsProps {
 export default function OngletActions({
   categories,
   getActions,
+  shouldFocus,
   beneficiaire,
   onLienExterne,
   labelSemaine,
@@ -105,6 +107,7 @@ export default function OngletActions({
       {actions && actions.length === 0 && !lectureSeule && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
+            shouldFocus={shouldFocus}
             illustrationName={IllustrationName.Checklist}
             titre={`Aucune action prévue pour ${beneficiaire.prenom} ${beneficiaire.nom}.`}
             lien={{
@@ -118,6 +121,7 @@ export default function OngletActions({
 
       {actions && actions.length === 0 && lectureSeule && (
         <EmptyState
+          shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Checklist}
           titre={`Aucune action prévue pour ${beneficiaire.prenom} ${beneficiaire.nom}.`}
         />
@@ -135,6 +139,7 @@ export default function OngletActions({
           jeune={beneficiaire}
           categories={categories}
           actions={actions}
+          shouldFocus={shouldFocus}
           isLoading={isLoading}
           labelSemaine={labelSemaine!}
           avecQualification={

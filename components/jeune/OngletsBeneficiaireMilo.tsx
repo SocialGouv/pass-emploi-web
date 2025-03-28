@@ -56,6 +56,7 @@ export default function OngletsBeneficiaireMilo({
     fin: DateTime
   }>()
   const [labelSemaine, setLabelSemaine] = useState<string>()
+  const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
@@ -67,7 +68,7 @@ export default function OngletsBeneficiaireMilo({
   ) {
     setSemaine(nouvellePeriode)
     setLabelSemaine(opts.label)
-    // setShouldFocus(opts.shouldFocus) // TODO focus on click semaine courante (tableau et empty states)
+    setShouldFocus(opts.shouldFocus)
     onChangementSemaine(currentTab, nouvellePeriode.index)
   }
 
@@ -206,6 +207,7 @@ export default function OngletsBeneficiaireMilo({
             beneficiaire={beneficiaire}
             categories={categoriesActions}
             getActions={chargerActions}
+            shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
             labelSemaine={labelSemaine}
           />
