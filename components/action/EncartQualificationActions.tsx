@@ -10,7 +10,6 @@ type EncartQualificationActionsProps = {
   actionsSelectionnees: ActionAQualifier[]
   boutonsDisabled: boolean
   jeune?: IdentiteBeneficiaire
-  nombreActionsSelectionnees: number
   onLienExterne: (label: string) => void
   onQualification: (
     qualificationSNP: boolean,
@@ -22,7 +21,6 @@ export default function EncartQualificationActions({
   actionsSelectionnees,
   boutonsDisabled,
   jeune,
-  nombreActionsSelectionnees,
   onLienExterne,
   onQualification,
 }: EncartQualificationActionsProps) {
@@ -49,12 +47,12 @@ export default function EncartQualificationActions({
     <>
       <div className='flex items-center bg-primary-lighten rounded-base p-4 justify-between'>
         <p className='whitespace-pre-wrap'>
-          {nombreActionsSelectionnees === 0 &&
+          {actionsSelectionnees.length === 0 &&
             'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'}
-          {nombreActionsSelectionnees === 1 &&
+          {actionsSelectionnees.length === 1 &&
             '1 action sélectionnée. \nS’agit-il de SNP ou de non SNP ?'}
-          {nombreActionsSelectionnees > 1 &&
-            `${nombreActionsSelectionnees} actions sélectionnées. \nS’agit-il de SNP ou de non SNP ?`}
+          {actionsSelectionnees.length > 1 &&
+            `${actionsSelectionnees.length} actions sélectionnées. \nS’agit-il de SNP ou de non SNP ?`}
         </p>
 
         <div className='flex gap-2'>

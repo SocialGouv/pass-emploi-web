@@ -104,8 +104,9 @@ export default function OngletAgendaConseiller({
   return (
     <>
       <SelecteurPeriode
+        jourReference={DateTime.now().weekday}
+        periodeInitiale={periodeIndex}
         onNouvellePeriode={chargerNouvellePeriode}
-        periodeCourante={periodeIndex}
         trackNavigation={trackNavigation}
       />
 

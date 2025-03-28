@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
+import { desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
@@ -16,12 +16,14 @@ import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 
 describe('Agenda de la fiche jeune', () => {
   const UNE_DATE_SEMAINE_EN_COURS = DateTime.local(2022, 1, 3)
@@ -40,6 +42,7 @@ describe('Agenda de la fiche jeune', () => {
       desIndicateursSemaine()
     )
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
   })
 
   describe("quand l'utilisateur est un conseiller France Travail", () => {
@@ -50,11 +53,11 @@ describe('Agenda de la fiche jeune', () => {
         <FicheBeneficiairePage
           estMilo={false}
           beneficiaire={unDetailBeneficiaire()}
+          historiqueConseillers={[]}
           metadonneesFavoris={uneMetadonneeFavoris()}
           favorisOffres={uneListeDOffres()}
           favorisRecherches={uneListeDeRecherches()}
           ongletInitial='offres'
-          lectureSeule={false}
         />,
         {
           customConseiller: {
@@ -129,9 +132,10 @@ describe('Agenda de la fiche jeune', () => {
         expect(voirActionsEnRetard).toBeInTheDocument()
 
         await userEvent.click(voirActionsEnRetard)
-        expect(
-          screen.getByRole('tab', { name: 'Actions 0 éléments' })
-        ).toHaveAttribute('aria-selected', 'true')
+        expect(screen.getByRole('tab', { name: 'Actions' })).toHaveAttribute(
+          'aria-selected',
+          'true'
+        )
       })
       it('avec un message si le bénéficiaire n’a rien sur la semaine en cours', async () => {
         // Given
@@ -461,11 +465,10 @@ async function renderFicheJeuneMILO() {
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
       ongletInitial='agenda'
-      lectureSeule={false}
     />,
     {
       customConseiller: {

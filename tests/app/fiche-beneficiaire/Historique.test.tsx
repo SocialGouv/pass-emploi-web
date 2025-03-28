@@ -3,20 +3,19 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desConseillersBeneficiaire,
   desIndicateursSemaine,
   unDetailBeneficiaire,
 } from 'fixtures/beneficiaire'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
 
 describe('Historique des conseillers dans la fiche jeune', () => {
@@ -25,7 +24,7 @@ describe('Historique des conseillers dans la fiche jeune', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
     const historiqueConseillers = desConseillersBeneficiaire()
 
     // When
@@ -35,9 +34,8 @@ describe('Historique des conseillers dans la fiche jeune', () => {
         beneficiaire={unDetailBeneficiaire()}
         historiqueConseillers={historiqueConseillers}
         rdvs={[]}
-        actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
-        ongletInitial='agenda'
+        ongletInitial='actions'
       />
     )
     await userEvent.click(
