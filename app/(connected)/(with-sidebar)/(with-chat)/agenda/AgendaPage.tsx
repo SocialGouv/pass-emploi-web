@@ -75,15 +75,15 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function switchTab(tab: Onglet) {
+  async function updateTabInUrl(tab: Onglet) {
     setCurrentTab(tab)
-    setTrackingTitle(trackingLabelOnglet(tab))
+    setTrackingTitle(getTrackingLabelOnglet(tab))
     router.replace(
       `/agenda?onglet=${ongletProps[tab].queryParam}&periodeIndex=${periodeIndex}`
     )
   }
 
-  async function switchPeriode(index: number) {
+  async function updatePeriodeInUrl(index: number) {
     setPeriodeIndex(index)
     router.replace(
       `/agenda?onglet=${ongletProps[currentTab].queryParam}&periodeIndex=${index}`
@@ -156,11 +156,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   }
 
   function trackNavigation(append?: string) {
-    const trackingOnglet = trackingLabelOnglet(currentTab)
+    const trackingOnglet = getTrackingLabelOnglet(currentTab)
     setTrackingTitle(trackingOnglet + (append ? ` - ${append}` : ''))
   }
 
-  function trackingLabelOnglet(tab: Onglet): string {
+  function getTrackingLabelOnglet(tab: Onglet): string {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
@@ -208,14 +208,14 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
           label='Agenda Mission Locale'
           selected={currentTab === 'MISSION_LOCALE'}
           controls='agenda-mission-locale'
-          onSelectTab={() => switchTab('MISSION_LOCALE')}
+          onSelectTab={() => updateTabInUrl('MISSION_LOCALE')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='Mon agenda'
           selected={currentTab === 'CONSEILLER'}
           controls='agenda-conseiller'
-          onSelectTab={() => switchTab('CONSEILLER')}
+          onSelectTab={() => updateTabInUrl('CONSEILLER')}
           iconName={IconName.EventFill}
         />
       </TabList>
@@ -233,7 +233,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
               periodeIndex={periodeIndex}
-              changerPeriode={switchPeriode}
+              changerPeriode={updatePeriodeInUrl}
             />
           )}
 
@@ -260,7 +260,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
             periodeIndex={periodeIndex}
-            changerPeriode={switchPeriode}
+            changerPeriode={updatePeriodeInUrl}
           />
         </div>
       )}

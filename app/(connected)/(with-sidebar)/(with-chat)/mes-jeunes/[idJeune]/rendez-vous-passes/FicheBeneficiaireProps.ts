@@ -34,13 +34,12 @@ export const valeursOngletsMilo = [
   'favoris',
 ]
 export type OngletMilo = (typeof valeursOngletsMilo)[number]
-type DonneesMilo = {
+export type FicheMiloProps = BaseFiche & {
+  ongletInitial: OngletMilo
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   erreurSessions?: boolean
 }
-export type FicheMiloProps = BaseFiche &
-  DonneesMilo & { ongletInitial: OngletMilo }
 
 // Pas Milo
 export const valeursOngletsPasMilo = [
@@ -50,9 +49,8 @@ export const valeursOngletsPasMilo = [
   'favoris',
 ]
 export type OngletPasMilo = (typeof valeursOngletsPasMilo)[number]
-type DonneesPasMilo = {
+export type FichePasMiloProps = BaseFiche & {
+  ongletInitial: OngletPasMilo
   favorisRecherches?: Recherche[]
   demarches?: { data: Demarche[]; isStale: boolean } | null
 }
-export type FichePasMiloProps = BaseFiche &
-  DonneesPasMilo & { ongletInitial: OngletPasMilo }

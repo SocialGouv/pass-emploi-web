@@ -46,13 +46,10 @@ export default function OngletAgendaConseiller({
   const [failed, setFailed] = useState<string>()
 
   async function chargerNouvellePeriode(
-    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
     opts: { label: string; shouldFocus: boolean }
   ) {
-    await initEvenementsPeriode(
-      nouvellePeriode.dateDebut,
-      nouvellePeriode.dateFin
-    )
+    await initEvenementsPeriode(nouvellePeriode.debut, nouvellePeriode.fin)
     setLabelPeriode(opts.label)
     setShouldFocus(opts.shouldFocus)
     changerPeriode(nouvellePeriode.index)

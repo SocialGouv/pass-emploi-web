@@ -10,7 +10,7 @@ type SelecteurPeriodeProps = {
   jourReference: 1 | 2 | 3 | 4 | 5 | 6 | 7
   periodeInitiale: number
   onNouvellePeriode: (
-    periode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    periode: { index: number; debut: DateTime; fin: DateTime },
     opts: { label: string; shouldFocus: boolean }
   ) => void
   trackNavigation: (append?: string) => void
@@ -29,6 +29,7 @@ export function SelecteurPeriode({
     .startOf('day')
   const isFirstRender = useRef<boolean>(true)
 
+  // FIXME replace with date consistant value
   const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
     periodeInitiale ?? 0
   )
@@ -104,7 +105,7 @@ export function SelecteurPeriode({
     const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
     const label = labelPeriode(debut, fin, 'long')
     onNouvellePeriode(
-      { index: indexPeriodeAffichee, dateDebut: debut, dateFin: fin },
+      { index: indexPeriodeAffichee, debut: debut, fin: fin },
       { label, shouldFocus: shouldFocusOnChange }
     )
     setPeriodeAffichee({ debut, fin, longLabel: label })

@@ -5,6 +5,7 @@ import EmptyState from 'components/EmptyState'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import {
   Action,
   SituationNonProfessionnelle,
@@ -78,27 +79,10 @@ export default function OngletActions({
       )
     }
 
-    // TODO extract
     setActions(
-      actions!.map((affichee) => {
-        const actionAEteQualifiee = actionsQualifiees.some(
-          ({ idAction }) => idAction === affichee.id
-        )
-        if (!actionAEteQualifiee) return affichee
-
-        return {
-          ...affichee,
-          status: StatutAction.TermineeQualifiee,
-          qualification: qualificationSNP
-            ? affichee.qualification
-            : {
-                code: CODE_QUALIFICATION_NON_SNP,
-                isSituationNonProfessionnelle: false,
-                libelle:
-                  'Action non qualifiée en Situation Non Professionnelle',
-              },
-        }
-      })
+      actions!.map((affichee) =>
+        updateSiQualifiee(affichee, actionsQualifiees, qualificationSNP)
+      )
     )
   }
 
@@ -114,8 +98,7 @@ export default function OngletActions({
 
   return (
     <>
-      {/*TODO Chargement des actions */}
-      {!actions && 'TODO'}
+      {!actions && <SpinningLoader />}
 
       {actions && actions.length === 0 && !lectureSeule && (
         <div className='flex flex-col justify-center items-center'>
@@ -163,4 +146,27 @@ export default function OngletActions({
       )}
     </>
   )
+}
+
+function updateSiQualifiee(
+  affichee: Action,
+  actionsQualifiees: Array<{ idAction: string }>,
+  qualificationSNP: boolean
+) {
+  const actionAEteQualifiee = actionsQualifiees.some(
+    ({ idAction }) => idAction === affichee.id
+  )
+  if (!actionAEteQualifiee) return affichee
+
+  return {
+    ...affichee,
+    status: StatutAction.TermineeQualifiee,
+    qualification: qualificationSNP
+      ? affichee.qualification
+      : {
+          code: CODE_QUALIFICATION_NON_SNP,
+          isSituationNonProfessionnelle: false,
+          libelle: 'Action non qualifiée en Situation Non Professionnelle',
+        },
+  }
 }
