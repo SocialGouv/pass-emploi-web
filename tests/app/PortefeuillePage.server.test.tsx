@@ -109,7 +109,12 @@ describe('PortefeuillePage server side', () => {
       // Then
       expect(
         recupereCompteursBeneficiairesPortefeuilleMilo
-      ).toHaveBeenCalledWith('id-conseiller-1', dateDebut, dateFin, 'accessToken')
+      ).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        dateDebut,
+        dateFin,
+        'accessToken'
+      )
     })
 
     it("renvoie les jeunes avec leur nombre d'actions", () => {
@@ -124,6 +129,7 @@ describe('PortefeuillePage server side', () => {
             }))
             .sort(compareBeneficiairesByNom),
           isFromEmail: false,
+          page: 1,
         },
         undefined
       )
