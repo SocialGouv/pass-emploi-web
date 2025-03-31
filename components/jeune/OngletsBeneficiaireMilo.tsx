@@ -12,6 +12,7 @@ import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Action } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
+import { Periode } from 'types/dates'
 import { LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
@@ -38,24 +39,20 @@ export default function OngletsBeneficiaireMilo({
   categoriesActions,
   erreurSessions,
   onLienExterne,
-  semaineIndexInitial,
+  debutSemaineInitiale,
   onChangementSemaine,
   trackChangementSemaine,
 }: FicheMiloProps & {
-  onSwitchTab: (newTab: OngletMilo, currentSemaineIndex: number) => void
+  onSwitchTab: (newTab: OngletMilo, debutSemaine: DateTime) => void
   onLienExterne: (label: string) => void
-  onChangementSemaine: (currentTab: OngletMilo, newSemaineIndex: number) => void
+  onChangementSemaine: (currentTab: OngletMilo, nouveauDebut: DateTime) => void
   trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
-  const [semaineIndex, setSemaineIndex] = useState<number>(semaineIndexInitial)
-  const [semaine, setSemaine] = useState<{
-    debut: DateTime
-    fin: DateTime
-  }>()
+  const [semaine, setSemaine] = useState<Periode>()
   const [labelSemaine, setLabelSemaine] = useState<string>()
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
@@ -64,20 +61,19 @@ export default function OngletsBeneficiaireMilo({
     useState<boolean>(false)
 
   async function chargerNouvelleSemaine(
-    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
+    nouvellePeriode: Periode,
     opts: { label: string; shouldFocus: boolean }
   ) {
-    setSemaineIndex(nouvellePeriode.index)
-    setSemaine({ debut: nouvellePeriode.debut, fin: nouvellePeriode.fin })
+    setSemaine(nouvellePeriode)
     setLabelSemaine(opts.label)
     setShouldFocus(opts.shouldFocus)
-    onChangementSemaine(currentTab, nouvellePeriode.index)
+    onChangementSemaine(currentTab, nouvellePeriode.debut)
   }
 
   function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
     setCurrentTab(newTab)
-    onSwitchTab(newTab, semaineIndex)
+    onSwitchTab(newTab, semaine!.debut)
   }
 
   const chargerActions = useCallback(async (): Promise<Action[]> => {
@@ -105,8 +101,12 @@ export default function OngletsBeneficiaireMilo({
   return (
     <>
       <SelecteurPeriode
-        jourReference={LUNDI}
-        periodeInitiale={semaineIndex}
+        premierJour={
+          debutSemaineInitiale
+            ? DateTime.fromISO(debutSemaineInitiale)
+            : DateTime.now()
+        }
+        jourSemaineReference={LUNDI}
         onNouvellePeriode={chargerNouvelleSemaine}
         trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
         className='m-auto'

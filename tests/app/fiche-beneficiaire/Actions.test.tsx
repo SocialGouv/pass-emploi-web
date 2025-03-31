@@ -100,7 +100,7 @@ describe('Actions dans la fiche jeune', () => {
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
       expect(replace).toHaveBeenCalledWith(
-        '/mes-jeunes/id-beneficiaire-1?onglet=actions'
+        '/mes-jeunes/id-beneficiaire-1?onglet=actions&debut=2022-08-29'
       )
     })
 

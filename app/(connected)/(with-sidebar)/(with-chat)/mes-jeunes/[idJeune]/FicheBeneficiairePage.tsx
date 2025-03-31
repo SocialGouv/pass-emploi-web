@@ -65,9 +65,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   ] = useState<boolean>(false)
 
   const aujourdHui = DateTime.now()
-  const debutSemaine = aujourdHui.startOf('week')
-  const finSemaine = aujourdHui.endOf('week')
-
   let pageTracking: string = beneficiaire.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
@@ -90,17 +87,17 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  function updateTabInUrl(newTab: Onglet, semaineIndex?: number) {
+  function updateTabInUrl(newTab: Onglet, debutSemaine?: DateTime) {
     setTrackingLabel(getOngletTrackingLabel(newTab))
 
     let newUrl = `${pathPrefix}/${beneficiaire.id}?onglet=${newTab}`
-    if (semaineIndex) newUrl += `&semaineIndex=${semaineIndex}`
+    if (debutSemaine) newUrl += `&debut=${debutSemaine.toISODate()}`
     router.replace(newUrl)
   }
 
-  function updateSemaineInUrl(currentTab: Onglet, newSemaineIndex: number) {
+  function updateSemaineInUrl(currentTab: Onglet, nouveauDebut: DateTime) {
     router.replace(
-      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&semaineIndex=${newSemaineIndex}`
+      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&debut=${nouveauDebut.toISODate()}`
     )
   }
 
@@ -120,8 +117,8 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       getIndicateursBeneficiaire(
         conseiller.id,
         beneficiaire.id,
-        debutSemaine,
-        finSemaine
+        aujourdHui.startOf('week'),
+        aujourdHui.endOf('week')
       ).then(setIndicateursSemaine)
     }
   }, [])

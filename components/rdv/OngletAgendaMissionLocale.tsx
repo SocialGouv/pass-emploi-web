@@ -16,6 +16,7 @@ import {
   AnimationCollective,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
+import { Periode } from 'types/dates'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -30,15 +31,15 @@ type OngletAgendaMissionLocaleProps = {
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
   trackNavigation: (append?: string) => void
-  periodeIndex: number
-  changerPeriode: (index: number) => void
+  debutPeriode: DateTime
+  changerPeriode: (nouveauDebut: DateTime) => void
 }
 
 export default function OngletAgendaMissionLocale({
   recupererAnimationsCollectives,
   recupererSessionsMilo,
   trackNavigation,
-  periodeIndex,
+  debutPeriode,
   changerPeriode,
 }: OngletAgendaMissionLocaleProps) {
   const [conseiller] = useConseiller()
@@ -53,34 +54,28 @@ export default function OngletAgendaMissionLocale({
     useState<AnimationCollective[]>()
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
-  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [periode, setPeriode] = useState<Periode>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<string>()
 
   async function modifierPeriode(
-    nouvellePeriode: { index: number; debut: DateTime; fin: DateTime },
+    nouvellePeriode: Periode,
     opts: { label: string; shouldFocus: boolean }
   ) {
-    await chargerEvenementsPeriode(nouvellePeriode.debut, nouvellePeriode.fin)
+    await chargerEvenementsPeriode(nouvellePeriode)
     setLabelPeriode(opts.label)
-    changerPeriode(nouvellePeriode.index)
+    changerPeriode(nouvellePeriode.debut)
     setShouldFocus(opts.shouldFocus)
   }
 
-  async function chargerEvenementsPeriode(
-    dateDebut: DateTime,
-    dateFin: DateTime
-  ) {
+  async function chargerEvenementsPeriode({ debut, fin }: Periode) {
     setFailed(undefined)
     setEvenementsAffiches(undefined)
     let erreurs
 
     let animationsCollectives: AnimationCollective[] = []
     try {
-      animationsCollectives = await recupererAnimationsCollectives(
-        dateDebut,
-        dateFin
-      )
+      animationsCollectives = await recupererAnimationsCollectives(debut, fin)
     } catch {
       erreurs = 'animationsCollectives'
     }
@@ -88,7 +83,7 @@ export default function OngletAgendaMissionLocale({
     let sessions: AnimationCollective[] = []
     if (peutAccederAuxSessions(conseiller)) {
       try {
-        sessions = await recupererSessionsMilo(dateDebut, dateFin)
+        sessions = await recupererSessionsMilo(debut, fin)
       } catch {
         erreurs = erreurs ? 'all' : 'sessions'
       }
@@ -100,7 +95,7 @@ export default function OngletAgendaMissionLocale({
         (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
       )
     )
-    setPeriode({ debut: dateDebut, fin: dateFin })
+    setPeriode({ debut, fin })
   }
 
   function filtrerEtChercherEvenements(): AnimationCollective[] {
@@ -152,8 +147,8 @@ export default function OngletAgendaMissionLocale({
       <RechercheAgendaForm onSearch={setRecherche} />
       <nav className='flex justify-between items-center'>
         <SelecteurPeriode
-          jourReference={DateTime.now().weekday}
-          periodeInitiale={periodeIndex}
+          premierJour={debutPeriode}
+          jourSemaineReference={DateTime.now().weekday}
           onNouvellePeriode={modifierPeriode}
           trackNavigation={trackNavigation}
         />
@@ -176,7 +171,7 @@ export default function OngletAgendaMissionLocale({
       <ErreursRecuperation
         failed={failed}
         shouldFocus={shouldFocus}
-        onRetry={() => chargerEvenementsPeriode(periode!.debut, periode!.fin)}
+        onRetry={() => chargerEvenementsPeriode(periode!)}
       />
 
       {evenementsAffiches &&
