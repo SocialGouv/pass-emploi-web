@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import React, {
   ForwardedRef,
   forwardRef,
@@ -29,16 +30,18 @@ const TableauBeneficiairesPasMilo = dynamic(
 type TableauBeneficiairesProps = {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
   total: number
+  pageInitiale: number
 }
 
 function TableauBeneficiaires(
-  { beneficiaires, total }: TableauBeneficiairesProps,
+  { beneficiaires, total, pageInitiale }: TableauBeneficiairesProps,
   ref: ForwardedRef<HTMLTableElement>
 ) {
   const [conseiller] = useConseiller()
+  const router = useRouter()
 
   const nombrePages = Math.ceil(beneficiaires.length / 10)
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<number>(pageInitiale)
 
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
@@ -82,6 +85,11 @@ function TableauBeneficiaires(
     })
   }
 
+  function changePage(nouvellePage: number) {
+    router.replace(`?page=${nouvellePage}`)
+    setPage(nouvellePage)
+  }
+
   function filtrerParDispositifs(
     beneficiairesAFiltrer: BeneficiaireAvecInfosComplementaires[],
     dispositifAFiltrer?: string
@@ -118,7 +126,7 @@ function TableauBeneficiaires(
   }
 
   useEffect(() => {
-    setPage(1)
+    setPage(page)
   }, [beneficiaires])
 
   useEffect(() => {
@@ -241,7 +249,7 @@ function TableauBeneficiaires(
             <Pagination
               pageCourante={page}
               nombreDePages={nombrePages}
-              allerALaPage={setPage}
+              allerALaPage={changePage}
             />
           )}
         </>

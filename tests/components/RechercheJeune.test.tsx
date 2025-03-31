@@ -18,7 +18,7 @@ describe('Recherche', () => {
     ;(countMessagesNotRead as jest.Mock).mockResolvedValue({})
 
     await renderWithContexts(
-      <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
+      <PortefeuillePage conseillerJeunes={jeunes} isFromEmail page={1} />
     )
   })
 

@@ -15,7 +15,9 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 
 export const metadata: Metadata = { title: 'Portefeuille' }
 
-type PortfeuilleSearchParams = Promise<Partial<{ source: string }>>
+type PortfeuilleSearchParams = Promise<
+  Partial<{ source: string; page: string }>
+>
 export default async function Portefeuille({
   searchParams,
 }: {
@@ -26,6 +28,9 @@ export default async function Portefeuille({
     user.id,
     accessToken
   )
+  const { source, page } = (await searchParams) ?? {}
+
+  const parsedPage = page ? parseInt(page, 10) : 1
 
   let beneficiairesAvecCompteurs: BeneficiaireAvecCompteursActionsRdvs[]
   if (estMilo(user.structure)) {
@@ -71,7 +76,8 @@ export default async function Portefeuille({
 
       <PortefeuillePage
         conseillerJeunes={beneficiairesAlphabetiques}
-        isFromEmail={Boolean((await searchParams)?.source)}
+        isFromEmail={Boolean(source)}
+        page={parsedPage || 1}
       />
     </>
   )
