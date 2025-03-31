@@ -8,7 +8,6 @@ import {
   CompteurActionsPeriode,
   QualificationAction,
   SituationNonProfessionnelle,
-  StatutAction,
 } from 'interfaces/action'
 import {
   ActionFormData,
@@ -22,8 +21,8 @@ import {
   jsonToQualification,
   QualificationActionJson,
 } from 'interfaces/json/action'
+import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
-import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export async function getAction(
@@ -70,7 +69,7 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
 
 export async function getActionsBeneficiaire(
   idJeune: string,
-  periode: { debut: DateTime; fin: DateTime }
+  periode: Periode
 ): Promise<Action[]> {
   const session = await getSession()
 

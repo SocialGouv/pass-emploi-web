@@ -1,7 +1,10 @@
 import { DateTime, Duration } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
+import { JourSemaine, Periode } from 'types/dates'
+
 export const LUNDI = 1
+export const PERIODE_LENGTH_FULL_DAYS = 7
 
 export function dateIsToday(dateToCheck: DateTime): boolean {
   return DateTime.now().hasSame(dateToCheck, 'day')
@@ -132,4 +135,15 @@ function toFrenchString(
 function toFrenchFormat(date: string | DateTime, format: string): string {
   const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
   return datetime.toFormat(format, { locale: 'fr-FR' })
+}
+
+export function getPeriodeAround(
+  date: DateTime,
+  { jourSemaineReference }: { jourSemaineReference: JourSemaine }
+): Periode {
+  const debut = date.set({ weekday: jourSemaineReference }).startOf('day')
+  return {
+    debut,
+    fin: debut.plus({ day: PERIODE_LENGTH_FULL_DAYS - 1 }).endOf('day'),
+  }
 }
