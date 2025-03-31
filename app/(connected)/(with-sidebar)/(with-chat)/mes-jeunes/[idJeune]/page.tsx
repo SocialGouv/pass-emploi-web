@@ -33,7 +33,7 @@ import { compareDates } from 'utils/date'
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
 type FicheBeneficiaireSearchParams = Promise<{
   onglet?: string
-  semaineIndex?: string
+  debut?: string
 }>
 type RouteProps = {
   params: FicheBeneficiaireParams
@@ -53,6 +53,7 @@ export async function generateMetadata({
   }
   return { title: `Portefeuille - ${jeune.prenom} ${jeune.nom}` }
 }
+
 export default async function FicheBeneficiaire({
   params,
   searchParams,
@@ -74,9 +75,11 @@ export default async function FicheBeneficiaire({
     favorisOffres = await getOffres(beneficiaire.id, accessToken)
   }
 
-  const { onglet, semaineIndex } = (await searchParams) ?? {}
+  const { onglet, debut } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
-  const semaineIndexInitial = semaineIndex ? parseInt(semaineIndex) : 0
+  // FIXME luxon throwOnInvalid
+  const debutSemaineInitiale =
+    debut && DateTime.fromISO(debut).isValid ? debut : undefined
 
   const props = {
     beneficiaire,
@@ -84,6 +87,7 @@ export default async function FicheBeneficiaire({
     historiqueConseillers,
     metadonneesFavoris,
     favorisOffres,
+    debutSemaineInitiale,
   }
 
   return (
@@ -91,20 +95,10 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(
-          conseiller,
-          accessToken,
-          semaineIndexInitial,
-          props
-        ))}
+        (await renderFicheMilo(conseiller, accessToken, props))}
 
       {!estMilo(conseiller.structure) &&
-        (await renderFichePasMilo(
-          conseiller,
-          accessToken,
-          semaineIndexInitial,
-          props
-        ))}
+        (await renderFichePasMilo(conseiller, accessToken, props))}
     </>
   )
 }
@@ -129,7 +123,6 @@ function getOngletInitial(
 async function renderFicheMilo(
   conseiller: Conseiller,
   accessToken: string,
-  semaineIndexInitial: number,
   props: Pick<
     FicheMiloProps,
     | 'beneficiaire'
@@ -137,6 +130,7 @@ async function renderFicheMilo(
     | 'historiqueConseillers'
     | 'metadonneesFavoris'
     | 'favorisOffres'
+    | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
   const [rdvs, categoriesActions] = await Promise.all([
@@ -174,7 +168,6 @@ async function renderFicheMilo(
   return (
     <FicheBeneficiairePage
       {...props}
-      semaineIndexInitial={isNaN(semaineIndexInitial) ? 0 : semaineIndexInitial}
       estMilo={true}
       rdvs={rdvsEtSessionsTriesParDate}
       categoriesActions={categoriesActions}
@@ -186,7 +179,6 @@ async function renderFicheMilo(
 async function renderFichePasMilo(
   conseiller: Conseiller,
   accessToken: string,
-  semaineIndexInitial: number,
   props: Pick<
     FichePasMiloProps,
     | 'beneficiaire'
@@ -194,6 +186,7 @@ async function renderFichePasMilo(
     | 'historiqueConseillers'
     | 'metadonneesFavoris'
     | 'favorisOffres'
+    | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
@@ -217,7 +210,6 @@ async function renderFichePasMilo(
   return (
     <FicheBeneficiairePage
       {...props}
-      semaineIndexInitial={isNaN(semaineIndexInitial) ? 0 : semaineIndexInitial}
       estMilo={false}
       favorisRecherches={recherches}
       demarches={demarches}

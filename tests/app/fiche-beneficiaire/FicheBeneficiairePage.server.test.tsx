@@ -114,7 +114,7 @@ describe('FicheBeneficiairePage server side', () => {
           metadonneesFavoris: expect.objectContaining({}),
           favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
-          semaineIndexInitial: 0,
+          debutSemaineInitiale: undefined,
           erreurSessions: false,
         },
         undefined
@@ -186,13 +186,13 @@ describe('FicheBeneficiairePage server side', () => {
       render(
         await FicheBeneficiaire({
           params: Promise.resolve({ idJeune: 'id-jeune' }),
-          searchParams: Promise.resolve({ semaineIndex: '4' }),
+          searchParams: Promise.resolve({ debut: '2023-04-12' }),
         })
       )
 
       // Then
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ semaineIndexInitial: 4 }),
+        expect.objectContaining({ debutSemaineInitiale: '2023-04-12' }),
         undefined
       )
     })

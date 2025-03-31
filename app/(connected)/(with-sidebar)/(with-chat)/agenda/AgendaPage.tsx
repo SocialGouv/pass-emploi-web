@@ -33,10 +33,10 @@ const OngletAgendaMissionLocale = dynamic(
 type Onglet = 'CONSEILLER' | 'MISSION_LOCALE'
 type AgendaPageProps = {
   onglet: Onglet
-  periodeIndexInitial: number
+  debutPeriodeInitiale?: string
 }
 
-function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
+function AgendaPage({ onglet, debutPeriodeInitiale }: AgendaPageProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -56,7 +56,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
-  const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
+  const [debutPeriode, setDebutPeriode] = useState<DateTime>(
+    debutPeriodeInitiale
+      ? DateTime.fromISO(debutPeriodeInitiale)
+      : DateTime.now()
+  )
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -79,14 +83,14 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     setCurrentTab(tab)
     setTrackingTitle(getTrackingLabelOnglet(tab))
     router.replace(
-      `/agenda?onglet=${ongletProps[tab].queryParam}&periodeIndex=${periodeIndex}`
+      `/agenda?onglet=${ongletProps[tab].queryParam}&debut=${debutPeriode.toISODate()}`
     )
   }
 
-  async function updatePeriodeInUrl(index: number) {
-    setPeriodeIndex(index)
+  async function updatePeriodeInUrl(nouveauDebut: DateTime) {
+    setDebutPeriode(nouveauDebut)
     router.replace(
-      `/agenda?onglet=${ongletProps[currentTab].queryParam}&periodeIndex=${index}`
+      `/agenda?onglet=${ongletProps[currentTab].queryParam}&debut=${nouveauDebut.toISODate()}`
     )
   }
 
@@ -232,7 +236,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
-              periodeIndex={periodeIndex}
+              debutPeriode={debutPeriode}
               changerPeriode={updatePeriodeInUrl}
             />
           )}
@@ -259,7 +263,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
             recupererRdvs={recupererRdvsConseiller}
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
-            periodeIndex={periodeIndex}
+            debutPeriode={debutPeriode}
             changerPeriode={updatePeriodeInUrl}
           />
         </div>

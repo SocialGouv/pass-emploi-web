@@ -55,7 +55,7 @@ describe('AgendaPage client side', () => {
 
     // When
     ;({ container } = await renderWithContexts(
-      <AgendaPage onglet='MISSION_LOCALE' periodeIndexInitial={0} />,
+      <AgendaPage onglet='MISSION_LOCALE' />,
       {
         customConseiller: conseiller,
       }
@@ -108,7 +108,7 @@ describe('AgendaPage client side', () => {
     )
     // Then
     expect(replace).toHaveBeenCalledWith(
-      '/agenda?onglet=mission-locale&periodeIndex=0'
+      '/agenda?onglet=mission-locale&debut=2022-09-01'
     )
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
       'Agenda Mission Locale'
@@ -122,7 +122,7 @@ describe('AgendaPage client side', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Mon agenda' }))
     // Then
     expect(replace).toHaveBeenCalledWith(
-      '/agenda?onglet=conseiller&periodeIndex=0'
+      '/agenda?onglet=conseiller&debut=2022-09-01'
     )
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
       'Mon agenda'

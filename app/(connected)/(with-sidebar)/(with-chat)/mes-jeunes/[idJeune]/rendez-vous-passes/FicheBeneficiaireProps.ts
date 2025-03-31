@@ -13,7 +13,7 @@ export type BaseFiche = {
   estMilo: boolean
   beneficiaire: DetailBeneficiaire
   historiqueConseillers: ConseillerHistorique[]
-  semaineIndexInitial: number
+  debutSemaineInitiale?: string
   metadonneesFavoris?: MetadonneesFavoris
   favorisOffres?: Offre[]
 }
