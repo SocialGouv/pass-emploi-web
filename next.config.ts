@@ -70,14 +70,6 @@ const nextConfig: NextConfig = {
       use: [{ loader: '@svgr/webpack', options: { titleProp: true } }],
     })
 
-    // https://www.elastic.co/guide/en/apm/agent/rum-js/current/install-the-agent.html#using-bundlers
-    const { EnvironmentPlugin } = require('webpack')
-    config.plugins.push(
-      new EnvironmentPlugin({
-        NODE_ENV: process.env.NODE_ENV,
-      })
-    )
-
     return config
   },
 
