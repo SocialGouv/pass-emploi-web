@@ -114,7 +114,7 @@ export default function OngletsBeneficiaireMilo({
 
       <TabList
         label={`Activités de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-        className='mt-6'
+        className='mt-8'
       >
         <Tab
           label='Actions'

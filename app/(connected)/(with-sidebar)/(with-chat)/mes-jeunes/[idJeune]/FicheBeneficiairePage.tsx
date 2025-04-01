@@ -156,7 +156,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
             ? () => setShowModaleDeleteBeneficiaire(true)
             : undefined
         }
-        className='mb-6'
+        className='mb-8'
       />
 
       {estBeneficiaireMilo && (
