@@ -5,7 +5,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Periode } from 'types/dates'
 import {
-  getPeriodeAround as _getPeriodeAround,
+  getPeriodeComprenant as _getPeriodeComprenant,
   PERIODE_LENGTH_FULL_DAYS,
   toLongMonthDate,
 } from 'utils/date'
@@ -33,23 +33,26 @@ export function SelecteurPeriode({
   const aujourdhui = DateTime.now()
 
   const [periodeAffichee, setPeriodeAffichee] = useState<Periode>(
-    getPeriodeAround(premierJour)
+    getPeriodeComprenant(premierJour)
   )
   const [labelPeriode, setLabelPeriode] = useState<string>(
     getLabelPeriode(periodeAffichee)
   )
+  const periodeCouranteEstAffichee =
+    Math.abs(periodeAffichee.debut.diff(aujourdhui, 'days').days) <
+    PERIODE_LENGTH_FULL_DAYS
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null)
   const [periodeInput, setPeriodeInput] = useState<string>(
     periodeAffichee.debut.toISODate()
   )
   const debouncedPeriode = useDebounce(periodeInput, 500)
-
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
+
   const [shouldFocusOnChange, setShouldFocusOnChange] = useState<boolean>(false)
 
-  function getPeriodeAround(date: DateTime): Periode {
-    return _getPeriodeAround(date, { jourSemaineReference })
+  function getPeriodeComprenant(date: DateTime): Periode {
+    return _getPeriodeComprenant(date, { jourSemaineReference })
   }
 
   function getLabelPeriode({ debut, fin }: Periode): string {
@@ -75,7 +78,7 @@ export function SelecteurPeriode({
   }
 
   async function allerPeriodeActuelle() {
-    setPeriodeAffichee(getPeriodeAround(aujourdhui))
+    setPeriodeAffichee(getPeriodeComprenant(aujourdhui))
     setShouldFocusOnChange(true)
     trackNavigation()
   }
@@ -83,7 +86,9 @@ export function SelecteurPeriode({
   function changerPeriode(debutPeriodeInput: string) {
     if (!regexDate.test(debutPeriodeInput)) return
 
-    setPeriodeAffichee(getPeriodeAround(DateTime.fromISO(debutPeriodeInput)))
+    setPeriodeAffichee(
+      getPeriodeComprenant(DateTime.fromISO(debutPeriodeInput))
+    )
     setShouldFocusOnChange(true)
     trackNavigation('manuel')
   }
@@ -126,7 +131,7 @@ export function SelecteurPeriode({
           aria-label={
             'Aller à la période précédente ' +
             getLabelPeriode(
-              getPeriodeAround(
+              getPeriodeComprenant(
                 periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS })
               )
             )
@@ -134,7 +139,7 @@ export function SelecteurPeriode({
           title={
             'Aller à la période précédente ' +
             getLabelPeriode(
-              getPeriodeAround(
+              getPeriodeComprenant(
                 periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS })
               )
             )
@@ -176,7 +181,7 @@ export function SelecteurPeriode({
           aria-label={
             `Aller à la période suivante ` +
             getLabelPeriode(
-              getPeriodeAround(
+              getPeriodeComprenant(
                 periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS })
               )
             )
@@ -184,7 +189,7 @@ export function SelecteurPeriode({
           title={
             `Aller à la période suivante ` +
             getLabelPeriode(
-              getPeriodeAround(
+              getPeriodeComprenant(
                 periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS })
               )
             )
@@ -196,12 +201,9 @@ export function SelecteurPeriode({
         type='button'
         style={ButtonStyle.SECONDARY}
         onClick={allerPeriodeActuelle}
-        disabled={
-          Math.abs(periodeAffichee.debut.diff(aujourdhui, 'days').days) <
-          PERIODE_LENGTH_FULL_DAYS
-        }
+        disabled={periodeCouranteEstAffichee}
         className='py-0!'
-        label={`Aller à la période en cours ${getLabelPeriode(getPeriodeAround(aujourdhui))}`}
+        label={`Aller à la période en cours ${getLabelPeriode(getPeriodeComprenant(aujourdhui))}`}
       >
         Période en cours
       </Button>

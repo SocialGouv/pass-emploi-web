@@ -137,7 +137,7 @@ function toFrenchFormat(date: string | DateTime, format: string): string {
   return datetime.toFormat(format, { locale: 'fr-FR' })
 }
 
-export function getPeriodeAround(
+export function getPeriodeComprenant(
   date: DateTime,
   { jourSemaineReference }: { jourSemaineReference: JourSemaine }
 ): Periode {
