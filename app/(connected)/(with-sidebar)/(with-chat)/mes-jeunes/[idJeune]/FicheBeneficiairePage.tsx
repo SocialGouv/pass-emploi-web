@@ -59,16 +59,12 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [showModaleDeleteBeneficiaire, setShowModaleDeleteBeneficiaire] =
     useState<boolean>(false)
-
   const [
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
   const aujourdHui = DateTime.now()
-  const debutSemaine = aujourdHui.startOf('week')
-  const finSemaine = aujourdHui.endOf('week')
-
   let pageTracking: string = beneficiaire.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
@@ -91,12 +87,27 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  function switchTab(tab: Onglet) {
-    setTrackingLabel(
-      `${pageTracking} - Consultation ${capitalizeFirstLetter(tab)}`
-    )
+  function updateTabInUrl(newTab: Onglet, debutSemaine?: DateTime) {
+    setTrackingLabel(getOngletTrackingLabel(newTab))
 
-    router.replace(`${pathPrefix}/${beneficiaire.id}?onglet=${tab}`)
+    let newUrl = `${pathPrefix}/${beneficiaire.id}?onglet=${newTab}`
+    if (debutSemaine) newUrl += `&debut=${debutSemaine.toISODate()}`
+    router.replace(newUrl)
+  }
+
+  function updateSemaineInUrl(currentTab: Onglet, nouveauDebut: DateTime) {
+    router.replace(
+      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&debut=${nouveauDebut.toISODate()}`
+    )
+  }
+
+  function trackChangementSemaine(tab: Onglet, append?: string) {
+    const ongletTrackingLabel = getOngletTrackingLabel(tab)
+    setTrackingLabel(ongletTrackingLabel + (append ? ` - ${append}` : ''))
+  }
+
+  function getOngletTrackingLabel(tab: string) {
+    return `${pageTracking} - Consultation ${capitalizeFirstLetter(tab)}`
   }
 
   useMatomo(trackingLabel, portefeuille.length > 0)
@@ -106,8 +117,8 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       getIndicateursBeneficiaire(
         conseiller.id,
         beneficiaire.id,
-        debutSemaine,
-        finSemaine
+        aujourdHui.startOf('week'),
+        aujourdHui.endOf('week')
       ).then(setIndicateursSemaine)
     }
   }, [])
@@ -145,19 +156,21 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
             ? () => setShowModaleDeleteBeneficiaire(true)
             : undefined
         }
-        className='mb-6'
+        className='mb-8'
       />
 
       {estBeneficiaireMilo && (
         <OngletsBeneficiaireMilo
-          onSwitchTab={switchTab}
+          onSwitchTab={updateTabInUrl}
           onLienExterne={setTrackingLabel}
+          onChangementSemaine={updateSemaineInUrl}
+          trackChangementSemaine={trackChangementSemaine}
           {...props}
         />
       )}
 
       {!estBeneficiaireMilo && (
-        <OngletsBeneficiairePasMilo onSwitchTab={switchTab} {...props} />
+        <OngletsBeneficiairePasMilo onSwitchTab={updateTabInUrl} {...props} />
       )}
 
       {showModaleDeleteBeneficiaire && (
@@ -174,15 +187,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       )}
     </>
   )
-}
-
-export default withTransaction(
-  FicheBeneficiairePage.name,
-  'page'
-)(FicheBeneficiairePage)
-
-function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 function Messages(props: FicheBeneficiaireProps): ReactElement {
@@ -285,3 +289,12 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
     </>
   )
 }
+
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export default withTransaction(
+  FicheBeneficiairePage.name,
+  'page'
+)(FicheBeneficiairePage)

@@ -2,11 +2,11 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction } from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unBeneficiaireChat,
@@ -22,7 +22,7 @@ import {
   Demarche,
 } from 'interfaces/beneficiaire'
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import {
   getIndicateursBeneficiaire,
   modifierDispositif,
@@ -31,7 +31,7 @@ import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
 
 describe('FicheBeneficiairePage client side', () => {
@@ -39,7 +39,8 @@ describe('FicheBeneficiairePage client side', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
   })
 
   describe('pour tous les conseillers', () => {
@@ -56,9 +57,8 @@ describe('FicheBeneficiairePage client side', () => {
           beneficiaire={beneficiaire}
           historiqueConseillers={[]}
           rdvs={[]}
-          actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
-          ongletInitial='agenda'
+          ongletInitial='actions'
         />,
         {
           customChats: [conversation],
@@ -88,9 +88,8 @@ describe('FicheBeneficiairePage client side', () => {
           beneficiaire={unDetailBeneficiaire()}
           historiqueConseillers={[]}
           rdvs={[]}
-          actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
-          ongletInitial='agenda'
+          ongletInitial='actions'
         />,
         {
           customConseiller: { id: 'fake-id' },
@@ -136,8 +135,13 @@ describe('FicheBeneficiairePage client side', () => {
   describe('pour les conseillers Milo', () => {
     it('a11y', async () => {
       const container = await renderFicheJeuneMilo()
-      const results = await axe(container)
-      expect(results).toHaveNoViolations()
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results!).toHaveNoViolations()
     })
 
     it('affiche la situation du bénéficiaire', async () => {
@@ -323,9 +327,8 @@ describe('FicheBeneficiairePage client side', () => {
             beneficiaire={unDetailBeneficiaire({ isActivated: false })}
             historiqueConseillers={[]}
             rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
-            ongletInitial='agenda'
+            ongletInitial='actions'
           />
         )
 
@@ -429,9 +432,8 @@ async function renderFicheJeuneMilo({
       beneficiaire={beneficiaire}
       historiqueConseillers={[]}
       rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
-      ongletInitial='agenda'
+      ongletInitial='actions'
     />,
     {
       customConseiller: {

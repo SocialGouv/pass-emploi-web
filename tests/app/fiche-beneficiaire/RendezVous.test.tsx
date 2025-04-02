@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
@@ -17,13 +16,13 @@ import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { Structure } from 'interfaces/structure'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 jest.mock('services/favoris.service')
 
 describe('Rendez-vous de la fiche jeune', () => {
@@ -35,7 +34,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
@@ -160,11 +159,10 @@ async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       rdvs={rdvs}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
-      ongletInitial='agenda'
-      lectureSeule={false}
+      ongletInitial='actions'
     />,
     {
       customConseiller: {
@@ -186,11 +184,11 @@ async function renderFicheJeuneFT(
     <FicheBeneficiairePage
       estMilo={false}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       metadonneesFavoris={metadonnees}
       favorisOffres={offresFT}
       favorisRecherches={recherchesFT}
-      ongletInitial='offres'
-      lectureSeule={false}
+      ongletInitial='actions'
     />,
     {
       customConseiller: {

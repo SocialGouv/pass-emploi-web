@@ -1,22 +1,22 @@
 import { screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
   describe("quand l'utilisateur est un conseiller Milo", () => {
@@ -27,7 +27,8 @@ describe('Indicateurs dans la fiche jeune', () => {
       ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
-      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+      ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+      ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
       // When
       await renderWithContexts(
@@ -36,10 +37,9 @@ describe('Indicateurs dans la fiche jeune', () => {
           beneficiaire={unDetailBeneficiaire()}
           historiqueConseillers={[]}
           rdvs={[]}
-          actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           metadonneesFavoris={uneMetadonneeFavoris()}
-          ongletInitial='agenda'
+          ongletInitial='actions'
         />,
         {}
       )

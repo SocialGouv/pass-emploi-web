@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   desItemsBeneficiaires,
@@ -21,7 +20,7 @@ import {
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import {
   archiverJeune,
   getIndicateursBeneficiaire,
@@ -31,7 +30,7 @@ import {
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
@@ -45,7 +44,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
   beforeEach(async () => {
     push = jest.fn()
-    ;(useRouter as jest.Mock).mockReturnValue({ push })
+    ;(useRouter as jest.Mock).mockReturnValue({ push, replace: jest.fn() })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsBeneficiaires().map(extractBeneficiaireWithActivity)
@@ -55,7 +54,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
   })
 
   describe('pour tous les conseillers', () => {
@@ -362,10 +361,10 @@ async function renderFicheBeneficiaire(
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={beneficiaire}
+      historiqueConseillers={[]}
       rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
-      ongletInitial='agenda'
+      ongletInitial='actions'
       lectureSeule={false}
     />,
     {

@@ -11,6 +11,8 @@ const apm = require('elastic-apm-node').start({
 require('next-logger')
 const { createServer } = require('http')
 const { parse } = require('url')
+
+const { Settings } = require('luxon')
 const next = require('next')
 
 const dev = process.env.NODE_ENV !== 'production'
@@ -30,3 +32,5 @@ app.prepare().then(() => {
     console.log(`> Ready on http://${hostname}:${port}`)
   })
 })
+
+Settings.throwOnInvalid = true

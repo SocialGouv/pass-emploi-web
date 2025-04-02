@@ -9,6 +9,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { Periode } from 'types/dates'
 import { compareDates } from 'utils/date'
 
 type OngletAgendaConseillerProps = {
@@ -24,8 +25,8 @@ type OngletAgendaConseillerProps = {
     dateFin: DateTime
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
-  periodeIndex: number
-  changerPeriode: (index: number) => void
+  debutPeriode: DateTime
+  changerPeriode: (nouveauDebut: DateTime) => void
 }
 
 export default function OngletAgendaConseiller({
@@ -33,7 +34,7 @@ export default function OngletAgendaConseiller({
   recupererRdvs,
   recupererSessionsBeneficiaires,
   trackNavigation,
-  periodeIndex,
+  debutPeriode,
   changerPeriode,
 }: OngletAgendaConseillerProps) {
   const tableRef = useRef<HTMLTableElement>(null)
@@ -41,27 +42,24 @@ export default function OngletAgendaConseiller({
   const [evenements, setEvenements] = useState<EvenementListItem[]>()
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
-  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [periode, setPeriode] = useState<Periode>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<string>()
 
   async function chargerNouvellePeriode(
-    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
+    nouvellePeriode: Periode,
     opts: { label: string; shouldFocus: boolean }
   ) {
-    await initEvenementsPeriode(
-      nouvellePeriode.dateDebut,
-      nouvellePeriode.dateFin
-    )
+    await initEvenementsPeriode(nouvellePeriode)
     setLabelPeriode(opts.label)
     setShouldFocus(opts.shouldFocus)
-    changerPeriode(nouvellePeriode.index)
+    changerPeriode(nouvellePeriode.debut)
   }
 
-  async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
-    const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
+  async function initEvenementsPeriode({ debut, fin }: Periode) {
+    const evenementsPeriode = await chargerEvenements(debut, fin)
     setEvenements(evenementsPeriode)
-    setPeriode({ debut: dateDebut, fin: dateFin })
+    setPeriode({ debut, fin })
   }
 
   async function chargerEvenements(
@@ -104,8 +102,9 @@ export default function OngletAgendaConseiller({
   return (
     <>
       <SelecteurPeriode
+        premierJour={debutPeriode}
+        jourSemaineReference={DateTime.now().weekday}
         onNouvellePeriode={chargerNouvellePeriode}
-        periodeCourante={periodeIndex}
         trackNavigation={trackNavigation}
       />
 
@@ -120,7 +119,7 @@ export default function OngletAgendaConseiller({
       <ErreursRecuperation
         failed={failed}
         shouldFocus={shouldFocus}
-        onRetry={() => initEvenementsPeriode(periode!.debut, periode!.fin)}
+        onRetry={() => initEvenementsPeriode(periode!)}
       />
 
       {failed !== 'all' && evenements?.length === 0 && (

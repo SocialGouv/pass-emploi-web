@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
@@ -13,13 +12,13 @@ import {
 } from 'fixtures/beneficiaire'
 import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 
 describe('Suivi des offres dans la fiche jeune', () => {
   beforeEach(async () => {
@@ -29,7 +28,7 @@ describe('Suivi des offres dans la fiche jeune', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
   })
 
   describe('quand on sélectionne l’onglet de suivi des offres', () => {
@@ -79,13 +78,12 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={unDetailBeneficiaire()}
+      historiqueConseillers={[]}
       rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
       metadonneesFavoris={metadonneesFavoris}
       favorisOffres={uneListeDOffres()}
-      ongletInitial='agenda'
-      lectureSeule={false}
+      ongletInitial='actions'
     />,
     {
       customConseiller: { id: 'id-conseiller-1' },

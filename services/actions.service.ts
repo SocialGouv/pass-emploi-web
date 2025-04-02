@@ -8,7 +8,6 @@ import {
   CompteurActionsPeriode,
   QualificationAction,
   SituationNonProfessionnelle,
-  StatutAction,
 } from 'interfaces/action'
 import {
   ActionFormData,
@@ -20,10 +19,9 @@ import {
   jsonToAction,
   jsonToActionPilotage,
   jsonToQualification,
-  MetadonneesActionsJson,
   QualificationActionJson,
-  statutActionToFiltres,
 } from 'interfaces/json/action'
+import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
@@ -69,28 +67,22 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   }
 }
 
-export async function getActionsBeneficiaireClientSide(
+export async function getActionsBeneficiaire(
   idJeune: string,
-  options: {
-    page: number
-    filtres: { statuts: StatutAction[]; categories: string[] }
-    tri?: string
-  }
-): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
+  periode: Periode
+): Promise<Action[]> {
   const session = await getSession()
-  return getActionsBeneficiaire(idJeune, options, session!.accessToken)
-}
 
-export async function getActionsBeneficiaireServerSide(
-  idJeune: string,
-  page: number,
-  accessToken: string
-): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-  return getActionsBeneficiaire(
-    idJeune,
-    { page, filtres: { statuts: [], categories: [] } },
-    accessToken
+  const dateDebutEncoded = encodeURIComponent(periode.debut.toISO())
+  const dateFinEncoded = encodeURIComponent(periode.fin.toISO())
+  const url = `/jeunes/${idJeune}/actions?dateDebut=${dateDebutEncoded}&dateFin=${dateFinEncoded}`
+
+  const { content: actionsJson } = await apiGet<ActionJson[]>(
+    url,
+    session!.accessToken
   )
+
+  return actionsJson.map(jsonToAction)
 }
 
 export async function getActionsAQualifierClientSide(
@@ -222,44 +214,6 @@ export async function getSituationsNonProfessionnelles(
     : content.filter(
         (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
       )
-}
-
-async function getActionsBeneficiaire(
-  idJeune: string,
-  {
-    tri,
-    filtres,
-    page,
-  }: {
-    page: number
-    filtres: { statuts: StatutAction[]; categories: string[] }
-    tri?: string
-  },
-  accessToken: string
-): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-  const triActions = tri ?? 'date_echeance_decroissante'
-  const filtresStatuts = filtres.statuts
-    .map((statut) => statutActionToFiltres(statut))
-    .join('')
-  const filtresCategories = filtres.categories
-    .map((categorie) => '&categories=' + categorie)
-    .join('')
-  const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresCategories}`
-
-  const {
-    content: { actions: actionsJson, metadonnees },
-  } = await apiGet<{
-    actions: ActionJson[]
-    metadonnees: MetadonneesActionsJson
-  }>(url, accessToken)
-
-  const nombrePages = Math.ceil(
-    metadonnees.nombreFiltrees / metadonnees.nombreActionsParPage
-  )
-  return {
-    actions: actionsJson.map(jsonToAction),
-    metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
-  }
 }
 
 export type TriActionsAQualifier =

@@ -33,10 +33,10 @@ const OngletAgendaMissionLocale = dynamic(
 type Onglet = 'CONSEILLER' | 'MISSION_LOCALE'
 type AgendaPageProps = {
   onglet: Onglet
-  periodeIndexInitial: number
+  debutPeriodeInitiale?: string
 }
 
-function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
+function AgendaPage({ onglet, debutPeriodeInitiale }: AgendaPageProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -56,7 +56,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
-  const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
+  const [debutPeriode, setDebutPeriode] = useState<DateTime>(
+    debutPeriodeInitiale
+      ? DateTime.fromISO(debutPeriodeInitiale)
+      : DateTime.now()
+  )
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -75,18 +79,18 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function switchTab(tab: Onglet) {
+  async function updateTabInUrl(tab: Onglet) {
     setCurrentTab(tab)
-    setTrackingTitle(trackingLabelOnglet(tab))
+    setTrackingTitle(getTrackingLabelOnglet(tab))
     router.replace(
-      `/agenda?onglet=${ongletProps[tab].queryParam}&periodeIndex=${periodeIndex}`
+      `/agenda?onglet=${ongletProps[tab].queryParam}&debut=${debutPeriode.toISODate()}`
     )
   }
 
-  async function switchPeriode(index: number) {
-    setPeriodeIndex(index)
+  async function updatePeriodeInUrl(nouveauDebut: DateTime) {
+    setDebutPeriode(nouveauDebut)
     router.replace(
-      `/agenda?onglet=${ongletProps[currentTab].queryParam}&periodeIndex=${index}`
+      `/agenda?onglet=${ongletProps[currentTab].queryParam}&debut=${nouveauDebut.toISODate()}`
     )
   }
 
@@ -156,11 +160,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   }
 
   function trackNavigation(append?: string) {
-    const trackingOnglet = trackingLabelOnglet(currentTab)
+    const trackingOnglet = getTrackingLabelOnglet(currentTab)
     setTrackingTitle(trackingOnglet + (append ? ` - ${append}` : ''))
   }
 
-  function trackingLabelOnglet(tab: Onglet): string {
+  function getTrackingLabelOnglet(tab: Onglet): string {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
@@ -208,14 +212,14 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
           label='Agenda Mission Locale'
           selected={currentTab === 'MISSION_LOCALE'}
           controls='agenda-mission-locale'
-          onSelectTab={() => switchTab('MISSION_LOCALE')}
+          onSelectTab={() => updateTabInUrl('MISSION_LOCALE')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='Mon agenda'
           selected={currentTab === 'CONSEILLER'}
           controls='agenda-conseiller'
-          onSelectTab={() => switchTab('CONSEILLER')}
+          onSelectTab={() => updateTabInUrl('CONSEILLER')}
           iconName={IconName.EventFill}
         />
       </TabList>
@@ -232,8 +236,8 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
-              periodeIndex={periodeIndex}
-              changerPeriode={switchPeriode}
+              debutPeriode={debutPeriode}
+              changerPeriode={updatePeriodeInUrl}
             />
           )}
 
@@ -259,8 +263,8 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
             recupererRdvs={recupererRdvsConseiller}
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
-            periodeIndex={periodeIndex}
-            changerPeriode={switchPeriode}
+            debutPeriode={debutPeriode}
+            changerPeriode={updatePeriodeInUrl}
           />
         </div>
       )}

@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 type AgendaSearchParams = Promise<{
-  periodeIndex?: string
+  debut?: string
   onglet?: string
 }>
 export default async function Agenda({
@@ -22,13 +23,17 @@ export default async function Agenda({
   const { user } = await getMandatorySessionServerSide()
   if (!estMilo(user.structure)) notFound()
 
-  const { periodeIndex, onglet } = (await searchParams) ?? {}
+  const { debut, onglet } = (await searchParams) ?? {}
+  // FIXME luxon throwOnInvalid
+  const debutPeriodeInitiale =
+    debut && DateTime.fromISO(debut).isValid ? debut : undefined
+
   return (
     <>
       <PageHeaderPortal header='Agenda' />
 
       <AgendaPage
-        periodeIndexInitial={periodeIndex ? parseInt(periodeIndex) : 0}
+        debutPeriodeInitiale={debutPeriodeInitiale}
         onglet={onglet === 'conseiller' ? 'CONSEILLER' : 'MISSION_LOCALE'}
       />
     </>

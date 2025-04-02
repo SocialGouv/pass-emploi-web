@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import {
   FicheMiloProps,
@@ -9,9 +9,11 @@ import {
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { Action, StatutAction } from 'interfaces/action'
+import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { Action } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { MetadonneesPagination } from 'types/pagination'
+import { Periode } from 'types/dates'
+import { LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
 const OngletAgendaBeneficiaire = dynamic(
@@ -33,50 +35,51 @@ export default function OngletsBeneficiaireMilo({
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
-  actionsInitiales,
   rdvs,
   categoriesActions,
   erreurSessions,
   onLienExterne,
+  debutSemaineInitiale,
+  onChangementSemaine,
+  trackChangementSemaine,
 }: FicheMiloProps & {
-  onSwitchTab: (tab: OngletMilo) => void
+  onSwitchTab: (newTab: OngletMilo, debutSemaine: DateTime) => void
   onLienExterne: (label: string) => void
+  onChangementSemaine: (currentTab: OngletMilo, nouveauDebut: DateTime) => void
+  trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
+  const [semaine, setSemaine] = useState<Periode>()
+  const [labelSemaine, setLabelSemaine] = useState<string>()
+  const [shouldFocus, setShouldFocus] = useState<boolean>(false)
+
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
 
-  const [totalActions, setTotalActions] = useState<number>(
-    actionsInitiales.metadonnees.nombreTotal
-  )
+  async function chargerNouvelleSemaine(
+    nouvellePeriode: Periode,
+    opts: { label: string; shouldFocus: boolean }
+  ) {
+    setSemaine(nouvellePeriode)
+    setLabelSemaine(opts.label)
+    setShouldFocus(opts.shouldFocus)
+    onChangementSemaine(currentTab, nouvellePeriode.debut)
+  }
 
-  function switchTab(tab: OngletMilo, { withFocus = false } = {}) {
+  function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
-    setCurrentTab(tab)
-    onSwitchTab(tab)
+    setCurrentTab(newTab)
+    onSwitchTab(newTab, semaine!.debut)
   }
 
-  async function chargerActions(
-    page: number,
-    filtres: { statuts: StatutAction[]; categories: string[] },
-    tri: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-    const { getActionsBeneficiaireClientSide } = await import(
-      'services/actions.service'
-    )
-    const result = await getActionsBeneficiaireClientSide(beneficiaire.id, {
-      page,
-      filtres,
-      tri,
-    })
-
-    setTotalActions(result.metadonnees.nombreTotal)
-    return result
-  }
+  const chargerActions = useCallback(async (): Promise<Action[]> => {
+    const { getActionsBeneficiaire } = await import('services/actions.service')
+    return getActionsBeneficiaire(beneficiaire.id, semaine!)
+  }, [semaine])
 
   async function recupererAgenda(): Promise<Agenda> {
     const { recupererAgenda: _recupererAgenda } = await import(
@@ -97,13 +100,24 @@ export default function OngletsBeneficiaireMilo({
 
   return (
     <>
+      <SelecteurPeriode
+        premierJour={
+          debutSemaineInitiale
+            ? DateTime.fromISO(debutSemaineInitiale)
+            : DateTime.now()
+        }
+        jourSemaineReference={LUNDI}
+        onNouvellePeriode={chargerNouvelleSemaine}
+        trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
+        className='m-auto'
+      />
+
       <TabList
         label={`Activités de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-        className='mt-10'
+        className='mt-8'
       >
         <Tab
           label='Actions'
-          count={totalActions}
           selected={currentTab === 'actions'}
           controls='liste-actions'
           onSelectTab={() => switchTab('actions')}
@@ -183,7 +197,7 @@ export default function OngletsBeneficiaireMilo({
         </div>
       )}
 
-      {currentTab === 'actions' && (
+      {currentTab === 'actions' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions--tab'
@@ -194,9 +208,10 @@ export default function OngletsBeneficiaireMilo({
           <OngletActions
             beneficiaire={beneficiaire}
             categories={categoriesActions}
-            actionsInitiales={actionsInitiales}
             getActions={chargerActions}
+            shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
+            labelSemaine={labelSemaine}
           />
         </div>
       )}

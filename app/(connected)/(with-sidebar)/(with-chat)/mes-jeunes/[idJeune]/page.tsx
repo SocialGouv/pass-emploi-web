@@ -16,10 +16,7 @@ import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
-import {
-  getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
@@ -34,7 +31,10 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 import { compareDates } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
-type FicheBeneficiaireSearchParams = Promise<{ page?: string; onglet?: string }>
+type FicheBeneficiaireSearchParams = Promise<{
+  onglet?: string
+  debut?: string
+}>
 type RouteProps = {
   params: FicheBeneficiaireParams
   searchParams?: FicheBeneficiaireSearchParams
@@ -53,6 +53,7 @@ export async function generateMetadata({
   }
   return { title: `Portefeuille - ${jeune.prenom} ${jeune.nom}` }
 }
+
 export default async function FicheBeneficiaire({
   params,
   searchParams,
@@ -74,8 +75,11 @@ export default async function FicheBeneficiaire({
     favorisOffres = await getOffres(beneficiaire.id, accessToken)
   }
 
-  const { page, onglet } = (await searchParams) ?? {}
+  const { onglet, debut } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
+  // FIXME luxon throwOnInvalid
+  const debutSemaineInitiale =
+    debut && DateTime.fromISO(debut).isValid ? debut : undefined
 
   const props = {
     beneficiaire,
@@ -83,6 +87,7 @@ export default async function FicheBeneficiaire({
     historiqueConseillers,
     metadonneesFavoris,
     favorisOffres,
+    debutSemaineInitiale,
   }
 
   return (
@@ -90,12 +95,7 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(
-          conseiller,
-          accessToken,
-          page ? parseInt(page) : 1,
-          props
-        ))}
+        (await renderFicheMilo(conseiller, accessToken, props))}
 
       {!estMilo(conseiller.structure) &&
         (await renderFichePasMilo(conseiller, accessToken, props))}
@@ -123,7 +123,6 @@ function getOngletInitial(
 async function renderFicheMilo(
   conseiller: Conseiller,
   accessToken: string,
-  page: number,
   props: Pick<
     FicheMiloProps,
     | 'beneficiaire'
@@ -131,15 +130,15 @@ async function renderFicheMilo(
     | 'historiqueConseillers'
     | 'metadonneesFavoris'
     | 'favorisOffres'
+    | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
-  const [rdvs, actions, categoriesActions] = await Promise.all([
+  const [rdvs, categoriesActions] = await Promise.all([
     getRendezVousJeune(
       props.beneficiaire.id,
       PeriodeEvenements.FUTURS,
       accessToken
     ),
-    getActionsBeneficiaireServerSide(props.beneficiaire.id, page, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])
 
@@ -171,7 +170,6 @@ async function renderFicheMilo(
       {...props}
       estMilo={true}
       rdvs={rdvsEtSessionsTriesParDate}
-      actionsInitiales={{ ...actions, page }}
       categoriesActions={categoriesActions}
       erreurSessions={erreurSessions}
     />
@@ -188,6 +186,7 @@ async function renderFichePasMilo(
     | 'historiqueConseillers'
     | 'metadonneesFavoris'
     | 'favorisOffres'
+    | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
