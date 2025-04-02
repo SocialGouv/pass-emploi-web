@@ -157,7 +157,9 @@ function PilotagePage({
     setTrackingLabel(
       pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
     )
-    router.replace('pilotage?onglet=' + ongletProps[tab].queryParam)
+    router.replace('pilotage?onglet=' + ongletProps[tab].queryParam, {
+      scroll: false,
+    })
     setCurrentTab(tab)
   }
 

@@ -142,8 +142,10 @@ export function getPeriodeComprenant(
   { jourSemaineReference }: { jourSemaineReference: JourSemaine }
 ): Periode {
   const debut = date.set({ weekday: jourSemaineReference }).startOf('day')
+  const fin = debut.plus({ day: PERIODE_LENGTH_FULL_DAYS - 1 }).endOf('day')
   return {
     debut,
-    fin: debut.plus({ day: PERIODE_LENGTH_FULL_DAYS - 1 }).endOf('day'),
+    fin,
+    label: `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`,
   }
 }

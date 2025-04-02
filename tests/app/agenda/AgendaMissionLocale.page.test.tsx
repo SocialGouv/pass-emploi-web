@@ -242,16 +242,15 @@ describe('Agenda - Onglet Mission Locale', () => {
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
-      console.log('>>>', (getRendezVousEtablissement as jest.Mock).mock.calls)
 
       // When
-      /* await userEvent.click(periodesFuturesButton)
+      await userEvent.click(periodesFuturesButton)
       // Then
       expect(getRendezVousEtablissement).toHaveBeenCalledWith(
         'id-etablissement',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
-      )*/
+      )
     })
 
     it('permet d’accéder directement à une période de 7 jours', async () => {

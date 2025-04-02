@@ -55,23 +55,22 @@ export default function OngletAgendaMissionLocale({
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [periode, setPeriode] = useState<Periode>()
-  const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<string>()
 
   async function modifierPeriode(
     nouvellePeriode: Periode,
-    opts: { label: string; shouldFocus: boolean }
+    opts: { shouldFocus: boolean }
   ) {
     await chargerEvenementsPeriode(nouvellePeriode)
-    setLabelPeriode(opts.label)
     changerPeriode(nouvellePeriode.debut)
     setShouldFocus(opts.shouldFocus)
   }
 
-  async function chargerEvenementsPeriode({ debut, fin }: Periode) {
+  async function chargerEvenementsPeriode(nouvellePeriode: Periode) {
     setFailed(undefined)
     setEvenementsAffiches(undefined)
     let erreurs
+    const { debut, fin } = nouvellePeriode
 
     let animationsCollectives: AnimationCollective[] = []
     try {
@@ -95,7 +94,7 @@ export default function OngletAgendaMissionLocale({
         (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
       )
     )
-    setPeriode({ debut, fin })
+    setPeriode(nouvellePeriode)
   }
 
   function filtrerEtChercherEvenements(): AnimationCollective[] {
@@ -207,7 +206,7 @@ export default function OngletAgendaMissionLocale({
         <TableauAnimationsCollectives
           ref={tableRef}
           animationsCollectives={evenementsAffiches}
-          labelPeriode={labelPeriode!}
+          labelPeriode={periode!.label}
           withRecherche={Boolean(recherche)}
         />
       )}
