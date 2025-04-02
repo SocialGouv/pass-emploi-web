@@ -83,14 +83,16 @@ function AgendaPage({ onglet, debutPeriodeInitiale }: AgendaPageProps) {
     setCurrentTab(tab)
     setTrackingTitle(getTrackingLabelOnglet(tab))
     router.replace(
-      `/agenda?onglet=${ongletProps[tab].queryParam}&debut=${debutPeriode.toISODate()}`
+      `/agenda?onglet=${ongletProps[tab].queryParam}&debut=${debutPeriode.toISODate()}`,
+      { scroll: false }
     )
   }
 
   async function updatePeriodeInUrl(nouveauDebut: DateTime) {
     setDebutPeriode(nouveauDebut)
     router.replace(
-      `/agenda?onglet=${ongletProps[currentTab].queryParam}&debut=${nouveauDebut.toISODate()}`
+      `/agenda?onglet=${ongletProps[currentTab].queryParam}&debut=${nouveauDebut.toISODate()}`,
+      { scroll: false }
     )
   }
 

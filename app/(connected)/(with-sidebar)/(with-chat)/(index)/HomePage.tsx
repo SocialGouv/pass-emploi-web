@@ -70,6 +70,7 @@ function HomePage({
     redirectToUrl()
   }
 
+  // TODO rename
   function redirectToUrl() {
     router.replace(redirectUrl)
   }
