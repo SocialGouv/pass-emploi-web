@@ -53,7 +53,6 @@ export default function OngletsBeneficiaireMilo({
     metadonneesFavoris?.autoriseLePartage === false
 
   const [semaine, setSemaine] = useState<Periode>()
-  const [labelSemaine, setLabelSemaine] = useState<string>()
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
@@ -62,10 +61,9 @@ export default function OngletsBeneficiaireMilo({
 
   async function chargerNouvelleSemaine(
     nouvellePeriode: Periode,
-    opts: { label: string; shouldFocus: boolean }
+    opts: { shouldFocus: boolean }
   ) {
     setSemaine(nouvellePeriode)
-    setLabelSemaine(opts.label)
     setShouldFocus(opts.shouldFocus)
     onChangementSemaine(currentTab, nouvellePeriode.debut)
   }
@@ -211,7 +209,7 @@ export default function OngletsBeneficiaireMilo({
             getActions={chargerActions}
             shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
-            labelSemaine={labelSemaine}
+            labelSemaine={semaine.label}
           />
         </div>
       )}

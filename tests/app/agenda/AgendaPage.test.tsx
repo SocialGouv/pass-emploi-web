@@ -108,7 +108,8 @@ describe('AgendaPage client side', () => {
     )
     // Then
     expect(replace).toHaveBeenCalledWith(
-      '/agenda?onglet=mission-locale&debut=2022-09-01'
+      '/agenda?onglet=mission-locale&debut=2022-09-01',
+      { scroll: false }
     )
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
       'Agenda Mission Locale'
@@ -122,7 +123,8 @@ describe('AgendaPage client side', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Mon agenda' }))
     // Then
     expect(replace).toHaveBeenCalledWith(
-      '/agenda?onglet=conseiller&debut=2022-09-01'
+      '/agenda?onglet=conseiller&debut=2022-09-01',
+      { scroll: false }
     )
     expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
       'Mon agenda'

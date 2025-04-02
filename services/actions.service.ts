@@ -69,12 +69,12 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
 
 export async function getActionsBeneficiaire(
   idJeune: string,
-  periode: Periode
+  { debut, fin }: Periode
 ): Promise<Action[]> {
   const session = await getSession()
 
-  const dateDebutEncoded = encodeURIComponent(periode.debut.toISO())
-  const dateFinEncoded = encodeURIComponent(periode.fin.toISO())
+  const dateDebutEncoded = encodeURIComponent(debut.toISO())
+  const dateFinEncoded = encodeURIComponent(fin.toISO())
   const url = `/jeunes/${idJeune}/actions?dateDebut=${dateDebutEncoded}&dateFin=${dateFinEncoded}`
 
   const { content: actionsJson } = await apiGet<ActionJson[]>(

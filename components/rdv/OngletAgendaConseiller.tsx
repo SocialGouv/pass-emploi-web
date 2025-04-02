@@ -43,23 +43,24 @@ export default function OngletAgendaConseiller({
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [periode, setPeriode] = useState<Periode>()
-  const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<string>()
 
   async function chargerNouvellePeriode(
     nouvellePeriode: Periode,
-    opts: { label: string; shouldFocus: boolean }
+    opts: { shouldFocus: boolean }
   ) {
     await initEvenementsPeriode(nouvellePeriode)
-    setLabelPeriode(opts.label)
     setShouldFocus(opts.shouldFocus)
     changerPeriode(nouvellePeriode.debut)
   }
 
-  async function initEvenementsPeriode({ debut, fin }: Periode) {
-    const evenementsPeriode = await chargerEvenements(debut, fin)
+  async function initEvenementsPeriode(nouvellePeriode: Periode) {
+    const evenementsPeriode = await chargerEvenements(
+      nouvellePeriode.debut,
+      nouvellePeriode.fin
+    )
     setEvenements(evenementsPeriode)
-    setPeriode({ debut, fin })
+    setPeriode(nouvellePeriode)
   }
 
   async function chargerEvenements(
@@ -139,7 +140,7 @@ export default function OngletAgendaConseiller({
         <TableauEvenementsConseiller
           ref={tableRef}
           evenements={evenements}
-          labelPeriode={labelPeriode!}
+          labelPeriode={periode!.label}
         />
       )}
     </>

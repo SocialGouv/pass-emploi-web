@@ -92,12 +92,13 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
 
     let newUrl = `${pathPrefix}/${beneficiaire.id}?onglet=${newTab}`
     if (debutSemaine) newUrl += `&debut=${debutSemaine.toISODate()}`
-    router.replace(newUrl)
+    router.replace(newUrl, { scroll: false })
   }
 
   function updateSemaineInUrl(currentTab: Onglet, nouveauDebut: DateTime) {
     router.replace(
-      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&debut=${nouveauDebut.toISODate()}`
+      `${pathPrefix}/${beneficiaire.id}?onglet=${currentTab}&debut=${nouveauDebut.toISODate()}`,
+      { scroll: false }
     )
   }
 

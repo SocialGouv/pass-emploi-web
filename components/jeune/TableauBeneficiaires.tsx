@@ -86,7 +86,7 @@ function TableauBeneficiaires(
   }
 
   function changePage(nouvellePage: number) {
-    router.replace(`?page=${nouvellePage}`)
+    router.replace(`?page=${nouvellePage}`, { scroll: false })
     setPage(nouvellePage)
   }
 

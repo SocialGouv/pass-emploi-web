@@ -7,17 +7,13 @@ import { Periode } from 'types/dates'
 import {
   getPeriodeComprenant as _getPeriodeComprenant,
   PERIODE_LENGTH_FULL_DAYS,
-  toLongMonthDate,
 } from 'utils/date'
 import { useDebounce } from 'utils/hooks/useDebounce'
 
 type SelecteurPeriodeProps = {
   premierJour: DateTime
   jourSemaineReference: 1 | 2 | 3 | 4 | 5 | 6 | 7
-  onNouvellePeriode: (
-    periode: Periode,
-    opts: { label: string; shouldFocus: boolean }
-  ) => void
+  onNouvellePeriode: (periode: Periode, opts: { shouldFocus: boolean }) => void
   trackNavigation: (append?: string) => void
   className?: string
 }
@@ -30,17 +26,18 @@ export function SelecteurPeriode({
   className,
 }: SelecteurPeriodeProps): ReactElement {
   const isFirstRender = useRef<boolean>(true)
-  const aujourdhui = DateTime.now()
 
+  const periodeEnCours = getPeriodeComprenant(DateTime.now())
   const [periodeAffichee, setPeriodeAffichee] = useState<Periode>(
     getPeriodeComprenant(premierJour)
   )
-  const [labelPeriode, setLabelPeriode] = useState<string>(
-    getLabelPeriode(periodeAffichee)
+
+  const [periodePrecedente, setPeriodePrecedente] = useState<Periode>(
+    getPeriodeComprenant(premierJour.minus({ day: PERIODE_LENGTH_FULL_DAYS }))
   )
-  const periodeCouranteEstAffichee =
-    Math.abs(periodeAffichee.debut.diff(aujourdhui, 'days').days) <
-    PERIODE_LENGTH_FULL_DAYS
+  const [periodeSuivante, setPeriodeSuivante] = useState<Periode>(
+    getPeriodeComprenant(premierJour.plus({ day: PERIODE_LENGTH_FULL_DAYS }))
+  )
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null)
   const [periodeInput, setPeriodeInput] = useState<string>(
@@ -48,37 +45,26 @@ export function SelecteurPeriode({
   )
   const debouncedPeriode = useDebounce(periodeInput, 500)
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-
   const [shouldFocusOnChange, setShouldFocusOnChange] = useState<boolean>(false)
 
   function getPeriodeComprenant(date: DateTime): Periode {
     return _getPeriodeComprenant(date, { jourSemaineReference })
   }
 
-  function getLabelPeriode({ debut, fin }: Periode): string {
-    return `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`
-  }
-
   async function allerPeriodePrecedente() {
-    setPeriodeAffichee({
-      debut: periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS }),
-      fin: periodeAffichee.fin.minus({ day: PERIODE_LENGTH_FULL_DAYS }),
-    })
+    setPeriodeAffichee(periodePrecedente)
     setShouldFocusOnChange(false)
     trackNavigation('passés')
   }
 
   async function allerPeriodeSuivante() {
-    setPeriodeAffichee({
-      debut: periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS }),
-      fin: periodeAffichee.fin.plus({ day: PERIODE_LENGTH_FULL_DAYS }),
-    })
+    setPeriodeAffichee(periodeSuivante)
     setShouldFocusOnChange(false)
     trackNavigation('futurs')
   }
 
   async function allerPeriodeActuelle() {
-    setPeriodeAffichee(getPeriodeComprenant(aujourdhui))
+    setPeriodeAffichee(periodeEnCours)
     setShouldFocusOnChange(true)
     trackNavigation()
   }
@@ -93,19 +79,12 @@ export function SelecteurPeriode({
     trackNavigation('manuel')
   }
 
-  useEffect(() => {
-    const nouveauLabel = getLabelPeriode(periodeAffichee)
-    setLabelPeriode(nouveauLabel)
-    onNouvellePeriode(periodeAffichee, {
-      label: nouveauLabel,
-      shouldFocus: shouldFocusOnChange,
-    })
-    debutPeriodeRef.current!.value = periodeAffichee.debut.toISODate()
-  }, [periodeAffichee])
-
-  useEffect(() => {
-    if (!isFirstRender.current) changerPeriode(debouncedPeriode)
-  }, [debouncedPeriode])
+  function isPeriodeEnCoursEstAffichee(): boolean {
+    return (
+      Math.abs(periodeAffichee.debut.diff(periodeEnCours.debut, 'days').days) <
+      PERIODE_LENGTH_FULL_DAYS
+    )
+  }
 
   useEffect(() => {
     isFirstRender.current = false
@@ -114,12 +93,34 @@ export function SelecteurPeriode({
     }
   }, [])
 
+  useEffect(() => {
+    onNouvellePeriode(periodeAffichee, { shouldFocus: shouldFocusOnChange })
+    debutPeriodeRef.current!.value = periodeAffichee.debut.toISODate()
+  }, [periodeAffichee])
+
+  useEffect(() => {
+    setPeriodePrecedente(
+      getPeriodeComprenant(
+        periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS })
+      )
+    )
+    setPeriodeSuivante(
+      getPeriodeComprenant(
+        periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS })
+      )
+    )
+  }, [periodeAffichee])
+
+  useEffect(() => {
+    if (!isFirstRender.current) changerPeriode(debouncedPeriode)
+  }, [debouncedPeriode])
+
   return (
     <fieldset
       className={'flex flex-wrap items-center gap-2 w-fit ' + (className ?? '')}
     >
       <legend className='sr-only' aria-live='polite' aria-atomic={true}>
-        Période : {labelPeriode}
+        Période : {periodeAffichee.label}
       </legend>
 
       <button onClick={allerPeriodePrecedente} type='button'>
@@ -129,21 +130,9 @@ export function SelecteurPeriode({
           focusable={false}
           role='img'
           aria-label={
-            'Aller à la période précédente ' +
-            getLabelPeriode(
-              getPeriodeComprenant(
-                periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS })
-              )
-            )
+            'Aller à la période précédente ' + periodePrecedente.label
           }
-          title={
-            'Aller à la période précédente ' +
-            getLabelPeriode(
-              getPeriodeComprenant(
-                periodeAffichee.debut.minus({ day: PERIODE_LENGTH_FULL_DAYS })
-              )
-            )
-          }
+          title={'Aller à la période précédente ' + periodePrecedente.label}
         />
       </button>
 
@@ -178,22 +167,8 @@ export function SelecteurPeriode({
           className='w-6 h-6 fill-primary hover:fill-primary-darken'
           focusable={false}
           role='img'
-          aria-label={
-            `Aller à la période suivante ` +
-            getLabelPeriode(
-              getPeriodeComprenant(
-                periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS })
-              )
-            )
-          }
-          title={
-            `Aller à la période suivante ` +
-            getLabelPeriode(
-              getPeriodeComprenant(
-                periodeAffichee.debut.plus({ day: PERIODE_LENGTH_FULL_DAYS })
-              )
-            )
-          }
+          aria-label={`Aller à la période suivante ` + periodeSuivante.label}
+          title={`Aller à la période suivante ` + periodeSuivante.label}
         />
       </button>
 
@@ -201,9 +176,9 @@ export function SelecteurPeriode({
         type='button'
         style={ButtonStyle.SECONDARY}
         onClick={allerPeriodeActuelle}
-        disabled={periodeCouranteEstAffichee}
+        disabled={isPeriodeEnCoursEstAffichee()}
         className='py-0!'
-        label={`Aller à la période en cours ${getLabelPeriode(getPeriodeComprenant(aujourdhui))}`}
+        label={`Aller à la période en cours ${periodeEnCours.label}`}
       >
         Période en cours
       </Button>
