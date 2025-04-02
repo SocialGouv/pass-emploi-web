@@ -31,7 +31,7 @@ describe('PilotagePage client side - Actions', () => {
         nom: 'Trotro',
         prenom: 'L’âne',
       },
-      dateFinReelle: '16/01/2024',
+      dateFinReelle: '2024-01-16',
     }
     let container: HTMLElement
 
@@ -47,7 +47,7 @@ describe('PilotagePage client side - Actions', () => {
                 nom: 'Granger',
                 prenom: 'Hermione',
               },
-              dateFinReelle: '18/12/2022',
+              dateFinReelle: '2022-12-18',
             },
           ],
           metadonnees: { nombrePages: 3, nombreTotal: 25 },

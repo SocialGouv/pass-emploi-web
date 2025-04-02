@@ -1,14 +1,15 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
+import { useRouter } from 'next/navigation'
+import React from 'react'
 
 import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
-import { AxeResults } from 'axe-core'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { structureMilo } from 'interfaces/structure'
-import { axe } from 'jest-axe'
-import { useRouter } from 'next/navigation'
-import React from 'react'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
 import { commenterAction } from 'services/messages.service'
@@ -256,6 +257,7 @@ describe('ActionPage client side', () => {
   describe("quand l'action est terminée et non qualifiée", () => {
     describe('quand le bénéficiaire est CEJ', () => {
       const actionAQualifier = uneAction({
+        dateFinReelle: DateTime.now().toISO(),
         status: StatutAction.TermineeAQualifier,
       })
 
@@ -329,6 +331,7 @@ describe('ActionPage client side', () => {
 
     describe('quand le bénéficiaire n’est pas CEJ', () => {
       const actionTerminee = uneAction({
+        dateFinReelle: DateTime.now().toISO(),
         status: StatutAction.Terminee,
       })
       actionTerminee.beneficiaire.dispositif = 'PACEA'
@@ -353,6 +356,7 @@ describe('ActionPage client side', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
         const actionQualifiee = uneAction({
+          dateFinReelle: DateTime.now().toISO(),
           status: StatutAction.TermineeQualifiee,
           qualification: {
             libelle: 'Emploi',
@@ -397,6 +401,7 @@ describe('ActionPage client side', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
         const actionQualifiee = uneAction({
+          dateFinReelle: DateTime.now().toISO(),
           status: StatutAction.TermineeQualifiee,
           qualification: {
             libelle: 'Non SNP',

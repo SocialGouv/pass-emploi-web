@@ -27,7 +27,7 @@ describe('dateUtils', () => {
       expect(dateIsToday(DateTime.fromISO('2018-12-31T22:59:59.000Z'))).toEqual(
         true
       )
-      expect(dateIsToday(DateTime.fromISO('2018-11-31T22:59:59.000Z'))).toEqual(
+      expect(dateIsToday(DateTime.fromISO('2018-11-30T22:59:59.000Z'))).toEqual(
         false
       )
     })
