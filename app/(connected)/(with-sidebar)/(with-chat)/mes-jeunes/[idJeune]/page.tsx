@@ -77,9 +77,12 @@ export default async function FicheBeneficiaire({
 
   const { onglet, debut } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
-  // FIXME luxon throwOnInvalid
-  const debutSemaineInitiale =
-    debut && DateTime.fromISO(debut).isValid ? debut : undefined
+  let debutSemaineInitiale
+  if (debut)
+    try {
+      const dateValid = DateTime.fromISO(debut)
+      debutSemaineInitiale = dateValid.toISODate()
+    } catch {}
 
   const props = {
     beneficiaire,
