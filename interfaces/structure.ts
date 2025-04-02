@@ -53,6 +53,12 @@ export function estMilo(structure: string): structure is typeof structureMilo {
   return structure === structureMilo
 }
 
+export function estAvenirPro(
+  structure: string
+): structure is typeof structureAvenirPro {
+  return structure === structureAvenirPro
+}
+
 export function estConseilDepartemental(
   structure: string
 ): structure is typeof structureConseilDepartemental {

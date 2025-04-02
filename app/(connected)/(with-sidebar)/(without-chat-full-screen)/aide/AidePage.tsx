@@ -17,6 +17,7 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
+  estAvenirPro,
   estMilo,
   estPassEmploi,
   getUrlFormulaireSupport,
@@ -31,6 +32,7 @@ export default function AidePage() {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
+  const conseillerEstAvenirPro = estAvenirPro(conseiller.structure)
   const conseillerEstPassEmploi = estPassEmploi(conseiller.structure)
   const aDesBeneficiaires = portefeuille.length > 0
 
@@ -54,12 +56,6 @@ export default function AidePage() {
 
   const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstPassEmploi ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
 
-  const urlEmbarquerBeneficiaires = `${urlSiteRessource}${
-    conseillerEstPassEmploi
-      ? 'embarquer-vos-beneficiaires/'
-      : 'embarquer-vos-jeunes/'
-  }`
-
   const urlGuideRessources = `${urlSiteRessource}${
     conseillerEstPassEmploi
       ? 'guide-dutilisation/'
@@ -69,6 +65,15 @@ export default function AidePage() {
   const urlVideos = urlSiteRessource + 'videos/'
 
   const urlFAQ = `${urlSiteRessource}${conseillerEstPassEmploi ? 'foire-aux-questions/' : 'faq/'}`
+
+  function getURLEmbarquerBeneficiaires() {
+    let suffixe = 'embarquer-vos-jeunes/'
+
+    if (conseillerEstAvenirPro) suffixe = 'embarquement-avenirpro/'
+    else if (conseillerEstPassEmploi) suffixe = 'embarquer-vos-beneficiaires/'
+
+    return `${urlSiteRessource}${suffixe}`
+  }
 
   async function trackEventAideEtRessources(action: string) {
     trackEvent({
@@ -168,7 +173,7 @@ export default function AidePage() {
                   {conseillerEstPassEmploi ? 'pass emploi' : 'du CEJ'}
                 </p>
                 <ButtonLink
-                  href={urlEmbarquerBeneficiaires}
+                  href={getURLEmbarquerBeneficiaires()}
                   style={ButtonStyle.PRIMARY}
                   externalIcon={IconName.OpenInNew}
                   label='Voir les ressources'
