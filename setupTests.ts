@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { toHaveNoViolations } from 'jest-axe'
+import { Settings } from 'luxon'
+
+Settings.throwOnInvalid = true
 
 expect.extend(toHaveNoViolations)
 

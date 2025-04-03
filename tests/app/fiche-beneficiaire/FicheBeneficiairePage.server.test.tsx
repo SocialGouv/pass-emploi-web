@@ -41,18 +41,16 @@ describe('FicheBeneficiairePage server side', () => {
   const rdvAVenir = unEvenementListItem({
     date: DateTime.now().plus({ day: 1 }).toISO(),
   })
-  const sessionsAVenir = [
-    {
-      id: '1',
-      type: 'Atelier i-milo',
-      date: '2022-09-01T11:00:00.000Z',
-      duree: 120,
-      createur: {
-        id: 'id-conseiller-1',
-      },
-      isSession: true,
+  const sessionAVenir = {
+    id: '1',
+    type: 'Atelier i-milo',
+    date: '2022-09-01T11:00:00.000Z',
+    duree: 120,
+    createur: {
+      id: 'id-conseiller-1',
     },
-  ]
+    isSession: true,
+  }
 
   beforeEach(() => {
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
@@ -66,7 +64,7 @@ describe('FicheBeneficiairePage server side', () => {
     )
     ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
     ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
-      sessionsAVenir,
+      sessionAVenir,
     ])
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
     ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(
@@ -134,7 +132,7 @@ describe('FicheBeneficiairePage server side', () => {
         now.startOf('day')
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ rdvs: [rdvAVenir, sessionsAVenir] }),
+        expect.objectContaining({ rdvs: [sessionAVenir, rdvAVenir] }),
         undefined
       )
     })

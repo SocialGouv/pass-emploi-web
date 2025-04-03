@@ -24,9 +24,12 @@ export default async function Agenda({
   if (!estMilo(user.structure)) notFound()
 
   const { debut, onglet } = (await searchParams) ?? {}
-  // FIXME luxon throwOnInvalid
-  const debutPeriodeInitiale =
-    debut && DateTime.fromISO(debut).isValid ? debut : undefined
+  let debutPeriodeInitiale
+  if (debut)
+    try {
+      const dateValid = DateTime.fromISO(debut)
+      debutPeriodeInitiale = dateValid.toISODate()
+    } catch {}
 
   return (
     <>

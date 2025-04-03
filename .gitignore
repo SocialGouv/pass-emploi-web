@@ -28,7 +28,6 @@ node_modules/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
 .env.local
 
 # Next.js build output
@@ -49,3 +48,8 @@ node_modules/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# typescript
+dist
+*.tsbuildinfo
+next-env.d.ts

@@ -5,9 +5,10 @@ export function initRum() {
   const appName = process.env.APP || 'pa-front-local'
   init({
     serviceName: `rum-${appName}`,
-    serverUrl: process.env.NEXT_PUBLIC_APM_URL || '',
-    environment: process.env.NEXT_PUBLIC_ENVIRONMENT || 'development',
-    active: process.env.NEXT_PUBLIC_APM_IS_ACTIVE === 'true',
+    serverUrl: process.env.NEXT_PUBLIC_ELASTIC_APM_SERVER_URL || '',
+    environment:
+      process.env.NEXT_PUBLIC_ELASTIC_APM_ENVIRONMENT || 'development',
+    active: process.env.NEXT_PUBLIC_ELASTIC_APM_ACTIVE === 'true',
     distributedTracingOrigins: [process.env.NEXT_PUBLIC_API_ENDPOINT || ''],
   })
 }
