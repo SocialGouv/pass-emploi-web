@@ -53,7 +53,7 @@ export default function IndicateursBeneficiaire({
           iconName={IconName.Error}
           count={indicateursSemaine?.actions.enRetard}
           label='actions en retard'
-          labelSingulier='acton en retard'
+          labelSingulier='action en retard'
           colors='WARNING'
         />
         <Indicateur
