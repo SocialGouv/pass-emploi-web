@@ -3,10 +3,10 @@ import { redirect } from 'next/navigation'
 import { captureError } from 'utils/monitoring/elastic'
 
 export async function fetchJson(
-  reqInfo: RequestInfo,
+  path: string,
   reqInit?: RequestInit
 ): Promise<{ content: any; headers: Headers }> {
-  const response = await callFetch(reqInfo, reqInit)
+  const response = await callFetch(path, reqInit)
 
   const contentType = response.headers.get('content-type')
   if (contentType?.includes('application/json')) {
@@ -16,36 +16,39 @@ export async function fetchJson(
 }
 
 export async function fetchNoContent(
-  reqInfo: RequestInfo,
+  path: string,
   reqInit?: RequestInit
 ): Promise<void> {
-  await callFetch(reqInfo, reqInit)
+  await callFetch(path, reqInit)
 }
 
 async function callFetch(
-  reqInfo: RequestInfo,
+  path: string,
   reqInit?: RequestInit
 ): Promise<Response> {
   let reponse: Response
   try {
-    reponse = await fetch(reqInfo, reqInit)
+    reponse = await fetch(path, reqInit)
   } catch (e) {
     const error: UnexpectedError = new UnexpectedError(
       (e as Error).message || 'Unexpected error'
     )
-    console.error('fetchJson exception', error)
+    console.error(`fetchJson exception at ${path}`, error)
     captureError(error)
     throw error
   }
 
   if (!reponse.ok) {
-    await handleHttpError(reponse)
+    await handleHttpError(reponse, path)
   }
 
   return reponse
 }
 
-async function handleHttpError(response: Response): Promise<void> {
+async function handleHttpError(
+  response: Response,
+  path: string
+): Promise<void> {
   if (response.status === 401) {
     const logoutUrl = '/api/auth/federated-logout'
     if (typeof window !== 'undefined') {
@@ -58,7 +61,7 @@ async function handleHttpError(response: Response): Promise<void> {
   const json: any = await response.json()
   const message = json?.message || response.statusText
   const error = new ApiError(response.status, message)
-  console.error('fetchJson error', error)
+  console.error(`fetchJson error at ${path}`, error)
   captureError(error)
   throw error
 }
