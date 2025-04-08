@@ -106,7 +106,9 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
 export function desEvenementsListItems(): EvenementListItem[] {
   return [
     unEvenementListItem({
-      beneficiaires: [{ id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' }],
+      beneficiaires: [
+        { id: 'id-beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+      ],
     }),
     {
       id: 'id-evenement-2',
@@ -118,8 +120,11 @@ export function desEvenementsListItems(): EvenementListItem[] {
       createur: {
         id: '2',
       },
-      beneficiaires: [{ id: 'id-beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
+      beneficiaires: [
+        { id: 'id-beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+      ],
       source: structureMilo,
+      titre: 'Rendez-vous en agence',
     },
   ]
 }
@@ -140,6 +145,7 @@ export function unEvenementListItem(
       prenom: 'Nils',
     },
     source: 'PASS_EMPLOI',
+    titre: 'Prise de nouvelles par téléphone',
   }
   return { ...defaults, ...overrides }
 }

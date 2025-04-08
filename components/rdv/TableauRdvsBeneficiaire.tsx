@@ -3,11 +3,9 @@ import React, { ReactElement } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { EvenementRow } from 'components/rdv/EvenementRow'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 
@@ -31,9 +29,6 @@ export default function TableauRdvsBeneficiaire({
     : '/mes-jeunes'
   const isRdvPasses = additionalColumn === 'Présent'
 
-  const informationLabel =
-    'L’information de présence est connue uniquement pour les informations collectives et les ateliers.'
-
   return (
     <>
       {rdvs.length === 0 && (
@@ -48,25 +43,14 @@ export default function TableauRdvsBeneficiaire({
 
       {rdvs.length > 0 && (
         <Table caption={{ text: 'Liste de mes événements' }}>
-          <thead>
-            <TR isHeader={true}>
-              <TH>Horaires</TH>
-              <TH>Type</TH>
-              <TH title={isRdvPasses ? informationLabel : undefined}>
-                {additionalColumn}
-                {isRdvPasses && (
-                  <IconComponent
-                    name={IconName.Info}
-                    role='img'
-                    focusable={false}
-                    aria-label={informationLabel}
-                    className='w-3 h-3 ml-2 fill-primary inline'
-                  />
-                )}
-              </TH>
-              <TH>Créé par vous</TH>
-              <TH>Voir le détail</TH>
-            </TR>
+          <thead className='sr-only'>
+            <tr>
+              <th scope='col'>Horaires et durée</th>
+              <th scope='col'>Titre et modalités</th>
+              <th scope='col'>Créateur</th>
+              <th scope='col'>Créateur</th>
+              <th scope='col'>Voir le détail</th>
+            </tr>
           </thead>
 
           <tbody>
@@ -75,7 +59,6 @@ export default function TableauRdvsBeneficiaire({
                 key={rdv.id}
                 evenement={rdv}
                 idConseiller={idConseiller}
-                withIndicationPresenceBeneficiaire={isRdvPasses}
               />
             ))}
           </tbody>
@@ -112,11 +95,7 @@ function StateAucunRendezvous({
         <EmptyState
           illustrationName={IllustrationName.Event}
           titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
-          sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
-          lien={{
-            href: `${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`,
-            label: 'Consulter l’historique',
-          }}
+          sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire.'
         />
       )}
     </>

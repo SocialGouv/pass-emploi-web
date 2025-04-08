@@ -10,7 +10,7 @@ import {
   Onglet,
   valeursOngletsMilo,
   valeursOngletsPasMilo,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { PageFilArianePortal } from 'components/PageNavigationPortals'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'

@@ -207,6 +207,7 @@ describe('SessionsApiService', () => {
           beneficiaires: [
             { id: 'id-beneficiaire', nom: 'Granger', prenom: 'Hermione' },
           ],
+          titre: 'nom session',
         },
         {
           id: 'id-session-2',
@@ -220,6 +221,7 @@ describe('SessionsApiService', () => {
             { id: 'id-beneficiaire', nom: 'Granger', prenom: 'Hermione' },
             { id: 'id-beneficiaire-2', nom: 'Potter', prenom: 'Harry' },
           ],
+          titre: 'nom session 2',
         },
       ]
       expect(actual).toEqual(sessionsMilo)
@@ -373,6 +375,8 @@ describe('SessionsApiService', () => {
           date: '2022-09-01T11:00:00.000Z',
           duree: 120,
           isSession: true,
+          titre: 'Une-session',
+          futPresent: true,
         },
       ]
       expect(actual).toEqual(sessionsMiloJeune)

@@ -46,12 +46,11 @@ describe('Rendez-vous de la fiche jeune', () => {
 
       it('affiche la liste des rendez-vous du jeune', async () => {
         // Given
-        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'RDV & Ateliers' })
+        )
 
         // Then
-        expect(
-          screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Rendez-vous 2 éléments')
         rdvs.forEach((rdv) => {
           expect(screen.getByText(rdv.type)).toBeInTheDocument()
           expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
@@ -63,23 +62,12 @@ describe('Rendez-vous de la fiche jeune', () => {
 
       it('indique caractère non modifiable d’un rendez-vous issu d’i-milo', async () => {
         // Given
-        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'RDV & Ateliers' })
+        )
 
         // Then
         expect(screen.getByLabelText('Non modifiable')).toBeInTheDocument()
-      })
-
-      it('affiche un lien vers les rendez-vous passés du jeune', async () => {
-        // Given
-        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
-
-        // Then
-        expect(
-          screen.getByRole('link', { name: 'Voir les événements passés' })
-        ).toHaveAttribute(
-          'href',
-          '/mes-jeunes/id-beneficiaire-1/rendez-vous-passes'
-        )
       })
 
       it('permet la prise de rendez-vous', async () => {
@@ -105,6 +93,7 @@ describe('Rendez-vous de la fiche jeune', () => {
               id: '2',
             },
             source: 'MILO',
+            titre: 'Atelier en agence',
           },
           {
             id: '1',
@@ -115,6 +104,7 @@ describe('Rendez-vous de la fiche jeune', () => {
               id: 'id-conseiller-1',
             },
             isSession: true,
+            titre: 'Atelier i-milo en ligne',
           },
         ]
         await renderFicheJeuneMilo(rdvs)
@@ -122,7 +112,9 @@ describe('Rendez-vous de la fiche jeune', () => {
 
       it('indique caractère non modifiable d’une session milo', async () => {
         // Given
-        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'RDV & Ateliers' })
+        )
 
         // Then
         expect(

@@ -38,7 +38,7 @@ describe('Suivi des offres dans la fiche jeune', () => {
 
       // When
       await userEvent.click(
-        screen.getByRole('tab', { name: 'Suivi des offres 12 éléments' })
+        screen.getByRole('tab', { name: 'Suivi des offres' })
       )
 
       // Then

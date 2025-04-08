@@ -110,6 +110,7 @@ export function jsonToListItem(
     duree: json.duration,
     createur: json.createur,
     source: json.source,
+    titre: json.title,
   }
   if (json.nombreMaxParticipants)
     evenement.nombreMaxParticipants = json.nombreMaxParticipants
@@ -181,6 +182,7 @@ export function sessionMiloJsonToEvenementListItem(
     source: structureMilo,
     isSession: true,
     beneficiaires: beneficiairesSession,
+    titre: json.nomSession,
   }
 
   if (json.nbPlacesRestantes)

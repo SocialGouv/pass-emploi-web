@@ -10,7 +10,7 @@ import {
   estFicheMilo,
   FicheBeneficiaireProps,
   Onglet,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import DetailsBeneficiaire from 'components/jeune/DetailsBeneficiaire'
 import { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
