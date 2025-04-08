@@ -99,9 +99,7 @@ export async function getConseillersDuJeuneServerSide(
   idJeune: string,
   accessToken: string
 ): Promise<ConseillerHistorique[]> {
-  {
-    return getConseillersDuBeneficiaire(idJeune, accessToken)
-  }
+  return getConseillersDuBeneficiaire(idJeune, accessToken)
 }
 
 export async function getConseillersDuJeuneClientSide(
