@@ -5,20 +5,17 @@ import React, { useCallback, useEffect, useState } from 'react'
 import {
   FicheMiloProps,
   OngletMilo,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Action } from 'interfaces/action'
-import { Agenda } from 'interfaces/agenda'
 import { Periode } from 'types/dates'
 import { LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
-const OngletAgendaBeneficiaire = dynamic(
-  () => import('components/agenda-jeune/OngletAgendaBeneficiaire')
-)
+
 const OngletRdvsBeneficiaire = dynamic(
   () => import('components/rdv/OngletRdvsBeneficiaire')
 )
@@ -79,13 +76,6 @@ export default function OngletsBeneficiaireMilo({
     return getActionsBeneficiaire(beneficiaire.id, semaine!)
   }, [semaine])
 
-  async function recupererAgenda(): Promise<Agenda> {
-    const { recupererAgenda: _recupererAgenda } = await import(
-      'services/agenda.service'
-    )
-    return _recupererAgenda(beneficiaire.id, DateTime.now())
-  }
-
   useEffect(() => {
     if (focusCurrentTabContent) {
       const table = document.querySelector<HTMLDivElement>(
@@ -119,18 +109,10 @@ export default function OngletsBeneficiaireMilo({
           selected={currentTab === 'actions'}
           controls='liste-actions'
           onSelectTab={() => switchTab('actions')}
-          iconName={IconName.ChecklistRtlFill}
+          iconName={IconName.Bolt}
         />
         <Tab
-          label='Agenda'
-          selected={currentTab === 'agenda'}
-          controls='agenda'
-          onSelectTab={() => switchTab('agenda')}
-          iconName={IconName.EventFill}
-        />
-        <Tab
-          label='Rendez-vous'
-          count={rdvs.length}
+          label='RDV & Ateliers'
           selected={currentTab === 'rdvs'}
           controls='liste-rdvs'
           onSelectTab={() => switchTab('rdvs')}
@@ -139,11 +121,10 @@ export default function OngletsBeneficiaireMilo({
         {afficherSuiviOffres && (
           <Tab
             label='Suivi des offres'
-            count={metadonneesFavoris!.offres.total}
             selected={currentTab === 'offres'}
             controls='liste-offres'
             onSelectTab={() => switchTab('offres')}
-            iconName={IconName.BookmarkFill}
+            iconName={IconName.BookmarkOutline}
           />
         )}
         {!afficherSuiviOffres && afficherSyntheseFavoris && (
@@ -161,20 +142,21 @@ export default function OngletsBeneficiaireMilo({
         )}
       </TabList>
 
-      {currentTab === 'agenda' && (
+      {currentTab === 'actions' && semaine && (
         <div
           role='tabpanel'
-          aria-labelledby='agenda--tab'
+          aria-labelledby='liste-actions--tab'
           tabIndex={0}
-          id='agenda'
-          className='mt-8 pb-8 border-b border-primary-lighten'
+          id='liste-actions'
+          className='mt-8 pb-8'
         >
-          <OngletAgendaBeneficiaire
-            idBeneficiaire={beneficiaire.id}
-            recupererAgenda={recupererAgenda}
-            goToActions={() => {
-              switchTab('actions', { withFocus: true })
-            }}
+          <OngletActions
+            beneficiaire={beneficiaire}
+            categories={categoriesActions}
+            getActions={chargerActions}
+            shouldFocus={shouldFocus}
+            onLienExterne={onLienExterne}
+            labelSemaine={semaine.label}
           />
         </div>
       )}
@@ -191,25 +173,6 @@ export default function OngletsBeneficiaireMilo({
             beneficiaire={beneficiaire}
             rdvs={rdvs}
             erreurSessions={erreurSessions}
-          />
-        </div>
-      )}
-
-      {currentTab === 'actions' && semaine && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-actions--tab'
-          tabIndex={0}
-          id='liste-actions'
-          className='mt-8 pb-8'
-        >
-          <OngletActions
-            beneficiaire={beneficiaire}
-            categories={categoriesActions}
-            getActions={chargerActions}
-            shouldFocus={shouldFocus}
-            onLienExterne={onLienExterne}
-            labelSemaine={semaine.label}
           />
         </div>
       )}

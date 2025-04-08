@@ -206,6 +206,7 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
   json: SessionMiloBeneficiaireJson
 ): EvenementListItem {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
+
   return {
     id: json.id,
     date: json.dateHeureDebut,
@@ -214,7 +215,9 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
       dateDebut,
       DateTime.fromISO(json.dateHeureFin)
     ),
+    titre: json.nomSession,
     isSession: true,
+    futPresent: json.inscription === 'INSCRIT',
   }
 }
 

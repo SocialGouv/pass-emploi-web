@@ -3,13 +3,15 @@ import { usePathname } from 'next/navigation'
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagStatut, TagType } from 'components/ui/Indicateurs/Tag'
+import { TagModalite, TagType } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDuration, toFrenchTime, toLongMonthDate } from 'utils/date'
+
+import { CreateurEvenementLabel } from './CreateurEvenementLabel'
 
 export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -80,29 +82,6 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   )
 }
 
-function CreateurEvenementLabel({
-  evenement,
-  idConseiller,
-}: {
-  evenement: EvenementListItem
-  idConseiller: string
-}): ReactElement {
-  if (evenement.createur?.id === idConseiller) return <p>Vous</p>
-  if (evenement.createur?.prenom)
-    return (
-      <p>
-        {evenement.createur.prenom} {evenement.createur.nom}
-      </p>
-    )
-
-  return (
-    <p>
-      --
-      <span className='sr-only'>information non disponible</span>
-    </p>
-  )
-}
-
 function Inscrits({
   evenement,
 }: {
@@ -131,13 +110,4 @@ function Inscrits({
         {nombreParticipants !== 1 ? 'inscrits' : 'inscrit'} /{maxParticipants}
       </p>
     )
-}
-
-function TagModalite({ modality }: EvenementListItem): ReactElement {
-  return (
-    <TagStatut
-      label={modality!}
-      className='text-primary bg-primary-lighten px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!'
-    />
-  )
 }
