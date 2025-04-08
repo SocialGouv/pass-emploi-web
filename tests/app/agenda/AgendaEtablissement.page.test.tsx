@@ -16,8 +16,7 @@ import { modifierAgence } from 'services/conseiller.service'
 import { getRendezVousEtablissement } from 'services/evenements.service'
 import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import {
-  changerAutoinscriptionSession,
-  changerVisibiliteSession,
+  configurerSession,
   getSessionsMissionLocaleClientSide,
 } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -103,7 +102,7 @@ describe('Agenda - Onglet établissement', () => {
         etatVisibilite: 'auto-inscription',
       }),
     ])
-    ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+    ;(configurerSession as jest.Mock).mockResolvedValue(undefined)
   })
 
   describe('contenu', () => {
@@ -465,6 +464,10 @@ describe('Agenda - Onglet établissement', () => {
       )
 
       // Then
+      expect(configurerSession).toHaveBeenCalledWith('id-session-1', {
+        estVisible: false,
+        autoinscription: false,
+      })
       expect(
         within(
           screen.getByRole('row', {
@@ -474,10 +477,6 @@ describe('Agenda - Onglet établissement', () => {
           name: 'Visibilité de l’événement Titre offre session milo',
         })
       ).toHaveTextContent('Non visible')
-      expect(changerVisibiliteSession).toHaveBeenCalledWith(
-        'id-session-1',
-        false
-      )
     })
 
     it('permet de modifier l’autoinscription à une session', async () => {
@@ -503,6 +502,10 @@ describe('Agenda - Onglet établissement', () => {
       )
 
       // Then
+      expect(configurerSession).toHaveBeenCalledWith('id-session-1', {
+        estVisible: true,
+        autoinscription: true,
+      })
       expect(
         within(
           screen.getByRole('row', {
@@ -512,11 +515,6 @@ describe('Agenda - Onglet établissement', () => {
           name: 'Visibilité de l’événement Titre offre session milo',
         })
       ).toHaveTextContent('Auto-inscription')
-      expect(changerAutoinscriptionSession).toHaveBeenCalledWith(
-        'id-session-1',
-        true
-      )
-      expect(changerVisibiliteSession).not.toHaveBeenCalled()
     })
 
     it('permet de changer de période de 7 jours', async () => {

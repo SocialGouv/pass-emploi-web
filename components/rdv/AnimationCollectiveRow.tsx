@@ -38,23 +38,29 @@ export function AnimationCollectiveRow({
     else return `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}`
   }
 
-  async function updateVisibiliteSession(nouvelEtat: EtatVisibilite) {
+  async function configurerSession(nouvelEtat: EtatVisibilite) {
+    const { configurerSession: _configurerSession } = await import(
+      'services/sessions.service'
+    )
+
     switch (nouvelEtat) {
       case 'auto-inscription':
-        const { changerAutoinscriptionSession } = await import(
-          'services/sessions.service'
-        )
-        await changerAutoinscriptionSession(animationCollective.id, true)
+        await _configurerSession(animationCollective.id, {
+          estVisible: true,
+          autoinscription: true,
+        })
         break
       case 'visible':
+        await _configurerSession(animationCollective.id, {
+          estVisible: true,
+          autoinscription: false,
+        })
+        break
       case 'non-visible':
-        const { changerVisibiliteSession } = await import(
-          'services/sessions.service'
-        )
-        await changerVisibiliteSession(
-          animationCollective.id,
-          nouvelEtat === 'visible'
-        )
+        await _configurerSession(animationCollective.id, {
+          estVisible: false,
+          autoinscription: false,
+        })
         break
     }
 
@@ -105,7 +111,7 @@ export function AnimationCollectiveRow({
           <Visibilite
             {...animationCollective}
             etatVisibilite={etatVisibilite}
-            onChangerVisibliteSession={updateVisibiliteSession}
+            onChangerVisibliteSession={configurerSession}
           />
         </div>
       </TD>

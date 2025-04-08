@@ -12,11 +12,11 @@ import {
   BeneficiaireEtablissement,
   CategorieSituation,
 } from 'interfaces/beneficiaire'
+import { StatutAnimationCollective } from 'interfaces/evenement'
 import { Session } from 'interfaces/session'
 import {
-  changerAutoinscriptionSession,
   changerInscriptionsSession,
-  changerVisibiliteSession,
+  configurerSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -29,6 +29,10 @@ jest.mock('services/sessions.service')
 
 describe('Détails Session Page Client', () => {
   let container: HTMLElement
+
+  beforeEach(async () => {
+    ;(configurerSession as jest.Mock).mockResolvedValue(undefined)
+  })
 
   describe('contenu', () => {
     let session: Session
@@ -163,7 +167,6 @@ describe('Détails Session Page Client', () => {
     describe('au clic sur le switch', () => {
       it('change la visibilité', async () => {
         // Given
-        ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
         await renderWithContexts(
           <DetailsSessionPage
             session={sessionInvisible}
@@ -177,13 +180,15 @@ describe('Détails Session Page Client', () => {
         await userEvent.click(toggleVisibiliteSession)
 
         // Then
-        expect(changerVisibiliteSession).toHaveBeenCalledWith('session-1', true)
+        expect(configurerSession).toHaveBeenCalledWith('session-1', {
+          estVisible: true,
+          autoinscription: false,
+        })
         expect(toggleVisibiliteSession).toBeChecked()
       })
 
       it('ne change pas la visibilité si l’autoinscription est activée', async () => {
         // Given
-        ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
         await renderWithContexts(
           <DetailsSessionPage
             session={{
@@ -204,7 +209,7 @@ describe('Détails Session Page Client', () => {
         await userEvent.click(toggleVisibiliteSession)
 
         // Then
-        expect(changerVisibiliteSession).toHaveBeenCalledTimes(0)
+        expect(configurerSession).toHaveBeenCalledTimes(0)
         expect(toggleVisibiliteSession).toBeChecked()
       })
     })
@@ -255,7 +260,7 @@ describe('Détails Session Page Client', () => {
     describe('au clic sur le switch', () => {
       it('change la possibilité de s’autoinscrire et la visibilité', async () => {
         // Given
-        ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+
         await renderWithContexts(
           <DetailsSessionPage
             session={sessionOnPeutPasSAutoinscrire}
@@ -270,10 +275,10 @@ describe('Détails Session Page Client', () => {
         await userEvent.click(toggleAutoinscription)
 
         // Then
-        expect(changerAutoinscriptionSession).toHaveBeenCalledWith(
-          'session-1',
-          true
-        )
+        expect(configurerSession).toHaveBeenCalledWith('session-1', {
+          autoinscription: true,
+          estVisible: true,
+        })
         expect(toggleAutoinscription).toBeChecked()
         expect(toggleVisibilite).toBeChecked()
       })
@@ -743,7 +748,7 @@ describe('Détails Session Page Client', () => {
         const session = unDetailSession({
           session: {
             ...unDetailSession().session,
-            statut: 'AVenir',
+            statut: StatutAnimationCollective.AVenir,
           },
         })
 
@@ -770,7 +775,7 @@ describe('Détails Session Page Client', () => {
         const session = unDetailSession({
           session: {
             ...unDetailSession().session,
-            statut: 'AClore',
+            statut: StatutAnimationCollective.AClore,
           },
         })
         ;({ container } = await renderWithContexts(
