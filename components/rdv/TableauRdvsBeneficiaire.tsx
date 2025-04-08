@@ -42,13 +42,17 @@ export default function TableauRdvsBeneficiaire({
       )}
 
       {rdvs.length > 0 && (
-        <Table caption={{ text: 'Liste de mes événements' }}>
+        <Table
+          caption={{
+            text: `Liste des rendez-vous et ateliers de ${beneficiaire.prenom} ${beneficiaire.nom}`,
+          }}
+        >
           <thead className='sr-only'>
             <tr>
               <th scope='col'>Horaires et durée</th>
               <th scope='col'>Titre et modalités</th>
               <th scope='col'>Créateur</th>
-              <th scope='col'>Créateur</th>
+              <th scope='col'>Présence</th>
               <th scope='col'>Voir le détail</th>
             </tr>
           </thead>

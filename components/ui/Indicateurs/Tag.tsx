@@ -1,9 +1,8 @@
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { EvenementListItem } from 'interfaces/evenement'
 import { unsafeRandomId } from 'utils/helpers'
-
-import { EvenementListItem } from '../../../interfaces/evenement'
 
 interface TagProps {
   label: string
@@ -166,13 +165,19 @@ export function TagModalite({ modality }: EvenementListItem): ReactElement {
 }
 
 export function TagPresence({ estPresent }: { estPresent?: boolean }) {
-  let label = 'Présent'
-  if (estPresent === undefined) label = 'Inscrit'
-  else if (!estPresent) label = 'Absent'
-  return (
-    <Tag
-      className='text-primary bg-primary-lighten rounded-large text-wrap!'
-      label={label}
-    />
-  )
+  const { style, label } = (() => {
+    switch (estPresent) {
+      case true:
+        return { style: 'text-primary bg-primary-lighten', label: 'Présent' }
+      case false:
+        return { style: 'text-warning bg-warning-lighten', label: 'Absent' }
+      case undefined:
+        return {
+          style: 'text-content-color bg-additional-5-lighten',
+          label: 'Inscrit',
+        }
+    }
+  })()
+
+  return <Tag className={`${style} rounded-large text-wrap!`} label={label} />
 }
