@@ -350,6 +350,30 @@ describe('SessionsApiService', () => {
           },
           inscription: 'INSCRIT',
         },
+        {
+          id: '2',
+          nomSession: 'Une-session-2',
+          nomOffre: 'Une-offre-2',
+          dateHeureDebut: '2022-09-01T11:00:00.000Z',
+          dateHeureFin: '2022-09-01T13:00:00.000Z',
+          type: {
+            code: 'WORKSHOP',
+            label: 'Atelier',
+          },
+          inscription: 'PRESENT',
+        },
+        {
+          id: '3',
+          nomSession: 'Une-session-3',
+          nomOffre: 'Une-offre-3',
+          dateHeureDebut: '2022-09-01T11:00:00.000Z',
+          dateHeureFin: '2022-09-01T13:00:00.000Z',
+          type: {
+            code: 'WORKSHOP',
+            label: 'Atelier',
+          },
+          inscription: 'REFUS_JEUNE',
+        },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: sessionsMiloJeuneJson,
@@ -376,7 +400,25 @@ describe('SessionsApiService', () => {
           duree: 120,
           isSession: true,
           titre: 'Une-session',
+          futPresent: undefined,
+        },
+        {
+          id: '2',
+          type: 'Atelier i-milo',
+          date: '2022-09-01T11:00:00.000Z',
+          duree: 120,
+          isSession: true,
+          titre: 'Une-session-2',
           futPresent: true,
+        },
+        {
+          id: '3',
+          type: 'Atelier i-milo',
+          date: '2022-09-01T11:00:00.000Z',
+          duree: 120,
+          isSession: true,
+          titre: 'Une-session-3',
+          futPresent: false,
         },
       ]
       expect(actual).toEqual(sessionsMiloJeune)

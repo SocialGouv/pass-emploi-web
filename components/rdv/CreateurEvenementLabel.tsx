@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-import { EvenementListItem } from '../../interfaces/evenement'
+import { EvenementListItem } from 'interfaces/evenement'
 
 export function CreateurEvenementLabel({
   evenement,

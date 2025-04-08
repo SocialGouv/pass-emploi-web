@@ -207,6 +207,18 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
 ): EvenementListItem {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
 
+  const futPresent = (() => {
+    switch (json.inscription) {
+      case 'PRESENT':
+        return true
+      case 'REFUS_JEUNE':
+        return false
+      case 'INSCRIT':
+      default:
+        return undefined
+    }
+  })()
+
   return {
     id: json.id,
     date: json.dateHeureDebut,
@@ -217,7 +229,7 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
     ),
     titre: json.nomSession,
     isSession: true,
-    futPresent: json.inscription === 'INSCRIT',
+    futPresent: futPresent,
   }
 }
 
