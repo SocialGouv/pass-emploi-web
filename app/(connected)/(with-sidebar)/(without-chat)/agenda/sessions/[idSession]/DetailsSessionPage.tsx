@@ -69,12 +69,13 @@ function DetailsSessionPage({
   const aDesBeneficiaires = portefeuille.length > 0
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
-  const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
-    session.session.estVisible
-  )
-  const [autoinscriptionSession, setAutoinscriptionSession] = useState<boolean>(
-    session.session.autoinscription
-  )
+  const [configurationSession, setConfigurationSession] = useState<{
+    visibilite: boolean
+    autoinscription: boolean
+  }>({
+    visibilite: session.session.estVisible,
+    autoinscription: session.session.autoinscription,
+  })
   const [loadingChangerConfiguration, setLoadingChangerConfiguration] =
     useState<boolean>(false)
 
@@ -120,15 +121,17 @@ function DetailsSessionPage({
   }
 
   async function handleChangerVisibiliteSession() {
-    if (autoinscriptionSession) return
+    if (configurationSession.autoinscription) return
     setLoadingChangerConfiguration(true)
+    const nouvelleConfiguration = {
+      autoinscription: false,
+      visibilite: !configurationSession.visibilite,
+    }
 
-    const { changerVisibiliteSession } = await import(
-      'services/sessions.service'
-    )
-    await changerVisibiliteSession(session.session.id, !visibiliteSession)
+    const { configurerSession } = await import('services/sessions.service')
+    await configurerSession(session.session.id, nouvelleConfiguration)
 
-    setVisibiliteSession(!visibiliteSession)
+    setConfigurationSession(nouvelleConfiguration)
     setLoadingChangerConfiguration(false)
 
     trackEvent({
@@ -142,18 +145,16 @@ function DetailsSessionPage({
 
   async function handleChangerAutoinscriptionSession() {
     setLoadingChangerConfiguration(true)
-    const nouvelleAutoinscription = !autoinscriptionSession
+    const nouvelleAutoinscription = !configurationSession.autoinscription
+    const nouvelleConfiguration = {
+      autoinscription: nouvelleAutoinscription,
+      visibilite: nouvelleAutoinscription || configurationSession.visibilite,
+    }
 
-    const { changerAutoinscriptionSession } = await import(
-      'services/sessions.service'
-    )
-    await changerAutoinscriptionSession(
-      session.session.id,
-      nouvelleAutoinscription
-    )
+    const { configurerSession } = await import('services/sessions.service')
+    await configurerSession(session.session.id, nouvelleConfiguration)
 
-    setAutoinscriptionSession(nouvelleAutoinscription)
-    if (nouvelleAutoinscription) setVisibiliteSession(true)
+    setConfigurationSession(nouvelleConfiguration)
     setLoadingChangerConfiguration(false)
 
     trackEvent({
@@ -488,10 +489,12 @@ function DetailsSessionPage({
             </Label>
             <Switch
               id='visibilite-session'
-              checked={visibiliteSession}
+              checked={configurationSession.visibilite}
               onChange={handleChangerVisibiliteSession}
               isLoading={loadingChangerConfiguration}
-              disabled={autoinscriptionSession || estClose(session)}
+              disabled={
+                configurationSession.autoinscription || estClose(session)
+              }
             />
 
             <Label htmlFor='autoinscription-session'>
@@ -500,7 +503,7 @@ function DetailsSessionPage({
             </Label>
             <Switch
               id='autoinscription-session'
-              checked={autoinscriptionSession}
+              checked={configurationSession.autoinscription}
               onChange={handleChangerAutoinscriptionSession}
               isLoading={loadingChangerConfiguration}
               disabled={estClose(session)}

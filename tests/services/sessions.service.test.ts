@@ -13,9 +13,8 @@ import {
   SessionMiloJson,
 } from 'interfaces/json/session'
 import {
-  changerAutoinscriptionSession,
+  configurerSession,
   changerInscriptionsSession,
-  changerVisibiliteSession,
   cloreSession,
   getDetailsSession,
   getSessionsBeneficiaires,
@@ -269,41 +268,18 @@ describe('SessionsApiService', () => {
     })
   })
 
-  describe('.changerVisibiliteSession', () => {
-    it('modifie la visibilité de la session', async () => {
+  describe('.configurerSession', () => {
+    it('modifie la configuration de la session', async () => {
       // When
-      await changerVisibiliteSession('idSession', true)
+      await configurerSession('idSession', {
+        visibilite: true,
+        autoinscription: false,
+      })
 
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
-        { estVisible: true },
-        'accessToken'
-      )
-    })
-  })
-
-  describe('.changerAutoinscriptionSession', () => {
-    it('modifie l’autoinscription à la session et sa visibilité', async () => {
-      // When
-      await changerAutoinscriptionSession('idSession', true)
-
-      // Then
-      expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/milo/idConseiller/sessions/idSession',
-        { autoinscription: true, visibilite: true },
-        'accessToken'
-      )
-    })
-
-    it('enlève l’autoinscription à la session mais pas sa visibilité', async () => {
-      // When
-      await changerAutoinscriptionSession('idSession', false)
-
-      // Then
-      expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/milo/idConseiller/sessions/idSession',
-        { autoinscription: false, visibilite: undefined },
+        { autoinscription: false, visibilite: true },
         'accessToken'
       )
     })

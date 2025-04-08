@@ -111,36 +111,18 @@ export async function changerInscriptionsSession(
   )
 }
 
-export async function changerVisibiliteSession(
+export async function configurerSession(
   idSession: string,
-  estVisible: boolean
+  configuration: { visibilite: boolean; autoinscription: boolean }
 ): Promise<void> {
   const session = await getSession()
   const accessToken = session!.accessToken
   const idConseiller = session!.user.id
-  const payload = { estVisible }
 
   return modifierInformationsSession(
     idConseiller,
     idSession,
-    payload,
-    accessToken
-  )
-}
-
-export async function changerAutoinscriptionSession(
-  idSession: string,
-  autoinscription: boolean
-): Promise<void> {
-  const session = await getSession()
-  const accessToken = session!.accessToken
-  const idConseiller = session!.user.id
-  const payload = { autoinscription, visibilite: autoinscription || undefined }
-
-  return modifierInformationsSession(
-    idConseiller,
-    idSession,
-    payload,
+    configuration,
     accessToken
   )
 }
