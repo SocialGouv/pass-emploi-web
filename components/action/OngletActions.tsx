@@ -102,9 +102,9 @@ export default function OngletActions({
 
   return (
     <>
-      {!actions && <SpinningLoader />}
+      {isLoading && <SpinningLoader />}
 
-      {actions && actions.length === 0 && !lectureSeule && (
+      {!isLoading && actions && actions.length === 0 && !lectureSeule && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             shouldFocus={shouldFocus}
@@ -119,7 +119,7 @@ export default function OngletActions({
         </div>
       )}
 
-      {actions && actions.length === 0 && lectureSeule && (
+      {!isLoading && actions && actions.length === 0 && lectureSeule && (
         <EmptyState
           shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Checklist}
@@ -134,13 +134,12 @@ export default function OngletActions({
         />
       )}
 
-      {actions && actions.length > 0 && (
+      {!isLoading && actions && actions.length > 0 && (
         <TableauActionsBeneficiaire
           jeune={beneficiaire}
           categories={categories}
           actions={actions}
           shouldFocus={shouldFocus}
-          isLoading={isLoading}
           labelSemaine={labelSemaine!}
           avecQualification={
             estCEJ(beneficiaire)

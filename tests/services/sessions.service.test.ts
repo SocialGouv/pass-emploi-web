@@ -336,7 +336,13 @@ describe('SessionsApiService', () => {
       // Given
       const accessToken = 'accessToken'
       const idJeune = 'id-jeune'
-      const dateDebut = DateTime.fromISO('2022-09-01T11:00:00.000+02:00')
+      const periode = {
+        debut: DateTime.fromISO('2022-09-01T11:00:00.000+02:00'),
+        fin: DateTime.fromISO('2022-09-08T11:00:00.000+02:00'),
+        label: 'Semaine du 1 au 8 septembre 2022',
+      }
+      const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
+      const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
       const sessionsMiloJeuneJson: SessionMiloBeneficiaireJson[] = [
         {
           id: '1',
@@ -380,11 +386,11 @@ describe('SessionsApiService', () => {
       })
 
       // When
-      const actual = await getSessionsMiloBeneficiaire('id-jeune', dateDebut)
+      const actual = await getSessionsMiloBeneficiaire('id-jeune', periode)
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/jeunes/milo/${idJeune}/sessions?dateDebut=2022-09-01T11%3A00%3A00.000%2B02%3A00&filtrerEstInscrit=true`,
+        `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&filtrerEstInscrit=true`,
         accessToken
       )
 
@@ -424,10 +430,14 @@ describe('SessionsApiService', () => {
       ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Sessions non trouvées')
       )
-      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+      const periode = {
+        debut: DateTime.fromISO('2025-04-07'),
+        fin: DateTime.fromISO('2025-04-13'),
+        label: 'Semaine du 7 au 13 avril 2025',
+      }
 
       // When
-      const actual = await getSessionsMiloBeneficiaire('id-jeune', dateDebut)
+      const actual = await getSessionsMiloBeneficiaire('id-jeune', periode)
 
       // Then
       expect(actual).toEqual([])

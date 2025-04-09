@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -8,6 +8,7 @@ import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
+  uneBaseBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
@@ -20,6 +21,8 @@ import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+import TableauRdvsBeneficiaire from '../../../components/rdv/TableauRdvsBeneficiaire'
 
 jest.mock('services/actions.service')
 jest.mock('services/beneficiaires.service')
@@ -157,7 +160,9 @@ async function renderFicheJeuneMilo() {
   await renderWithContexts(
     <FicheBeneficiairePage
       estMilo={true}
-      beneficiaire={unDetailBeneficiaire()}
+      beneficiaire={unDetailBeneficiaire({
+        structureMilo: { id: 'id-test' },
+      })}
       historiqueConseillers={[]}
       categoriesActions={desCategories()}
       ongletInitial='actions'

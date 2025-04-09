@@ -22,7 +22,6 @@ import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
-
 export async function getRendezVousConseiller(
   idConseiller: string,
   dateDebut: DateTime,
@@ -44,8 +43,10 @@ export async function getRendezVousJeune(
   periode: Periode
 ): Promise<EvenementListItem[]> {
   const session = await getSession()
+  const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
   const { content: rdvsJson } = await apiGet<EvenementJeuneJson[]>(
-    `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${periode.debut}&dateFin=${periode.fin}`,
+    `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     session!.accessToken
   )
 

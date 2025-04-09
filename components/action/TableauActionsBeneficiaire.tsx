@@ -11,7 +11,6 @@ import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
-import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
@@ -29,7 +28,6 @@ interface TableauActionsBeneficiaireProps {
   categories: SituationNonProfessionnelle[]
   actions: Action[]
   shouldFocus: boolean
-  isLoading: boolean
   labelSemaine: string
   avecQualification?: {
     onQualification: (
@@ -48,7 +46,6 @@ export default function TableauActionsBeneficiaire({
   categories,
   actions,
   shouldFocus,
-  isLoading,
   avecQualification,
   labelSemaine,
 }: TableauActionsBeneficiaireProps) {
@@ -220,8 +217,6 @@ export default function TableauActionsBeneficiaire({
 
   return (
     <>
-      {isLoading && <SpinningLoader alert={true} />}
-
       {actionsFiltrees.length === 0 && (
         <EmptyState
           shouldFocus={shouldFocus}

@@ -98,7 +98,6 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
-          actionsInitiales: expect.objectContaining({}),
           estMilo: true,
           beneficiaire: unDetailBeneficiaire({
             structureMilo: { id: 'id-test' },

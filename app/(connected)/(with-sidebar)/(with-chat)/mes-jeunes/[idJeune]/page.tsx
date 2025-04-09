@@ -94,7 +94,7 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(conseiller, accessToken, props))}
+        (await renderFicheMilo(accessToken, props))}
 
       {!estMilo(conseiller.structure) &&
         (await renderFichePasMilo(conseiller, accessToken, props))}
@@ -120,7 +120,6 @@ function getOngletInitial(
 }
 
 async function renderFicheMilo(
-  conseiller: Conseiller,
   accessToken: string,
   props: Pick<
     FicheMiloProps,

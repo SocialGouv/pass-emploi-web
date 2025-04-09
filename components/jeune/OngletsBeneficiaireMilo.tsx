@@ -11,6 +11,7 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Action } from 'interfaces/action'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Periode } from 'types/dates'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -92,13 +93,19 @@ export default function OngletsBeneficiaireMilo({
     )
 
     let sessionsMilo: EvenementListItem[] = []
-    try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
-        beneficiaire.id,
-        semaine!.debut
-      )
-    } catch (e) {
-      setErreurSessions(true)
+    if (
+      peutAccederAuxSessions(conseiller) &&
+      conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
+    ) {
+      try {
+        setErreurSessions(false)
+        sessionsMilo = await getSessionsMiloBeneficiaire(
+          beneficiaire.id,
+          semaine!
+        )
+      } catch {
+        setErreurSessions(true)
+      }
     }
 
     return trieParDateRdvsEtSessions(rdvs, sessionsMilo)
@@ -215,6 +222,7 @@ export default function OngletsBeneficiaireMilo({
             beneficiaire={beneficiaire}
             getRdvs={chargerRdvs}
             erreurSessions={erreurSessions}
+            shouldFocus={shouldFocus}
           />
         </div>
       )}

@@ -200,6 +200,8 @@ describe('EvenementsApiService', () => {
         label: 'Semaine du 7 au 13 avril 2025',
       }
       const expectedDate = '2025-04-08'
+      const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
+      const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
 
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: [unEvenementJeuneJson({ date: expectedDate })],
@@ -210,7 +212,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${periode.debut}&dateFin=${periode.fin}`,
+        `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         accessToken
       )
       const expected = unEvenementListItem({
