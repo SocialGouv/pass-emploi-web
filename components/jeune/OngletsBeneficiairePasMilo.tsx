@@ -15,9 +15,6 @@ const TableauOffres = dynamic(
 const OngletDemarches = dynamic(
   () => import('components/jeune/OngletDemarches')
 )
-const TableauRecherches = dynamic(
-  () => import('components/favoris/recherches/TableauRecherches')
-)
 const ResumeFavorisBeneficiaire = dynamic(
   () => import('components/jeune/ResumeFavorisBeneficiaire')
 )
@@ -28,7 +25,6 @@ export default function OngletsBeneficiairePasMilo({
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
-  favorisRecherches,
   demarches,
 }: FichePasMiloProps & {
   onSwitchTab: (tab: OngletPasMilo) => void
@@ -87,22 +83,13 @@ export default function OngletsBeneficiairePasMilo({
           />
         )}
         {afficherSuiviOffres && (
-          <>
-            <Tab
-              label='Suivi des offres'
-              count={favorisOffres!.length}
-              selected={currentTab === 'offres'}
-              controls='liste-offres'
-              onSelectTab={() => switchTab('offres')}
-            />
-            <Tab
-              label='Recherches'
-              count={favorisRecherches!.length}
-              selected={currentTab === 'recherches'}
-              controls='liste-recherches'
-              onSelectTab={() => switchTab('recherches')}
-            />
-          </>
+          <Tab
+            label='Suivi des offres'
+            count={favorisOffres!.length}
+            selected={currentTab === 'offres'}
+            controls='liste-offres'
+            onSelectTab={() => switchTab('offres')}
+          />
         )}
         {!afficherSuiviOffres && afficherSyntheseFavoris && (
           <Tab
@@ -139,18 +126,6 @@ export default function OngletsBeneficiairePasMilo({
           className='mt-8 pb-8'
         >
           <TableauOffres offres={favorisOffres!} />
-        </div>
-      )}
-
-      {currentTab === 'recherches' && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-recherches--tab'
-          tabIndex={0}
-          id='liste-recherches'
-          className='mt-8 pb-8'
-        >
-          <TableauRecherches recherches={favorisRecherches!} />
         </div>
       )}
 

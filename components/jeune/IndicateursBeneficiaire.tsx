@@ -2,19 +2,60 @@ import { DateTime } from 'luxon'
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { IndicateursSemaine } from 'interfaces/beneficiaire'
+import { Demarche, IndicateursSemaine } from 'interfaces/beneficiaire'
+import { StatutDemarche } from 'interfaces/json/beneficiaire'
+import { estMilo } from 'interfaces/structure'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 type IndicateursBeneficiaireProps = {
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
+  demarches?: Demarche[]
 }
 export default function IndicateursBeneficiaire({
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
+  demarches,
 }: IndicateursBeneficiaireProps) {
+  const [conseiller] = useConseiller()
+  const withActionsEtRdvs = estMilo(conseiller.structure)
+
+  const { demarchesCreees, demarchesTerminees, demarchesEnRetard } = (
+    demarches ?? []
+  ).reduce<{
+    demarchesCreees: Demarche[]
+    demarchesTerminees: Demarche[]
+    demarchesEnRetard: Demarche[]
+  }>(
+    (acc, demarche) => {
+      const dateCreation = DateTime.fromISO(demarche.dateCreation)
+      const dateFin = DateTime.fromISO(demarche.dateFin)
+
+      if (dateCreation >= debutDeLaSemaine) acc.demarchesCreees.push(demarche)
+
+      if (
+        dateFin >= debutDeLaSemaine &&
+        demarche.statut === StatutDemarche.REALISEE
+      )
+        acc.demarchesTerminees.push(demarche)
+
+      if (
+        dateFin < DateTime.now().startOf('day') &&
+        Boolean(
+          demarche.statut !== StatutDemarche.REALISEE &&
+            demarche.statut !== StatutDemarche.ANNULEE
+        )
+      )
+        acc.demarchesEnRetard.push(demarche)
+
+      return acc
+    },
+    { demarchesCreees: [], demarchesTerminees: [], demarchesEnRetard: [] }
+  )
+
   return (
     <div className='grow shrink border-r border-grey-500 px-6'>
       <h2
@@ -33,36 +74,67 @@ export default function IndicateursBeneficiaire({
 
       <ul
         aria-describedby='indicateurs-semaine'
-        className={`grid grid-rows-3 gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}
+        className={`grid ${withActionsEtRdvs || demarches ? 'grid-rows-3' : 'grid-rows-2'} gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}
       >
-        <Indicateur
-          iconName={IconName.Timer}
-          count={indicateursSemaine?.actions.creees}
-          label='actions créées'
-          labelSingulier='action créée'
-          colors='PRIMARY'
-        />
-        <Indicateur
-          iconName={IconName.Check}
-          count={indicateursSemaine?.actions.terminees}
-          label='actions terminées'
-          labelSingulier='action terminée'
-          colors='SUCCESS'
-        />
-        <Indicateur
-          iconName={IconName.Error}
-          count={indicateursSemaine?.actions.enRetard}
-          label='actions en retard'
-          labelSingulier='action en retard'
-          colors='WARNING'
-        />
-        <Indicateur
-          iconName={IconName.EventOutline}
-          count={indicateursSemaine?.rendezVous}
-          label='RDV et ateliers'
-          labelSingulier='RDV ou atelier'
-          colors='PRIMARY'
-        />
+        {withActionsEtRdvs && (
+          <>
+            <Indicateur
+              iconName={IconName.Timer}
+              count={indicateursSemaine?.actions.creees}
+              label='actions créées'
+              labelSingulier='action créée'
+              colors='PRIMARY'
+            />
+            <Indicateur
+              iconName={IconName.Check}
+              count={indicateursSemaine?.actions.terminees}
+              label='actions terminées'
+              labelSingulier='action terminée'
+              colors='SUCCESS'
+            />
+            <Indicateur
+              iconName={IconName.Error}
+              count={indicateursSemaine?.actions.enRetard}
+              label='actions en retard'
+              labelSingulier='action en retard'
+              colors='WARNING'
+            />
+            <Indicateur
+              iconName={IconName.EventOutline}
+              count={indicateursSemaine?.rendezVous}
+              label='RDV et ateliers'
+              labelSingulier='RDV ou atelier'
+              colors='PRIMARY'
+            />
+          </>
+        )}
+
+        {demarches && (
+          <>
+            <Indicateur
+              iconName={IconName.Timer}
+              count={demarchesCreees.length}
+              label='démarches créées'
+              labelSingulier='action créée'
+              colors='PRIMARY'
+            />
+            <Indicateur
+              iconName={IconName.Check}
+              count={demarchesTerminees.length}
+              label='démarches terminées'
+              labelSingulier='action terminée'
+              colors='SUCCESS'
+            />
+            <Indicateur
+              iconName={IconName.Error}
+              count={demarchesEnRetard.length}
+              label='démarches en retard'
+              labelSingulier='action en retard'
+              colors='WARNING'
+            />
+          </>
+        )}
+
         <Indicateur
           iconName={IconName.BookmarkOutline}
           count={indicateursSemaine?.offres.sauvegardees}

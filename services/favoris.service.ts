@@ -1,11 +1,6 @@
 import { apiGet } from 'clients/api.client'
-import { Offre, Recherche } from 'interfaces/favoris'
-import {
-  jsonToOffre,
-  jsonToRecherche,
-  OffreJson,
-  RechercheJson,
-} from 'interfaces/json/favoris'
+import { Offre } from 'interfaces/favoris'
+import { jsonToOffre, OffreJson } from 'interfaces/json/favoris'
 
 export async function getOffres(
   idJeune: string,
@@ -16,16 +11,4 @@ export async function getOffres(
     accessToken
   )
   return offresJson.map(jsonToOffre)
-}
-
-export async function getRecherchesSauvegardees(
-  idJeune: string,
-  accessToken: string
-): Promise<Recherche[]> {
-  const { content: recherchesJson } = await apiGet<RechercheJson[]>(
-    `/jeunes/${idJeune}/recherches`,
-    accessToken
-  )
-
-  return recherchesJson.map(jsonToRecherche)
 }

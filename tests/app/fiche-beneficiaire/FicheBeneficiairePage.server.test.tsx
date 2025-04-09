@@ -12,7 +12,7 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import { now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import {
   getConseillersDuJeuneServerSide,
@@ -22,7 +22,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
@@ -67,9 +67,6 @@ describe('FicheBeneficiairePage server side', () => {
       sessionAVenir,
     ])
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
-    ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(
-      uneListeDeRecherches()
-    )
     ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
       data: uneListeDeDemarches(),
       isStale: false,
@@ -233,19 +230,6 @@ describe('FicheBeneficiairePage server side', () => {
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({
           favorisOffres: uneListeDOffres(),
-        }),
-        undefined
-      )
-    })
-
-    it('récupère les recherches favorites', async () => {
-      expect(getRecherchesSauvegardees).toHaveBeenCalledWith(
-        'id-beneficiaire-1',
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisRecherches: uneListeDeRecherches(),
         }),
         undefined
       )

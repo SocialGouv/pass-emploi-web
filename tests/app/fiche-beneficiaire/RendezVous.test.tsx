@@ -11,10 +11,9 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { desEvenementsListItems } from 'fixtures/evenement'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import { Structure } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
@@ -126,12 +125,7 @@ describe('Rendez-vous de la fiche jeune', () => {
 
   describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
     beforeEach(async () => {
-      await renderFicheJeuneFT(
-        'POLE_EMPLOI',
-        uneMetadonneeFavoris(),
-        uneListeDOffres(),
-        uneListeDeRecherches()
-      )
+      await renderFicheJeuneFT('POLE_EMPLOI', uneMetadonneeFavoris())
     })
 
     it("n'affiche pas la liste des rendez-vous du jeune", async () => {
@@ -168,9 +162,7 @@ async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
 
 async function renderFicheJeuneFT(
   structure: Structure,
-  metadonnees: MetadonneesFavoris,
-  offresFT: Offre[],
-  recherchesFT: Recherche[]
+  metadonnees: MetadonneesFavoris
 ) {
   await renderWithContexts(
     <FicheBeneficiairePage
@@ -178,8 +170,7 @@ async function renderFicheJeuneFT(
       beneficiaire={unDetailBeneficiaire()}
       historiqueConseillers={[]}
       metadonneesFavoris={metadonnees}
-      favorisOffres={offresFT}
-      favorisRecherches={recherchesFT}
+      favorisOffres={[]}
       ongletInitial='actions'
     />,
     {

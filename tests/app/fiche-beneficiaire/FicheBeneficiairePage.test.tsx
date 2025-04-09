@@ -15,7 +15,7 @@ import {
   uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { uneListeDOffres } from 'fixtures/favoris'
 import {
   BeneficiaireEtChat,
   CategorieSituation,
@@ -294,13 +294,12 @@ describe('FicheBeneficiairePage client side', () => {
       expect(() => screen.getByText('Rendez-vous')).toThrow()
     })
 
-    it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
+    it('affiche le suivi des offres si le bénéficiaire a accepté le partage', async () => {
       // When
       await renderFicheJeuneNonMilo()
 
       // Then
       expect(screen.getByText('Suivi des offres')).toBeInTheDocument()
-      expect(screen.getByText('Recherches')).toBeInTheDocument()
     })
 
     it('affiche le récapitulatif des favoris si le bénéficiaire a refusé le partage', async () => {
@@ -472,7 +471,6 @@ async function renderFicheJeuneNonMilo({
         autoriseLePartage: autorisePartageFavoris ?? true,
       })}
       favorisOffres={uneListeDOffres()}
-      favorisRecherches={uneListeDeRecherches()}
       demarches={demarches}
     />,
     {

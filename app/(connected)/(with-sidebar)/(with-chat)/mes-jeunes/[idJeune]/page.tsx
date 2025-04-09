@@ -25,7 +25,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { compareDates } from 'utils/date'
@@ -202,20 +202,7 @@ async function renderFichePasMilo(
       )
     : undefined
 
-  let recherches
-  if (props.metadonneesFavoris?.autoriseLePartage) {
-    recherches = await getRecherchesSauvegardees(
-      props.beneficiaire.id,
-      accessToken
-    )
-  }
-
   return (
-    <FicheBeneficiairePage
-      {...props}
-      estMilo={false}
-      favorisRecherches={recherches}
-      demarches={demarches}
-    />
+    <FicheBeneficiairePage {...props} estMilo={false} demarches={demarches} />
   )
 }

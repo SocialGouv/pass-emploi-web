@@ -11,20 +11,19 @@ import {
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { Action } from 'interfaces/action'
 import {
   getActionsBeneficiaire,
   qualifierActions,
 } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
-import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
+
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions()
 
@@ -32,6 +31,12 @@ describe('Actions dans la fiche jeune', () => {
   beforeEach(async () => {
     replace = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+    const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
+    jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
+      desIndicateursSemaine()
+    )
   })
 
   describe("quand l'utilisateur n’est pas un conseiller Milo", () => {
@@ -42,8 +47,7 @@ describe('Actions dans la fiche jeune', () => {
           beneficiaire={unDetailBeneficiaire()}
           historiqueConseillers={[]}
           metadonneesFavoris={uneMetadonneeFavoris()}
-          favorisOffres={uneListeDOffres()}
-          favorisRecherches={uneListeDeRecherches()}
+          favorisOffres={[]}
           ongletInitial='agenda'
         />,
         {
@@ -66,16 +70,6 @@ describe('Actions dans la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller Milo", () => {
-    beforeEach(async () => {
-      // Given
-      const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
-      jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
-        desIndicateursSemaine()
-      )
-      ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
-    })
-
     it('affiche les actions du jeune', async () => {
       // Given
       await renderFicheJeuneMILO(actions, { onglet: 'agenda' })

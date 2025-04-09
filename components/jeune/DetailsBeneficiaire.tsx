@@ -6,7 +6,6 @@ import BlocInformationBeneficiaire from 'components/jeune/BlocInformationBenefic
 import ChangementDispositifBeneficiaireModal from 'components/jeune/ChangementDispositifBeneficiaireModal' // FIXME should use dynamic(() => import() but issue with jest
 import HeaderDetailBeneficiaire from 'components/jeune/HeaderDetailBeneficiaire'
 import IndicateursBeneficiaire from 'components/jeune/IndicateursBeneficiaire'
-import ResumeDemarchesBeneficiaire from 'components/jeune/ResumeDemarchesBeneficiaire'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal' // FIXME should use dynamic(() => import() but issue with jest
 import { ModalHandles } from 'components/ModalContainer'
 import {
@@ -15,11 +14,7 @@ import {
   DetailBeneficiaire,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
-import {
-  estConseilDepartemental,
-  estMilo,
-  structureFTCej,
-} from 'interfaces/structure'
+import { estMilo, structureFTCej } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -33,7 +28,7 @@ interface DetailsBeneficiaireProps {
   beneficiaire: DetailBeneficiaire
   historiqueConseillers: ConseillerHistorique[]
   withCreations: boolean
-  demarches?: { data: Demarche[]; isStale: boolean } | null
+  demarches?: { data: Demarche[] } | null
   indicateursSemaine?: IndicateursSemaine
   onSupprimerBeneficiaire?: () => void
   className?: string
@@ -122,21 +117,12 @@ export default function DetailsBeneficiaire({
         />
 
         <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
-          {estMilo(conseiller.structure) && (
-            <IndicateursBeneficiaire
-              debutDeLaSemaine={debutSemaine}
-              finDeLaSemaine={finSemaine}
-              indicateursSemaine={indicateursSemaine}
-            />
-          )}
-
-          {estConseilDepartemental(conseiller.structure) && demarches && (
-            <ResumeDemarchesBeneficiaire
-              debutDeLaSemaine={debutSemaine}
-              finDeLaSemaine={finSemaine}
-              demarches={demarches.data}
-            />
-          )}
+          <IndicateursBeneficiaire
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            indicateursSemaine={indicateursSemaine}
+            demarches={demarches?.data}
+          />
 
           <BlocInformationBeneficiaire
             beneficiaire={beneficiaire}
