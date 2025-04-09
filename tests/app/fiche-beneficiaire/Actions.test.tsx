@@ -6,7 +6,6 @@ import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desCategories, uneAction, uneListeDActions } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
@@ -18,13 +17,11 @@ import {
   getActionsBeneficiaire,
   qualifierActions,
 } from 'services/actions.service'
-import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
@@ -76,7 +73,6 @@ describe('Actions dans la fiche jeune', () => {
       ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
-      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
       ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
     })
 
