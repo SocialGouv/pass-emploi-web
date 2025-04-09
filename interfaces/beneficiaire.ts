@@ -25,7 +25,6 @@ export type IdentiteBeneficiaire = {
 export type BeneficiaireWithActivity = IdentiteBeneficiaire & {
   creationDate: string
   estAArchiver: boolean
-  isActivated: boolean
   lastActivity?: string
   dateFinCEJ?: string
 }
@@ -227,7 +226,6 @@ export function extractBeneficiaireWithActivity(
   return {
     ...extractBaseBeneficiaire(beneficiaire),
     creationDate: beneficiaire.creationDate,
-    isActivated: beneficiaire.isActivated,
     lastActivity: beneficiaire.lastActivity,
     dateFinCEJ: beneficiaire.dateFinCEJ,
     estAArchiver: beneficiaire.estAArchiver,

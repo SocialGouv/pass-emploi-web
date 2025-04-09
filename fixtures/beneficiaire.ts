@@ -42,7 +42,6 @@ export const unBeneficiaireWithActivity = (
   const defaults: BeneficiaireWithActivity = {
     ...uneBaseBeneficiaire(),
     creationDate: '2020-04-12T05:30:07.756Z',
-    isActivated: true,
     lastActivity: '2021-12-07T17:30:07.756Z',
     estAArchiver: false,
   }
@@ -55,7 +54,6 @@ export const unDetailBeneficiaire = (
   const defaults: DetailBeneficiaire = {
     ...uneBaseBeneficiaire(),
     email: 'kenji.jirac@email.fr',
-    isActivated: true,
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
@@ -133,14 +131,12 @@ export const desItemsBeneficiaires = (): BeneficiaireFromListe[] => [
     prenom: 'Nadia',
     nom: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
-    isActivated: true,
   }),
   unItemBeneficiaire({
     id: 'id-beneficiaire-3',
     prenom: 'Maria',
     nom: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
-    isActivated: true,
     dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
@@ -164,7 +160,6 @@ export const unDetailBeneficiaireJson = (
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
-    isActivated: true,
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
@@ -183,7 +178,6 @@ export const unItemBeneficiaireJson = (
     firstName: 'Kenji',
     lastName: 'Jirac',
     estAArchiver: false,
-    isActivated: true,
     isReaffectationTemporaire: false,
     creationDate: '2020-04-12T05:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
@@ -199,14 +193,12 @@ export const desItemsBeneficiairesJson = (): ItemBeneficiaireJson[] => [
     firstName: 'Nadia',
     lastName: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
-    isActivated: true,
   }),
   unItemBeneficiaireJson({
     id: 'id-beneficiaire-3',
     firstName: 'Maria',
     lastName: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
-    isActivated: true,
     dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
@@ -229,8 +221,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       id: 'id-beneficiaire-2',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
-      isActivated: false,
-      lastActivity: '2022-01-30T17:30:07.756Z',
+      lastActivity: undefined,
       actionsCreees: 0,
     }),
     unBeneficiaireAvecActionsNonTerminees({

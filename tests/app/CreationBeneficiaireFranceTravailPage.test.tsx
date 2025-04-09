@@ -177,7 +177,6 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
         {
           ...uneBaseBeneficiaire(),
           creationDate: now.toISO(),
-          isActivated: false,
           estAArchiver: false,
         },
       ])

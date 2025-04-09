@@ -241,7 +241,7 @@ describe('FicheBeneficiairePage client side', () => {
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
       it('affiche un message', async () => {
         // When
-        await renderFicheJeuneMilo({ isActivated: false })
+        await renderFicheJeuneMilo({ lastActivity: undefined })
 
         // Then
         expect(
@@ -324,7 +324,7 @@ describe('FicheBeneficiairePage client side', () => {
         await renderWithContexts(
           <FicheBeneficiairePage
             estMilo={true}
-            beneficiaire={unDetailBeneficiaire({ isActivated: false })}
+            beneficiaire={unDetailBeneficiaire({ lastActivity: undefined })}
             historiqueConseillers={[]}
             rdvs={[]}
             categoriesActions={desCategories()}
@@ -413,16 +413,16 @@ describe('FicheBeneficiairePage client side', () => {
 })
 
 async function renderFicheJeuneMilo({
-  isActivated,
+  lastActivity,
   structureDifferente,
   situation,
 }: {
-  isActivated?: boolean
+  lastActivity?: string
   structureDifferente?: boolean
   situation?: CategorieSituation
 } = {}): Promise<HTMLElement> {
   const beneficiaire = unDetailBeneficiaire({
-    isActivated: isActivated ?? true,
+    lastActivity,
     situationCourante: situation ?? CategorieSituation.SANS_SITUATION,
   })
 

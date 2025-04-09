@@ -68,7 +68,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     })
 
     describe('Supprimer un compte actif', () => {
-      const beneficiaire = unDetailBeneficiaire({ isActivated: true })
+      const beneficiaire = unDetailBeneficiaire()
       beforeEach(async () => {
         // Given
         await renderFicheBeneficiaire(
@@ -275,7 +275,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheBeneficiaire(
-          unDetailBeneficiaire({ isActivated: false }),
+          unDetailBeneficiaire({ lastActivity: undefined }),
           portefeuilleSetter,
           alerteSetter
         )
@@ -338,7 +338,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       it('affiche le mode opératoire pour activer le compte', async () => {
         // Given
         await renderFicheBeneficiaire(
-          unDetailBeneficiaire({ isActivated: false })
+          unDetailBeneficiaire({ lastActivity: undefined })
         )
 
         // Then
@@ -365,7 +365,6 @@ async function renderFicheBeneficiaire(
       rdvs={[]}
       categoriesActions={desCategories()}
       ongletInitial='actions'
-      lectureSeule={false}
     />,
     {
       customConseiller: {

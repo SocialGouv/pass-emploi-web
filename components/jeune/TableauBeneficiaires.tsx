@@ -115,11 +115,11 @@ function TableauBeneficiaires(
     ordreChronologique: boolean
   ): BeneficiaireAvecInfosComplementaires[] {
     return [...beneficiairesATrier].sort((a, b) => {
-      if (!a.isActivated || !b.isActivated)
-        return Number(b.isActivated) - Number(a.isActivated)
+      if (!a.lastActivity) return 1
+      if (!b.lastActivity) return -1
 
-      const dateA = DateTime.fromISO(a.lastActivity!)
-      const dateB = DateTime.fromISO(b.lastActivity!)
+      const dateA = DateTime.fromISO(a.lastActivity)
+      const dateB = DateTime.fromISO(b.lastActivity)
       const diff = dateA.toMillis() - dateB.toMillis()
       return ordreChronologique ? diff : -diff
     })

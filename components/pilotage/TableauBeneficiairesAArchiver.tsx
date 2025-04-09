@@ -88,7 +88,7 @@ export default function TableauBeneficiairesAArchiver({
               </TD>
 
               <TD>
-                {beneficiaire.isActivated && (
+                {beneficiaire.lastActivity && (
                   <>
                     <div
                       className='text-xs-regular text-grey-800'
@@ -97,12 +97,12 @@ export default function TableauBeneficiairesAArchiver({
                       {derniereActiviteColumn}
                     </div>
                     <span className='text-s-regular'>
-                      {toRelativeDateTime(beneficiaire.lastActivity!)}
+                      {toRelativeDateTime(beneficiaire.lastActivity)}
                     </span>
                   </>
                 )}
 
-                {!beneficiaire.isActivated && (
+                {!beneficiaire.lastActivity && (
                   <span className='text-s-regular text-warning'>
                     Compte non activé
                   </span>

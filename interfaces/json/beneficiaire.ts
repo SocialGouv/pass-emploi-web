@@ -30,7 +30,6 @@ export interface BaseBeneficiaireJson {
 
 export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   creationDate: string
-  isActivated: boolean
   isReaffectationTemporaire: boolean
   estAArchiver: boolean
   dispositif: string
@@ -42,7 +41,6 @@ export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
 
 export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   creationDate: string
-  isActivated: boolean
   isReaffectationTemporaire: boolean
   conseiller: { id: string }
   dispositif: string

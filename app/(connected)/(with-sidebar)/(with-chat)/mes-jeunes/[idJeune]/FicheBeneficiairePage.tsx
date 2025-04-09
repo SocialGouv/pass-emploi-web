@@ -65,7 +65,7 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   ] = useState<boolean>(false)
 
   const aujourdHui = DateTime.now()
-  let pageTracking: string = beneficiaire.isActivated
+  let pageTracking: string = beneficiaire.lastActivity
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
   if (lectureSeule) pageTracking += ' - hors portefeuille'
@@ -206,7 +206,7 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
         </FailureAlert>
       )}
 
-      {!beneficiaire.estAArchiver && !beneficiaire.isActivated && (
+      {!beneficiaire.estAArchiver && !beneficiaire.lastActivity && (
         <>
           {!estBeneficiaireMilo && (
             <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'>

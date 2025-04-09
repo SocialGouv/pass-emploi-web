@@ -22,7 +22,6 @@ describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", async () => {
     // Given
     const jeune = unDetailBeneficiaire({
-      isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
       dateFinCEJ: '2024-12-07T17:30:07.756Z',
     })

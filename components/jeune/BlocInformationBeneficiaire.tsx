@@ -27,8 +27,7 @@ export default function BlocInformationBeneficiaire({
 
   const conseillerEstMilo = estMilo(conseiller.structure)
   const aIdentifiantFT = estFTConnect(conseiller.structure)
-  const { dateFinCEJ, email, isActivated, lastActivity, urlDossier } =
-    beneficiaire
+  const { dateFinCEJ, email, lastActivity, urlDossier } = beneficiaire
 
   return (
     <>
@@ -54,8 +53,8 @@ export default function BlocInformationBeneficiaire({
           <div className='flex gap-1'>
             <dt className='text-s-regular'>Dernière connexion :</dt>
             <dd className='text-s-bold'>
-              {isActivated && toRelativeDateTime(lastActivity!)}
-              {!isActivated && (
+              {lastActivity && toRelativeDateTime(lastActivity)}
+              {!lastActivity && (
                 <span className='text-warning'>Compte non activé</span>
               )}
             </dd>
