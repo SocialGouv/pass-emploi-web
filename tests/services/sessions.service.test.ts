@@ -380,11 +380,7 @@ describe('SessionsApiService', () => {
       })
 
       // When
-      const actual = await getSessionsMiloBeneficiaire(
-        'id-jeune',
-        accessToken,
-        dateDebut
-      )
+      const actual = await getSessionsMiloBeneficiaire('id-jeune', dateDebut)
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
@@ -431,11 +427,7 @@ describe('SessionsApiService', () => {
       const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
 
       // When
-      const actual = await getSessionsMiloBeneficiaire(
-        'id-jeune',
-        'access-token',
-        dateDebut
-      )
+      const actual = await getSessionsMiloBeneficiaire('id-jeune', dateDebut)
 
       // Then
       expect(actual).toEqual([])

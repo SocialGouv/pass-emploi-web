@@ -5,12 +5,14 @@ import EmptyState from 'components/EmptyState'
 import { EvenementRow } from 'components/rdv/EvenementRow'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauRdvsBeneficiaireProps = {
   idConseiller: string
+  isLoading: boolean
   rdvs: EvenementListItem[]
   beneficiaire: IdentiteBeneficiaire
   additionalColumn?: ColumnHeaderLabel
@@ -21,6 +23,7 @@ export type ColumnHeaderLabel = 'Présent' | 'Modalité'
 export default function TableauRdvsBeneficiaire({
   rdvs,
   idConseiller,
+  isLoading,
   beneficiaire,
   additionalColumn = 'Modalité',
 }: TableauRdvsBeneficiaireProps) {
@@ -31,6 +34,8 @@ export default function TableauRdvsBeneficiaire({
 
   return (
     <>
+      {isLoading && <SpinningLoader />}
+
       {rdvs.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <StateAucunRendezvous

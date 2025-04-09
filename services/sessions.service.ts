@@ -143,15 +143,15 @@ export async function cloreSession(
 
 export async function getSessionsMiloBeneficiaire(
   idJeune: string,
-  accessToken: string,
   dateDebut: DateTime
 ): Promise<EvenementListItem[]> {
+  const session = await getSession()
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
   try {
     const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
     const { content: sessionsMiloJeuneJson } = await apiGet<
       SessionMiloBeneficiaireJson[]
-    >(path, accessToken)
+    >(path, session!.accessToken)
 
     return sessionsMiloJeuneJson.map(
       sessionMiloBeneficiaireJsonToEvenementListItem

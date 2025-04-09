@@ -11,8 +11,10 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Action } from 'interfaces/action'
+import { EvenementListItem } from 'interfaces/evenement'
 import { Periode } from 'types/dates'
-import { LUNDI } from 'utils/date'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { compareDates, LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
 
@@ -32,9 +34,7 @@ export default function OngletsBeneficiaireMilo({
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
-  rdvs,
   categoriesActions,
-  erreurSessions,
   onLienExterne,
   debutSemaineInitiale,
   onChangementSemaine,
@@ -45,6 +45,7 @@ export default function OngletsBeneficiaireMilo({
   onChangementSemaine: (currentTab: OngletMilo, nouveauDebut: DateTime) => void
   trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
+  const [conseiller] = useConseiller()
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
@@ -55,6 +56,8 @@ export default function OngletsBeneficiaireMilo({
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
+
+  const [erreurSessions, setErreurSessions] = useState<boolean>(false)
 
   async function chargerNouvelleSemaine(
     nouvellePeriode: Periode,
@@ -75,6 +78,45 @@ export default function OngletsBeneficiaireMilo({
     const { getActionsBeneficiaire } = await import('services/actions.service')
     return getActionsBeneficiaire(beneficiaire.id, semaine!)
   }, [semaine])
+
+  const chargerRdvs = useCallback(async (): Promise<EvenementListItem[]> => {
+    const { getRendezVousJeune } = await import('services/evenements.service')
+    const { getSessionsMiloBeneficiaire } = await import(
+      'services/sessions.service'
+    )
+
+    const rdvs = await getRendezVousJeune(
+      conseiller.id,
+      beneficiaire.id,
+      semaine!
+    )
+
+    let sessionsMilo: EvenementListItem[] = []
+    try {
+      sessionsMilo = await getSessionsMiloBeneficiaire(
+        beneficiaire.id,
+        semaine!.debut
+      )
+    } catch (e) {
+      setErreurSessions(true)
+    }
+
+    return trieParDateRdvsEtSessions(rdvs, sessionsMilo)
+  }, [semaine])
+
+  function trieParDateRdvsEtSessions(
+    rdvs: EvenementListItem[],
+    sessionsMilo: EvenementListItem[]
+  ) {
+    return [...rdvs]
+      .concat(sessionsMilo)
+      .sort((event1, event2) =>
+        compareDates(
+          DateTime.fromISO(event1.date),
+          DateTime.fromISO(event2.date)
+        )
+      )
+  }
 
   useEffect(() => {
     if (focusCurrentTabContent) {
@@ -161,7 +203,7 @@ export default function OngletsBeneficiaireMilo({
         </div>
       )}
 
-      {currentTab === 'rdvs' && (
+      {currentTab === 'rdvs' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-rdvs--tab'
@@ -171,7 +213,7 @@ export default function OngletsBeneficiaireMilo({
         >
           <OngletRdvsBeneficiaire
             beneficiaire={beneficiaire}
-            rdvs={rdvs}
+            getRdvs={chargerRdvs}
             erreurSessions={erreurSessions}
           />
         </div>

@@ -18,8 +18,10 @@ import {
   jsonToListItem,
 } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
+import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
+
 
 export async function getRendezVousConseiller(
   idConseiller: string,
@@ -37,13 +39,14 @@ export async function getRendezVousConseiller(
 }
 
 export async function getRendezVousJeune(
+  idConseiller: string,
   idJeune: string,
-  periode: string,
-  accessToken: string
+  periode: Periode
 ): Promise<EvenementListItem[]> {
+  const session = await getSession()
   const { content: rdvsJson } = await apiGet<EvenementJeuneJson[]>(
-    `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
-    accessToken
+    `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${periode.debut}&dateFin=${periode.fin}`,
+    session!.accessToken
   )
 
   return rdvsJson.map(jsonToListItem)

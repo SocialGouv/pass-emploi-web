@@ -20,6 +20,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
       <TableauRdvsBeneficiaire
         rdvs={[]}
         idConseiller='id-conseiller-1'
+        isLoading={false}
         beneficiaire={uneBaseBeneficiaire()}
       />
     )
@@ -37,14 +38,13 @@ describe('<TableauRdvsBeneficiaire>', () => {
   describe('Quand il y a des rendez-vous', () => {
     const listeRdv = desEvenementsListItems()
     beforeEach(async () => {
-      // Given
-
       // When
       await act(async () => {
         render(
           <TableauRdvsBeneficiaire
             rdvs={listeRdv}
             idConseiller='id-conseiller-1'
+            isLoading={false}
             beneficiaire={uneBaseBeneficiaire()}
           />
         )
