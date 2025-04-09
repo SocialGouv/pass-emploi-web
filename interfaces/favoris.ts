@@ -8,11 +8,3 @@ export interface Offre {
   organisation?: string
   localisation?: string
 }
-
-export interface Recherche {
-  id: string
-  titre: string
-  type: string
-  metier?: string
-  localisation?: string
-}

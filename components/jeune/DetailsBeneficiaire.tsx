@@ -122,13 +122,11 @@ export default function DetailsBeneficiaire({
         />
 
         <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
-          {estMilo(conseiller.structure) && (
-            <IndicateursBeneficiaire
-              debutDeLaSemaine={debutSemaine}
-              finDeLaSemaine={finSemaine}
-              indicateursSemaine={indicateursSemaine}
-            />
-          )}
+          <IndicateursBeneficiaire
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            indicateursSemaine={indicateursSemaine}
+          />
 
           {estConseilDepartemental(conseiller.structure) && demarches && (
             <ResumeDemarchesBeneficiaire

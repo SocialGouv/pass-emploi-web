@@ -11,7 +11,7 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   ActionAQualifier,

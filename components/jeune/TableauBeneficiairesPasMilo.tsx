@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireAvecInfosComplementaires,

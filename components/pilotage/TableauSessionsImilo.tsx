@@ -3,7 +3,7 @@ import React from 'react'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import { SessionsAClore } from 'services/sessions.service'
 

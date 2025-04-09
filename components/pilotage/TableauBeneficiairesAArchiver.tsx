@@ -7,7 +7,7 @@ import { TagDate } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireWithActivity,

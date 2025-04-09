@@ -10,7 +10,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   estAClore,

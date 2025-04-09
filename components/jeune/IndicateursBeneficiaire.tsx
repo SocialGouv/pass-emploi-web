@@ -3,6 +3,8 @@ import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
+import { estMilo } from 'interfaces/structure'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 type IndicateursBeneficiaireProps = {
@@ -15,6 +17,9 @@ export default function IndicateursBeneficiaire({
   finDeLaSemaine,
   indicateursSemaine,
 }: IndicateursBeneficiaireProps) {
+  const [conseiller] = useConseiller()
+  const withActionsEtRdvs = estMilo(conseiller.structure)
+
   return (
     <div className='grow shrink border-r border-grey-500 px-6'>
       <h2
@@ -33,36 +38,41 @@ export default function IndicateursBeneficiaire({
 
       <ul
         aria-describedby='indicateurs-semaine'
-        className={`grid grid-rows-3 gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}
+        className={`grid ${withActionsEtRdvs ? 'grid-rows-3' : 'grid-rows-2'} gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}
       >
-        <Indicateur
-          iconName={IconName.Timer}
-          count={indicateursSemaine?.actions.creees}
-          label='actions créées'
-          labelSingulier='action créée'
-          colors='PRIMARY'
-        />
-        <Indicateur
-          iconName={IconName.Check}
-          count={indicateursSemaine?.actions.terminees}
-          label='actions terminées'
-          labelSingulier='action terminée'
-          colors='SUCCESS'
-        />
-        <Indicateur
-          iconName={IconName.Error}
-          count={indicateursSemaine?.actions.enRetard}
-          label='actions en retard'
-          labelSingulier='action en retard'
-          colors='WARNING'
-        />
-        <Indicateur
-          iconName={IconName.EventOutline}
-          count={indicateursSemaine?.rendezVous}
-          label='RDV et ateliers'
-          labelSingulier='RDV ou atelier'
-          colors='PRIMARY'
-        />
+        {withActionsEtRdvs && (
+          <>
+            <Indicateur
+              iconName={IconName.Timer}
+              count={indicateursSemaine?.actions.creees}
+              label='actions créées'
+              labelSingulier='action créée'
+              colors='PRIMARY'
+            />
+            <Indicateur
+              iconName={IconName.Check}
+              count={indicateursSemaine?.actions.terminees}
+              label='actions terminées'
+              labelSingulier='action terminée'
+              colors='SUCCESS'
+            />
+            <Indicateur
+              iconName={IconName.Error}
+              count={indicateursSemaine?.actions.enRetard}
+              label='actions en retard'
+              labelSingulier='action en retard'
+              colors='WARNING'
+            />
+            <Indicateur
+              iconName={IconName.EventOutline}
+              count={indicateursSemaine?.rendezVous}
+              label='RDV et ateliers'
+              labelSingulier='RDV ou atelier'
+              colors='PRIMARY'
+            />
+          </>
+        )}
+
         <Indicateur
           iconName={IconName.BookmarkOutline}
           count={indicateursSemaine?.offres.sauvegardees}

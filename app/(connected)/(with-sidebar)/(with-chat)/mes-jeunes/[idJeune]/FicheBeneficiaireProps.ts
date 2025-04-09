@@ -6,7 +6,7 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
+import { Offre } from 'interfaces/favoris'
 
 export type Onglet = OngletMilo | OngletPasMilo
 export type BaseFiche = {
@@ -52,6 +52,5 @@ export const valeursOngletsPasMilo = [
 export type OngletPasMilo = (typeof valeursOngletsPasMilo)[number]
 export type FichePasMiloProps = BaseFiche & {
   ongletInitial: OngletPasMilo
-  favorisRecherches?: Recherche[]
   demarches?: { data: Demarche[]; isStale: boolean } | null
 }

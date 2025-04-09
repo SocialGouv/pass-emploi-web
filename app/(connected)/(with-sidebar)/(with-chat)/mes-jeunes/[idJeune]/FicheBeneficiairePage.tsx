@@ -114,14 +114,12 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
   useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
-    if (estBeneficiaireMilo) {
-      getIndicateursBeneficiaire(
-        conseiller.id,
-        beneficiaire.id,
-        aujourdHui.startOf('week'),
-        aujourdHui.endOf('week')
-      ).then(setIndicateursSemaine)
-    }
+    getIndicateursBeneficiaire(
+      conseiller.id,
+      beneficiaire.id,
+      aujourdHui.startOf('week'),
+      aujourdHui.endOf('week')
+    ).then(setIndicateursSemaine)
   }, [])
 
   useEffect(() => {
