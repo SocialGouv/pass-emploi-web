@@ -86,7 +86,7 @@ function labelStructure(structure: Structure): string {
     case 'POLE_EMPLOI_AIJ':
       return 'AIJ'
     case 'FT_ACCOMPAGNEMENT_INTENSIF':
-      return 'Accompagnement intensif'
+      return 'REN-Intensif'
     case 'FT_ACCOMPAGNEMENT_GLOBAL':
       return 'Accompagnement global'
     case 'FT_EQUIP_EMPLOI_RECRUT':

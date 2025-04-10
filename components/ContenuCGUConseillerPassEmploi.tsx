@@ -40,7 +40,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         création de leur projet. Il peut également s’agir de tout agent de
         France travail utilisant le back office « pass emploi », accompagnant
         les bénéficiaires de l’AIJ, de l’Accompagnement global, de
-        l’Accompagnement intensif ou d’Equi’emploi / Equip’recrut.
+        l’Accompagnement REN-Intensif ou d’Equi’emploi / Equip’recrut.
       </p>
       <p className='mb-4'>
         « Le bénéficiaire de l’AIJ » est toute personne bénéficiant d’un AIJ
@@ -57,7 +57,7 @@ export default function ContenuCGUConseillerPassEmploi() {
         la réglementation en vigueur.
       </p>
       <p className='mb-4'>
-        « Le bénéficiaire de l’Accompagnement intensif » est toute personne
+        « Le bénéficiaire de l’Accompagnement REN-Intensif » est toute personne
         bénéficiant d’un accompagnement global dans les conditions prévues par
         la réglementation en vigueur.
       </p>
@@ -68,10 +68,10 @@ export default function ContenuCGUConseillerPassEmploi() {
       </p>
       <p className='mb-4'>
         « L’Usager » est toute personne bénéficiaire de l’AIJ, du RSA, de
-        l’Accompagnement global, de l’Accompagnement intensif et du dispositif
-        Equip’emploi / Equip’recrut s’étant créé un compte, accompagnée dans sa
-        recherche par un Conseiller, souhaitant trouver des ressources et être
-        accompagnée dans son projet professionnel en général.
+        l’Accompagnement global, de l’Accompagnement REN-Intensif et du
+        dispositif Equip’emploi / Equip’recrut s’étant créé un compte,
+        accompagnée dans sa recherche par un Conseiller, souhaitant trouver des
+        ressources et être accompagnée dans son projet professionnel en général.
       </p>
       <p className='mb-4'>
         « Le Superviseur » est un agent ayant un rôle d’encadrement et
