@@ -15,24 +15,26 @@ import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { estConseillerReferent } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { getActionsBeneficiaire } from 'services/actions.service'
+import { Periode } from 'types/dates'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface OngletActionsProps {
   beneficiaire: DetailBeneficiaire
   categories: SituationNonProfessionnelle[]
-  getActions: () => Promise<Action[]>
   shouldFocus: boolean
   onLienExterne: (label: string) => void
+  semaine: Periode
   labelSemaine?: string
 }
 
 export default function OngletActions({
   categories,
-  getActions,
   shouldFocus,
   beneficiaire,
   onLienExterne,
+  semaine,
   labelSemaine,
 }: OngletActionsProps) {
   const [_, setAlerte] = useAlerte()
@@ -93,12 +95,12 @@ export default function OngletActions({
   useEffect(() => {
     setIsLoading(true)
 
-    getActions()
+    getActionsBeneficiaire(beneficiaire.id, semaine)
       .then(setActions)
       .finally(() => {
         setIsLoading(false)
       })
-  }, [getActions])
+  }, [semaine])
 
   return (
     <>

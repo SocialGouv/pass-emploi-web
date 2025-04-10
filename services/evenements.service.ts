@@ -46,7 +46,7 @@ export async function getRendezVousJeune(
   const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
   const { content: rdvsJson } = await apiGet<EvenementJeuneJson[]>(
-    `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    `/conseillers/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     session!.accessToken
   )
 

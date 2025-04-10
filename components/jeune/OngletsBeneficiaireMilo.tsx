@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   FicheMiloProps,
@@ -10,12 +10,8 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { Action } from 'interfaces/action'
-import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import { EvenementListItem } from 'interfaces/evenement'
 import { Periode } from 'types/dates'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { compareDates, LUNDI } from 'utils/date'
+import { LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
 
@@ -46,7 +42,6 @@ export default function OngletsBeneficiaireMilo({
   onChangementSemaine: (currentTab: OngletMilo, nouveauDebut: DateTime) => void
   trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
-  const [conseiller] = useConseiller()
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
@@ -57,8 +52,6 @@ export default function OngletsBeneficiaireMilo({
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
   const [focusCurrentTabContent, setFocusCurrentTabContent] =
     useState<boolean>(false)
-
-  const [erreurSessions, setErreurSessions] = useState<boolean>(false)
 
   async function chargerNouvelleSemaine(
     nouvellePeriode: Periode,
@@ -73,56 +66,6 @@ export default function OngletsBeneficiaireMilo({
     setFocusCurrentTabContent(withFocus)
     setCurrentTab(newTab)
     onSwitchTab(newTab, semaine!.debut)
-  }
-
-  const chargerActions = useCallback(async (): Promise<Action[]> => {
-    const { getActionsBeneficiaire } = await import('services/actions.service')
-    return getActionsBeneficiaire(beneficiaire.id, semaine!)
-  }, [semaine])
-
-  const chargerRdvs = useCallback(async (): Promise<EvenementListItem[]> => {
-    const { getRendezVousJeune } = await import('services/evenements.service')
-    const { getSessionsMiloBeneficiaire } = await import(
-      'services/sessions.service'
-    )
-
-    const rdvs = await getRendezVousJeune(
-      conseiller.id,
-      beneficiaire.id,
-      semaine!
-    )
-
-    let sessionsMilo: EvenementListItem[] = []
-    if (
-      peutAccederAuxSessions(conseiller) &&
-      conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
-    ) {
-      try {
-        setErreurSessions(false)
-        sessionsMilo = await getSessionsMiloBeneficiaire(
-          beneficiaire.id,
-          semaine!
-        )
-      } catch {
-        setErreurSessions(true)
-      }
-    }
-
-    return trieParDateRdvsEtSessions(rdvs, sessionsMilo)
-  }, [semaine])
-
-  function trieParDateRdvsEtSessions(
-    rdvs: EvenementListItem[],
-    sessionsMilo: EvenementListItem[]
-  ) {
-    return [...rdvs]
-      .concat(sessionsMilo)
-      .sort((event1, event2) =>
-        compareDates(
-          DateTime.fromISO(event1.date),
-          DateTime.fromISO(event2.date)
-        )
-      )
   }
 
   useEffect(() => {
@@ -202,10 +145,10 @@ export default function OngletsBeneficiaireMilo({
           <OngletActions
             beneficiaire={beneficiaire}
             categories={categoriesActions}
-            getActions={chargerActions}
             shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
             labelSemaine={semaine.label}
+            semaine={semaine}
           />
         </div>
       )}
@@ -220,9 +163,8 @@ export default function OngletsBeneficiaireMilo({
         >
           <OngletRdvsBeneficiaire
             beneficiaire={beneficiaire}
-            getRdvs={chargerRdvs}
-            erreurSessions={erreurSessions}
             shouldFocus={shouldFocus}
+            semaine={semaine}
           />
         </div>
       )}

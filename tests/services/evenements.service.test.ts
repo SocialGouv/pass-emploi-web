@@ -212,7 +212,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseiller/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         accessToken
       )
       const expected = unEvenementListItem({
