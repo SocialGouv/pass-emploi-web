@@ -15,24 +15,26 @@ import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { estConseillerReferent } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { getActionsBeneficiaire } from 'services/actions.service'
+import { Periode } from 'types/dates'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface OngletActionsProps {
   beneficiaire: DetailBeneficiaire
   categories: SituationNonProfessionnelle[]
-  getActions: () => Promise<Action[]>
   shouldFocus: boolean
   onLienExterne: (label: string) => void
+  semaine: Periode
   labelSemaine?: string
 }
 
 export default function OngletActions({
   categories,
-  getActions,
   shouldFocus,
   beneficiaire,
   onLienExterne,
+  semaine,
   labelSemaine,
 }: OngletActionsProps) {
   const [_, setAlerte] = useAlerte()
@@ -93,18 +95,18 @@ export default function OngletActions({
   useEffect(() => {
     setIsLoading(true)
 
-    getActions()
+    getActionsBeneficiaire(beneficiaire.id, semaine)
       .then(setActions)
       .finally(() => {
         setIsLoading(false)
       })
-  }, [getActions])
+  }, [semaine])
 
   return (
     <>
-      {!actions && <SpinningLoader />}
+      {isLoading && <SpinningLoader />}
 
-      {actions && actions.length === 0 && !lectureSeule && (
+      {!isLoading && actions && actions.length === 0 && !lectureSeule && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             shouldFocus={shouldFocus}
@@ -119,7 +121,7 @@ export default function OngletActions({
         </div>
       )}
 
-      {actions && actions.length === 0 && lectureSeule && (
+      {!isLoading && actions && actions.length === 0 && lectureSeule && (
         <EmptyState
           shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Checklist}
@@ -134,13 +136,12 @@ export default function OngletActions({
         />
       )}
 
-      {actions && actions.length > 0 && (
+      {!isLoading && actions && actions.length > 0 && (
         <TableauActionsBeneficiaire
           jeune={beneficiaire}
           categories={categories}
           actions={actions}
           shouldFocus={shouldFocus}
-          isLoading={isLoading}
           labelSemaine={labelSemaine!}
           avecQualification={
             estCEJ(beneficiaire)

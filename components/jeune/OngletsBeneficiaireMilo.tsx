@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   FicheMiloProps,
@@ -10,7 +10,6 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { Action } from 'interfaces/action'
 import { Periode } from 'types/dates'
 import { LUNDI } from 'utils/date'
 
@@ -32,9 +31,7 @@ export default function OngletsBeneficiaireMilo({
   beneficiaire,
   metadonneesFavoris,
   favorisOffres,
-  rdvs,
   categoriesActions,
-  erreurSessions,
   onLienExterne,
   debutSemaineInitiale,
   onChangementSemaine,
@@ -70,11 +67,6 @@ export default function OngletsBeneficiaireMilo({
     setCurrentTab(newTab)
     onSwitchTab(newTab, semaine!.debut)
   }
-
-  const chargerActions = useCallback(async (): Promise<Action[]> => {
-    const { getActionsBeneficiaire } = await import('services/actions.service')
-    return getActionsBeneficiaire(beneficiaire.id, semaine!)
-  }, [semaine])
 
   useEffect(() => {
     if (focusCurrentTabContent) {
@@ -153,15 +145,15 @@ export default function OngletsBeneficiaireMilo({
           <OngletActions
             beneficiaire={beneficiaire}
             categories={categoriesActions}
-            getActions={chargerActions}
             shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
             labelSemaine={semaine.label}
+            semaine={semaine}
           />
         </div>
       )}
 
-      {currentTab === 'rdvs' && (
+      {currentTab === 'rdvs' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-rdvs--tab'
@@ -171,8 +163,8 @@ export default function OngletsBeneficiaireMilo({
         >
           <OngletRdvsBeneficiaire
             beneficiaire={beneficiaire}
-            rdvs={rdvs}
-            erreurSessions={erreurSessions}
+            shouldFocus={shouldFocus}
+            semaine={semaine}
           />
         </div>
       )}

@@ -10,7 +10,6 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDOffres } from 'fixtures/favoris'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
@@ -104,32 +103,12 @@ describe('FicheBeneficiairePage server side', () => {
             structureMilo: { id: 'id-test' },
           }),
           historiqueConseillers: desConseillersBeneficiaire(),
-          rdvs: expect.arrayContaining([]),
-          actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),
           favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
           debutSemaineInitiale: undefined,
-          erreurSessions: false,
+          categoriesActions: undefined,
         },
-        undefined
-      )
-    })
-
-    it('récupère les rendez-vous à venir du jeune', async () => {
-      // Then
-      expect(getRendezVousJeune).toHaveBeenCalledWith(
-        'id-beneficiaire-1',
-        'FUTURS',
-        'accessToken'
-      )
-      expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
-        'id-beneficiaire-1',
-        'accessToken',
-        now.startOf('day')
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ rdvs: [sessionAVenir, rdvAVenir] }),
         undefined
       )
     })

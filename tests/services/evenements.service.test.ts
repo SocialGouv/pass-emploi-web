@@ -189,51 +189,37 @@ describe('EvenementsApiService', () => {
   })
 
   describe('.getRendezVousJeune', () => {
-    it('renvoie les rendez-vous passés', async () => {
+    it('renvoie les rendez-vous de la période', async () => {
       // Given
       const accessToken = 'accessToken'
+      const idConseiller = 'id-conseiller'
       const idJeune = 'id-jeune'
-      const periode = 'PASSES'
+      const periode = {
+        debut: DateTime.fromISO('2025-04-07'),
+        fin: DateTime.fromISO('2025-04-13'),
+        label: 'Semaine du 7 au 13 avril 2025',
+      }
+      const expectedDate = '2025-04-08'
+      const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
+      const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
+
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: [unEvenementJeuneJson()],
+        content: [unEvenementJeuneJson({ date: expectedDate })],
       })
 
       // When
-      const actual = await getRendezVousJeune('id-jeune', 'PASSES', accessToken)
+      const actual = await getRendezVousJeune(idConseiller, idJeune, periode)
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         accessToken
       )
-      const expected = unEvenementListItem()
+      const expected = unEvenementListItem({
+        date: expectedDate,
+      })
       delete expected.labelBeneficiaires
       expect(actual).toEqual([expected])
-    })
-
-    it('renvoie les rendez-vous avec présence du bénéficiaire', async () => {
-      // Given
-      const accessToken = 'accessToken'
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: [
-          unEvenementJeuneJson({
-            type: { code: 'ATELIER', label: 'Atelier' },
-            futPresent: true,
-          }),
-        ],
-      })
-
-      // When
-      const actual = await getRendezVousJeune('id-jeune', 'PASSES', accessToken)
-
-      // Then
-      const expected = unEvenementListItem({
-        type: 'Atelier',
-        futPresent: true,
-      })
-
-      delete expected.labelBeneficiaires
-      expect(actual[0].futPresent).toBeTruthy()
     })
   })
 

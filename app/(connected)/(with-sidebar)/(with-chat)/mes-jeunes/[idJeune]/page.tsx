@@ -13,8 +13,7 @@ import {
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { PageFilArianePortal } from 'components/PageNavigationPortals'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
-import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
-import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { Conseiller } from 'interfaces/conseiller'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import {
@@ -24,11 +23,8 @@ import {
   getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
-import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
-import { compareDates } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
 type FicheBeneficiaireSearchParams = Promise<{
@@ -98,7 +94,7 @@ export default async function FicheBeneficiaire({
       <PageFilArianePortal />
 
       {estMilo(conseiller.structure) &&
-        (await renderFicheMilo(conseiller, accessToken, props))}
+        (await renderFicheMilo(accessToken, props))}
 
       {!estMilo(conseiller.structure) &&
         (await renderFichePasMilo(conseiller, accessToken, props))}
@@ -124,7 +120,6 @@ function getOngletInitial(
 }
 
 async function renderFicheMilo(
-  conseiller: Conseiller,
   accessToken: string,
   props: Pick<
     FicheMiloProps,
@@ -136,45 +131,16 @@ async function renderFicheMilo(
     | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
-  const [rdvs, categoriesActions] = await Promise.all([
-    getRendezVousJeune(
-      props.beneficiaire.id,
-      PeriodeEvenements.FUTURS,
-      accessToken
-    ),
-    getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
-  ])
-
-  let sessionsMilo: EvenementListItem[] = []
-  let erreurSessions = false
-  if (
-    peutAccederAuxSessions(conseiller) &&
-    conseiller.structureMilo!.id === props.beneficiaire.structureMilo?.id
-  ) {
-    try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
-        props.beneficiaire.id,
-        accessToken,
-        DateTime.now().startOf('day')
-      )
-    } catch {
-      erreurSessions = true
-    }
-  }
-
-  const rdvsEtSessionsTriesParDate = [...rdvs]
-    .concat(sessionsMilo)
-    .sort((event1, event2) =>
-      compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
-    )
+  const categoriesActions = await getSituationsNonProfessionnelles(
+    { avecNonSNP: false },
+    accessToken
+  )
 
   return (
     <FicheBeneficiairePage
       {...props}
       estMilo={true}
-      rdvs={rdvsEtSessionsTriesParDate}
       categoriesActions={categoriesActions}
-      erreurSessions={erreurSessions}
     />
   )
 }

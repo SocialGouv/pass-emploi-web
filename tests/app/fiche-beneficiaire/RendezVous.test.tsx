@@ -4,28 +4,41 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desCategories } from 'fixtures/action'
+import { desCategories, uneListeDActions } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
-import { desEvenementsListItems } from 'fixtures/evenement'
+import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Structure } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
+import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
+jest.mock('services/beneficiaires.service')
+jest.mock('services/evenements.service')
 jest.mock('services/favoris.service')
+jest.mock('services/sessions.service')
 
 describe('Rendez-vous de la fiche jeune', () => {
   let rdvs: EvenementListItem[] = desEvenementsListItems()
+  const sessions: EvenementListItem[] = [
+    unEvenementListItem({
+      id: 'id-session-1',
+      type: 'Session',
+      modality: 'En ligne',
+      isSession: true,
+    }),
+  ]
+
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
@@ -33,14 +46,16 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(getRendezVousJeune as jest.Mock).mockResolvedValue(rdvs)
+    ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue(sessions)
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue(uneListeDActions())
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
   describe("quand l'utilisateur est un conseiller Milo", () => {
     describe('conseiller sans sessions milo', () => {
       beforeEach(async () => {
-        await renderFicheJeuneMilo(rdvs)
+        await renderFicheJeuneMilo()
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
@@ -55,7 +70,7 @@ describe('Rendez-vous de la fiche jeune', () => {
           expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
         })
         expect(() =>
-          screen.getByRole('table', { name: /Liste des actions de/ })
+          screen.getByRole('table', { name: /Liste des rendez-vous de/ })
         ).toThrow()
       })
 
@@ -106,7 +121,7 @@ describe('Rendez-vous de la fiche jeune', () => {
             titre: 'Atelier i-milo en ligne',
           },
         ]
-        await renderFicheJeuneMilo(rdvs)
+        await renderFicheJeuneMilo()
       })
 
       it('indique caractère non modifiable d’une session milo', async () => {
@@ -140,13 +155,14 @@ describe('Rendez-vous de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeuneMilo(rdvs: EvenementListItem[]) {
+async function renderFicheJeuneMilo() {
   await renderWithContexts(
     <FicheBeneficiairePage
       estMilo={true}
-      beneficiaire={unDetailBeneficiaire()}
+      beneficiaire={unDetailBeneficiaire({
+        structureMilo: { id: 'id-test' },
+      })}
       historiqueConseillers={[]}
-      rdvs={rdvs}
       categoriesActions={desCategories()}
       ongletInitial='actions'
     />,
