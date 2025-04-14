@@ -87,6 +87,7 @@ function DetailsSessionPage({
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] = useState<
     ValueWithError<BeneficiaireSelectionneSession[]>
   >({ value: initBeneficiairesSelectionnes() })
+  const [erreurInscriptions, setErreurInscriptions] = useState<boolean>(false)
 
   const [beneficiaireADesinscrire, setBeneficiaireADesinscire] = useState<
     | {
@@ -121,8 +122,10 @@ function DetailsSessionPage({
   }
 
   async function handleChangerVisibiliteSession() {
+    setErreurInscriptions(false)
     if (configurationSession.autoinscription) return
     setLoadingChangerConfiguration(true)
+
     const nouvelleConfiguration = {
       autoinscription: false,
       estVisible: !configurationSession.estVisible,
@@ -144,7 +147,9 @@ function DetailsSessionPage({
   }
 
   async function handleChangerAutoinscriptionSession() {
+    setErreurInscriptions(false)
     setLoadingChangerConfiguration(true)
+
     const nouvelleAutoinscription = !configurationSession.autoinscription
     const nouvelleConfiguration = {
       autoinscription: nouvelleAutoinscription,
@@ -210,6 +215,7 @@ function DetailsSessionPage({
   }
 
   function selectionnerBeneficiaire(inputValue: string) {
+    setErreurInscriptions(false)
     const option = rechercherBeneficiaire(inputValue)
     if (option) updateBeneficiairesSelectionnes(option)
   }
@@ -223,6 +229,7 @@ function DetailsSessionPage({
   }
 
   function desinscrireBeneficiaire(idBeneficiaire: string) {
+    setErreurInscriptions(false)
     const beneficiaireDejaInscrit = session.inscriptions.find(
       ({ idJeune }) => idJeune === idBeneficiaire
     )
@@ -241,6 +248,7 @@ function DetailsSessionPage({
   }
 
   function reinscrireBeneficiaire(idBeneficiaire: string) {
+    setErreurInscriptions(false)
     const indexBeneficiaireAReinscrire =
       beneficiairesSelectionnes.value.findIndex(
         ({ id }) => id === idBeneficiaire
@@ -277,6 +285,7 @@ function DetailsSessionPage({
 
   async function enregistrerInscriptions(e: FormEvent) {
     e.preventDefault()
+    setErreurInscriptions(false)
 
     const { changerInscriptionsSession } = await import(
       'services/sessions.service'
@@ -290,15 +299,19 @@ function DetailsSessionPage({
       })
     )
 
-    await changerInscriptionsSession(session.session.id, inscriptions)
-    setAlerte(
-      session.offre.type === 'Atelier'
-        ? AlerteParam.modificationAtelier
-        : AlerteParam.modificationInformationCollective
-    )
-    setTrackingLabel(initialTracking + ' - Modification succès')
-    router.push(returnTo)
-    router.refresh()
+    try {
+      await changerInscriptionsSession(session.session.id, inscriptions)
+      setAlerte(
+        session.offre.type === 'Atelier'
+          ? AlerteParam.modificationAtelier
+          : AlerteParam.modificationInformationCollective
+      )
+      setTrackingLabel(initialTracking + ' - Modification succès')
+      router.push(returnTo)
+      router.refresh()
+    } catch {
+      setErreurInscriptions(true)
+    }
   }
 
   function trackExport() {
@@ -337,15 +350,25 @@ function DetailsSessionPage({
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       {dateLimiteInscriptionDepassee && (
-        <div className='mt-2'>
-          <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
-        </div>
+        <FailureAlert
+          label='Les inscriptions ne sont plus possibles car la date limite est atteinte.'
+          className='mt-2'
+        />
       )}
 
       {estAClore(session) && (
-        <div className='mt-2'>
-          <FailureAlert label='Cet événement est passé et doit être clos.' />
-        </div>
+        <FailureAlert
+          label='Cet événement est passé et doit être clos.'
+          className='mt-2'
+        />
+      )}
+
+      {erreurInscriptions && (
+        <FailureAlert
+          shouldFocus={true}
+          label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
+          className='mt-2'
+        />
       )}
 
       <section className='border border-solid rounded-base w-full p-4 border-grey-100 mt-6'>
