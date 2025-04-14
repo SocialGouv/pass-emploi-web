@@ -197,7 +197,11 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsBeneficiaire('whatever', { debut, fin })
+      const actual = await getActionsBeneficiaire('whatever', {
+        debut,
+        fin,
+        label: 'whatever',
+      })
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
@@ -514,7 +518,7 @@ describe('ActionsApiService', () => {
       expect(result).toEqual([
         {
           idBeneficiaire: 'id-beneficiaire',
-          actions: 3,
+          actionsCreees: 3,
           rdvs: 6,
         },
       ])

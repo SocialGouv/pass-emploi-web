@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { CompteurActionsPeriode } from 'interfaces/action'
+import { CompteursBeneficiairePeriode } from 'interfaces/action'
 import {
   BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
@@ -36,7 +36,7 @@ export default async function Portefeuille({
   if (estMilo(user.structure)) {
     const dateDebut = DateTime.now().startOf('week')
     const dateFin = DateTime.now().endOf('week')
-    const compteurActionsPeriode: CompteurActionsPeriode[] =
+    const compteurBeneficiairesPeriode: CompteursBeneficiairePeriode[] =
       await recupereCompteursBeneficiairesPortefeuilleMilo(
         user.id,
         dateDebut,
@@ -45,15 +45,11 @@ export default async function Portefeuille({
       )
 
     beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => {
-      const compteursPeriode = compteurActionsPeriode.find(
+      const { actionsCreees, rdvs } = compteurBeneficiairesPeriode.find(
         (compteurs) => compteurs.idBeneficiaire === beneficiaire.id
-      )
+      ) ?? { actionsCreees: 0, rdvs: 0 }
 
-      return {
-        ...beneficiaire,
-        actionsCreees: compteursPeriode?.actions ?? 0,
-        rdvs: compteursPeriode?.rdvs ?? 0,
-      }
+      return { ...beneficiaire, actionsCreees, rdvs }
     })
   } else {
     beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({

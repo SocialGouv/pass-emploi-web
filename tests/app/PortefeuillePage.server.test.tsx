@@ -27,7 +27,7 @@ describe('PortefeuillePage server side', () => {
     ).mockResolvedValue(
       jeunes.map((j) => ({
         idBeneficiaire: j.id,
-        actions: 7,
+        actionsCreees: 7,
         rdvs: 3,
       }))
     )

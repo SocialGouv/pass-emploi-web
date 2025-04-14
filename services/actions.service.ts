@@ -5,7 +5,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   Action,
   ActionPilotage,
-  CompteurActionsPeriode,
+  CompteursBeneficiairePeriode,
   QualificationAction,
   SituationNonProfessionnelle,
 } from 'interfaces/action'
@@ -46,7 +46,7 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   dateDebut: DateTime,
   dateFin: DateTime,
   accessToken: string
-): Promise<CompteurActionsPeriode[]> {
+): Promise<CompteursBeneficiairePeriode[]> {
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
@@ -58,7 +58,7 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
     return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
       return {
         idBeneficiaire,
-        actions,
+        actionsCreees: actions,
         rdvs: Number(rdvs) + Number(sessions),
       }
     })

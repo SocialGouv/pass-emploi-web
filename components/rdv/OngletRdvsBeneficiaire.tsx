@@ -38,7 +38,7 @@ export default function OngletRdvsBeneficiaire({
 
   const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
 
-  async function chargerRdvs(): Promise<EvenementListItem[]> {
+  async function chargerRdvsEtSessions(): Promise<EvenementListItem[]> {
     const rdvs = await getRendezVousJeune(
       conseiller.id,
       beneficiaire.id,
@@ -81,7 +81,7 @@ export default function OngletRdvsBeneficiaire({
   useEffect(() => {
     setIsLoading(true)
 
-    chargerRdvs()
+    chargerRdvsEtSessions()
       .then(setRdvsAAfficher)
       .finally(() => {
         setIsLoading(false)

@@ -50,9 +50,9 @@ export interface QualificationAction {
   isSituationNonProfessionnelle: boolean
 }
 
-export interface CompteurActionsPeriode {
+export interface CompteursBeneficiairePeriode {
   idBeneficiaire: string
-  actions: number
+  actionsCreees: number
   rdvs: number
 }
 
