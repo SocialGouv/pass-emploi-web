@@ -13,8 +13,8 @@ export interface ActionJson {
   id: string
   content: string
   comment: string
-  creationDate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
-  lastUpdate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
+  dateCreation: string
+  dateDerniereActualisation: string
   status: string
   etat: string
   creator: string
@@ -82,13 +82,12 @@ export function jsonToQualification(
 }
 
 export function jsonToAction(json: ActionJson): Action {
-  const legacyFormat = 'EEE, d MMM yyyy HH:mm:ss z'
   const action: Action = {
     id: json.id,
     titre: json.content,
     comment: json.comment,
-    creationDate: DateTime.fromFormat(json.creationDate, legacyFormat).toISO(),
-    lastUpdate: DateTime.fromFormat(json.lastUpdate, legacyFormat).toISO(),
+    dateCreation: json.dateCreation,
+    dateDerniereActualisation: json.dateDerniereActualisation,
     status: jsonToActionStatus(json),
     creator: json.creator,
     creatorType: json.creatorType,

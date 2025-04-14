@@ -7,8 +7,8 @@ export interface Action {
   id: string
   titre: string
   comment: string
-  creationDate: string
-  lastUpdate: string
+  dateCreation: string
+  dateDerniereActualisation: string
   creator: string
   creatorType: string
   status: StatutAction
@@ -104,8 +104,8 @@ export function comparerParDateEcheance(
   return (
     comparaisonDateEcheance ||
     compareDates(
-      DateTime.fromISO(action1.creationDate),
-      DateTime.fromISO(action2.creationDate)
+      DateTime.fromISO(action1.dateCreation),
+      DateTime.fromISO(action2.dateCreation)
     )
   )
 }
