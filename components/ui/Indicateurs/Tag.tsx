@@ -168,12 +168,15 @@ export function TagPresence({ estPresent }: { estPresent?: boolean }) {
   const { style, label } = (() => {
     switch (estPresent) {
       case true:
-        return { style: 'text-primary bg-primary-lighten', label: 'Présent' }
+        return {
+          style: 'text-success bg-success-lighten',
+          label: 'Présent',
+        }
       case false:
         return { style: 'text-warning bg-warning-lighten', label: 'Absent' }
       case undefined:
         return {
-          style: 'text-content-color bg-additional-5-lighten',
+          style: 'text-primary bg-primary-lighten',
           label: 'Inscrit',
         }
     }
