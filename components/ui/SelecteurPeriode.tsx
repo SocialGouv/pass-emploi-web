@@ -40,9 +40,7 @@ export function SelecteurPeriode({
   )
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null)
-  const [periodeInput, setPeriodeInput] = useState<string>(
-    periodeAffichee.debut.toISODate()
-  )
+  const [periodeInput, setPeriodeInput] = useState<string>()
   const debouncedPeriode = useDebounce(periodeInput, 500)
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [shouldFocusOnChange, setShouldFocusOnChange] = useState<boolean>(false)
@@ -69,8 +67,8 @@ export function SelecteurPeriode({
     trackNavigation()
   }
 
-  function changerPeriode(debutPeriodeInput: string) {
-    if (!regexDate.test(debutPeriodeInput)) return
+  function changerPeriode(debutPeriodeInput?: string) {
+    if (!debutPeriodeInput || !regexDate.test(debutPeriodeInput)) return
 
     setPeriodeAffichee(
       getPeriodeComprenant(DateTime.fromISO(debutPeriodeInput))
