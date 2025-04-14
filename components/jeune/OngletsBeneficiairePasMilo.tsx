@@ -125,7 +125,11 @@ export default function OngletsBeneficiairePasMilo({
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <TableauOffres offres={favorisOffres!} />
+          <TableauOffres
+            beneficiaire={beneficiaire}
+            autoriseLePartage={metadonneesFavoris?.autoriseLePartage}
+            semaine={semaine}
+          />
         </div>
       )}
 

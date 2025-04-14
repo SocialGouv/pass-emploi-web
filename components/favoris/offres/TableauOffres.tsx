@@ -1,28 +1,58 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagFavori, TagMetier } from 'components/ui/Indicateurs/Tag'
+import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
 import { Offre } from 'interfaces/favoris'
+import { getOffres } from 'services/favoris.service'
+import { Periode } from 'types/dates'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 interface TableauOffresProps {
-  offres: Offre[]
+  beneficiaire: DetailBeneficiaire
+  shouldFocus: boolean
+  semaine: Periode
+  autoriseLePartage?: boolean
 }
 
-export default function TableauOffres({ offres }: TableauOffresProps) {
+export default function TableauOffres({
+  beneficiaire,
+  autoriseLePartage,
+  shouldFocus,
+  semaine,
+}: TableauOffresProps) {
+  const [offres, setOffres] = useState<Offre[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    if (autoriseLePartage) {
+      getOffres(beneficiaire.id, semaine)
+        .then(setOffres)
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+  }, [semaine])
+
   return (
     <>
-      {offres.length === 0 && (
+      {isLoading && <SpinningLoader />}
+
+      {!isLoading && offres.length === 0 && (
         <EmptyState
           illustrationName={IllustrationName.Checklist}
-          titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
+          shouldFocus={shouldFocus}
+          titre={`Aucune offre en favori pour ${beneficiaire.prenom} ${beneficiaire.nom}`}
           sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
           lien={{
             href: '/offres',
@@ -32,7 +62,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
         />
       )}
 
-      {offres.length > 0 && (
+      {!isLoading && offres.length > 0 && (
         <Table caption={{ text: 'Liste des offres en favoris' }}>
           <thead>
             <TR isHeader={true}>

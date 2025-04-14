@@ -30,7 +30,6 @@ export default function OngletsBeneficiaireMilo({
   onSwitchTab,
   beneficiaire,
   metadonneesFavoris,
-  favorisOffres,
   categoriesActions,
   onLienExterne,
   debutSemaineInitiale,
@@ -177,7 +176,12 @@ export default function OngletsBeneficiaireMilo({
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <TableauOffres offres={favorisOffres!} />
+          <TableauOffres
+            beneficiaire={beneficiaire}
+            shouldFocus={shouldFocus}
+            autoriseLePartage={metadonneesFavoris?.autoriseLePartage}
+            semaine={semaine}
+          />
         </div>
       )}
 
