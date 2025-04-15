@@ -27,11 +27,13 @@ import {
   getIndicateursBeneficiaire,
   modifierDispositif,
 } from 'services/beneficiaires.service'
+import { getOffres } from 'services/favoris.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
+jest.mock('services/favoris.service')
 jest.mock('components/ModalContainer')
 
 describe('FicheBeneficiairePage client side', () => {
@@ -40,6 +42,7 @@ describe('FicheBeneficiairePage client side', () => {
       desIndicateursSemaine()
     )
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(getOffres as jest.Mock).mockResolvedValue([])
     ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
   })
 

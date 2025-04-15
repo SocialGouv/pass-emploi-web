@@ -124,16 +124,6 @@ describe('FicheBeneficiairePage server side', () => {
         undefined
       )
     })
-
-    it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('id-beneficiaire-1', 'accessToken')
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisOffres: uneListeDOffres(),
-        }),
-        undefined
-      )
-    })
   })
 
   describe('Quand on veut accéder à un onglet spécifique', () => {
@@ -200,16 +190,6 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.not.objectContaining({ rdvs: expect.arrayContaining([]) }),
-        undefined
-      )
-    })
-
-    it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('id-beneficiaire-1', 'accessToken')
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisOffres: uneListeDOffres(),
-        }),
         undefined
       )
     })

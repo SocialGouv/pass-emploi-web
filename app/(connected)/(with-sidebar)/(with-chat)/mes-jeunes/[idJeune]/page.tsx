@@ -23,7 +23,6 @@ import {
   getMetadonneesFavorisJeune,
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getOffres } from 'services/favoris.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
@@ -66,11 +65,6 @@ export default async function FicheBeneficiaire({
     ])
   if (!beneficiaire) notFound()
 
-  let favorisOffres
-  if (metadonneesFavoris?.autoriseLePartage) {
-    favorisOffres = await getOffres(beneficiaire.id, accessToken)
-  }
-
   const { onglet, debut } = (await searchParams) ?? {}
   const ongletInitial = getOngletInitial(onglet, conseiller, metadonneesFavoris)
   let debutSemaineInitiale
@@ -85,7 +79,6 @@ export default async function FicheBeneficiaire({
     ongletInitial,
     historiqueConseillers,
     metadonneesFavoris,
-    favorisOffres,
     debutSemaineInitiale,
   }
 
