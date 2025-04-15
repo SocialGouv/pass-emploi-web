@@ -14,11 +14,13 @@ import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
+import { getOffres } from 'services/favoris.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
+jest.mock('services/favoris.service')
 
 describe('Suivi des offres dans la fiche jeune', () => {
   beforeEach(async () => {
@@ -29,6 +31,7 @@ describe('Suivi des offres dans la fiche jeune', () => {
       desIndicateursSemaine()
     )
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
   describe('quand on sélectionne l’onglet de suivi des offres', () => {
@@ -79,10 +82,8 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
       estMilo={true}
       beneficiaire={unDetailBeneficiaire()}
       historiqueConseillers={[]}
-      rdvs={[]}
       categoriesActions={desCategories()}
       metadonneesFavoris={metadonneesFavoris}
-      favorisOffres={uneListeDOffres()}
       ongletInitial='actions'
     />,
     {

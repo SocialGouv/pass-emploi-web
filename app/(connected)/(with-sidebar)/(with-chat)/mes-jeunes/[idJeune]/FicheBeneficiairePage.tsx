@@ -169,7 +169,12 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       )}
 
       {!estBeneficiaireMilo && (
-        <OngletsBeneficiairePasMilo onSwitchTab={updateTabInUrl} {...props} />
+        <OngletsBeneficiairePasMilo
+          onChangementSemaine={updateSemaineInUrl}
+          onSwitchTab={updateTabInUrl}
+          trackChangementSemaine={trackChangementSemaine}
+          {...props}
+        />
       )}
 
       {showModaleDeleteBeneficiaire && (

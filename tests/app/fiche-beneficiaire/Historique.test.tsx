@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -11,20 +12,26 @@ import {
 } from 'fixtures/beneficiaire'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
+import { getOffres } from 'services/favoris.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/actions.service')
+jest.mock('services/favoris.service')
 jest.mock('components/ModalContainer')
 
 describe('Historique des conseillers dans la fiche jeune', () => {
   it('affiche l’historique des conseillers du jeune', async () => {
     // Given
+    const replace = jest.fn(() => Promise.resolve())
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(getOffres as jest.Mock).mockResolvedValue([])
+    ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
     const historiqueConseillers = desConseillersBeneficiaire()
 
     // When
@@ -33,7 +40,6 @@ describe('Historique des conseillers dans la fiche jeune', () => {
         estMilo={false}
         beneficiaire={unDetailBeneficiaire()}
         historiqueConseillers={historiqueConseillers}
-        rdvs={[]}
         categoriesActions={desCategories()}
         ongletInitial='actions'
       />
