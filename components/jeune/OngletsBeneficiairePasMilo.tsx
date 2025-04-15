@@ -151,7 +151,7 @@ export default function OngletsBeneficiairePasMilo({
         </div>
       )}
 
-      {currentTab === 'offres' && (
+      {currentTab === 'offres' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-offres--tab'
@@ -161,7 +161,6 @@ export default function OngletsBeneficiairePasMilo({
         >
           <TableauOffres
             beneficiaire={beneficiaire}
-            autoriseLePartage={metadonneesFavoris?.autoriseLePartage}
             shouldFocus={shouldFocus}
             semaine={semaine}
           />

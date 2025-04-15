@@ -20,12 +20,10 @@ interface TableauOffresProps {
   beneficiaire: DetailBeneficiaire
   shouldFocus: boolean
   semaine: Periode
-  autoriseLePartage?: boolean
 }
 
 export default function TableauOffres({
   beneficiaire,
-  autoriseLePartage,
   shouldFocus,
   semaine,
 }: TableauOffresProps) {
@@ -35,13 +33,11 @@ export default function TableauOffres({
   useEffect(() => {
     setIsLoading(true)
 
-    if (autoriseLePartage) {
-      getOffres(beneficiaire.id, semaine)
-        .then(setOffres)
-        .finally(() => {
-          setIsLoading(false)
-        })
-    }
+    getOffres(beneficiaire.id, semaine)
+      .then(setOffres)
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [semaine])
 
   return (
