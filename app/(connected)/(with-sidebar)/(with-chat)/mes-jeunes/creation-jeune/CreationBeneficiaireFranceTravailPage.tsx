@@ -43,7 +43,6 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
         portefeuille.concat({
           ...beneficiaireCree,
           creationDate: DateTime.now().toISO(),
-          isActivated: false,
           estAArchiver: false,
         })
       )

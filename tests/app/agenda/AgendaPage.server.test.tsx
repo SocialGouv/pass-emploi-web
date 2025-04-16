@@ -35,13 +35,59 @@ describe('AgendaPage server side', () => {
       // When
       render(
         await Agenda({
-          searchParams: Promise.resolve({ onglet: 'etablissement' }),
+          searchParams: Promise.resolve({ onglet: 'mission-locale' }),
         })
       )
 
       // Then
       expect(AgendaPage).toHaveBeenCalledWith(
-        { onglet: 'ETABLISSEMENT', periodeIndexInitial: 0 },
+        { onglet: 'MISSION_LOCALE', debutPeriodeInitiale: undefined },
+        undefined
+      )
+    })
+
+    it('parse la date de début demandée', async () => {
+      // Given
+      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+        user: { structure: 'MILO' },
+      })
+
+      // When
+      render(
+        await Agenda({
+          searchParams: Promise.resolve({
+            onglet: 'mission-locale',
+            debut: '2023-04-12',
+          }),
+        })
+      )
+
+      // Then
+      expect(AgendaPage).toHaveBeenCalledWith(
+        { onglet: 'MISSION_LOCALE', debutPeriodeInitiale: '2023-04-12' },
+        undefined
+      )
+    })
+
+    it('vérifie la validité de la date de début demandée', async () => {
+      // Given
+      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+        user: { structure: 'MILO' },
+      })
+
+      // When
+      render(
+        await Agenda({
+          searchParams: Promise.resolve({
+            onglet: 'mission-locale',
+            debut: 'cestpasunedate',
+          }),
+        })
+      )
+
+      // Then
+      expect(AgendaPage).toHaveBeenCalledWith(
+        { onglet: 'MISSION_LOCALE', debutPeriodeInitiale: undefined },
         undefined
       )
     })

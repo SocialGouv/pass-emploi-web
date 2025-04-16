@@ -172,13 +172,12 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         {
           ...uneBaseBeneficiaire(),
           creationDate: now.toISO(),
-          isActivated: false,
           estAArchiver: false,
         },
       ])
       expect(setAlerte).toHaveBeenCalledWith(
         'creationBeneficiaire',
-        'beneficiaire-1'
+        'id-beneficiaire-1'
       )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })

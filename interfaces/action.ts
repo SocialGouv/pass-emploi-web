@@ -1,11 +1,14 @@
+import { DateTime } from 'luxon'
+
 import { UserType } from 'interfaces/conseiller'
+import { compareDates, compareDatesDesc } from 'utils/date'
 
 export interface Action {
   id: string
   titre: string
   comment: string
-  creationDate: string
-  lastUpdate: string
+  dateCreation: string
+  dateDerniereActualisation: string
   creator: string
   creatorType: string
   status: StatutAction
@@ -47,9 +50,9 @@ export interface QualificationAction {
   isSituationNonProfessionnelle: boolean
 }
 
-export interface CompteurActionsPeriode {
+export interface CompteursBeneficiairePeriode {
   idBeneficiaire: string
-  actions: number
+  actionsCreees: number
   rdvs: number
 }
 
@@ -82,5 +85,27 @@ export function estSupprimable({
 }: Pick<Action, 'creatorType' | 'status'>): boolean {
   return (
     creatorType === UserType.CONSEILLER.toLowerCase() && !estTermine(status)
+  )
+}
+
+export function comparerParDateEcheance(
+  action1: Action,
+  action2: Action,
+  antechronologique: boolean
+): number {
+  const compareDateEcheance = antechronologique
+    ? compareDatesDesc
+    : compareDates
+  const comparaisonDateEcheance = compareDateEcheance(
+    DateTime.fromISO(action1.dateEcheance),
+    DateTime.fromISO(action2.dateEcheance)
+  )
+
+  return (
+    comparaisonDateEcheance ||
+    compareDates(
+      DateTime.fromISO(action1.dateCreation),
+      DateTime.fromISO(action2.dateCreation)
+    )
   )
 }

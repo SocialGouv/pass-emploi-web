@@ -13,7 +13,6 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
 jest.mock('utils/analytics/matomo')
 
 describe('GET /api/milo/[numeroDossier]', () => {

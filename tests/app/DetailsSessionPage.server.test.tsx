@@ -55,12 +55,12 @@ describe('Détails Session Page Server', () => {
     const beneficiaires: BeneficiaireEtablissement[] = [
       {
         base: uneBaseBeneficiaire({
-          id: 'beneficiaire-1',
+          id: 'id-beneficiaire-1',
           prenom: 'Harry',
           nom: 'Beau',
         }),
         referent: {
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           nom: 'Le Calamar',
           prenom: 'Carlo',
         },
@@ -69,12 +69,12 @@ describe('Détails Session Page Server', () => {
       },
       {
         base: uneBaseBeneficiaire({
-          id: 'beneficiaire-2',
+          id: 'id-beneficiaire-2',
           prenom: 'Octo',
           nom: 'Puce',
         }),
         referent: {
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           nom: 'Le Calamar',
           prenom: 'Carlo',
         },
@@ -86,7 +86,7 @@ describe('Détails Session Page Server', () => {
     beforeEach(async () => {
       //Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: structureMilo },
+        user: { id: 'id-conseiller-1', structure: structureMilo },
         accessToken: 'accessToken',
       })
       ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
@@ -94,7 +94,7 @@ describe('Détails Session Page Server', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureMilo,
           agence: { nom: 'Agence', id: 'id-test' },
           structureMilo: { nom: 'Agence', id: 'id-test' },
@@ -114,7 +114,7 @@ describe('Détails Session Page Server', () => {
     it('recupère le détail de la session', async () => {
       // Then
       expect(getDetailsSession).toHaveBeenCalledWith(
-        'id-conseiller',
+        'id-conseiller-1',
         'session-1',
         'accessToken'
       )

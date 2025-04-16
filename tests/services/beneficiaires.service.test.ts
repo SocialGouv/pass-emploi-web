@@ -36,8 +36,7 @@ import {
   getDemarchesBeneficiaire,
   getIdentitesBeneficiairesClientSide,
   getIdJeuneMilo,
-  getIndicateursJeuneAlleges,
-  getIndicateursJeuneComplets,
+  getIndicateursBeneficiaire,
   getJeuneDetails,
   getJeunesDuConseillerParId,
   getMetadonneesFavorisJeune,
@@ -64,7 +63,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/jeunes`,
+        `/conseillers/id-conseiller-1/jeunes`,
         'accessToken'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
@@ -74,7 +73,7 @@ describe('JeunesApiService', () => {
   describe('.getJeunesDuConseillerParId', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Given
-      const idConseiller = 'idConseiller'
+      const idConseiller = 'id-conseiller-1'
       const jeunesJson = desItemsBeneficiairesJson()
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
@@ -83,7 +82,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/jeunes`,
+        `/conseillers/id-conseiller-1/jeunes`,
         'accessToken'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
@@ -93,7 +92,7 @@ describe('JeunesApiService', () => {
   describe('.getJeunesDuConseillerServerSide', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Given
-      const idConseiller = 'idConseiller'
+      const idConseiller = 'id-conseiller-1'
       const accessToken = 'accessToken'
       const jeunesJson = desItemsBeneficiairesJson()
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
@@ -124,10 +123,13 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getJeuneDetails('id-jeune', 'accessToken')
+      const actual = await getJeuneDetails('id-beneficiaire-1', 'accessToken')
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/jeunes/id-jeune', 'accessToken')
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-beneficiaire-1',
+        'accessToken'
+      )
       expect(actual).toEqual(
         unDetailBeneficiaire({
           urlDossier: 'url-dossier',
@@ -143,7 +145,7 @@ describe('JeunesApiService', () => {
       )
 
       // When
-      const actual = await getJeuneDetails('id-jeune', 'accessToken')
+      const actual = await getJeuneDetails('id-beneficiaire-1', 'accessToken')
 
       // Then
       expect(actual).toEqual(undefined)
@@ -154,7 +156,7 @@ describe('JeunesApiService', () => {
     it("renvoie l'id du jeune MiLo", async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: { id: 'id-jeune' },
+        content: { id: 'id-beneficiaire-1' },
       })
 
       // When
@@ -165,7 +167,7 @@ describe('JeunesApiService', () => {
         '/conseillers/milo/jeunes/numero-dossier',
         'accessToken'
       )
-      expect(actual).toEqual('id-jeune')
+      expect(actual).toEqual('id-beneficiaire-1')
     })
 
     it("renvoie undefined si le jeune n'existe pas", async () => {
@@ -224,10 +226,13 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await supprimerJeuneInactif('id-jeune')
+      await supprimerJeuneInactif('id-beneficiaire-1')
 
       // Then
-      expect(apiDelete).toHaveBeenCalledWith(`/jeunes/id-jeune`, accessToken)
+      expect(apiDelete).toHaveBeenCalledWith(
+        '/jeunes/id-beneficiaire-1',
+        accessToken
+      )
     })
   })
 
@@ -242,11 +247,11 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await archiverJeune('id-jeune', payloadFormData)
+      await archiverJeune('id-beneficiaire-1', payloadFormData)
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/archiver',
+        '/jeunes/id-beneficiaire-1/archiver',
         {
           motif: 'Radiation du CEJ',
           dateFinAccompagnement: '2020-04-12T12:00:00.000Z',
@@ -265,11 +270,11 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getConseillersDuJeuneClientSide('id-jeune')
+      const actual = await getConseillersDuJeuneClientSide('id-beneficiaire-1')
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/conseillers',
+        '/jeunes/id-beneficiaire-1/conseillers',
         'accessToken'
       )
       expect(actual).toEqual(desConseillersBeneficiaire())
@@ -285,13 +290,13 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await getConseillersDuJeuneServerSide(
-        'id-jeune',
+        'id-beneficiaire-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/conseillers',
+        '/jeunes/id-beneficiaire-1/conseillers',
         'accessToken'
       )
       expect(actual).toEqual(desConseillersBeneficiaire())
@@ -328,11 +333,14 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getMetadonneesFavorisJeune('id-jeune', 'accessToken')
+      const actual = await getMetadonneesFavorisJeune(
+        'id-beneficiaire-1',
+        'accessToken'
+      )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/id-jeune/favoris/metadonnees',
+        '/jeunes/id-beneficiaire-1/favoris/metadonnees',
         'accessToken'
       )
       expect(actual).toEqual(uneMetadonneeFavoris())
@@ -350,7 +358,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/' + idJeune,
+        '/conseillers/id-conseiller-1/jeunes/' + idJeune,
         { idPartenaire },
         'accessToken'
       )
@@ -368,40 +376,14 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/' + idJeune,
+        '/conseillers/id-conseiller-1/jeunes/' + idJeune,
         { dispositif },
         'accessToken'
       )
     })
   })
 
-  describe('.getIndicateursJeuneAlleges', () => {
-    it('renvoie les indicateurs allégés du jeune entre une date de début et une date de fin', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desIndicateursSemaineJson(),
-      })
-      const dateDebut = DateTime.fromISO('2022-10-10')
-      const dateFin = DateTime.fromISO('2022-10-17')
-
-      // When
-      const actual = await getIndicateursJeuneAlleges(
-        'id-conseiller',
-        'id-jeune',
-        dateDebut,
-        dateFin
-      )
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=true',
-        'accessToken'
-      )
-      expect(actual).toEqual(desIndicateursSemaine())
-    })
-  })
-
-  describe('.getIndicateursJeuneComplets', () => {
+  describe('.getIndicateursBeneficiaire', () => {
     it('renvoie les indicateurs complets du jeune entre une date de début et une date de fin', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -411,16 +393,16 @@ describe('JeunesApiService', () => {
       const dateFin = DateTime.fromISO('2022-10-17')
 
       // When
-      const actual = await getIndicateursJeuneComplets(
-        'id-conseiller',
-        'id-jeune',
+      const actual = await getIndicateursBeneficiaire(
+        'id-conseiller-1',
+        'id-beneficiaire-1',
         dateDebut,
         dateFin
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=false',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual(desIndicateursSemaine())
@@ -464,7 +446,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
+        '/conseillers/id-conseiller-1/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
         'accessToken'
       )
       expect(actual).toEqual(basesJeunes)
@@ -484,7 +466,7 @@ describe('JeunesApiService', () => {
           resultats: [
             {
               jeune: {
-                id: 'beneficiaire-1',
+                id: 'id-beneficiaire-1',
                 nom: 'Reportaire',
                 prenom: 'Albert',
               },
@@ -520,7 +502,7 @@ describe('JeunesApiService', () => {
         beneficiaires: [
           {
             base: {
-              id: 'beneficiaire-1',
+              id: 'id-beneficiaire-1',
               nom: 'Reportaire',
               prenom: 'Albert',
             },
@@ -550,7 +532,7 @@ describe('JeunesApiService', () => {
           resultats: [
             {
               jeune: {
-                id: 'beneficiaire-1',
+                id: 'id-beneficiaire-1',
                 nom: 'Reportaire',
                 prenom: 'Albert',
               },
@@ -581,7 +563,7 @@ describe('JeunesApiService', () => {
         beneficiaires: [
           {
             base: {
-              id: 'beneficiaire-1',
+              id: 'id-beneficiaire-1',
               nom: 'Reportaire',
               prenom: 'Albert',
             },
@@ -619,15 +601,15 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
+        'id-beneficiaire-1',
         dateDebut,
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: false })
@@ -654,15 +636,15 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
+        'id-beneficiaire-1',
         dateDebut,
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: true })
@@ -677,15 +659,15 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await getDemarchesBeneficiaire(
-        'id-jeune',
+        'id-beneficiaire-1',
         dateDebut,
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual(null)

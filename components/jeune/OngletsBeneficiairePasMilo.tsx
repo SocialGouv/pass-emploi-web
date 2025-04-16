@@ -1,13 +1,17 @@
+import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import {
   FichePasMiloProps,
   OngletPasMilo,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/FicheBeneficiaireProps'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
+import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { Periode } from 'types/dates'
+import { LUNDI } from 'utils/date'
 
 const TableauOffres = dynamic(
   () => import('components/favoris/offres/TableauOffres')
@@ -15,23 +19,26 @@ const TableauOffres = dynamic(
 const OngletDemarches = dynamic(
   () => import('components/jeune/OngletDemarches')
 )
-const TableauRecherches = dynamic(
-  () => import('components/favoris/recherches/TableauRecherches')
-)
 const ResumeFavorisBeneficiaire = dynamic(
   () => import('components/jeune/ResumeFavorisBeneficiaire')
 )
 
-export default function FicheBeneficiairePasMilo({
+export default function OngletsBeneficiairePasMilo({
   ongletInitial,
   onSwitchTab,
   beneficiaire,
   metadonneesFavoris,
-  favorisOffres,
-  favorisRecherches,
   demarches,
+  debutSemaineInitiale,
+  onChangementSemaine,
+  trackChangementSemaine,
 }: FichePasMiloProps & {
+  onChangementSemaine: (
+    currentTab: OngletPasMilo,
+    nouveauDebut: DateTime
+  ) => void
   onSwitchTab: (tab: OngletPasMilo) => void
+  trackChangementSemaine: (currentTab: OngletPasMilo, append?: string) => void
 }) {
   const conseillerEstCD = demarches !== undefined
 
@@ -40,6 +47,17 @@ export default function FicheBeneficiairePasMilo({
     metadonneesFavoris?.autoriseLePartage === false
 
   const [currentTab, setCurrentTab] = useState<OngletPasMilo>(ongletInitial)
+  const [semaine, setSemaine] = useState<Periode>()
+  const [shouldFocus, setShouldFocus] = useState<boolean>(false)
+
+  async function chargerNouvelleSemaine(
+    nouvellePeriode: Periode,
+    opts: { shouldFocus: boolean }
+  ) {
+    setSemaine(nouvellePeriode)
+    setShouldFocus(opts.shouldFocus)
+    onChangementSemaine(currentTab, nouvellePeriode.debut)
+  }
 
   async function switchTab(tab: OngletPasMilo) {
     setCurrentTab(tab)
@@ -48,6 +66,18 @@ export default function FicheBeneficiairePasMilo({
 
   return (
     <>
+      <SelecteurPeriode
+        premierJour={
+          debutSemaineInitiale
+            ? DateTime.fromISO(debutSemaineInitiale)
+            : DateTime.now()
+        }
+        jourSemaineReference={LUNDI}
+        onNouvellePeriode={chargerNouvelleSemaine}
+        trackNavigation={(append) => trackChangementSemaine(currentTab, append)}
+        className='m-auto'
+      />
+
       {!conseillerEstCD && (
         <>
           {afficherSuiviOffres && (
@@ -87,22 +117,13 @@ export default function FicheBeneficiairePasMilo({
           />
         )}
         {afficherSuiviOffres && (
-          <>
-            <Tab
-              label='Suivi des offres'
-              count={favorisOffres!.length}
-              selected={currentTab === 'offres'}
-              controls='liste-offres'
-              onSelectTab={() => switchTab('offres')}
-            />
-            <Tab
-              label='Recherches'
-              count={favorisRecherches!.length}
-              selected={currentTab === 'recherches'}
-              controls='liste-recherches'
-              onSelectTab={() => switchTab('recherches')}
-            />
-          </>
+          <Tab
+            iconName={IconName.BookmarkOutline}
+            label='Suivi des offres'
+            selected={currentTab === 'offres'}
+            controls='liste-offres'
+            onSelectTab={() => switchTab('offres')}
+          />
         )}
         {!afficherSuiviOffres && afficherSyntheseFavoris && (
           <Tab
@@ -130,7 +151,7 @@ export default function FicheBeneficiairePasMilo({
         </div>
       )}
 
-      {currentTab === 'offres' && (
+      {currentTab === 'offres' && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-offres--tab'
@@ -138,19 +159,11 @@ export default function FicheBeneficiairePasMilo({
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <TableauOffres offres={favorisOffres!} />
-        </div>
-      )}
-
-      {currentTab === 'recherches' && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-recherches--tab'
-          tabIndex={0}
-          id='liste-recherches'
-          className='mt-8 pb-8'
-        >
-          <TableauRecherches recherches={favorisRecherches!} />
+          <TableauOffres
+            beneficiaire={beneficiaire}
+            shouldFocus={shouldFocus}
+            semaine={semaine}
+          />
         </div>
       )}
 

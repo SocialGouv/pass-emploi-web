@@ -78,7 +78,7 @@ describe('Reaffectation', () => {
           within(etape).getByRole('radio', { name: 'BRSA' })
         ).toBeInTheDocument()
         expect(
-          within(etape).getByRole('radio', { name: 'Accompagnement intensif' })
+          within(etape).getByRole('radio', { name: 'REN-Intensif' })
         ).toBeInTheDocument()
         expect(
           within(etape).getByRole('radio', { name: 'Accompagnement global' })
@@ -536,7 +536,7 @@ describe('Reaffectation', () => {
           expect(reaffecter).toHaveBeenCalledWith(
             'id-nils-tavernier',
             'id-neil-armstrong',
-            ['beneficiaire-2'],
+            ['id-beneficiaire-2'],
             false
           )
         })

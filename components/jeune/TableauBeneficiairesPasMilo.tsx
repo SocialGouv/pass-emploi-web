@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireAvecInfosComplementaires,
@@ -92,7 +92,7 @@ export default function TableauBeneficiairesPasMilo({
               </TD>
 
               <TD className='h-full p-2! row-start-2 col-span-2 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout-m:row-start-1 layout-m:col-start-3 layout-m:col-span-1 layout-m:rounded-none layout-m:flex-col layout-m:gap-0 layout-m:justify-center layout-m:pt-0'>
-                {beneficiaire.isActivated && (
+                {beneficiaire.lastActivity && (
                   <>
                     <span
                       className='text-xs-regular text-grey-800'
@@ -101,11 +101,11 @@ export default function TableauBeneficiairesPasMilo({
                       {derniereActiviteColumn}
                     </span>
                     <span className='text-s-regular'>
-                      {toRelativeDateTime(beneficiaire.lastActivity!)}
+                      {toRelativeDateTime(beneficiaire.lastActivity)}
                     </span>
                   </>
                 )}
-                {!beneficiaire.isActivated && (
+                {!beneficiaire.lastActivity && (
                   <span className='text-s-regular text-warning'>
                     Compte non activé
                   </span>

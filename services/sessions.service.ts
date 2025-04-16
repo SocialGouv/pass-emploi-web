@@ -14,6 +14,7 @@ import {
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
 import { InformationBeneficiaireSession, Session } from 'interfaces/session'
+import { Periode } from 'types/dates'
 import { minutesEntreDeuxDates, toLongMonthDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
@@ -143,15 +144,16 @@ export async function cloreSession(
 
 export async function getSessionsMiloBeneficiaire(
   idJeune: string,
-  accessToken: string,
-  dateDebut: DateTime
+  periode: Periode
 ): Promise<EvenementListItem[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
+  const session = await getSession()
+  const dateDebutUrlEncoded = encodeURIComponent(periode.debut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(periode.fin.toISO())
   try {
-    const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
+    const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&filtrerEstInscrit=true`
     const { content: sessionsMiloJeuneJson } = await apiGet<
       SessionMiloBeneficiaireJson[]
-    >(path, accessToken)
+    >(path, session!.accessToken)
 
     return sessionsMiloJeuneJson.map(
       sessionMiloBeneficiaireJsonToEvenementListItem
@@ -206,6 +208,19 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
   json: SessionMiloBeneficiaireJson
 ): EvenementListItem {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
+
+  const futPresent = (() => {
+    switch (json.inscription) {
+      case 'PRESENT':
+        return true
+      case 'REFUS_JEUNE':
+        return false
+      case 'INSCRIT':
+      default:
+        return undefined
+    }
+  })()
+
   return {
     id: json.id,
     date: json.dateHeureDebut,
@@ -214,7 +229,9 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
       dateDebut,
       DateTime.fromISO(json.dateHeureFin)
     ),
+    titre: json.nomSession,
     isSession: true,
+    futPresent: futPresent,
   }
 }
 

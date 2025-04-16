@@ -1,18 +1,19 @@
-import { Action, SituationNonProfessionnelle } from 'interfaces/action'
+import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
+  ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesPagination } from 'types/pagination'
+import { Offre } from 'interfaces/favoris'
 
 export type Onglet = OngletMilo | OngletPasMilo
 export type BaseFiche = {
   estMilo: boolean
   beneficiaire: DetailBeneficiaire
-  lectureSeule: boolean
+  historiqueConseillers: ConseillerHistorique[]
+  debutSemaineInitiale?: string
   metadonneesFavoris?: MetadonneesFavoris
   favorisOffres?: Offre[]
 }
@@ -34,18 +35,12 @@ export const valeursOngletsMilo = [
   'favoris',
 ]
 export type OngletMilo = (typeof valeursOngletsMilo)[number]
-type DonneesMilo = {
+export type FicheMiloProps = BaseFiche & {
+  ongletInitial: OngletMilo
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
-  actionsInitiales: {
-    actions: Action[]
-    metadonnees: MetadonneesPagination
-    page: number
-  }
   erreurSessions?: boolean
 }
-export type FicheMiloProps = BaseFiche &
-  DonneesMilo & { ongletInitial: OngletMilo }
 
 // Pas Milo
 export const valeursOngletsPasMilo = [
@@ -55,9 +50,7 @@ export const valeursOngletsPasMilo = [
   'favoris',
 ]
 export type OngletPasMilo = (typeof valeursOngletsPasMilo)[number]
-type DonneesPasMilo = {
-  favorisRecherches?: Recherche[]
+export type FichePasMiloProps = BaseFiche & {
+  ongletInitial: OngletPasMilo
   demarches?: { data: Demarche[]; isStale: boolean } | null
 }
-export type FichePasMiloProps = BaseFiche &
-  DonneesPasMilo & { ongletInitial: OngletPasMilo }

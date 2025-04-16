@@ -6,33 +6,29 @@ import FiltresCategories, {
   Categorie,
 } from 'components/action/FiltresCategories'
 import FiltresStatuts from 'components/action/FiltresStatuts'
-import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import EmptyState from 'components/EmptyState'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
-import SpinningLoader from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   Action,
   ActionAQualifier,
+  comparerParDateEcheance,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
 interface TableauActionsBeneficiaireProps {
-  jeune: BaseBeneficiaire
+  jeune: IdentiteBeneficiaire
   categories: SituationNonProfessionnelle[]
-  actionsFiltrees: Action[]
-  isLoading: boolean
-  onFiltres: (filtres: Record<'categories' | 'statuts', string[]>) => void
-  tri: TRI
-  onTri: (tri: TRI) => void
+  actions: Action[]
+  shouldFocus: boolean
+  labelSemaine: string
   avecQualification?: {
     onQualification: (
       qualificationSNP: boolean,
@@ -48,17 +44,17 @@ interface TableauActionsBeneficiaireProps {
 export default function TableauActionsBeneficiaire({
   jeune,
   categories,
-  actionsFiltrees,
-  isLoading,
-  onFiltres,
-  onTri,
-  tri,
+  actions,
+  shouldFocus,
   avecQualification,
+  labelSemaine,
 }: TableauActionsBeneficiaireProps) {
+  const isFirstRender = useRef<boolean>(true)
   const listeActionsRef = useRef<HTMLTableElement>(null)
   const filtresStatutRef = useRef<HTMLButtonElement>(null)
   const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
 
+  const [actionsFiltrees, setActionsFiltrees] = useState<Action[]>(actions)
   const statutsSansQualification = [
     StatutAction.AFaire,
     StatutAction.Terminee,
@@ -75,6 +71,10 @@ export default function TableauActionsBeneficiaire({
   const [aReinitialiseLesFiltres, setAReinitialiseLesFiltres] =
     useState<boolean>(false)
 
+  const [actionsTriees, setActionsTriees] = useState<Action[]>(actions)
+  const [triAntichronologique, setTriAntichronologique] =
+    useState<boolean>(true)
+
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
   >([])
@@ -85,48 +85,27 @@ export default function TableauActionsBeneficiaire({
     actionsSelectionnees.length === 0 || actionSansCategorieSelectionnee
 
   function reinitialiserFiltres() {
-    onFiltres({ categories: [], statuts: [] })
     setStatutsValides([])
     setCategoriesValidees([])
     setAReinitialiseLesFiltres(true)
-  }
-
-  function getIsSortedDesc(): boolean {
-    return tri === TRI.dateEcheanceDecroissante
-  }
-
-  function trierParDateEcheance() {
-    onTri(
-      getIsSortedDesc()
-        ? TRI.dateEcheanceCroissante
-        : TRI.dateEcheanceDecroissante
-    )
   }
 
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function getOrdreTriParDate() {
     return `Trier les actions dans l’ordre ${
-      getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
+      triAntichronologique ? 'antéchronologique' : 'chronologique'
     }`
   }
 
   function filtrerActionsParCategorie(categoriesSelectionnees: Categorie[]) {
     setCategoriesValidees(categoriesSelectionnees)
     filtresCategoriesRef.current!.focus()
-    onFiltres({
-      categories: categoriesSelectionnees.map(({ code }) => code),
-      statuts: statutsValides,
-    })
   }
 
   function filtrerActionsParStatuts(statutsSelectionnes: string[]) {
     setStatutsValides(statutsSelectionnes)
     filtresStatutRef.current!.focus()
-    onFiltres({
-      categories: categoriesValidees.map(({ code }) => code),
-      statuts: statutsSelectionnes,
-    })
   }
 
   function selectionnerToutesLesActions() {
@@ -134,12 +113,10 @@ export default function TableauActionsBeneficiaire({
       setActionsSelectionnees(
         actionsFiltrees
           .filter((action) => action.status === StatutAction.TermineeAQualifier)
-          .map(({ id, qualification }) => {
-            return {
-              idAction: id,
-              codeQualification: qualification?.code,
-            }
-          })
+          .map(({ id, qualification }) => ({
+            idAction: id,
+            codeQualification: qualification?.code,
+          }))
       )
     } else {
       setActionsSelectionnees([])
@@ -164,8 +141,51 @@ export default function TableauActionsBeneficiaire({
   }
 
   useEffect(() => {
+    isFirstRender.current = false
+    return () => {
+      isFirstRender.current = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let actionsFiltreesParCategories = actions
+    if (categoriesValidees.length)
+      actionsFiltreesParCategories = actions.filter((action) =>
+        categoriesValidees.some(
+          ({ code }) => code === action.qualification?.code
+        )
+      )
+
+    let actionsFiltreesParCategoriesEtStatuts = actionsFiltreesParCategories
+    if (statutsValides.length)
+      actionsFiltreesParCategoriesEtStatuts =
+        actionsFiltreesParCategories.filter((action) =>
+          statutsValides.includes(action.status)
+        )
+
+    setActionsFiltrees(actionsFiltreesParCategoriesEtStatuts)
+  }, [actions, categoriesValidees, statutsValides])
+
+  useEffect(() => {
     setActionsSelectionnees([])
   }, [actionsFiltrees])
+
+  useEffect(() => {
+    if (isFirstRender.current) return
+
+    if (actionsFiltrees.length && (aReinitialiseLesFiltres || shouldFocus)) {
+      listeActionsRef.current!.focus()
+      setAReinitialiseLesFiltres(false)
+    }
+  }, [aReinitialiseLesFiltres, shouldFocus])
+
+  useEffect(() => {
+    setActionsTriees(
+      [...actionsFiltrees].sort((action1, action2) =>
+        comparerParDateEcheance(action1, action2, triAntichronologique)
+      )
+    )
+  }, [actionsFiltrees, triAntichronologique])
 
   useEffect(() => {
     setActionSansCategorieSelectionnee(
@@ -174,7 +194,7 @@ export default function TableauActionsBeneficiaire({
   }, [actionsSelectionnees])
 
   useEffect(() => {
-    if (!avecQualification || !actionsFiltrees.length) return
+    if (!avecQualification) return
 
     const nbActionsAQualifier = actionsFiltrees.filter(
       ({ status }) => status === StatutAction.TermineeAQualifier
@@ -182,9 +202,10 @@ export default function TableauActionsBeneficiaire({
 
     const tailleSelection = actionsSelectionnees.length
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === nbActionsAQualifier
+    const isChecked =
+      tailleSelection > 0 && tailleSelection === nbActionsAQualifier
     const isIndeterminate =
-      tailleSelection !== nbActionsAQualifier && tailleSelection > 0
+      tailleSelection > 0 && tailleSelection !== nbActionsAQualifier
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -192,36 +213,21 @@ export default function TableauActionsBeneficiaire({
     if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
     else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
     else toutSelectionnerCheckbox.ariaChecked = 'false'
-  }, [actionsFiltrees.length, actionsSelectionnees.length])
-
-  useEffect(() => {
-    if (aReinitialiseLesFiltres && actionsFiltrees.length) {
-      listeActionsRef.current!.focus()
-      setAReinitialiseLesFiltres(false)
-    }
-  }, [aReinitialiseLesFiltres, actionsFiltrees])
+  }, [actionsSelectionnees.length])
 
   return (
     <>
-      {isLoading && <SpinningLoader alert={true} />}
-
       {actionsFiltrees.length === 0 && (
-        <div className='flex flex-col justify-center'>
-          <EmptyState
-            shouldFocus={true}
-            illustrationName={IllustrationName.Search}
-            titre='Aucun résultat.'
-            sousTitre='Modifiez vos filtres.'
-          />
-          <Button
-            type='button'
-            style={ButtonStyle.PRIMARY}
-            onClick={reinitialiserFiltres}
-            className='mx-auto mt-8'
-          >
-            Réinitialiser les filtres
-          </Button>
-        </div>
+        <EmptyState
+          shouldFocus={shouldFocus}
+          illustrationName={IllustrationName.Search}
+          titre='Aucun résultat.'
+          sousTitre='Modifiez vos filtres.'
+          bouton={{
+            onClick: async () => reinitialiserFiltres(),
+            label: 'Réinitialiser les filtres',
+          }}
+        />
       )}
 
       {actionsFiltrees.length > 0 && (
@@ -232,7 +238,6 @@ export default function TableauActionsBeneficiaire({
                 actionsSelectionnees={actionsSelectionnees}
                 boutonsDisabled={boutonsDisabled}
                 jeune={jeune}
-                nombreActionsSelectionnees={actionsSelectionnees.length}
                 onLienExterne={avecQualification.onLienExterne}
                 onQualification={avecQualification.onQualification}
               />
@@ -254,7 +259,7 @@ export default function TableauActionsBeneficiaire({
           <Table
             ref={listeActionsRef}
             caption={{
-              text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
+              text: `Liste des actions de ${jeune.prenom} ${jeune.nom} ${labelSemaine}`,
             }}
           >
             <thead>
@@ -276,14 +281,16 @@ export default function TableauActionsBeneficiaire({
                 <TH>Titre de l’action</TH>
                 <TH estCliquable={true}>
                   <button
-                    onClick={trierParDateEcheance}
+                    onClick={() =>
+                      setTriAntichronologique(!triAntichronologique)
+                    }
                     aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
                     title={getOrdreTriParDate()}
                     className={columnHeaderButtonStyle}
                     type='button'
                   >
                     Date de l’action
-                    <SortIcon isSorted={true} isDesc={getIsSortedDesc()} />
+                    <SortIcon isSorted={true} isDesc={triAntichronologique} />
                   </button>
                 </TH>
                 <TH estCliquable={true}>
@@ -314,7 +321,7 @@ export default function TableauActionsBeneficiaire({
             </thead>
 
             <tbody>
-              {actionsFiltrees.map((action: Action) => (
+              {actionsTriees.map((action: Action) => (
                 <ActionBeneficiaireRow
                   key={action.id}
                   action={action}

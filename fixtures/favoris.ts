@@ -1,5 +1,5 @@
-import { Offre, Recherche } from 'interfaces/favoris'
-import { OffreJson, RechercheJson } from 'interfaces/json/favoris'
+import { Offre } from 'interfaces/favoris'
+import { OffreJson } from 'interfaces/json/favoris'
 
 export function uneListeDOffres(): Offre[] {
   return [
@@ -46,25 +46,6 @@ export function uneListeDOffres(): Offre[] {
   ]
 }
 
-export function uneListeDeRecherches(): Recherche[] {
-  return [
-    {
-      id: '1',
-      titre: 'recherche 1',
-      type: 'Offres d’emploi',
-      metier: 'metier',
-      localisation: 'localisation',
-    },
-    {
-      id: '2',
-      titre: 'recherche 2',
-      type: 'Alternances',
-      metier: 'metier',
-      localisation: 'localisation',
-    },
-  ]
-}
-
 export function uneListeDOffresJson(): OffreJson[] {
   return [
     {
@@ -99,25 +80,6 @@ export function uneListeDOffresJson(): OffreJson[] {
       organisation: 'organisation',
       localisation: 'localisation',
       dateCreation: '2025-02-22T22:22:22',
-    },
-  ]
-}
-
-export function uneListeDeRecherchesJson(): RechercheJson[] {
-  return [
-    {
-      id: '1',
-      titre: 'recherche 1',
-      type: 'OFFRES_EMPLOI',
-      metier: 'metier',
-      localisation: 'localisation',
-    },
-    {
-      id: '2',
-      titre: 'recherche 2',
-      type: 'OFFRES_ALTERNANCE',
-      metier: 'metier',
-      localisation: 'localisation',
     },
   ]
 }

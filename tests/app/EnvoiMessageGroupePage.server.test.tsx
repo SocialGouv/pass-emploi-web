@@ -21,7 +21,7 @@ describe('EnvoiMessageGroupePage server side', () => {
   beforeEach(() => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
       accessToken: 'accessToken',
     })
     ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
@@ -35,7 +35,7 @@ describe('EnvoiMessageGroupePage server side', () => {
 
     // Then
     expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
-      'id-conseiller',
+      'id-conseiller-1',
       'accessToken'
     )
   })

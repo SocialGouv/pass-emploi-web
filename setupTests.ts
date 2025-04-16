@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { toHaveNoViolations } from 'jest-axe'
+import { Settings } from 'luxon'
+
+Settings.throwOnInvalid = true
 
 expect.extend(toHaveNoViolations)
 
@@ -34,7 +37,7 @@ jest.mock('next/headers', () => ({
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
     user: {
-      id: 'idConseiller',
+      id: 'id-conseiller-1',
       estSuperviseur: false,
       estSuperviseurResponsable: false,
       structure: 'MILO',

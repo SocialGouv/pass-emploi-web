@@ -131,10 +131,10 @@ describe('LoginFranceTravailDispositifsPage client side', () => {
       )
     })
 
-    it("permet de s'identifier en tant que conseiller FT Accompagnement intensif", async () => {
+    it("permet de s'identifier en tant que conseiller FT REN-Intensif", async () => {
       // Given
       const button = screen.getByRole('button', {
-        name: 'Connexion France Travail Accompagnement intensif',
+        name: 'Connexion France Travail REN-Intensif',
       })
 
       // When

@@ -1,8 +1,10 @@
+import { Settings } from 'luxon'
 import { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { ReactNode } from 'react'
 
 import Analytics from 'components/global/Analytics'
+import DateSettings from 'components/global/DateSettings'
 import ProgressBar from 'components/global/ProgressBar'
 import RealUserMonitoring from 'components/global/RealUserMonitoring'
 import WebVitals from 'components/global/WebVitals'
@@ -43,6 +45,8 @@ export const viewport: Viewport = {
   themeColor: '#3B69D1',
 }
 
+Settings.throwOnInvalid = true
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='fr' className={marianne.className}>
@@ -52,6 +56,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Analytics />
         <RealUserMonitoring />
         <WebVitals />
+        <DateSettings />
 
         {children}
       </body>

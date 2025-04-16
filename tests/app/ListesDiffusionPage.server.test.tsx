@@ -17,7 +17,7 @@ describe('Page Listes de Diffusion', () => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
       accessToken: 'access-token',
-      user: { id: 'id-conseiller' },
+      user: { id: 'id-conseiller-1' },
     })
     ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
@@ -28,7 +28,7 @@ describe('Page Listes de Diffusion', () => {
 
     // Then
     expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
-      'id-conseiller',
+      'id-conseiller-1',
       'access-token'
     )
     expect(ListesDiffusionPage).toHaveBeenCalledWith(

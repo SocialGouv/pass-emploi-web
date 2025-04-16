@@ -52,7 +52,7 @@ describe('DetailDemarchePage server side', () => {
     beforeEach(async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',
-        user: { structure: 'CONSEIL_DEPT', id: 'id-conseiller' },
+        user: { structure: 'CONSEIL_DEPT', id: 'id-conseiller-1' },
       })
       ;(headers as jest.Mock).mockReturnValue(
         new Map([['referer', '/whatever']])
@@ -73,7 +73,7 @@ describe('DetailDemarchePage server side', () => {
       ;(getJeuneDetails as jest.Mock).mockResolvedValue(beneficiaire)
 
       // When
-      const params = { idJeune: 'beneficiaire-1', idDemarche: 'id-demarche' }
+      const params = { idJeune: 'id-beneficiaire-1', idDemarche: 'id-demarche' }
       const metadata = await generateMetadata({
         params: Promise.resolve(params),
       })
@@ -81,19 +81,16 @@ describe('DetailDemarchePage server side', () => {
 
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         trenteJoursAvant,
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
       expect(metadata).toEqual({
         title: `${demarche.titre} - Démarches de ${beneficiaire.prenom} ${beneficiaire.nom} - Portefeuille`,
       })
       expect(DetailDemarchePage).toHaveBeenCalledWith(
-        {
-          demarche,
-          lectureSeule: false,
-        },
+        { beneficiaire, demarche },
         undefined
       )
     })

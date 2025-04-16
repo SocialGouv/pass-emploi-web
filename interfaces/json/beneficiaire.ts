@@ -1,13 +1,12 @@
 import {
-  BaseBeneficiaire,
-  CategorieSituation,
-  DetailBeneficiaire,
-  EtatSituation,
-  IndicateursSemaine,
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
-  MetadonneesFavoris,
+  CategorieSituation,
   Demarche,
+  DetailBeneficiaire,
+  IdentiteBeneficiaire,
+  IndicateursSemaine,
+  MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 
 export enum StatutDemarche {
@@ -31,18 +30,17 @@ export interface BaseBeneficiaireJson {
 
 export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   creationDate: string
-  isActivated: boolean
   isReaffectationTemporaire: boolean
   estAArchiver: boolean
   dispositif: string
   lastActivity?: string
   situationCourante?: Situation
   dateFinCEJ?: string
+  structureMilo?: { id: string }
 }
 
 export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   creationDate: string
-  isActivated: boolean
   isReaffectationTemporaire: boolean
   conseiller: { id: string }
   dispositif: string
@@ -56,7 +54,7 @@ export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
 }
 
 export type BeneficiaireEtablissementJson = {
-  jeune: BaseBeneficiaire
+  jeune: IdentiteBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: string
   dateDerniereActivite?: string
@@ -91,18 +89,13 @@ export type IndicateursSemaineJson = {
     creees: number
     enRetard: number
     terminees: number
-    aEcheance: number
   }
   rendezVous: {
     planifies: number
   }
   offres: {
-    consultees: number
-    partagees: number
-  }
-  favoris: {
-    offresSauvegardees: number
-    recherchesSauvegardees: number
+    sauvegardees: number
+    postulees: number
   }
 }
 
@@ -133,19 +126,6 @@ export function jsonToDemarche(json: DemarcheJson): Demarche {
   }
 }
 
-function toEtatSituation(etat: string): EtatSituation | undefined {
-  switch (etat) {
-    case 'EN_COURS':
-      return EtatSituation.EN_COURS
-    case 'PREVU':
-      return EtatSituation.PREVU
-    case 'terminée':
-      return EtatSituation.TERMINE
-    default:
-      return undefined
-  }
-}
-
 function toCategorieSituation(categorie?: string): CategorieSituation {
   switch (categorie) {
     case 'Emploi':
@@ -170,7 +150,7 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
 
 export function jsonToBaseBeneficiaire(
   beneficiaire: BaseBeneficiaireJson
-): BaseBeneficiaire {
+): IdentiteBeneficiaire {
   return {
     id: beneficiaire.id,
     prenom: beneficiaire.firstName,
@@ -205,12 +185,9 @@ export function jsonToDetailBeneficiaire({
     prenom: firstName,
     nom: lastName,
     idConseiller: conseiller.id,
-    situations:
-      beneficiaire.situations?.map((situation) => ({
-        ...situation,
-        categorie: toCategorieSituation(situation.categorie),
-        etat: toEtatSituation(situation.etat),
-      })) ?? [],
+    situationCourante: toCategorieSituation(
+      beneficiaire.situations?.at(0)?.categorie
+    ),
     idPartenaire: beneficiaire.idPartenaire ?? '',
   }
 }
@@ -262,16 +239,11 @@ export function jsonToIndicateursSemaine(
       creees: indicateursJson.actions.creees,
       enRetard: indicateursJson.actions.enRetard,
       terminees: indicateursJson.actions.terminees,
-      aEcheance: indicateursJson.actions.aEcheance,
     },
     rendezVous: indicateursJson.rendezVous.planifies,
     offres: {
-      partagees: indicateursJson.offres.partagees,
-      consultees: indicateursJson.offres.consultees,
-    },
-    favoris: {
-      offresSauvegardees: indicateursJson.favoris.offresSauvegardees,
-      recherchesSauvegardees: indicateursJson.favoris.recherchesSauvegardees,
+      sauvegardees: indicateursJson.offres.sauvegardees,
+      postulees: indicateursJson.offres.postulees,
     },
   }
 }

@@ -28,7 +28,7 @@ jest.mock('services/sessions.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
-describe('Agenda - Onglet établissement', () => {
+describe('Agenda - Onglet Mission Locale', () => {
   let container: HTMLElement
   let replace: jest.Mock
   const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
@@ -121,7 +121,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // When
       ;({ container } = await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
+        <AgendaPage onglet='MISSION_LOCALE' />,
         {
           customConseiller: conseiller,
         }
@@ -245,7 +245,7 @@ describe('Agenda - Onglet établissement', () => {
       // When
       await userEvent.click(periodesFuturesButton)
       // Then
-      expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
+      expect(getRendezVousEtablissement).toHaveBeenCalledWith(
         'id-etablissement',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
@@ -351,18 +351,15 @@ describe('Agenda - Onglet établissement', () => {
       })
 
       // When
-      await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-        {
-          customConseiller: conseiller,
-        }
-      )
+      await renderWithContexts(<AgendaPage onglet='MISSION_LOCALE' />, {
+        customConseiller: conseiller,
+      })
     })
 
     it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
@@ -533,7 +530,7 @@ describe('Agenda - Onglet établissement', () => {
       await userEvent.click(periodesPasseesButton)
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         AOUT_25_0H,
         AOUT_31_23H
       )
@@ -543,7 +540,7 @@ describe('Agenda - Onglet établissement', () => {
 
       // Then
       expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-        '1',
+        'id-conseiller-1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
@@ -567,12 +564,9 @@ describe('Agenda - Onglet établissement', () => {
       ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
 
       // When
-      await renderWithContexts(
-        <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
-        {
-          customConseiller: { structure: structureMilo },
-        }
-      )
+      await renderWithContexts(<AgendaPage onglet='MISSION_LOCALE' />, {
+        customConseiller: { structure: structureMilo },
+      })
     })
 
     it('n’affiche pas l’agenda de l’établissement', async () => {

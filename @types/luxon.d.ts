@@ -1,6 +1,4 @@
-import { Settings } from 'luxon'
-
-Settings.throwOnInvalid = true
+export {}
 
 declare module 'luxon' {
   interface TSSettings {

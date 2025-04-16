@@ -3,14 +3,14 @@
   "version": "5.7.5",
   "private": true,
   "engines": {
-    "node": "22.11.0"
+    "node": "22.14.0"
   },
   "scripts": {
-    "dev": "node server.js | pino-pretty",
+    "dev": "ts-node --project tsconfig.server.json server.ts | pino-pretty",
     "watch": "yarn dev",
-    "build": "NODE_ENV=production next build",
+    "build": "NODE_ENV=production; next build && tsc --project tsconfig.server.json",
     "build-source-map": "NODE_ENV=production next build && source-map-explorer .next/static/**/*.js",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node dist/server.js",
     "lint": "next lint",
     "test": "TZ=Europe/Paris jest --config jest.config.js --coverage",
     "test:watch": "jest --config jest.config.js --watch"
@@ -74,6 +74,7 @@
     "style-loader": "^4.0.0",
     "tailwindcss": "^4.0.14",
     "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
     "typescript": "^5.8.2"
   },

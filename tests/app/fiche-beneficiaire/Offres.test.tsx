@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
@@ -13,23 +12,26 @@ import {
 } from 'fixtures/beneficiaire'
 import { uneListeDOffres } from 'fixtures/favoris'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
-import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
+import { getOffres } from 'services/favoris.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
+jest.mock('services/favoris.service')
 
 describe('Suivi des offres dans la fiche jeune', () => {
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
     })
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+    ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
   describe('quand on sélectionne l’onglet de suivi des offres', () => {
@@ -39,7 +41,7 @@ describe('Suivi des offres dans la fiche jeune', () => {
 
       // When
       await userEvent.click(
-        screen.getByRole('tab', { name: 'Suivi des offres 12 éléments' })
+        screen.getByRole('tab', { name: 'Suivi des offres' })
       )
 
       // Then
@@ -79,16 +81,13 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={unDetailBeneficiaire()}
-      rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
+      historiqueConseillers={[]}
       categoriesActions={desCategories()}
       metadonneesFavoris={metadonneesFavoris}
-      favorisOffres={uneListeDOffres()}
-      ongletInitial='agenda'
-      lectureSeule={false}
+      ongletInitial='actions'
     />,
     {
-      customConseiller: { id: 'id-conseiller' },
+      customConseiller: { id: 'id-conseiller-1' },
     }
   )
 }

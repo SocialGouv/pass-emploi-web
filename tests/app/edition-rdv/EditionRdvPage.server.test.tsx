@@ -33,7 +33,7 @@ describe('EditionRdvPage server side', () => {
     // Given
     ;(headers as jest.Mock).mockReturnValue(new Map())
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: 'MILO' },
+      user: { id: 'id-conseiller-1', structure: 'MILO' },
       accessToken: 'accessToken',
     })
     ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())
@@ -158,7 +158,7 @@ describe('EditionRdvPage server side', () => {
     beforeEach(() => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
+        user: { id: 'id-conseiller-1', structure: 'MILO' },
         accessToken: 'accessToken',
       })
       ;(getBeneficiairesDuConseillerServerSide as jest.Mock).mockResolvedValue(
@@ -269,7 +269,7 @@ describe('EditionRdvPage server side', () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         user: {
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureFTCej,
         },
         accessToken: 'accessToken',

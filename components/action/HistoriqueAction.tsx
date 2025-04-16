@@ -10,8 +10,8 @@ interface HistoriqueActionProps {
 }
 
 export default function HistoriqueAction({ action }: HistoriqueActionProps) {
-  const lastUpdate = toShortDate(action.lastUpdate)
-  const creationDate = toShortDate(action.creationDate)
+  const lastUpdate = toShortDate(action.dateDerniereActualisation)
+  const creationDate = toShortDate(action.dateCreation)
 
   return (
     <Details summary='Historique'>

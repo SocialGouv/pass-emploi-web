@@ -180,7 +180,7 @@ function userStructureDimensionString(loginMode: Structure | null): string {
     case 'AVENIR_PRO':
       return 'Avenir Pro'
     case 'FT_ACCOMPAGNEMENT_INTENSIF':
-      return 'France Travail Accompagnement intensif'
+      return 'France Travail REN-Intensif'
     case 'FT_ACCOMPAGNEMENT_GLOBAL':
       return 'France Travail Accompagnement global'
     case 'FT_EQUIP_EMPLOI_RECRUT':

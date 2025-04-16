@@ -90,14 +90,14 @@ export default function DeleteBeneficiaireModal({
   }
 
   useEffect(() => {
-    if (beneficiaire.isActivated) {
+    if (beneficiaire.lastActivity) {
       getMotifsSuppression().then(setMotifsSuppression)
     }
   }, [])
 
   return (
     <>
-      {!showModaleSuccesDeleteBeneficiaire && beneficiaire.isActivated && (
+      {!showModaleSuccesDeleteBeneficiaire && beneficiaire.lastActivity && (
         <DeleteBeneficiaireActifModal
           ref={modalRef}
           beneficiaire={beneficiaire}
@@ -107,7 +107,7 @@ export default function DeleteBeneficiaireModal({
         />
       )}
 
-      {!showModaleSuccesDeleteBeneficiaire && !beneficiaire.isActivated && (
+      {!showModaleSuccesDeleteBeneficiaire && !beneficiaire.lastActivity && (
         <DeleteJeuneInactifModal
           ref={modalRef}
           beneficiaire={beneficiaire}

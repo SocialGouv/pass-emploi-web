@@ -26,17 +26,17 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 const OngletAgendaConseiller = dynamic(
   () => import('components/rdv/OngletAgendaConseiller')
 )
-const OngletAgendaEtablissement = dynamic(
-  () => import('components/rdv/OngletAgendaEtablissement')
+const OngletAgendaMissionLocale = dynamic(
+  () => import('components/rdv/OngletAgendaMissionLocale')
 )
 
-type Onglet = 'CONSEILLER' | 'ETABLISSEMENT'
+type Onglet = 'CONSEILLER' | 'MISSION_LOCALE'
 type AgendaPageProps = {
   onglet: Onglet
-  periodeIndexInitial: number
+  debutPeriodeInitiale?: string
 }
 
-function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
+function AgendaPage({ onglet, debutPeriodeInitiale }: AgendaPageProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -50,13 +50,17 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
   } = {
     CONSEILLER: { queryParam: 'conseiller', trackingLabel: 'conseiller' },
-    ETABLISSEMENT: {
-      queryParam: 'etablissement',
+    MISSION_LOCALE: {
+      queryParam: 'mission-locale',
       trackingLabel: 'Mission Locale',
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
-  const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
+  const [debutPeriode, setDebutPeriode] = useState<DateTime>(
+    debutPeriodeInitiale
+      ? DateTime.fromISO(debutPeriodeInitiale)
+      : DateTime.now()
+  )
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -75,18 +79,20 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function switchTab(tab: Onglet) {
+  async function updateTabInUrl(tab: Onglet) {
     setCurrentTab(tab)
-    setTrackingTitle(trackingLabelOnglet(tab))
+    setTrackingTitle(getTrackingLabelOnglet(tab))
     router.replace(
-      `/agenda?onglet=${ongletProps[tab].queryParam}&periodeIndex=${periodeIndex}`
+      `/agenda?onglet=${ongletProps[tab].queryParam}&debut=${debutPeriode.toISODate()}`,
+      { scroll: false }
     )
   }
 
-  async function switchPeriode(index: number) {
-    setPeriodeIndex(index)
+  async function updatePeriodeInUrl(nouveauDebut: DateTime) {
+    setDebutPeriode(nouveauDebut)
     router.replace(
-      `/agenda?onglet=${ongletProps[currentTab].queryParam}&periodeIndex=${index}`
+      `/agenda?onglet=${ongletProps[currentTab].queryParam}&debut=${nouveauDebut.toISODate()}`,
+      { scroll: false }
     )
   }
 
@@ -156,11 +162,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   }
 
   function trackNavigation(append?: string) {
-    const trackingOnglet = trackingLabelOnglet(currentTab)
+    const trackingOnglet = getTrackingLabelOnglet(currentTab)
     setTrackingTitle(trackingOnglet + (append ? ` - ${append}` : ''))
   }
 
-  function trackingLabelOnglet(tab: Onglet): string {
+  function getTrackingLabelOnglet(tab: Onglet): string {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
@@ -206,34 +212,34 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
       >
         <Tab
           label='Agenda Mission Locale'
-          selected={currentTab === 'ETABLISSEMENT'}
-          controls='agenda-etablissement'
-          onSelectTab={() => switchTab('ETABLISSEMENT')}
+          selected={currentTab === 'MISSION_LOCALE'}
+          controls='agenda-mission-locale'
+          onSelectTab={() => updateTabInUrl('MISSION_LOCALE')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='Mon agenda'
           selected={currentTab === 'CONSEILLER'}
           controls='agenda-conseiller'
-          onSelectTab={() => switchTab('CONSEILLER')}
+          onSelectTab={() => updateTabInUrl('CONSEILLER')}
           iconName={IconName.EventFill}
         />
       </TabList>
 
-      {currentTab === 'ETABLISSEMENT' && (
+      {currentTab === 'MISSION_LOCALE' && (
         <div
           role='tabpanel'
-          aria-labelledby='agenda-etablissement--tab'
+          aria-labelledby='agenda-mission-locale--tab'
           tabIndex={0}
-          id='agenda-etablissement'
+          id='agenda-mission-locale'
         >
           {conseiller.agence && (
-            <OngletAgendaEtablissement
+            <OngletAgendaMissionLocale
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
-              periodeIndex={periodeIndex}
-              changerPeriode={switchPeriode}
+              debutPeriode={debutPeriode}
+              changerPeriode={updatePeriodeInUrl}
             />
           )}
 
@@ -259,8 +265,8 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
             recupererRdvs={recupererRdvsConseiller}
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
-            periodeIndex={periodeIndex}
-            changerPeriode={switchPeriode}
+            debutPeriode={debutPeriode}
+            changerPeriode={updatePeriodeInUrl}
           />
         </div>
       )}

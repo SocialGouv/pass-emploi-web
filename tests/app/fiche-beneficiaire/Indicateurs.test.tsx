@@ -1,81 +1,74 @@
 import { screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
-import { recupererAgenda } from 'services/agenda.service'
-import { getIndicateursJeuneAlleges } from 'services/beneficiaires.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
+import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
   describe("quand l'utilisateur est un conseiller Milo", () => {
-    beforeEach(async () => {
+    it('affiche les indicateurs du jeune', async () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
-      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+      ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
+      ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
       // When
       await renderWithContexts(
         <FicheBeneficiairePage
           estMilo={true}
           beneficiaire={unDetailBeneficiaire()}
+          historiqueConseillers={[]}
           rdvs={[]}
-          actionsInitiales={desActionsInitiales()}
           categoriesActions={desCategories()}
           metadonneesFavoris={uneMetadonneeFavoris()}
-          ongletInitial='agenda'
-          lectureSeule={false}
+          ongletInitial='actions'
         />,
         {}
       )
-    })
 
-    it('affiche les indicateurs du jeune', async () => {
       // Then
-      const indicateurs = screen.getByRole('heading', {
-        name: 'Cette semaine',
-      }).parentElement
-      expect(
-        within(indicateurs!).getByText('du 29/08/2022 au 04/09/2022')
-      ).toBeInTheDocument()
-      const indicateursActions = screen.getByRole('heading', {
-        name: 'Les actions',
-      }).parentElement
-      expect(
-        getByTextContent('0Créées', indicateursActions!)
-      ).toBeInTheDocument()
-      expect(
-        getByTextContent('1Terminée', indicateursActions!)
-      ).toBeInTheDocument()
-      expect(
-        getByTextContent('2En retard', indicateursActions!)
-      ).toBeInTheDocument()
-    })
+      const titreIndicateursSemaine = screen.getByRole('heading', {
+        name: 'Résumé pour la semaine du 29 août 2022 au 4 septembre 2022',
+      })
+      const indicateurs = within(
+        titreIndicateursSemaine.parentElement!
+      ).getByRole('list')
 
-    it('affiche un lien vers tous les indicateurs du jeune', async () => {
-      // Then
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir plus d’indicateurs',
-        })
-      ).toHaveAttribute(
-        'href',
-        '/mes-jeunes/beneficiaire-1/informations?onglet=indicateurs'
+      expect(getByTextContent('0actions créées', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('1action terminée', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('2actions en retard', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('3RDV et ateliers', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('10offres enregistrées', indicateurs)).toHaveRole(
+        'listitem'
+      )
+      expect(getByTextContent('4offres postulées', indicateurs)).toHaveRole(
+        'listitem'
       )
     })
   })

@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { EvenementListItem } from 'interfaces/evenement'
 import { unsafeRandomId } from 'utils/helpers'
 
 interface TagProps {
@@ -152,4 +153,34 @@ export function TagFavori({ aPostule }: { aPostule: boolean }) {
       className='text-primary bg-primary-lighten'
     />
   )
+}
+
+export function TagModalite({ modality }: EvenementListItem): ReactElement {
+  return (
+    <TagStatut
+      label={modality!}
+      className='text-primary bg-primary-lighten px-2! py-1! text-xs! font-bold! [&>svg]:w-4! [&>svg]:h-4!'
+    />
+  )
+}
+
+export function TagPresence({ estPresent }: { estPresent?: boolean }) {
+  const { style, label } = (() => {
+    switch (estPresent) {
+      case true:
+        return {
+          style: 'text-success bg-success-lighten',
+          label: 'Présent',
+        }
+      case false:
+        return { style: 'text-warning bg-warning-lighten', label: 'Absent' }
+      case undefined:
+        return {
+          style: 'text-primary bg-primary-lighten',
+          label: 'Inscrit',
+        }
+    }
+  })()
+
+  return <Tag className={`${style} rounded-large text-wrap!`} label={label} />
 }

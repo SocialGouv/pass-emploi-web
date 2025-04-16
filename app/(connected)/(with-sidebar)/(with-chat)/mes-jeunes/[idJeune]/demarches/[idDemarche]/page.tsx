@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Session } from 'next-auth'
 import React from 'react'
 
 import DetailDemarchePage, {
@@ -10,7 +11,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { estConseillerReferent } from 'interfaces/conseiller'
 import { estConseilDepartemental } from 'interfaces/structure'
 import {
   getDemarchesBeneficiaire,
@@ -25,12 +26,13 @@ export async function generateMetadata({
 }: {
   params: DetailDemarcheParams
 }): Promise<Metadata> {
-  const { beneficiaire, demarche, lectureSeule } =
-    await getDemarcheProps(params)
+  const { beneficiaire, demarche, user } = await getDemarcheProps(params)
 
   return {
     title: `${demarche.titre} - Démarches de ${beneficiaire.prenom} ${beneficiaire.nom} - ${
-      lectureSeule ? 'Etablissement' : 'Portefeuille'
+      estConseillerReferent(user, beneficiaire)
+        ? 'Portefeuille'
+        : 'Etablissement'
     }`,
   }
 }
@@ -40,7 +42,7 @@ export default async function DetailDemarche({
 }: {
   params: DetailDemarcheParams
 }) {
-  const { beneficiaire, ...props } = await getDemarcheProps(params)
+  const { user, ...props } = await getDemarcheProps(params)
 
   return (
     <>
@@ -54,7 +56,7 @@ export default async function DetailDemarche({
 
 async function getDemarcheProps(
   params: DetailDemarcheParams
-): Promise<DetailDemarcheProps & { beneficiaire: BaseBeneficiaire }> {
+): Promise<DetailDemarcheProps & { user: Session.HydratedUser }> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estConseilDepartemental(user.structure)) notFound()
 
@@ -73,8 +75,6 @@ async function getDemarcheProps(
   const beneficiaire = await getJeuneDetails(idJeune, accessToken)
   if (!beneficiaire) notFound()
 
-  const lectureSeule = beneficiaire.idConseiller !== user.id
   const isStale = demarches!.isStale
-
-  return { beneficiaire, demarche, lectureSeule, isStale }
+  return { beneficiaire, demarche, isStale, user }
 }

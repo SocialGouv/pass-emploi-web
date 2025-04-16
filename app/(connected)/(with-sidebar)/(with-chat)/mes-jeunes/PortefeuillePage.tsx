@@ -37,11 +37,13 @@ const TutorielAjoutBeneficiaireFranceTravail = dynamic(
 type PortefeuilleProps = {
   conseillerJeunes: BeneficiaireAvecCompteursActionsRdvs[]
   isFromEmail: boolean
+  page: number
 }
 
 function PortefeuillePage({
   conseillerJeunes,
   isFromEmail,
+  page,
 }: PortefeuilleProps) {
   const chatCredentials = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
@@ -216,6 +218,7 @@ function PortefeuillePage({
               ref={refTableau}
               beneficiaires={jeunesFiltres}
               total={conseillerJeunes.length}
+              pageInitiale={page}
             />
           )}
         </>

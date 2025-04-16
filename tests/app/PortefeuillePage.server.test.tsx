@@ -27,7 +27,7 @@ describe('PortefeuillePage server side', () => {
     ).mockResolvedValue(
       jeunes.map((j) => ({
         idBeneficiaire: j.id,
-        actions: 7,
+        actionsCreees: 7,
         rdvs: 3,
       }))
     )
@@ -36,7 +36,7 @@ describe('PortefeuillePage server side', () => {
   it('récupère la liste des jeunes', async () => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-      user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+      user: { id: 'id-conseiller-1', structure: 'POLE_EMPLOI' },
       accessToken: 'accessToken',
     })
 
@@ -45,7 +45,7 @@ describe('PortefeuillePage server side', () => {
 
     // Then
     expect(getBeneficiairesDuConseillerServerSide).toHaveBeenCalledWith(
-      'id-conseiller',
+      'id-conseiller-1',
       'accessToken'
     )
   })
@@ -54,7 +54,7 @@ describe('PortefeuillePage server side', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+        user: { id: 'id-conseiller-1', structure: 'POLE_EMPLOI' },
         accessToken: 'accessToken',
       })
 
@@ -90,7 +90,7 @@ describe('PortefeuillePage server side', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { id: 'id-conseiller', structure: 'MILO' },
+        user: { id: 'id-conseiller-1', structure: 'MILO' },
         accessToken: 'accessToken',
       })
 
@@ -109,7 +109,12 @@ describe('PortefeuillePage server side', () => {
       // Then
       expect(
         recupereCompteursBeneficiairesPortefeuilleMilo
-      ).toHaveBeenCalledWith('id-conseiller', dateDebut, dateFin, 'accessToken')
+      ).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        dateDebut,
+        dateFin,
+        'accessToken'
+      )
     })
 
     it("renvoie les jeunes avec leur nombre d'actions", () => {
@@ -124,6 +129,7 @@ describe('PortefeuillePage server side', () => {
             }))
             .sort(compareBeneficiairesByNom),
           isFromEmail: false,
+          page: 1,
         },
         undefined
       )

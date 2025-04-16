@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 
 import {
-  BaseBeneficiaire,
   BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireEtChat,
   BeneficiaireFromListe,
@@ -11,6 +10,7 @@ import {
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
+  IdentiteBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
@@ -26,10 +26,10 @@ import {
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 
 export const uneBaseBeneficiaire = (
-  overrides: Partial<BaseBeneficiaire> = {}
-): BaseBeneficiaire => {
-  const defaults: BaseBeneficiaire = {
-    id: 'beneficiaire-1',
+  overrides: Partial<IdentiteBeneficiaire> = {}
+): IdentiteBeneficiaire => {
+  const defaults: IdentiteBeneficiaire = {
+    id: 'id-beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
   }
@@ -42,7 +42,6 @@ export const unBeneficiaireWithActivity = (
   const defaults: BeneficiaireWithActivity = {
     ...uneBaseBeneficiaire(),
     creationDate: '2020-04-12T05:30:07.756Z',
-    isActivated: true,
     lastActivity: '2021-12-07T17:30:07.756Z',
     estAArchiver: false,
   }
@@ -55,13 +54,12 @@ export const unDetailBeneficiaire = (
   const defaults: DetailBeneficiaire = {
     ...uneBaseBeneficiaire(),
     email: 'kenji.jirac@email.fr',
-    isActivated: true,
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2023-04-12T05:42:07.756Z',
-    situations: [],
-    idConseiller: 'id-conseiller',
+    situationCourante: CategorieSituation.SANS_SITUATION,
+    idConseiller: 'id-conseiller-1',
     estAArchiver: false,
     dispositif: 'CEJ',
   }
@@ -129,18 +127,16 @@ export const unItemBeneficiaire = (
 export const desItemsBeneficiaires = (): BeneficiaireFromListe[] => [
   unItemBeneficiaire(),
   unItemBeneficiaire({
-    id: 'beneficiaire-2',
+    id: 'id-beneficiaire-2',
     prenom: 'Nadia',
     nom: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
-    isActivated: true,
   }),
   unItemBeneficiaire({
-    id: 'beneficiaire-3',
+    id: 'id-beneficiaire-3',
     prenom: 'Maria',
     nom: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
-    isActivated: true,
     dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
@@ -149,7 +145,7 @@ export const uneBaseBeneficiaireJson = (
   overrides: Partial<BaseBeneficiaireJson> = {}
 ): BaseBeneficiaireJson => {
   const defaults: BaseBeneficiaireJson = {
-    id: 'beneficiaire-1',
+    id: 'id-beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
   }
@@ -160,16 +156,15 @@ export const unDetailBeneficiaireJson = (
   overrides: Partial<DetailBeneficiaireJson> = {}
 ): DetailBeneficiaireJson => {
   const defaults: DetailBeneficiaireJson = {
-    id: 'beneficiaire-1',
+    id: 'id-beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
-    isActivated: true,
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2023-04-12T05:42:07.756Z',
-    conseiller: { id: 'id-conseiller' },
+    conseiller: { id: 'id-conseiller-1' },
     dispositif: 'CEJ',
   }
   return { ...defaults, ...overrides }
@@ -179,11 +174,10 @@ export const unItemBeneficiaireJson = (
   overrides: Partial<ItemBeneficiaireJson> = {}
 ): ItemBeneficiaireJson => {
   const defaults: ItemBeneficiaireJson = {
-    id: 'beneficiaire-1',
+    id: 'id-beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
     estAArchiver: false,
-    isActivated: true,
     isReaffectationTemporaire: false,
     creationDate: '2020-04-12T05:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
@@ -195,18 +189,16 @@ export const unItemBeneficiaireJson = (
 export const desItemsBeneficiairesJson = (): ItemBeneficiaireJson[] => [
   unItemBeneficiaireJson(),
   unItemBeneficiaireJson({
-    id: 'beneficiaire-2',
+    id: 'id-beneficiaire-2',
     firstName: 'Nadia',
     lastName: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
-    isActivated: true,
   }),
   unItemBeneficiaireJson({
-    id: 'beneficiaire-3',
+    id: 'id-beneficiaire-3',
     firstName: 'Maria',
     lastName: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
-    isActivated: true,
     dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
@@ -226,15 +218,14 @@ export const desBeneficiairesAvecActionsNonTerminees =
   (): BeneficiaireAvecCompteursActionsRdvs[] => [
     unBeneficiaireAvecActionsNonTerminees(),
     unBeneficiaireAvecActionsNonTerminees({
-      id: 'beneficiaire-2',
+      id: 'id-beneficiaire-2',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
-      isActivated: false,
-      lastActivity: '2022-01-30T17:30:07.756Z',
+      lastActivity: undefined,
       actionsCreees: 0,
     }),
     unBeneficiaireAvecActionsNonTerminees({
-      id: 'beneficiaire-3',
+      id: 'id-beneficiaire-3',
       prenom: 'Maria',
       nom: "D'Aböville-Muñoz François",
       lastActivity: '2022-02-07T17:30:07.756Z',
@@ -264,7 +255,7 @@ export const unBeneficiaireChat = (
   overrides: Partial<BeneficiaireEtChat> = {}
 ): BeneficiaireEtChat => {
   const defaults: BeneficiaireEtChat = {
-    id: 'beneficiaire-1',
+    id: 'id-beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
     ...unChat(),
@@ -280,7 +271,7 @@ export const unConseillerHistorique = (
     id: 'conseiller-1',
     nom: 'Dublon',
     prenom: 'Nicolas',
-    depuis: '12/03/2022',
+    depuis: '2022-03-12',
   }
   return { ...defaults, ...overrides }
 }
@@ -337,18 +328,13 @@ export const desIndicateursSemaineJson = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
-      aEcheance: 3,
     },
     rendezVous: {
       planifies: 3,
     },
     offres: {
-      consultees: 10,
-      partagees: 4,
-    },
-    favoris: {
-      offresSauvegardees: 6,
-      recherchesSauvegardees: 7,
+      sauvegardees: 10,
+      postulees: 4,
     },
   }
   return { ...defaults, ...overrides }
@@ -362,16 +348,11 @@ export const desIndicateursSemaine = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
-      aEcheance: 3,
     },
     rendezVous: 3,
     offres: {
-      consultees: 10,
-      partagees: 4,
-    },
-    favoris: {
-      offresSauvegardees: 6,
-      recherchesSauvegardees: 7,
+      sauvegardees: 10,
+      postulees: 4,
     },
   }
   return { ...defaults, ...overrides }

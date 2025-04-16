@@ -3,7 +3,6 @@ import { DateTime } from 'luxon'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
-import { uneAction } from 'fixtures/action'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
@@ -11,11 +10,9 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
-import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import {
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
@@ -24,7 +21,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
@@ -43,18 +40,16 @@ describe('FicheBeneficiairePage server side', () => {
   const rdvAVenir = unEvenementListItem({
     date: DateTime.now().plus({ day: 1 }).toISO(),
   })
-  const sessionsAVenir = [
-    {
-      id: '1',
-      type: 'Atelier i-milo',
-      date: '2022-09-01T11:00:00.000Z',
-      duree: 120,
-      createur: {
-        id: '1',
-      },
-      isSession: true,
+  const sessionAVenir = {
+    id: '1',
+    type: 'Atelier i-milo',
+    date: '2022-09-01T11:00:00.000Z',
+    duree: 120,
+    createur: {
+      id: 'id-conseiller-1',
     },
-  ]
+    isSession: true,
+  }
 
   beforeEach(() => {
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
@@ -68,35 +63,23 @@ describe('FicheBeneficiairePage server side', () => {
     )
     ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
     ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
-      sessionsAVenir,
+      sessionAVenir,
     ])
-    ;(getActionsBeneficiaireServerSide as jest.Mock).mockResolvedValue({
-      actions: [
-        uneAction({ creationDate: now.toISO() }),
-        uneAction({ creationDate: datePasseeLoin.toISO() }),
-        uneAction({ creationDate: dateFuture.toISO() }),
-        uneAction({ creationDate: dateFutureLoin.toISO() }),
-      ],
-      metadonnees: { nombreTotal: 14, nombrePages: 2 },
-    })
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
-    ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(
-      uneListeDeRecherches()
-    )
     ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
       data: uneListeDeDemarches(),
       isStale: false,
     })
     ;(getConseillerServerSide as jest.Mock).mockReturnValue(
       unConseiller({
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
     )
     ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
       accessToken: 'accessToken',
-      user: { id: 'id-conseiller', structure: 'MILO' },
+      user: { id: 'id-conseiller-1', structure: 'MILO' },
     })
   })
 
@@ -119,32 +102,13 @@ describe('FicheBeneficiairePage server side', () => {
           beneficiaire: unDetailBeneficiaire({
             structureMilo: { id: 'id-test' },
           }),
-          rdvs: expect.arrayContaining([]),
-          actionsInitiales: expect.objectContaining({}),
+          historiqueConseillers: desConseillersBeneficiaire(),
           metadonneesFavoris: expect.objectContaining({}),
           favorisOffres: expect.objectContaining({}),
           ongletInitial: 'actions',
-          lectureSeule: false,
-          erreurSessions: false,
+          debutSemaineInitiale: undefined,
+          categoriesActions: undefined,
         },
-        undefined
-      )
-    })
-
-    it('récupère les rendez-vous à venir du jeune', async () => {
-      // Then
-      expect(getRendezVousJeune).toHaveBeenCalledWith(
-        'beneficiaire-1',
-        'FUTURS',
-        'accessToken'
-      )
-      expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
-        'beneficiaire-1',
-        'accessToken',
-        now.startOf('day')
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ rdvs: [rdvAVenir, sessionsAVenir] }),
         undefined
       )
     })
@@ -157,67 +121,6 @@ describe('FicheBeneficiairePage server side', () => {
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         expect.objectContaining({ metadonneesFavoris: uneMetadonneeFavoris() }),
-        undefined
-      )
-    })
-
-    it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisOffres: uneListeDOffres(),
-        }),
-        undefined
-      )
-    })
-
-    it('récupère la première page des actions du jeune', async () => {
-      // Then
-      expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'beneficiaire-1',
-        1,
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          actionsInitiales: {
-            actions: [
-              uneAction({ creationDate: now.toISO() }),
-              uneAction({ creationDate: datePasseeLoin.toISO() }),
-              uneAction({ creationDate: dateFuture.toISO() }),
-              uneAction({ creationDate: dateFutureLoin.toISO() }),
-            ],
-            page: 1,
-            metadonnees: { nombreTotal: 14, nombrePages: 2 },
-          },
-        }),
-        undefined
-      )
-    })
-  })
-
-  describe('Quand on demande une page d’actions spécifique', () => {
-    it('récupère la page demandée des actions du jeune', async () => {
-      // When
-      render(
-        await FicheBeneficiaire({
-          params: Promise.resolve({ idJeune: 'id-jeune' }),
-          searchParams: Promise.resolve({ page: '3' }),
-        })
-      )
-
-      // Then
-      expect(getActionsBeneficiaireServerSide).toHaveBeenCalledWith(
-        'beneficiaire-1',
-        3,
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          actionsInitiales: expect.objectContaining({
-            page: 3,
-          }),
-        }),
         undefined
       )
     })
@@ -241,6 +144,24 @@ describe('FicheBeneficiairePage server side', () => {
     })
   })
 
+  describe('Quand on veut accéder à une période spécifique', () => {
+    it('récupère la période sur laquelle ouvrir la page', async () => {
+      // When
+      render(
+        await FicheBeneficiaire({
+          params: Promise.resolve({ idJeune: 'id-jeune' }),
+          searchParams: Promise.resolve({ debut: '2023-04-12' }),
+        })
+      )
+
+      // Then
+      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
+        expect.objectContaining({ debutSemaineInitiale: '2023-04-12' }),
+        undefined
+      )
+    })
+  })
+
   describe('Quand le conseiller n’est pas Milo', () => {
     beforeEach(async () => {
       // Given
@@ -250,7 +171,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: structureFTCej,
         })
       )
@@ -272,42 +193,6 @@ describe('FicheBeneficiairePage server side', () => {
         undefined
       )
     })
-
-    it('ne recupère pas les actions', async () => {
-      // Then
-      expect(getActionsBeneficiaireServerSide).not.toHaveBeenCalled()
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.not.objectContaining({
-          actionsInitiales: expect.objectContaining({
-            actions: expect.arrayContaining([]),
-          }),
-        }),
-        undefined
-      )
-    })
-
-    it('récupère les offres favorites', async () => {
-      expect(getOffres).toHaveBeenCalledWith('beneficiaire-1', 'accessToken')
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisOffres: uneListeDOffres(),
-        }),
-        undefined
-      )
-    })
-
-    it('récupère les recherches favorites', async () => {
-      expect(getRecherchesSauvegardees).toHaveBeenCalledWith(
-        'beneficiaire-1',
-        'accessToken'
-      )
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          favorisRecherches: uneListeDeRecherches(),
-        }),
-        undefined
-      )
-    })
   })
 
   describe('Quand le conseiller est Conseil Départemental', () => {
@@ -319,7 +204,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
-          id: 'id-conseiller',
+          id: 'id-conseiller-1',
           structure: 'CONSEIL_DEPT',
         })
       )
@@ -333,9 +218,9 @@ describe('FicheBeneficiairePage server side', () => {
 
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
-        'beneficiaire-1',
+        'id-beneficiaire-1',
         DateTime.now().minus({ day: 30 }).startOf('day'),
-        'id-conseiller',
+        'id-conseiller-1',
         'accessToken'
       )
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
@@ -345,30 +230,6 @@ describe('FicheBeneficiairePage server side', () => {
             isStale: false,
           },
         }),
-        undefined
-      )
-    })
-  })
-
-  describe('Quand le conseiller est observateur', () => {
-    it('prépare la page en lecture seule', async () => {
-      // Given
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-        unConseiller({ id: 'id-observateur' })
-      )
-
-      // When
-      render(
-        await FicheBeneficiaire({
-          params: Promise.resolve({ idJeune: 'id-jeune' }),
-        })
-      )
-
-      // Then
-      expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
-
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({ lectureSeule: true }),
         undefined
       )
     })

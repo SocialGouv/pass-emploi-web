@@ -2,11 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -25,31 +21,6 @@
       }
     ]
   },
-  "include": [
-    "types/svgr.d.ts",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "paths": {
-    "@/pages/*": [
-      "pages/*"
-    ],
-    "@/components/*": [
-      "components/*"
-    ],
-    "@/utils/*": [
-      "utils/*"
-    ]
-  },
-  "types": [
-    "node",
-    "jest",
-    "@testing-library/jest-dom"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

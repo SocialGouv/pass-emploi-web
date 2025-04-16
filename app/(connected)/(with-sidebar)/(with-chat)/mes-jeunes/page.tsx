@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { CompteurActionsPeriode } from 'interfaces/action'
+import { CompteursBeneficiairePeriode } from 'interfaces/action'
 import {
   BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
@@ -15,7 +15,9 @@ import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerS
 
 export const metadata: Metadata = { title: 'Portefeuille' }
 
-type PortfeuilleSearchParams = Promise<Partial<{ source: string }>>
+type PortfeuilleSearchParams = Promise<
+  Partial<{ source: string; page: string }>
+>
 export default async function Portefeuille({
   searchParams,
 }: {
@@ -26,12 +28,15 @@ export default async function Portefeuille({
     user.id,
     accessToken
   )
+  const { source, page } = (await searchParams) ?? {}
+
+  const parsedPage = page ? parseInt(page, 10) : 1
 
   let beneficiairesAvecCompteurs: BeneficiaireAvecCompteursActionsRdvs[]
   if (estMilo(user.structure)) {
     const dateDebut = DateTime.now().startOf('week')
     const dateFin = DateTime.now().endOf('week')
-    const compteurActionsPeriode: CompteurActionsPeriode[] =
+    const compteurBeneficiairesPeriode: CompteursBeneficiairePeriode[] =
       await recupereCompteursBeneficiairesPortefeuilleMilo(
         user.id,
         dateDebut,
@@ -40,15 +45,11 @@ export default async function Portefeuille({
       )
 
     beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => {
-      const compteursPeriode = compteurActionsPeriode.find(
+      const { actionsCreees, rdvs } = compteurBeneficiairesPeriode.find(
         (compteurs) => compteurs.idBeneficiaire === beneficiaire.id
-      )
+      ) ?? { actionsCreees: 0, rdvs: 0 }
 
-      return {
-        ...beneficiaire,
-        actionsCreees: compteursPeriode?.actions ?? 0,
-        rdvs: compteursPeriode?.rdvs ?? 0,
-      }
+      return { ...beneficiaire, actionsCreees, rdvs }
     })
   } else {
     beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({
@@ -71,7 +72,8 @@ export default async function Portefeuille({
 
       <PortefeuillePage
         conseillerJeunes={beneficiairesAlphabetiques}
-        isFromEmail={Boolean((await searchParams)?.source)}
+        isFromEmail={Boolean(source)}
+        page={parsedPage || 1}
       />
     </>
   )

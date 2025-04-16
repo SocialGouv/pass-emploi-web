@@ -80,7 +80,7 @@ describe('ConseillerApiService', () => {
       )
       expect(actual).toEqual([
         {
-          id: '1',
+          id: 'id-conseiller-1',
           firstName: 'Nils',
           lastName: 'Tavernier',
           email: 'nils.tavernier@mail.com',
@@ -107,7 +107,7 @@ describe('ConseillerApiService', () => {
       )
       expect(actual).toEqual([
         {
-          id: '1',
+          id: 'id-conseiller-1',
           firstName: 'Nils',
           lastName: 'Tavernier',
           email: 'nils.tavernier@mail.com',
@@ -125,7 +125,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller-1',
         { dateSignatureCGU: nouvelleDate },
         'accessToken'
       )
@@ -139,7 +139,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller-1',
         { agence: { id: 'id-agence' } },
         'accessToken'
       )
@@ -151,7 +151,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/idConseiller',
+        '/conseillers/id-conseiller-1',
         { agence: { nom: 'Agence libre' } },
         'accessToken'
       )
@@ -161,11 +161,11 @@ describe('ConseillerApiService', () => {
   describe('.modifierNotificationsSonores', () => {
     it("modifie le conseiller avec l'activation des notifications sonores", async () => {
       // When
-      await modifierNotificationsSonores('id-conseiller', true)
+      await modifierNotificationsSonores('id-conseiller-1', true)
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller',
+        '/conseillers/id-conseiller-1',
         { notificationsSonores: true },
         'accessToken'
       )
@@ -179,7 +179,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/recuperer-mes-jeunes',
+        '/conseillers/id-conseiller-1/recuperer-mes-jeunes',
         {},
         'accessToken'
       )
@@ -192,11 +192,11 @@ describe('ConseillerApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await supprimerConseiller('id-conseiller')
+      await supprimerConseiller('id-conseiller-1')
 
       // Then
       expect(apiDelete).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller',
+        '/conseillers/id-conseiller-1',
         accessToken
       )
     })

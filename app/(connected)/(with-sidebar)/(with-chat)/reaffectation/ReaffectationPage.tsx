@@ -653,7 +653,7 @@ type StateChoixConseiller = {
 
 const labelsStructures: { [key in StructureReaffectation]: string } = {
   FT_ACCOMPAGNEMENT_GLOBAL: 'Accompagnement global',
-  FT_ACCOMPAGNEMENT_INTENSIF: 'Accompagnement intensif',
+  FT_ACCOMPAGNEMENT_INTENSIF: 'REN-Intensif',
   FT_EQUIP_EMPLOI_RECRUT: 'Equip’emploi / Equip’recrut',
   POLE_EMPLOI: 'CEJ',
   POLE_EMPLOI_AIJ: 'AIJ',

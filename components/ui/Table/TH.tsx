@@ -6,7 +6,7 @@ interface THProps {
   title?: string
 }
 
-export function TH({
+export default function TH({
   children,
   estCliquable = false,
   title,

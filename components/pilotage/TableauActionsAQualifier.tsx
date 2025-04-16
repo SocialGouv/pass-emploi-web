@@ -11,14 +11,14 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
+import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   ActionAQualifier,
   ActionPilotage,
   SituationNonProfessionnelle,
 } from 'interfaces/action'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
@@ -54,7 +54,7 @@ export default function TableauActionsAQualifier({
     ActionAQualifier[]
   >([])
   const [beneficiaireSelectionne, setBeneficiaireSelectionne] =
-    useState<BaseBeneficiaire>()
+    useState<IdentiteBeneficiaire>()
 
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
@@ -129,8 +129,11 @@ export default function TableauActionsAQualifier({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function recupererBeneficiairesSelectionnes(): Map<string, BaseBeneficiaire> {
-    const mapBeneficiaires = new Map<string, BaseBeneficiaire>()
+  function recupererBeneficiairesSelectionnes(): Map<
+    string,
+    IdentiteBeneficiaire
+  > {
+    const mapBeneficiaires = new Map<string, IdentiteBeneficiaire>()
     actionsSelectionnees.forEach(({ idAction }) => {
       const { beneficiaire } = actionsFiltrees.find(
         ({ id }) => idAction === id
@@ -184,7 +187,6 @@ export default function TableauActionsAQualifier({
         actionsSelectionnees={actionsSelectionnees}
         boutonsDisabled={boutonsDisabled}
         jeune={beneficiaireSelectionne}
-        nombreActionsSelectionnees={actionsSelectionnees.length}
         onLienExterne={onLienExterne}
         onQualification={onQualification}
       />

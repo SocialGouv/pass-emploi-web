@@ -19,8 +19,7 @@ import {
   getAction,
   getActionsAQualifierClientSide,
   getActionsAQualifierServerSide,
-  getActionsBeneficiaireClientSide,
-  getActionsBeneficiaireServerSide,
+  getActionsBeneficiaire,
   getSituationsNonProfessionnelles,
   qualifier,
   qualifierActions,
@@ -187,179 +186,29 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.getActionsBeneficiaireClientSide', () => {
+  describe('.getActionsBeneficiaire', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
+      const debut = DateTime.fromISO('2023-03-12T05:24:41.000Z')
+      const fin = DateTime.fromISO('2023-03-19T18:53:51.000Z')
       const actions = uneListeDActions()
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreFiltrees: 82,
-            nombreActionsParPage: 10,
-          },
-        },
+        content: uneListeDActionsJson(),
       })
 
       // WHEN
-      const actual = await getActionsBeneficiaireClientSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        filtres: { statuts: [], categories: [] },
+      const actual = await getActionsBeneficiaire('whatever', {
+        debut,
+        fin,
+        label: 'whatever',
       })
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
+        '/jeunes/whatever/actions?dateDebut=2023-03-12T06%3A24%3A41.000%2B01%3A00&dateFin=2023-03-19T19%3A53%3A51.000%2B01%3A00',
         'accessToken'
       )
-      expect(actual).toStrictEqual({
-        actions,
-        metadonnees: { nombrePages: 9, nombreTotal: 82 },
-      })
-    })
-
-    it('parse le paramètre pour filtrer les actions par statut et compte le nombre de pages', async () => {
-      // GIVEN
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreFiltrees: 51,
-            nombreActionsParPage: 10,
-          },
-        },
-      })
-
-      // WHEN
-      const actual = await getActionsBeneficiaireClientSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        filtres: { statuts: [StatutAction.AFaire], categories: [] },
-      })
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual({
-        actions: expect.arrayContaining([]),
-        metadonnees: {
-          nombreTotal: 82,
-          nombrePages: 6,
-        },
-      })
-    })
-
-    it('parse le paramètre pour filtrer les actions par état de qualification et compte le nombre de pages', async () => {
-      // GIVEN
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreFiltrees: 18,
-            nombreActionsParPage: 10,
-          },
-        },
-      })
-
-      // WHEN
-      const actual = await getActionsBeneficiaireClientSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        filtres: {
-          statuts: [StatutAction.TermineeQualifiee],
-          categories: [],
-        },
-      })
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=done&etats=QUALIFIEE',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual({
-        actions: expect.arrayContaining([]),
-        metadonnees: {
-          nombreTotal: 82,
-          nombrePages: 2,
-        },
-      })
-    })
-
-    it('parse le paramètre pour filtrer les actions par catégorie et compte le nombre de pages', async () => {
-      // GIVEN
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreFiltrees: 21,
-            nombreActionsParPage: 10,
-          },
-        },
-      })
-
-      // WHEN
-      const actual = await getActionsBeneficiaireClientSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        filtres: {
-          statuts: [],
-          categories: ['SANTE'],
-        },
-      })
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&categories=SANTE',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual({
-        actions: expect.arrayContaining([]),
-        metadonnees: {
-          nombreTotal: 82,
-          nombrePages: 3,
-        },
-      })
-    })
-  })
-
-  describe('.getActionsBeneficiaireServerSide', () => {
-    it('renvoie les actions du jeune', async () => {
-      // GIVEN
-      const actions = uneListeDActions()
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreFiltrees: 82,
-            nombreActionsParPage: 10,
-          },
-        },
-      })
-
-      // WHEN
-      const actual = await getActionsBeneficiaireServerSide(
-        'whatever',
-        1,
-        'accessToken'
-      )
-
-      // THEN
-      expect(apiGet).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual({
-        actions,
-        metadonnees: { nombrePages: 9, nombreTotal: 82 },
-      })
+      expect(actual).toStrictEqual(actions)
     })
   })
 
@@ -464,7 +313,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiPost).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/id-jeune/action',
+        '/conseillers/id-conseiller-1/jeunes/id-jeune/action',
         {
           codeQualification: 'CODE',
           content: 'content',
@@ -655,7 +504,7 @@ describe('ActionsApiService', () => {
 
       // WHEN
       const result = await recupereCompteursBeneficiairesPortefeuilleMilo(
-        'id-conseiller',
+        'id-conseiller-1',
         dateDebut,
         dateFin,
         'accessToken'
@@ -663,13 +512,13 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        `/conseillers/milo/id-conseiller-1/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         'accessToken'
       )
       expect(result).toEqual([
         {
           idBeneficiaire: 'id-beneficiaire',
-          actions: 3,
+          actionsCreees: 3,
           rdvs: 6,
         },
       ])

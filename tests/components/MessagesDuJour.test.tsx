@@ -35,7 +35,7 @@ describe('<MessagesDuJour />', () => {
         beneficiaireEtChat={conversation}
         messageSelectionne={messageSelectionne}
         beneficiaireNomComplet='Kenji Jirac'
-        idConseiller='id-conseiller'
+        idConseiller='id-conseiller-1'
         getConseillerNomComplet={() => 'Nils Tavernier'}
       />
     )

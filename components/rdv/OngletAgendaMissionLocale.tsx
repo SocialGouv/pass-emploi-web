@@ -2,24 +2,26 @@ import { DateTime } from 'luxon'
 import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives, {
   FiltresHandles,
 } from 'components/rdv/FiltresStatutAnimationsCollectives'
+import TableauAnimationsCollectives from 'components/rdv/TableauAnimationsCollectives'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
+import { Periode } from 'types/dates'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type OngletAgendaEtablissementProps = {
+type OngletAgendaMissionLocaleProps = {
   recupererAnimationsCollectives: (
     dateDebut: DateTime,
     dateFin: DateTime
@@ -29,17 +31,17 @@ type OngletAgendaEtablissementProps = {
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
   trackNavigation: (append?: string) => void
-  periodeIndex: number
-  changerPeriode: (index: number) => void
+  debutPeriode: DateTime
+  changerPeriode: (nouveauDebut: DateTime) => void
 }
 
-export default function OngletAgendaEtablissement({
+export default function OngletAgendaMissionLocale({
   recupererAnimationsCollectives,
   recupererSessionsMilo,
   trackNavigation,
-  periodeIndex,
+  debutPeriode,
   changerPeriode,
-}: OngletAgendaEtablissementProps) {
+}: OngletAgendaMissionLocaleProps) {
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
 
@@ -52,55 +54,50 @@ export default function OngletAgendaEtablissement({
     useState<AnimationCollective[]>()
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
-  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
-  const [labelPeriode, setLabelPeriode] = useState<string>()
-  const [periodeFailed, setPeriodeFailed] = useState<boolean>(false)
+  const [periode, setPeriode] = useState<Periode>()
+  const [failed, setFailed] = useState<string>()
 
   async function modifierPeriode(
-    nouvellePeriode: { index: number; dateDebut: DateTime; dateFin: DateTime },
-    opts: { label: string; shouldFocus: boolean }
+    nouvellePeriode: Periode,
+    opts: { shouldFocus: boolean }
   ) {
-    await chargerEvenementsPeriode(
-      nouvellePeriode.dateDebut,
-      nouvellePeriode.dateFin
-    )
-    setLabelPeriode(opts.label)
-    changerPeriode(nouvellePeriode.index)
+    await chargerEvenementsPeriode(nouvellePeriode)
+    changerPeriode(nouvellePeriode.debut)
     setShouldFocus(opts.shouldFocus)
   }
 
-  async function chargerEvenementsPeriode(
-    dateDebut: DateTime,
-    dateFin: DateTime
-  ) {
-    setPeriodeFailed(false)
+  async function chargerEvenementsPeriode(nouvellePeriode: Periode) {
+    setFailed(undefined)
     setEvenementsAffiches(undefined)
+    let erreurs
+    const { debut, fin } = nouvellePeriode
 
+    let animationsCollectives: AnimationCollective[] = []
     try {
-      const animationsCollectives = await recupererAnimationsCollectives(
-        dateDebut,
-        dateFin
-      )
-      const evenementsRecuperes = [...animationsCollectives]
-
-      if (peutAccederAuxSessions(conseiller)) {
-        const sessions = await recupererSessionsMilo(dateDebut, dateFin)
-        evenementsRecuperes.push(...sessions)
-      }
-
-      setEvenements(
-        [...evenementsRecuperes].sort(
-          (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
-        )
-      )
+      animationsCollectives = await recupererAnimationsCollectives(debut, fin)
     } catch {
-      setPeriodeFailed(true)
-    } finally {
-      setPeriode({ debut: dateDebut, fin: dateFin })
+      erreurs = 'animationsCollectives'
     }
+
+    let sessions: AnimationCollective[] = []
+    if (peutAccederAuxSessions(conseiller)) {
+      try {
+        sessions = await recupererSessionsMilo(debut, fin)
+      } catch {
+        erreurs = erreurs ? 'all' : 'sessions'
+      }
+    }
+
+    setFailed(erreurs)
+    setEvenements(
+      [...animationsCollectives, ...sessions].sort(
+        (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
+      )
+    )
+    setPeriode(nouvellePeriode)
   }
 
-  function filtrerEvenements(): AnimationCollective[] {
+  function filtrerEtChercherEvenements(): AnimationCollective[] {
     setEvenementsAffiches(undefined)
     let evenementsFiltres = evenements!
 
@@ -123,19 +120,19 @@ export default function OngletAgendaEtablissement({
 
   useEffect(() => {
     if (!evenements) return
-    filtrerEvenements()
+    filtrerEtChercherEvenements()
   }, [evenements])
 
   useEffect(() => {
     if (!evenements) return
-    const evenementsFiltres = filtrerEvenements()
+    const evenementsFiltres = filtrerEtChercherEvenements()
 
     if (evenementsFiltres.length) filtresRef.current!.focus()
   }, [filtres])
 
   useEffect(() => {
     if (!evenements) return
-    filtrerEvenements()
+    filtrerEtChercherEvenements()
 
     tableRef.current?.focus()
   }, [recherche])
@@ -147,11 +144,11 @@ export default function OngletAgendaEtablissement({
   return (
     <>
       <RechercheAgendaForm onSearch={setRecherche} />
-
       <nav className='flex justify-between items-center'>
         <SelecteurPeriode
+          premierJour={debutPeriode}
+          jourSemaineReference={DateTime.now().weekday}
           onNouvellePeriode={modifierPeriode}
-          periodeCourante={periodeIndex}
           trackNavigation={trackNavigation}
         />
 
@@ -162,7 +159,7 @@ export default function OngletAgendaEtablissement({
         />
       </nav>
 
-      {!evenementsAffiches && !periodeFailed && (
+      {!evenementsAffiches && !failed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
           titre='L’affichage de l’agenda de votre Mission Locale peut prendre quelques instants.'
@@ -170,19 +167,11 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {!evenementsAffiches && periodeFailed && (
-        <EmptyState
-          shouldFocus={shouldFocus}
-          illustrationName={IllustrationName.Maintenance}
-          titre='L’affichage de l’agenda de votre Mission Locale'
-          sousTitre='Si le problème persiste, contactez notre support.'
-          bouton={{
-            onClick: () =>
-              chargerEvenementsPeriode(periode!.debut, periode!.fin),
-            label: 'Réessayer',
-          }}
-        />
-      )}
+      <ErreursRecuperation
+        failed={failed}
+        shouldFocus={shouldFocus}
+        onRetry={() => chargerEvenementsPeriode(periode!)}
+      />
 
       {evenementsAffiches &&
         evenementsAffiches?.length === 0 &&
@@ -191,7 +180,7 @@ export default function OngletAgendaEtablissement({
             <EmptyState
               shouldFocus={shouldFocus}
               illustrationName={IllustrationName.Checklist}
-              titre='Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+              titre='Il n’y a pas d’animation collective sur cette période dans votre Mission Locale.'
               sousTitre={undefined}
               lien={{
                 href: '/mes-jeunes/edition-rdv?type=ac',
@@ -201,6 +190,7 @@ export default function OngletAgendaEtablissement({
             />
           </div>
         )}
+
       {evenementsAffiches?.length === 0 &&
         evenements &&
         evenements?.length > 0 && (
@@ -211,38 +201,14 @@ export default function OngletAgendaEtablissement({
             sousTitre='Vous pouvez essayer de modifier vos critères de recherche, ajuster les filtres appliqués, ou changer la période.'
           />
         )}
+
       {evenementsAffiches && evenementsAffiches.length > 0 && (
-        <table className='w-full mt-6' tabIndex={-1} ref={tableRef}>
-          <caption className='mb-6 text-left text-m-bold text-primary'>
-            {evenementsAffiches.length}{' '}
-            {evenementsAffiches.length === 1 &&
-              (recherche ? 'résultat' : 'atelier ou information collective')}
-            {evenementsAffiches.length > 1 &&
-              (recherche
-                ? 'résultats'
-                : 'ateliers ou informations collectives')}
-            <span className='sr-only'> {labelPeriode}</span>
-          </caption>
-
-          <thead className='sr-only'>
-            <tr>
-              <th scope='col'>Horaires et durée</th>
-              <th scope='col'>Titre, type et visibilité</th>
-              <th scope='col'>Inscrits</th>
-              <th scope='col'>Statut</th>
-              <th scope='col'>Voir le détail</th>
-            </tr>
-          </thead>
-
-          <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout-base:grid-cols-[repeat(5,auto)] gap-y-2'>
-            {evenementsAffiches.map((evenement) => (
-              <AnimationCollectiveRow
-                key={evenement.id}
-                animationCollective={evenement}
-              />
-            ))}
-          </tbody>
-        </table>
+        <TableauAnimationsCollectives
+          ref={tableRef}
+          animationsCollectives={evenementsAffiches}
+          labelPeriode={periode!.label}
+          withRecherche={Boolean(recherche)}
+        />
       )}
     </>
   )
@@ -308,4 +274,56 @@ function RechercheAgendaForm({
       </div>
     </form>
   )
+}
+
+function ErreursRecuperation({
+  failed,
+  shouldFocus,
+  onRetry,
+}: {
+  failed: string | undefined
+  shouldFocus: boolean
+  onRetry: () => Promise<void>
+}) {
+  const labelContactSupport =
+    'Si le problème persiste, contactez notre support.'
+
+  switch (failed) {
+    case 'animationsCollectives':
+      return (
+        <FailureAlert
+          label='La récupération des animations collectives de votre Mission Locale a échoué.'
+          className='mt-4'
+        >
+          <p className='pl-8'>{labelContactSupport}</p>
+        </FailureAlert>
+      )
+
+    case 'sessions':
+      return (
+        <FailureAlert
+          label='La récupération des sessions de votre Mission Locale depuis i-milo a échoué.'
+          className='mt-4'
+        >
+          <p className='pl-8'>{labelContactSupport}</p>
+        </FailureAlert>
+      )
+
+    case 'all':
+      return (
+        <EmptyState
+          shouldFocus={shouldFocus}
+          illustrationName={IllustrationName.Maintenance}
+          titre='L’affichage de l’agenda de votre Mission Locale a échoué.'
+          sousTitre={labelContactSupport}
+          bouton={{
+            onClick: onRetry,
+            label: 'Réessayer',
+          }}
+        />
+      )
+
+    default:
+      return null
+  }
 }

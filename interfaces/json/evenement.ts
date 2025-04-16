@@ -2,8 +2,8 @@ import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
 import {
-  BaseBeneficiaire,
   getNomBeneficiaireComplet,
+  IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import {
   AnimationCollective,
@@ -26,7 +26,7 @@ export type EvenementJson = {
   date: string
   duration: number
   type: TypeEvenement
-  jeunes: Array<BaseBeneficiaire & { futPresent?: boolean }>
+  jeunes: Array<IdentiteBeneficiaire & { futPresent?: boolean }>
   title: string
   createur: Auteur
   invitation: boolean
@@ -110,6 +110,7 @@ export function jsonToListItem(
     duree: json.duration,
     createur: json.createur,
     source: json.source,
+    titre: json.title,
   }
   if (json.nombreMaxParticipants)
     evenement.nombreMaxParticipants = json.nombreMaxParticipants
@@ -181,6 +182,7 @@ export function sessionMiloJsonToEvenementListItem(
     source: structureMilo,
     isSession: true,
     beneficiaires: beneficiairesSession,
+    titre: json.nomSession,
   }
 
   if (json.nbPlacesRestantes)

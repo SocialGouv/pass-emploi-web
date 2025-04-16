@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales, desCategories } from 'fixtures/action'
-import { unAgenda } from 'fixtures/agenda'
+import { desCategories } from 'fixtures/action'
 import {
   desIndicateursSemaine,
   desItemsBeneficiaires,
@@ -21,17 +20,17 @@ import {
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { recupererAgenda } from 'services/agenda.service'
+import { getActionsBeneficiaire } from 'services/actions.service'
 import {
   archiverJeune,
-  getIndicateursJeuneAlleges,
+  getIndicateursBeneficiaire,
   getMotifsSuppression,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
-jest.mock('services/agenda.service')
+jest.mock('services/actions.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
@@ -45,17 +44,17 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
   beforeEach(async () => {
     push = jest.fn()
-    ;(useRouter as jest.Mock).mockReturnValue({ push })
+    ;(useRouter as jest.Mock).mockReturnValue({ push, replace: jest.fn() })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsBeneficiaires().map(extractBeneficiaireWithActivity)
 
     motifsSuppression = desMotifsDeSuppression()
     ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
-    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+    ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
-    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
   })
 
   describe('pour tous les conseillers', () => {
@@ -69,7 +68,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     })
 
     describe('Supprimer un compte actif', () => {
-      const beneficiaire = unDetailBeneficiaire({ isActivated: true })
+      const beneficiaire = unDetailBeneficiaire()
       beforeEach(async () => {
         // Given
         await renderFicheBeneficiaire(
@@ -257,7 +256,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           )
 
           // Then
-          expect(archiverJeune).toHaveBeenCalledWith('beneficiaire-1', {
+          expect(archiverJeune).toHaveBeenCalledWith('id-beneficiaire-1', {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
             dateFinAccompagnement,
@@ -276,7 +275,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheBeneficiaire(
-          unDetailBeneficiaire({ isActivated: false }),
+          unDetailBeneficiaire({ lastActivity: undefined }),
           portefeuilleSetter,
           alerteSetter
         )
@@ -311,7 +310,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         )
 
         // Then
-        expect(supprimerJeuneInactif).toHaveBeenCalledWith('beneficiaire-1')
+        expect(supprimerJeuneInactif).toHaveBeenCalledWith('id-beneficiaire-1')
 
         expect(portefeuilleSetter).toHaveBeenCalledWith([
           portefeuille[1],
@@ -339,7 +338,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       it('affiche le mode opératoire pour activer le compte', async () => {
         // Given
         await renderFicheBeneficiaire(
-          unDetailBeneficiaire({ isActivated: false })
+          unDetailBeneficiaire({ lastActivity: undefined })
         )
 
         // Then
@@ -362,15 +361,14 @@ async function renderFicheBeneficiaire(
     <FicheBeneficiairePage
       estMilo={true}
       beneficiaire={beneficiaire}
+      historiqueConseillers={[]}
       rdvs={[]}
-      actionsInitiales={desActionsInitiales()}
       categoriesActions={desCategories()}
-      ongletInitial='agenda'
-      lectureSeule={false}
+      ongletInitial='actions'
     />,
     {
       customConseiller: {
-        id: 'id-conseiller',
+        id: 'id-conseiller-1',
         structure: structureMilo,
       },
       customPortefeuille: { setter: portefeuilleSetter },

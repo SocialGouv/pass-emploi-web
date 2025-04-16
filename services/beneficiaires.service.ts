@@ -3,12 +3,12 @@ import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
-  BaseBeneficiaire,
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
+  IdentiteBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
@@ -41,13 +41,13 @@ export async function getIdentitesBeneficiairesServerSide(
   idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   return getIdentitesBeneficiaires(idsBeneficiaires, idConseiller, accessToken)
 }
 
 export async function getIdentitesBeneficiairesClientSide(
   idsBeneficiaires: string[]
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   const session = await getSession()
   return getIdentitesBeneficiaires(
     idsBeneficiaires,
@@ -99,9 +99,7 @@ export async function getConseillersDuJeuneServerSide(
   idJeune: string,
   accessToken: string
 ): Promise<ConseillerHistorique[]> {
-  {
-    return getConseillersDuBeneficiaire(idJeune, accessToken)
-  }
+  return getConseillersDuBeneficiaire(idJeune, accessToken)
 }
 
 export async function getConseillersDuJeuneClientSide(
@@ -117,7 +115,7 @@ export async function createCompteJeuneFranceTravail(newJeune: {
   firstName: string
   lastName: string
   email: string
-}): Promise<BaseBeneficiaire> {
+}): Promise<IdentiteBeneficiaire> {
   const session = await getSession()
   const { content } = await apiPost<BaseBeneficiaireJson>(
     `/conseillers/pole-emploi/jeunes`,
@@ -236,39 +234,26 @@ export async function modifierIdentifiantPartenaire(
   )
 }
 
-export async function getIndicateursJeuneAlleges(
+export async function getIndicateursBeneficiaire(
   idConseiller: string,
   idBeneficiaire: string,
   dateDebut: DateTime,
   dateFin: DateTime
 ): Promise<IndicateursSemaine> {
-  return getIndicateursBeneficiaire(
-    idConseiller,
-    idBeneficiaire,
-    dateDebut,
-    dateFin,
-    true
-  )
-}
+  const session = await getSession()
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
-export async function getIndicateursJeuneComplets(
-  idConseiller: string,
-  idBeneficiaire: string,
-  dateDebut: DateTime,
-  dateFin: DateTime
-): Promise<IndicateursSemaine> {
-  return getIndicateursBeneficiaire(
-    idConseiller,
-    idBeneficiaire,
-    dateDebut,
-    dateFin,
-    false
+  const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
+    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    session!.accessToken
   )
+  return jsonToIndicateursSemaine(indicateurs)
 }
 
 export async function getBeneficiairesDeLEtablissementClientSide(
   idEtablissement: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   const session = await getSession()
   return getBeneficiairesDeLEtablissement(idEtablissement, session!.accessToken)
 }
@@ -334,7 +319,7 @@ export async function rechercheBeneficiairesDeLEtablissement(
 async function getBeneficiairesDuConseiller(
   idConseiller: string,
   accessToken: string
-) {
+): Promise<BeneficiaireFromListe[]> {
   const { content: beneficiaires } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
     accessToken
@@ -362,33 +347,15 @@ async function getConseillersDuBeneficiaire(
   }
 }
 
-async function getIndicateursBeneficiaire(
-  idConseiller: string,
-  idBeneficiaire: string,
-  dateDebut: DateTime,
-  dateFin: DateTime,
-  exclureOffresEtFavoris: boolean
-): Promise<IndicateursSemaine> {
-  const session = await getSession()
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-
-  const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
-    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
-    session!.accessToken
-  )
-  return jsonToIndicateursSemaine(indicateurs)
-}
-
 async function getIdentitesBeneficiaires(
   idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseBeneficiaire[]> {
+): Promise<IdentiteBeneficiaire[]> {
   if (!idsBeneficiaires.length) return []
   const queryParam = idsBeneficiaires.map((id) => 'ids=' + id).join('&')
 
-  const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
+  const { content: beneficiaires } = await apiGet<IdentiteBeneficiaire[]>(
     `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
     accessToken
   )

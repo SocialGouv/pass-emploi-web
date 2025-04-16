@@ -2,7 +2,7 @@ import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 import { usePathname } from 'next/navigation'
 
-import DetailsJeune from 'components/jeune/DetailsJeune'
+import DetailsBeneficiaire from 'components/jeune/DetailsBeneficiaire'
 import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
@@ -22,17 +22,18 @@ describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", async () => {
     // Given
     const jeune = unDetailBeneficiaire({
-      isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
       dateFinCEJ: '2024-12-07T17:30:07.756Z',
     })
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
-        conseiller={unConseiller({ structure: structureMilo })}
-      />
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
+      />,
+      { customConseiller: unConseiller({ structure: structureMilo }) }
     )
 
     // Then
@@ -53,9 +54,10 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
-        conseiller={unConseiller({ structure: structureMilo })}
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
       />
     )
 
@@ -69,9 +71,10 @@ describe('<DetailsJeune>', () => {
 
     // When
     await renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
-        conseiller={unConseiller({ structure: structureMilo })}
+      <DetailsBeneficiaire
+        beneficiaire={jeune}
+        historiqueConseillers={[]}
+        withCreations={false}
       />
     )
 
@@ -80,50 +83,29 @@ describe('<DetailsJeune>', () => {
   })
 
   describe('Date de fin du CEJ', () => {
-    describe('Conseiller MILO', () => {
-      it('affiche la date de fin du CEJ si le jeune en a', async () => {
-        // Given
-        const jeune = unDetailBeneficiaire({
-          dateFinCEJ: '2022-10-10T10:10:10Z',
-        })
-
-        // When
-        await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
-            conseiller={unConseiller({ structure: structureMilo })}
-          />
-        )
-
-        // Then
-        expect(
-          screen.queryByText('Date de fin du CEJ', { exact: false })
-        ).toBeInTheDocument()
-        expect(screen.queryByText('10/10/2022')).toBeInTheDocument()
+    it('affiche la date de fin du CEJ si le jeune en a', async () => {
+      // Given
+      const jeune = unDetailBeneficiaire({
+        dateFinCEJ: '2022-10-10T10:10:10Z',
       })
-    })
-    describe('Conseiller non MILO', () => {
-      it("n'affiche pas la date de fin du CEJ", async () => {
-        // Given
-        const jeune = unDetailBeneficiaire({
-          dateFinCEJ: '2022-10-10T10:10:10Z',
-        })
 
-        // When
-        await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
-            conseiller={unConseiller({
-              structure: structureFTCej,
-            })}
-          />
-        )
+      // When
+      await renderWithContexts(
+        <DetailsBeneficiaire
+          beneficiaire={jeune}
+          historiqueConseillers={[]}
+          withCreations={false}
+        />
+      )
 
-        // Then
-        expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
-      })
+      // Then
+      expect(
+        screen.queryByText('Date de fin du CEJ', { exact: false })
+      ).toBeInTheDocument()
+      expect(screen.queryByText('10/10/2022')).toBeInTheDocument()
     })
   })
+
   describe('identifiant partenaire', () => {
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     beforeEach(async () => {
@@ -137,13 +119,13 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
-            conseiller={unConseiller({
-              structure: structureFTCej,
-            })}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
+            historiqueConseillers={[]}
+            withCreations={false}
           />,
           {
+            customConseiller: unConseiller({ structure: structureFTCej }),
             customAlerte: { setter: alerteSetter },
           }
         )
@@ -201,7 +183,7 @@ describe('<DetailsJeune>', () => {
 
           // Then
           expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
-            'beneficiaire-1',
+            'id-beneficiaire-1',
             '12345'
           )
           expect(alerteSetter).toHaveBeenCalledWith(
@@ -219,13 +201,13 @@ describe('<DetailsJeune>', () => {
         })
 
         await renderWithContexts(
-          <DetailsJeune
-            jeune={jeune}
-            conseiller={unConseiller({
-              structure: structureFTCej,
-            })}
+          <DetailsBeneficiaire
+            beneficiaire={jeune}
+            historiqueConseillers={[]}
+            withCreations={false}
           />,
           {
+            customConseiller: unConseiller({ structure: structureFTCej }),
             customAlerte: { setter: alerteSetter },
           }
         )
@@ -283,7 +265,7 @@ describe('<DetailsJeune>', () => {
 
           // Then
           expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
-            'beneficiaire-1',
+            'id-beneficiaire-1',
             '123456789'
           )
           expect(alerteSetter).toHaveBeenCalledWith(
@@ -302,9 +284,10 @@ describe('<DetailsJeune>', () => {
 
       // When
       await renderWithContexts(
-        <DetailsJeune
-          jeune={jeune}
-          conseiller={unConseiller({ structure: structureMilo })}
+        <DetailsBeneficiaire
+          beneficiaire={jeune}
+          historiqueConseillers={[]}
+          withCreations={false}
         />
       )
 

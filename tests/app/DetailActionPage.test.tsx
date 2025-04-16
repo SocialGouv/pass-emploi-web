@@ -2,6 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -40,11 +41,7 @@ describe('ActionPage client side', () => {
   describe('render', () => {
     beforeEach(async () => {
       ;({ container } = await renderWithContexts(
-        <DetailActionPage
-          action={action}
-          lectureSeule={false}
-          from='beneficiaire'
-        />,
+        <DetailActionPage action={action} from='beneficiaire' />,
         {
           customAlerte: { setter: alerteSetter },
         }
@@ -213,11 +210,7 @@ describe('ActionPage client side', () => {
 
     beforeEach(async () => {
       ;({ container } = await renderWithContexts(
-        <DetailActionPage
-          action={action}
-          lectureSeule={true}
-          from='beneficiaire'
-        />,
+        <DetailActionPage action={action} from='beneficiaire' />,
         {
           customAlerte: { setter: alerteSetter },
           customConseiller: { id: 'fake-id' },
@@ -264,6 +257,7 @@ describe('ActionPage client side', () => {
   describe("quand l'action est terminée et non qualifiée", () => {
     describe('quand le bénéficiaire est CEJ', () => {
       const actionAQualifier = uneAction({
+        dateFinReelle: DateTime.now().toISO(),
         status: StatutAction.TermineeAQualifier,
       })
 
@@ -274,11 +268,7 @@ describe('ActionPage client side', () => {
       it('ne permet pas de supprimer l’action', async () => {
         //When
         await renderWithContexts(
-          <DetailActionPage
-            action={actionAQualifier}
-            lectureSeule={false}
-            from='beneficiaire'
-          />,
+          <DetailActionPage action={actionAQualifier} from='beneficiaire' />,
           { customAlerte: { setter: alerteSetter } }
         )
 
@@ -291,11 +281,7 @@ describe('ActionPage client side', () => {
       it("affiche un lien pour qualifier l'action", async () => {
         //When
         await renderWithContexts(
-          <DetailActionPage
-            action={actionAQualifier}
-            lectureSeule={false}
-            from='beneficiaire'
-          />,
+          <DetailActionPage action={actionAQualifier} from='beneficiaire' />,
           { customAlerte: { setter: alerteSetter } }
         )
 
@@ -305,18 +291,14 @@ describe('ActionPage client side', () => {
             .getByRole('link', { name: 'Qualifier l’action' })
             .getAttribute('href')
         ).toMatch(
-          '/mes-jeunes/beneficiaire-1/actions/id-action-1/qualification?liste=beneficiaire'
+          '/mes-jeunes/id-beneficiaire-1/actions/id-action-1/qualification?liste=beneficiaire'
         )
       })
 
       it('a11y', async () => {
         let results: AxeResults
         ;({ container } = await renderWithContexts(
-          <DetailActionPage
-            action={actionAQualifier}
-            lectureSeule={false}
-            from='beneficiaire'
-          />,
+          <DetailActionPage action={actionAQualifier} from='beneficiaire' />,
           { customAlerte: { setter: alerteSetter } }
         ))
 
@@ -331,11 +313,7 @@ describe('ActionPage client side', () => {
         it('affiche un lien pour qualifier l’action qui retourne vers pilotage', async () => {
           //When
           await renderWithContexts(
-            <DetailActionPage
-              action={actionAQualifier}
-              lectureSeule={false}
-              from='pilotage'
-            />,
+            <DetailActionPage action={actionAQualifier} from='pilotage' />,
             { customAlerte: { setter: alerteSetter } }
           )
 
@@ -345,7 +323,7 @@ describe('ActionPage client side', () => {
               .getByRole('link', { name: 'Qualifier l’action' })
               .getAttribute('href')
           ).toMatch(
-            '/mes-jeunes/beneficiaire-1/actions/id-action-1/qualification?liste=pilotage'
+            '/mes-jeunes/id-beneficiaire-1/actions/id-action-1/qualification?liste=pilotage'
           )
         })
       })
@@ -353,17 +331,14 @@ describe('ActionPage client side', () => {
 
     describe('quand le bénéficiaire n’est pas CEJ', () => {
       const actionTerminee = uneAction({
+        dateFinReelle: DateTime.now().toISO(),
         status: StatutAction.Terminee,
       })
       actionTerminee.beneficiaire.dispositif = 'PACEA'
 
       beforeEach(async () => {
         await renderWithContexts(
-          <DetailActionPage
-            action={actionTerminee}
-            lectureSeule={false}
-            from='beneficiaire'
-          />
+          <DetailActionPage action={actionTerminee} from='beneficiaire' />
         )
       })
 
@@ -381,6 +356,7 @@ describe('ActionPage client side', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
         const actionQualifiee = uneAction({
+          dateFinReelle: DateTime.now().toISO(),
           status: StatutAction.TermineeQualifiee,
           qualification: {
             libelle: 'Emploi',
@@ -389,11 +365,7 @@ describe('ActionPage client side', () => {
           },
         })
         ;({ container } = await renderWithContexts(
-          <DetailActionPage
-            action={actionQualifiee}
-            lectureSeule={false}
-            from='beneficiaire'
-          />,
+          <DetailActionPage action={actionQualifiee} from='beneficiaire' />,
           {
             customConseiller: {
               structure: structureMilo,
@@ -429,6 +401,7 @@ describe('ActionPage client side', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
         const actionQualifiee = uneAction({
+          dateFinReelle: DateTime.now().toISO(),
           status: StatutAction.TermineeQualifiee,
           qualification: {
             libelle: 'Non SNP',
@@ -437,11 +410,7 @@ describe('ActionPage client side', () => {
           },
         })
         ;({ container } = await renderWithContexts(
-          <DetailActionPage
-            action={actionQualifiee}
-            lectureSeule={false}
-            from='beneficiaire'
-          />,
+          <DetailActionPage action={actionQualifiee} from='beneficiaire' />,
           {
             customConseiller: {
               structure: structureMilo,

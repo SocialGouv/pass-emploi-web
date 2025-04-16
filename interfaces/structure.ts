@@ -53,6 +53,12 @@ export function estMilo(structure: string): structure is typeof structureMilo {
   return structure === structureMilo
 }
 
+export function estAvenirPro(
+  structure: string
+): structure is typeof structureAvenirPro {
+  return structure === structureAvenirPro
+}
+
 export function estConseilDepartemental(
   structure: string
 ): structure is typeof structureConseilDepartemental {
@@ -84,7 +90,7 @@ export function labelStructure(structure: StructureFTConnect): string {
     case structureAij:
       return 'AIJ'
     case structureAccompagnementIntensif:
-      return 'Accompagnement intensif'
+      return 'REN-Intensif'
     case structureAccompagnementGlobal:
       return 'Accompagnement global'
     case structureEquipEmploiRecrut:
