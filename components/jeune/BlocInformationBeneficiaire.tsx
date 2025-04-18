@@ -1,7 +1,7 @@
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
 import { estFTConnect, estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime, toShortDate } from 'utils/date'
@@ -34,7 +34,7 @@ export default function BlocInformationBeneficiaire({
       <div className='grow shrink-0 px-6'>
         <h2 className='text-base-bold text-content-color mb-4'>Informations</h2>
         <dl className='flex flex-col gap-1 mb-4'>
-          {estCEJ(beneficiaire) && (
+          {conseillerEstMilo && (
             <div className='w-fit rounded-full flex items-center gap-1 text-s-medium px-3 bg-primary-lighten text-primary'>
               <dt>Date de fin du CEJ :</dt>
               <dd>
