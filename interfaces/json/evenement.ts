@@ -9,7 +9,7 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
-  StatutAnimationCollective,
+  StatutEvenement,
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
@@ -18,6 +18,7 @@ import {
 } from 'interfaces/json/session'
 import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
+import { filtrerUndefinedNullEtChaineVide } from 'utils/helpers'
 
 type Auteur = { id: string; nom: string; prenom: string }
 
@@ -37,7 +38,7 @@ export type EvenementJson = {
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
-  statut: StatutAnimationCollectiveJson
+  statut: StatutEvenementJson
   source?: string
   futPresent?: boolean
   nombreMaxParticipants?: number
@@ -48,13 +49,10 @@ export type EvenementJeuneJson = Omit<EvenementJson, 'statut' | 'jeunes'> & {
 }
 
 export type AnimationCollectiveJson = EvenementJson & {
-  statut: StatutAnimationCollectiveJson
+  statut: StatutEvenementJson
 }
 
-export type StatutAnimationCollectiveJson =
-  | 'A_VENIR'
-  | 'A_CLOTURER'
-  | 'CLOTUREE'
+export type StatutEvenementJson = 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 
 export type EvenementFormData = {
   date: string
@@ -89,22 +87,12 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     precisionType: json.precision,
     adresse: json.adresse,
     organisme: json.organisme,
-    statut: jsonToStatutAnimationCollective(json.statut),
+    statut: jsonToStatutEvenement(json.statut),
     source: json.source,
     nombreMaxParticipants: json.nombreMaxParticipants,
   }
 
-  const evenementSansValeursNullesOuUndefines =
-    filtrerUndefinedNullEtChaineVide(evenement)
-  return evenementSansValeursNullesOuUndefines as Evenement
-}
-
-function filtrerUndefinedNullEtChaineVide(objet: any): any {
-  return Object.fromEntries(
-    Object.entries(objet).filter(
-      ([, valeur]) => valeur !== undefined && valeur !== null && valeur !== ''
-    )
-  )
+  return filtrerUndefinedNullEtChaineVide(evenement) as Evenement
 }
 
 export function jsonToListItem(
@@ -155,7 +143,7 @@ export function jsonToAnimationCollective(
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
-    statut: jsonToStatutAnimationCollective(json.statut),
+    statut: jsonToStatutEvenement(json.statut),
     nombreParticipants: json.jeunes.length,
     etatVisibilite: 'visible',
   }
@@ -206,22 +194,22 @@ function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {
   return jsonType.label
 }
 
-function jsonToStatutAnimationCollective(
-  jsonStatus: StatutAnimationCollectiveJson
-): StatutAnimationCollective {
+function jsonToStatutEvenement(
+  jsonStatus: StatutEvenementJson
+): StatutEvenement {
   switch (jsonStatus) {
     case 'A_VENIR':
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
     case 'A_CLOTURER':
-      return StatutAnimationCollective.AClore
+      return StatutEvenement.AClore
     case 'CLOTUREE':
-      return StatutAnimationCollective.Close
+      return StatutEvenement.Close
 
     default:
       console.warn(
-        `Statut d'animation collective ${jsonStatus} incorrect, traité comme AVenir`
+        `Statut d'évènement ${jsonStatus} incorrect, traité comme AVenir`
       )
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
   }
 }
 

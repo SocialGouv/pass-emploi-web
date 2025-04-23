@@ -54,3 +54,11 @@ export function getVisibleText(nodes: Node | Node[]): string | null {
 
   return null
 }
+
+export function filtrerUndefinedNullEtChaineVide(objet: any): any {
+  return Object.fromEntries(
+    Object.entries(objet).filter(
+      ([, valeur]) => valeur !== undefined && valeur !== null && valeur !== ''
+    )
+  )
+}

@@ -6,7 +6,7 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
-  StatutAnimationCollective,
+  StatutEvenement,
 } from 'interfaces/evenement'
 import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
@@ -98,7 +98,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
       },
     ],
     source: 'PASS_EMPLOI',
-    statut: StatutAnimationCollective.AVenir,
+    statut: StatutEvenement.AVenir,
   }
 
   return { ...defaults, ...overrides }
@@ -160,7 +160,7 @@ export function uneAnimationCollective(
     titre: 'Prise de nouvelles par téléphone',
     date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
     duree: 125,
-    statut: StatutAnimationCollective.AVenir,
+    statut: StatutEvenement.AVenir,
     nombreParticipants: 1,
     nombreMaxParticipants: 10,
     etatVisibilite: 'visible',

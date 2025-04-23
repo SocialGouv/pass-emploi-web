@@ -5,7 +5,7 @@ import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import {
   AnimationCollective,
   EvenementListItem,
-  StatutAnimationCollective,
+  StatutEvenement,
 } from 'interfaces/evenement'
 import {
   SessionMiloBeneficiaireJson,
@@ -87,7 +87,7 @@ describe('SessionsApiService', () => {
           date: dateDebut,
           duree: 10080,
           type: 'info coll i-milo',
-          statut: StatutAnimationCollective.Close,
+          statut: StatutEvenement.Close,
           isSession: true,
           etatVisibilite: 'auto-inscription',
           nombreParticipants: 2,
@@ -99,7 +99,7 @@ describe('SessionsApiService', () => {
           date: dateDebut,
           duree: 10080,
           type: 'Atelier i-milo',
-          statut: StatutAnimationCollective.AVenir,
+          statut: StatutEvenement.AVenir,
           isSession: true,
           etatVisibilite: 'non-visible',
           nombreParticipants: 4,

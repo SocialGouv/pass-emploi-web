@@ -5,7 +5,7 @@ import ClotureSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/ag
 import ClotureSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/page'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -51,7 +51,7 @@ describe('Cloture Session server side', () => {
             estVisible: true,
             autoinscription: true,
             nbPlacesDisponibles: 20,
-            statut: StatutAnimationCollective.AClore,
+            statut: StatutEvenement.AClore,
           },
         })
       )
@@ -72,7 +72,7 @@ describe('Cloture Session server side', () => {
           estVisible: true,
           autoinscription: true,
           nbPlacesDisponibles: 20,
-          statut: StatutAnimationCollective.AClore,
+          statut: StatutEvenement.AClore,
         },
       })
 
@@ -137,7 +137,7 @@ describe('Cloture Session server side', () => {
             estVisible: true,
             autoinscription: true,
             nbPlacesDisponibles: 20,
-            statut: StatutAnimationCollective.AVenir,
+            statut: StatutEvenement.AVenir,
           },
         })
       )

@@ -12,7 +12,7 @@ import {
 } from 'fixtures/evenement'
 import {
   AnimationCollective,
-  StatutAnimationCollective,
+  StatutEvenement,
 } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
@@ -270,13 +270,13 @@ describe('EvenementsApiService', () => {
           id: 'ac-passee',
           type: 'Information collective',
           date: dateDebut,
-          statut: StatutAnimationCollective.AVenir,
+          statut: StatutEvenement.AVenir,
         }),
         uneAnimationCollective({
           id: 'ac-future',
           type: 'Atelier',
           date: dateFin,
-          statut: StatutAnimationCollective.Close,
+          statut: StatutEvenement.Close,
         }),
       ]
       expect(actual).toEqual(animationsCollectives)

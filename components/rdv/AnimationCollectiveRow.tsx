@@ -9,7 +9,7 @@ import TR from 'components/ui/Table/TR'
 import {
   AnimationCollective,
   EtatVisibilite,
-  StatutAnimationCollective,
+  StatutEvenement,
 } from 'interfaces/evenement'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -138,12 +138,12 @@ function statusProps({ type, statut }: AnimationCollective): {
   style: string
 } {
   switch (statut) {
-    case StatutAnimationCollective.AVenir:
+    case StatutEvenement.AVenir:
       return { label: 'À venir', style: 'text-accent-1 bg-accent-1-lighten' }
-    case StatutAnimationCollective.AClore:
+    case StatutEvenement.AClore:
       return { label: 'À clore', style: 'text-warning bg-warning-lighten' }
 
-    case StatutAnimationCollective.Close:
+    case StatutEvenement.Close:
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         style: 'text-accent-2 bg-accent-2-lighten',

@@ -21,7 +21,7 @@ import {
   getNomBeneficiaireComplet,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
+import { Evenement, StatutEvenement } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -1407,7 +1407,7 @@ describe('EditionRdvPage client side', () => {
               returnTo='https://localhost:3000/agenda'
               evenement={unEvenement({
                 jeunes: [],
-                statut: StatutAnimationCollective.AClore,
+                statut: StatutEvenement.AClore,
               })}
               conseillerEstObservateur={false}
               lectureSeule={false}
@@ -1432,7 +1432,7 @@ describe('EditionRdvPage client side', () => {
               returnTo='https://localhost:3000/agenda'
               evenement={unEvenement({
                 jeunes: [uneBaseBeneficiaire()],
-                statut: StatutAnimationCollective.AClore,
+                statut: StatutEvenement.AClore,
               })}
               conseillerEstObservateur={false}
               lectureSeule={false}
@@ -1643,7 +1643,7 @@ describe('EditionRdvPage client side', () => {
         it("n'affiche pas le lien Clore", async () => {
           // Given
           const evenement = unEvenement({
-            statut: StatutAnimationCollective.AVenir,
+            statut: StatutEvenement.AVenir,
           })
 
           // When
@@ -1670,7 +1670,7 @@ describe('EditionRdvPage client side', () => {
         it('affiche un lien pour la clore', async () => {
           // Given
           const evenement = unEvenement({
-            statut: StatutAnimationCollective.AClore,
+            statut: StatutEvenement.AClore,
           })
 
           // When
@@ -1717,7 +1717,7 @@ describe('EditionRdvPage client side', () => {
         const evenement = unEvenement({
           jeunes: [beneficiaireAbsent, beneficiairePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
-          statut: StatutAnimationCollective.Close,
+          statut: StatutEvenement.Close,
         })
 
         ;({ container } = await renderWithContexts(
