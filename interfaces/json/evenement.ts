@@ -92,7 +92,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     nombreMaxParticipants: json.nombreMaxParticipants,
   }
 
-  return filtrerUndefinedNullEtChaineVide(evenement) as Evenement
+  return filtrerUndefinedNullEtChaineVide<Evenement>(evenement) as Evenement
 }
 
 export function jsonToListItem(

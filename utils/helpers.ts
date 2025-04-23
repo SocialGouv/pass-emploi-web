@@ -55,10 +55,12 @@ export function getVisibleText(nodes: Node | Node[]): string | null {
   return null
 }
 
-export function filtrerUndefinedNullEtChaineVide(objet: any): any {
-  return Object.fromEntries(
-    Object.entries(objet).filter(
-      ([, valeur]) => valeur !== undefined && valeur !== null && valeur !== ''
-    )
+export function filtrerUndefinedNullEtChaineVide<T>(objet: object): Partial<T> {
+  const objetSansValeursVides = Object.entries(objet).filter(
+    ([, valeur]) => valeur !== undefined && valeur !== null && valeur !== ''
   )
+
+  const cleanObjet = Object.fromEntries(objetSansValeursVides)
+
+  return cleanObjet as Partial<T>
 }

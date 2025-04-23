@@ -12,10 +12,7 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import {
-  AnimationCollective,
-  StatutEvenement,
-} from 'interfaces/evenement'
+import { AnimationCollective, StatutEvenement } from 'interfaces/evenement'
 import { Periode } from 'types/dates'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
