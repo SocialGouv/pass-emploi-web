@@ -98,6 +98,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
       },
     ],
     source: 'PASS_EMPLOI',
+    statut: StatutAnimationCollective.AVenir,
   }
 
   return { ...defaults, ...overrides }
@@ -243,6 +244,7 @@ export function unEvenementJson(
       },
     ],
     source: 'PASS_EMPLOI',
+    statut: 'A_VENIR',
   }
 
   return { ...defaults, ...overrides }

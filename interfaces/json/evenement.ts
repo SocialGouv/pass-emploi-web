@@ -37,13 +37,13 @@ export type EvenementJson = {
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
-  statut?: StatutAnimationCollectiveJson
+  statut: StatutAnimationCollectiveJson
   source?: string
   futPresent?: boolean
   nombreMaxParticipants?: number
 }
 
-export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
+export type EvenementJeuneJson = Omit<EvenementJson, 'statut' | 'jeunes'> & {
   futPresent?: boolean
 }
 
@@ -83,21 +83,28 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
-    historique: [],
+    historique: (json.historique || []).map(jsonToHistorique),
+    modality: json.modality,
+    commentaire: json.comment,
+    precisionType: json.precision,
+    adresse: json.adresse,
+    organisme: json.organisme,
+    statut: jsonToStatutAnimationCollective(json.statut),
+    source: json.source,
+    nombreMaxParticipants: json.nombreMaxParticipants,
   }
-  if (json.modality) evenement.modality = json.modality
-  if (json.comment) evenement.commentaire = json.comment
-  if (json.precision) evenement.precisionType = json.precision
-  if (json.adresse) evenement.adresse = json.adresse
-  if (json.organisme) evenement.organisme = json.organisme
-  if (json.historique) evenement.historique = jsonToHistorique(json.historique)
-  if (json.statut)
-    evenement.statut = jsonToStatutAnimationCollective(json.statut)
-  if (json.source) evenement.source = json.source
-  if (json.nombreMaxParticipants)
-    evenement.nombreMaxParticipants = json.nombreMaxParticipants
 
-  return evenement
+  const evenementSansValeursNullesOuUndefines =
+    filtrerUndefinedNullEtChaineVide(evenement)
+  return evenementSansValeursNullesOuUndefines as Evenement
+}
+
+function filtrerUndefinedNullEtChaineVide(objet: any): any {
+  return Object.fromEntries(
+    Object.entries(objet).filter(
+      ([, valeur]) => valeur !== undefined && valeur !== null && valeur !== ''
+    )
+  )
 }
 
 export function jsonToListItem(
@@ -225,9 +232,9 @@ function jsonToBeneficiaires(
   return 'Bénéficiaires multiples'
 }
 
-function jsonToHistorique(historique: Array<{ date: string; auteur: Auteur }>) {
-  return historique.map(({ date, auteur }) => ({
+function jsonToHistorique({ date, auteur }: { date: string; auteur: Auteur }) {
+  return {
     date,
     auteur: { nom: auteur.nom, prenom: auteur.prenom },
-  }))
+  }
 }
