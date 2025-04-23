@@ -16,7 +16,7 @@ import {
   getNomBeneficiaireComplet,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { Evenement } from 'interfaces/evenement'
+import { Evenement, isCodeTypeAnimationCollective } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 
@@ -84,8 +84,11 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
     <>
       <h2 className='text-m-bold'>Présence des bénéficiaires</h2>
       <p className='mt-6'>
-        Vous devez valider la présence des bénéficiaires à l’animation
-        collective en cochant dans la liste le nom des bénéficiaires
+        Vous devez valider la présence des bénéficiaires{' '}
+        {isCodeTypeAnimationCollective(evenement.type.code)
+          ? 'à l’animation collective'
+          : ''}
+        en cochant dans la liste le nom des bénéficiaires
       </p>
       <div className='mt-6'>
         <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
