@@ -1396,6 +1396,58 @@ describe('EditionRdvPage client side', () => {
         ).not.toBeInTheDocument()
       })
     })
+
+    describe('quand le rendez-vous est passé', () => {
+      describe('quand il n’y a pas de bénéficiaires inscrits', () => {
+        beforeEach(async () => {
+          // When
+          ;({ container } = await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={unEvenement({
+                jeunes: [],
+                statut: StatutAnimationCollective.AClore,
+              })}
+              conseillerEstObservateur={false}
+              lectureSeule={false}
+            />
+          ))
+        })
+
+        it('affiche un message d’information sur le fait que le rendez-vous est passé et doit être supprimé', () => {
+          // Then
+          expect(
+            screen.getByText('Cet événement est passé et doit être supprimé')
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe('quand il y a un ou plusieurs bénéficiaires inscrits', () => {
+        beforeEach(async () => {
+          // When
+          ;({ container } = await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={unEvenement({
+                jeunes: [uneBaseBeneficiaire()],
+                statut: StatutAnimationCollective.AClore,
+              })}
+              conseillerEstObservateur={false}
+              lectureSeule={false}
+            />
+          ))
+        })
+
+        it('affiche un message d’information sur le fait que le rendez-vous est passé et doit être clos', () => {
+          // Then
+          expect(
+            screen.getByText('Cet événement est passé et doit être clos')
+          ).toBeInTheDocument()
+        })
+      })
+    })
   })
 
   describe('Animation collective', () => {
