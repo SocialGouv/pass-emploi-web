@@ -116,14 +116,13 @@ export default function DetailsBeneficiaire({
           onSupprimerBeneficiaire={onSupprimerBeneficiaire}
         />
 
-        <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex'>
+        <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex flex-wrap gap-4'>
           <IndicateursBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
             indicateursSemaine={indicateursSemaine}
             demarches={demarches?.data}
           />
-
           <BlocInformationBeneficiaire
             beneficiaire={beneficiaire}
             identifiantPartenaire={{
