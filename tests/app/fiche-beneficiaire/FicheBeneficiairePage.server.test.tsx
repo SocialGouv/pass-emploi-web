@@ -208,6 +208,10 @@ describe('FicheBeneficiairePage server side', () => {
           structure: 'CONSEIL_DEPT',
         })
       )
+      const periode = {
+        debut: DateTime.now().minus({ day: 30 }).startOf('day'),
+        fin: DateTime.now(),
+      }
 
       // When
       render(
@@ -219,7 +223,7 @@ describe('FicheBeneficiairePage server side', () => {
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
         'id-beneficiaire-1',
-        DateTime.now().minus({ day: 30 }).startOf('day'),
+        periode,
         'id-conseiller-1',
         'accessToken'
       )

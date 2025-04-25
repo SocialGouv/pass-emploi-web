@@ -74,7 +74,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
       'services/evenements.service'
     )
 
-    await _cloreEvenement(evenement.id, evenement.type.code, idsSelectionnes)
+    await _cloreEvenement(evenement.id, idsSelectionnes)
 
     setAlerte(AlerteParam.clotureEvenement)
     router.push(returnTo)

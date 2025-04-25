@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   FichePasMiloProps,
@@ -10,8 +10,12 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { Demarche } from 'interfaces/beneficiaire'
+import { estConseilDepartemental } from 'interfaces/structure'
+import { getDemarchesBeneficiaireClientSide } from 'services/beneficiaires.service'
 import { Periode } from 'types/dates'
-import { LUNDI } from 'utils/date'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { getPeriodeComprenant, LUNDI } from 'utils/date'
 
 const TableauOffres = dynamic(
   () => import('components/favoris/offres/TableauOffres')
@@ -28,7 +32,6 @@ export default function OngletsBeneficiairePasMilo({
   onSwitchTab,
   beneficiaire,
   metadonneesFavoris,
-  demarches,
   debutSemaineInitiale,
   onChangementSemaine,
   trackChangementSemaine,
@@ -40,14 +43,27 @@ export default function OngletsBeneficiairePasMilo({
   onSwitchTab: (tab: OngletPasMilo) => void
   trackChangementSemaine: (currentTab: OngletPasMilo, append?: string) => void
 }) {
-  const conseillerEstCD = demarches !== undefined
+  const [conseiller] = useConseiller()
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [demarches, setDemarches] = useState<Demarche[] | undefined>(undefined)
+
+  const debutPeriodeInitiale = debutSemaineInitiale
+    ? DateTime.fromISO(debutSemaineInitiale)
+    : DateTime.now().startOf('week')
+
+  const conseillerEstCD = estConseilDepartemental(conseiller.structure)
 
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
 
   const [currentTab, setCurrentTab] = useState<OngletPasMilo>(ongletInitial)
-  const [semaine, setSemaine] = useState<Periode>()
+  const [semaine, setSemaine] = useState<Periode>(
+    getPeriodeComprenant(debutPeriodeInitiale, {
+      jourSemaineReference: LUNDI,
+    })
+  )
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   async function chargerNouvelleSemaine(
@@ -63,6 +79,24 @@ export default function OngletsBeneficiairePasMilo({
     setCurrentTab(tab)
     onSwitchTab(tab)
   }
+
+  useEffect(() => {
+    if (conseillerEstCD) {
+      setIsLoading(true)
+
+      getDemarchesBeneficiaireClientSide(
+        beneficiaire.id,
+        semaine,
+        conseiller.id
+      )
+        .then((nouvellesDemarches) =>
+          setDemarches(nouvellesDemarches?.data ?? [])
+        )
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+  }, [semaine])
 
   return (
     <>
@@ -109,7 +143,7 @@ export default function OngletsBeneficiairePasMilo({
         {conseillerEstCD && (
           <Tab
             label='Démarches'
-            count={demarches?.data.length}
+            count={demarches?.length}
             selected={currentTab === 'demarches'}
             controls='liste-demarches'
             onSelectTab={() => switchTab('demarches')}
@@ -139,7 +173,7 @@ export default function OngletsBeneficiairePasMilo({
         )}
       </TabList>
 
-      {currentTab === 'demarches' && demarches !== undefined && (
+      {currentTab === 'demarches' && demarches !== undefined && semaine && (
         <div
           role='tabpanel'
           aria-labelledby='liste-demarches--tab'
@@ -147,7 +181,11 @@ export default function OngletsBeneficiairePasMilo({
           id='liste-demarches'
           className='mt-8 pb-8'
         >
-          <OngletDemarches demarches={demarches} jeune={beneficiaire} />
+          <OngletDemarches
+            beneficiaire={beneficiaire}
+            demarches={demarches}
+            isLoading={isLoading}
+          />
         </div>
       )}
 

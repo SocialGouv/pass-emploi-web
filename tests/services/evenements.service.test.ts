@@ -403,13 +403,13 @@ describe('EvenementsApiService', () => {
         const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
 
         // When
-        await cloreEvenement('id-rdv', 'ATELIER', idsJeunes)
+        await cloreEvenement('id-rdv', idsJeunes)
 
         // Then
         expect(apiPost).toHaveBeenCalledWith(
-          '/structures-milo/animations-collectives/id-rdv/cloturer',
+          '/rendezvous/id-rdv/cloturer',
           {
-            idsJeunes: ['id-beneficiaire-1', 'id-beneficiaire-2'],
+            idsJeunesPresents: ['id-beneficiaire-1', 'id-beneficiaire-2'],
           },
           'accessToken'
         )
@@ -420,16 +420,16 @@ describe('EvenementsApiService', () => {
       describe('si le bénéficiaire est présent', () => {
         it('clôt le rdv', async () => {
           // Given
-          const idsJeunes = ['id-beneficiaire-1']
+          const idsJeunesPresents = ['id-beneficiaire-1']
 
           // When
-          await cloreEvenement('id-rdv', 'AUTRE', idsJeunes)
+          await cloreEvenement('id-rdv', idsJeunesPresents)
 
           // Then
           expect(apiPost).toHaveBeenCalledWith(
             '/rendezvous/id-rdv/cloturer',
             {
-              present: true,
+              idsJeunesPresents,
             },
             'accessToken'
           )
@@ -439,16 +439,16 @@ describe('EvenementsApiService', () => {
       describe('si le bénéficiaire est absent', () => {
         it('clôt le rdv', async () => {
           // Given
-          const idsJeunes: string[] = []
+          const idsJeunesPresents: string[] = []
 
           // When
-          await cloreEvenement('id-rdv', 'AUTRE', idsJeunes)
+          await cloreEvenement('id-rdv', idsJeunesPresents)
 
           // Then
           expect(apiPost).toHaveBeenCalledWith(
             '/rendezvous/id-rdv/cloturer',
             {
-              present: false,
+              idsJeunesPresents,
             },
             'accessToken'
           )

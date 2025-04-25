@@ -152,11 +152,9 @@ describe('CloturePage client side', () => {
 
       it('clôt l’animation collective', async () => {
         // Then
-        expect(cloreEvenement).toHaveBeenCalledWith(
-          animationCollective.id,
-          animationCollective.type.code,
-          [animationCollective.jeunes[0].id]
-        )
+        expect(cloreEvenement).toHaveBeenCalledWith(animationCollective.id, [
+          animationCollective.jeunes[0].id,
+        ])
       })
 
       it('renvoie sur le détail de l’animation collective', () => {
@@ -218,11 +216,9 @@ describe('CloturePage client side', () => {
 
       it('clôt l’animation collective', async () => {
         // Then
-        expect(cloreEvenement).toHaveBeenCalledWith(
-          evenementParDefaut.id,
-          evenementParDefaut.type.code,
-          [evenementParDefaut.jeunes[0].id]
-        )
+        expect(cloreEvenement).toHaveBeenCalledWith(evenementParDefaut.id, [
+          evenementParDefaut.jeunes[0].id,
+        ])
       })
 
       it('renvoie sur le détail de l’animation collective', () => {

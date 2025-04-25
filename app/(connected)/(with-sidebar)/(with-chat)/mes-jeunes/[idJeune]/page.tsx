@@ -152,10 +152,15 @@ async function renderFichePasMilo(
   >
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+  const aujourdhui = DateTime.now()
+  const periode = {
+    debut: trenteJoursAvant,
+    fin: aujourdhui,
+  }
   const demarches = estConseilDepartemental(conseiller.structure)
     ? await getDemarchesBeneficiaire(
         props.beneficiaire.id,
-        trenteJoursAvant,
+        periode,
         conseiller.id,
         accessToken
       )
