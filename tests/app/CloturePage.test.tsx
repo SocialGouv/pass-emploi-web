@@ -7,11 +7,10 @@ import React from 'react'
 
 import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 import { unEvenement } from 'fixtures/evenement'
+import { Evenement } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { cloreAnimationCollective } from 'services/evenements.service'
+import { cloreEvenement } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
-
-import { Evenement } from '../../interfaces/evenement'
 
 jest.mock('services/evenements.service')
 
@@ -153,17 +152,18 @@ describe('CloturePage client side', () => {
 
       it('clôt l’animation collective', async () => {
         // Then
-        expect(cloreAnimationCollective).toHaveBeenCalledWith(
-          evenementParDefaut.id,
-          [evenementParDefaut.jeunes[0].id]
+        expect(cloreEvenement).toHaveBeenCalledWith(
+          animationCollective.id,
+          animationCollective.type.code,
+          [animationCollective.jeunes[0].id]
         )
       })
 
       it('renvoie sur le détail de l’animation collective', () => {
         // Then
-        expect(alerteSetter).toHaveBeenCalledWith('clotureAC')
+        expect(alerteSetter).toHaveBeenCalledWith('clotureEvenement')
         expect(routerPush).toHaveBeenCalledWith(
-          `/mes-jeunes/edition-rdv?idRdv=${evenementParDefaut.id}&redirectUrl=redirectUrl`
+          `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`
         )
       })
     })
@@ -190,6 +190,48 @@ describe('CloturePage client side', () => {
           'Vous devez valider la présence des bénéficiaires en cochant dans la liste le nom des bénéficiaires'
         )
       ).toBeInTheDocument()
+    })
+
+    describe('au click sur le bouton "Clore"', () => {
+      beforeEach(async () => {
+        // Given
+        await userEvent.click(
+          screen.getByText(evenementParDefaut.jeunes[0].prenom, {
+            exact: false,
+          })
+        )
+
+        // When
+        const clore = screen.getByText('Clore')
+        await userEvent.click(clore)
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results!).toHaveNoViolations()
+      })
+
+      it('clôt l’animation collective', async () => {
+        // Then
+        expect(cloreEvenement).toHaveBeenCalledWith(
+          evenementParDefaut.id,
+          evenementParDefaut.type.code,
+          [evenementParDefaut.jeunes[0].id]
+        )
+      })
+
+      it('renvoie sur le détail de l’animation collective', () => {
+        // Then
+        expect(alerteSetter).toHaveBeenCalledWith('clotureEvenement')
+        expect(routerPush).toHaveBeenCalledWith(
+          `/mes-jeunes/edition-rdv?idRdv=${evenementParDefaut.id}&redirectUrl=redirectUrl`
+        )
+      })
     })
   })
 })

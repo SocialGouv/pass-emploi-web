@@ -120,7 +120,7 @@ const ALERTES: DictAlertes = {
   suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',
   },
-  clotureAC: { title: 'Cet événement a bien été clos' },
+  clotureEvenement: { title: 'Cet événement a bien été clos' },
   clotureSession: { title: 'Cet événement a bien été clos' },
   creationListeDiffusion: { title: 'La liste de diffusion a bien été créée' },
   modificationListeDiffusion: {

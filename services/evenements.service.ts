@@ -7,6 +7,7 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
+  isCodeTypeAnimationCollective,
 } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
@@ -153,7 +154,18 @@ export async function supprimerEvenement(idRendezVous: string): Promise<void> {
   await apiDelete(`/rendezvous/${idRendezVous}`, session!.accessToken)
 }
 
-export async function cloreAnimationCollective(
+export async function cloreEvenement(
+  idEvenement: string,
+  codeEvenement: string,
+  idsBeneficiaires: string[]
+): Promise<void> {
+  if (isCodeTypeAnimationCollective(codeEvenement)) {
+    return cloreAnimationCollective(idEvenement, idsBeneficiaires)
+  }
+  return cloreRdvIndividuel(idEvenement, idsBeneficiaires.length === 1)
+}
+
+async function cloreAnimationCollective(
   idAnimationCollective: string,
   idsJeunes: string[]
 ): Promise<void> {
@@ -164,6 +176,15 @@ export async function cloreAnimationCollective(
     payload,
     session!.accessToken
   )
+}
+
+async function cloreRdvIndividuel(
+  idRdv: string,
+  present: boolean
+): Promise<void> {
+  const session = await getSession()
+  const payload = { present }
+  await apiPost(`/rendezvous/${idRdv}/cloturer`, payload, session!.accessToken)
 }
 
 async function getAnimationsCollectivesAClore(

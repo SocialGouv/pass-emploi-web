@@ -67,15 +67,16 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
     else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
-  async function cloreAnimationCollective(event: FormEvent) {
+  async function cloreEvenement(event: FormEvent) {
     event.preventDefault()
 
-    const { cloreAnimationCollective: _cloreAnimationCollective } =
-      await import('services/evenements.service')
+    const { cloreEvenement: _cloreEvenement } = await import(
+      'services/evenements.service'
+    )
 
-    await _cloreAnimationCollective(evenement.id, idsSelectionnes)
+    await _cloreEvenement(evenement.id, evenement.type.code, idsSelectionnes)
 
-    setAlerte(AlerteParam.clotureAC)
+    setAlerte(AlerteParam.clotureEvenement)
     router.push(returnTo)
     router.refresh()
   }
@@ -94,7 +95,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
         <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
 
-      <form onSubmit={cloreAnimationCollective} className='mt-6'>
+      <form onSubmit={cloreEvenement} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de l’animation collective' }}>
           <thead>
             <TR isHeader={true}>
