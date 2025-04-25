@@ -7,7 +7,7 @@ import React from 'react'
 
 import ClotureSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/ClotureSessionPage'
 import { unDetailSession } from 'fixtures/session'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreSession } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -20,7 +20,7 @@ describe('Cloture Session', () => {
   const session = unDetailSession({
     session: {
       ...unDetailSession().session,
-      statut: StatutAnimationCollective.AClore,
+      statut: StatutEvenement.AClore,
     },
     inscriptions: [
       {

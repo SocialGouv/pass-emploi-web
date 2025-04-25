@@ -2,11 +2,11 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 
 describe('FiltresStatutAnimationsCollectives', () => {
   let filtrerAnimationsCollectives: (
-    statutACSelectionnees: StatutAnimationCollective[]
+    statutACSelectionnees: StatutEvenement[]
   ) => void
   beforeEach(async () => {
     // Given
@@ -79,8 +79,8 @@ describe('FiltresStatutAnimationsCollectives', () => {
 
     // Then
     expect(filtrerAnimationsCollectives).toHaveBeenCalledWith([
-      StatutAnimationCollective.Close,
-      StatutAnimationCollective.AClore,
+      StatutEvenement.Close,
+      StatutEvenement.AClore,
     ])
   })
 })

@@ -12,10 +12,7 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import {
-  AnimationCollective,
-  StatutAnimationCollective,
-} from 'interfaces/evenement'
+import { AnimationCollective, StatutEvenement } from 'interfaces/evenement'
 import { Periode } from 'types/dates'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -48,7 +45,7 @@ export default function OngletAgendaMissionLocale({
   const filtresRef = useRef<FiltresHandles>(null)
   const tableRef = useRef<HTMLTableElement>(null)
 
-  const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
+  const [filtres, setFiltres] = useState<StatutEvenement[]>([])
   const [recherche, setRecherche] = useState<string>('')
   const [evenementsAffiches, setEvenementsAffiches] =
     useState<AnimationCollective[]>()

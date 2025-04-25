@@ -10,17 +10,14 @@ import {
   unEvenementJson,
   unEvenementListItem,
 } from 'fixtures/evenement'
-import {
-  AnimationCollective,
-  StatutAnimationCollective,
-} from 'interfaces/evenement'
+import { AnimationCollective, StatutEvenement } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
   EvenementFormData,
 } from 'interfaces/json/evenement'
 import { modalites } from 'referentiel/evenement'
 import {
-  cloreAnimationCollective,
+  cloreEvenement,
   creerEvenement,
   getAnimationsCollectivesACloreClientSide,
   getAnimationsCollectivesACloreServerSide,
@@ -270,13 +267,13 @@ describe('EvenementsApiService', () => {
           id: 'ac-passee',
           type: 'Information collective',
           date: dateDebut,
-          statut: StatutAnimationCollective.AVenir,
+          statut: StatutEvenement.AVenir,
         }),
         uneAnimationCollective({
           id: 'ac-future',
           type: 'Atelier',
           date: dateFin,
-          statut: StatutAnimationCollective.Close,
+          statut: StatutEvenement.Close,
         }),
       ]
       expect(actual).toEqual(animationsCollectives)
@@ -399,22 +396,64 @@ describe('EvenementsApiService', () => {
     })
   })
 
-  describe('.cloreAnimationCollective', () => {
-    it('clôt une animation collective', async () => {
-      // Given
-      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
+  describe('.cloreEvenement', () => {
+    describe('si l’évènement est une animation collective', () => {
+      it('clôt l’animation collective', async () => {
+        // Given
+        const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
 
-      // When
-      await cloreAnimationCollective('id-rdv', idsJeunes)
+        // When
+        await cloreEvenement('id-rdv', 'ATELIER', idsJeunes)
 
-      // Then
-      expect(apiPost).toHaveBeenCalledWith(
-        '/structures-milo/animations-collectives/id-rdv/cloturer',
-        {
-          idsJeunes: ['id-beneficiaire-1', 'id-beneficiaire-2'],
-        },
-        'accessToken'
-      )
+        // Then
+        expect(apiPost).toHaveBeenCalledWith(
+          '/structures-milo/animations-collectives/id-rdv/cloturer',
+          {
+            idsJeunes: ['id-beneficiaire-1', 'id-beneficiaire-2'],
+          },
+          'accessToken'
+        )
+      })
+    })
+
+    describe('si l’évènement est un rdv individuel', () => {
+      describe('si le bénéficiaire est présent', () => {
+        it('clôt le rdv', async () => {
+          // Given
+          const idsJeunes = ['id-beneficiaire-1']
+
+          // When
+          await cloreEvenement('id-rdv', 'AUTRE', idsJeunes)
+
+          // Then
+          expect(apiPost).toHaveBeenCalledWith(
+            '/rendezvous/id-rdv/cloturer',
+            {
+              present: true,
+            },
+            'accessToken'
+          )
+        })
+      })
+
+      describe('si le bénéficiaire est absent', () => {
+        it('clôt le rdv', async () => {
+          // Given
+          const idsJeunes: string[] = []
+
+          // When
+          await cloreEvenement('id-rdv', 'AUTRE', idsJeunes)
+
+          // Then
+          expect(apiPost).toHaveBeenCalledWith(
+            '/rendezvous/id-rdv/cloturer',
+            {
+              present: false,
+            },
+            'accessToken'
+          )
+        })
+      })
     })
   })
 })

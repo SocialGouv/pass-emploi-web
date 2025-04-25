@@ -9,7 +9,7 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
-  StatutAnimationCollective,
+  StatutEvenement,
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
@@ -18,6 +18,7 @@ import {
 } from 'interfaces/json/session'
 import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
+import { filtrerUndefinedNullEtChaineVide } from 'utils/helpers'
 
 type Auteur = { id: string; nom: string; prenom: string }
 
@@ -37,24 +38,21 @@ export type EvenementJson = {
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
-  statut?: StatutAnimationCollectiveJson
+  statut: StatutEvenementJson
   source?: string
   futPresent?: boolean
   nombreMaxParticipants?: number
 }
 
-export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
+export type EvenementJeuneJson = Omit<EvenementJson, 'statut' | 'jeunes'> & {
   futPresent?: boolean
 }
 
 export type AnimationCollectiveJson = EvenementJson & {
-  statut: StatutAnimationCollectiveJson
+  statut: StatutEvenementJson
 }
 
-export type StatutAnimationCollectiveJson =
-  | 'A_VENIR'
-  | 'A_CLOTURER'
-  | 'CLOTUREE'
+export type StatutEvenementJson = 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 
 export type EvenementFormData = {
   date: string
@@ -83,21 +81,18 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
-    historique: [],
+    historique: (json.historique || []).map(jsonToHistorique),
+    modality: json.modality,
+    commentaire: json.comment,
+    precisionType: json.precision,
+    adresse: json.adresse,
+    organisme: json.organisme,
+    statut: jsonToStatutEvenement(json.statut),
+    source: json.source,
+    nombreMaxParticipants: json.nombreMaxParticipants,
   }
-  if (json.modality) evenement.modality = json.modality
-  if (json.comment) evenement.commentaire = json.comment
-  if (json.precision) evenement.precisionType = json.precision
-  if (json.adresse) evenement.adresse = json.adresse
-  if (json.organisme) evenement.organisme = json.organisme
-  if (json.historique) evenement.historique = jsonToHistorique(json.historique)
-  if (json.statut)
-    evenement.statut = jsonToStatutAnimationCollective(json.statut)
-  if (json.source) evenement.source = json.source
-  if (json.nombreMaxParticipants)
-    evenement.nombreMaxParticipants = json.nombreMaxParticipants
 
-  return evenement
+  return filtrerUndefinedNullEtChaineVide<Evenement>(evenement) as Evenement
 }
 
 export function jsonToListItem(
@@ -148,7 +143,7 @@ export function jsonToAnimationCollective(
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
-    statut: jsonToStatutAnimationCollective(json.statut),
+    statut: jsonToStatutEvenement(json.statut),
     nombreParticipants: json.jeunes.length,
     etatVisibilite: 'visible',
   }
@@ -199,22 +194,22 @@ function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {
   return jsonType.label
 }
 
-function jsonToStatutAnimationCollective(
-  jsonStatus: StatutAnimationCollectiveJson
-): StatutAnimationCollective {
+function jsonToStatutEvenement(
+  jsonStatus: StatutEvenementJson
+): StatutEvenement {
   switch (jsonStatus) {
     case 'A_VENIR':
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
     case 'A_CLOTURER':
-      return StatutAnimationCollective.AClore
+      return StatutEvenement.AClore
     case 'CLOTUREE':
-      return StatutAnimationCollective.Close
+      return StatutEvenement.Close
 
     default:
       console.warn(
-        `Statut d'animation collective ${jsonStatus} incorrect, traité comme AVenir`
+        `Statut d'évènement ${jsonStatus} incorrect, traité comme AVenir`
       )
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
   }
 }
 
@@ -225,9 +220,9 @@ function jsonToBeneficiaires(
   return 'Bénéficiaires multiples'
 }
 
-function jsonToHistorique(historique: Array<{ date: string; auteur: Auteur }>) {
-  return historique.map(({ date, auteur }) => ({
+function jsonToHistorique({ date, auteur }: { date: string; auteur: Auteur }) {
+  return {
     date,
     auteur: { nom: auteur.nom, prenom: auteur.prenom },
-  }))
+  }
 }
