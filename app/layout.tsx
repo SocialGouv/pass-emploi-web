@@ -52,12 +52,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang='fr' className={marianne.className}>
       <body>
         <ProgressBar />
-
         <Analytics />
         <RealUserMonitoring />
         <WebVitals />
         <DateSettings />
-
         {children}
       </body>
     </html>
