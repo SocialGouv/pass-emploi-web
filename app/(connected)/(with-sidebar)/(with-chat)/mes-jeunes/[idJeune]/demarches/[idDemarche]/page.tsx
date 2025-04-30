@@ -18,8 +18,7 @@ import {
   getJeuneDetails,
 } from 'services/beneficiaires.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
-
-import { toLongMonthDate } from '../../../../../../../../utils/date'
+import { toLongMonthDate } from 'utils/date'
 
 type DetailDemarcheParams = Promise<{ idJeune: string; idDemarche: string }>
 

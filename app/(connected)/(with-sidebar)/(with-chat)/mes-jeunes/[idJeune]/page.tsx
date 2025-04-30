@@ -24,8 +24,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
-
-import { toLongMonthDate } from '../../../../../../utils/date'
+import { toLongMonthDate } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
 type FicheBeneficiaireSearchParams = Promise<{

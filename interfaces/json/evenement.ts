@@ -113,7 +113,9 @@ export function jsonToListItem(
     futPresent: json.futPresent,
     ...parseBeneficiaires(beneficiaires),
   }
-  return evenement
+  return filtrerUndefinedNullEtChaineVide<EvenementListItem>(
+    evenement
+  ) as EvenementListItem
 }
 
 function parseBeneficiaires(
@@ -146,12 +148,12 @@ export function jsonToAnimationCollective(
     statut: jsonToStatutEvenement(json.statut),
     nombreParticipants: json.jeunes.length,
     etatVisibilite: 'visible',
+    nombreMaxParticipants: json.nombreMaxParticipants,
   }
 
-  if (json.nombreMaxParticipants)
-    animationCollective.nombreMaxParticipants = json.nombreMaxParticipants
-
-  return animationCollective
+  return filtrerUndefinedNullEtChaineVide<AnimationCollective>(
+    animationCollective
+  ) as AnimationCollective
 }
 
 export function sessionMiloJsonToEvenementListItem(
@@ -178,13 +180,14 @@ export function sessionMiloJsonToEvenementListItem(
     isSession: true,
     beneficiaires: beneficiairesSession,
     titre: json.nomSession,
+    nombreMaxParticipants: json.nbPlacesRestantes
+      ? json.beneficiaires.length + (json.nbPlacesRestantes ?? 0)
+      : undefined,
   }
 
-  if (json.nbPlacesRestantes)
-    evenement.nombreMaxParticipants =
-      json.beneficiaires.length + json.nbPlacesRestantes
-
-  return evenement
+  return filtrerUndefinedNullEtChaineVide<EvenementListItem>(
+    evenement
+  ) as EvenementListItem
 }
 
 function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {

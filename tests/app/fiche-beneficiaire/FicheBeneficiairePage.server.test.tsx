@@ -24,8 +24,7 @@ import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
-
-import { toLongMonthDate } from '../../../utils/date'
+import { toLongMonthDate } from 'utils/date'
 
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock(
