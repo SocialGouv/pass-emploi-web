@@ -19,6 +19,8 @@ import {
 } from 'services/beneficiaires.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
+import { toLongMonthDate } from '../../../../../../../../utils/date'
+
 type DetailDemarcheParams = Promise<{ idJeune: string; idDemarche: string }>
 
 export async function generateMetadata({
@@ -61,11 +63,17 @@ async function getDemarcheProps(
   if (!estConseilDepartemental(user.structure)) notFound()
 
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+  const aujourdhui = DateTime.now()
+  const periode = {
+    debut: trenteJoursAvant,
+    fin: aujourdhui,
+    label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
+  }
   const { idJeune, idDemarche } = await params
 
   const demarches = await getDemarchesBeneficiaire(
     idJeune,
-    trenteJoursAvant,
+    periode,
     user.id,
     accessToken
   )

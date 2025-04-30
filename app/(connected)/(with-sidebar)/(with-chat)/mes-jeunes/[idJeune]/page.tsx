@@ -25,6 +25,8 @@ import {
 import { getConseillerServerSide } from 'services/conseiller.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
+import { toLongMonthDate } from '../../../../../../utils/date'
+
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
 type FicheBeneficiaireSearchParams = Promise<{
   onglet?: string
@@ -156,6 +158,7 @@ async function renderFichePasMilo(
   const periode = {
     debut: trenteJoursAvant,
     fin: aujourdhui,
+    label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
   }
   const demarches = estConseilDepartemental(conseiller.structure)
     ? await getDemarchesBeneficiaire(

@@ -25,6 +25,8 @@ import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
+import { toLongMonthDate } from '../../../utils/date'
+
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
@@ -208,9 +210,12 @@ describe('FicheBeneficiairePage server side', () => {
           structure: 'CONSEIL_DEPT',
         })
       )
+      const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+      const aujourdhui = DateTime.now()
       const periode = {
-        debut: DateTime.now().minus({ day: 30 }).startOf('day'),
-        fin: DateTime.now(),
+        debut: trenteJoursAvant,
+        fin: aujourdhui,
+        label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
       }
 
       // When
