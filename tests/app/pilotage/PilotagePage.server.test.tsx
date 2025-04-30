@@ -103,7 +103,7 @@ describe('PilotagePage server side', () => {
         'accessToken'
       )
       expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
-        'id-etablissement',
+        'id-conseiller-1',
         'accessToken'
       )
       expect(getSessionsACloreServerSide).toHaveBeenCalledWith(

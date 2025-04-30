@@ -292,13 +292,13 @@ describe('EvenementsApiService', () => {
 
       // WHEN
       const actual = await getAnimationsCollectivesACloreClientSide(
-        'id-etablissement',
-        2
+        'id-conseiller',
+        1
       )
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
+        '/conseillers/id-conseiller/rendezvous/a-clore?page=1',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -320,13 +320,13 @@ describe('EvenementsApiService', () => {
 
       // WHEN
       const actual = await getAnimationsCollectivesACloreServerSide(
-        'id-etablissement',
+        'id-conseiller',
         'accessToken'
       )
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
+        '/conseillers/id-conseiller/rendezvous/a-clore?page=1',
         'accessToken'
       )
       expect(actual).toStrictEqual({

@@ -73,7 +73,7 @@ export async function getRendezVousEtablissement(
 }
 
 export async function getAnimationsCollectivesACloreClientSide(
-  idEtablissement: string,
+  idConseiller: string,
   page: number
 ): Promise<{
   animationsCollectives: AnimationCollectivePilotage[]
@@ -82,20 +82,20 @@ export async function getAnimationsCollectivesACloreClientSide(
   const session = await getSession()
 
   return getAnimationsCollectivesAClore(
-    idEtablissement,
+    idConseiller,
     page,
     session!.accessToken
   )
 }
 
 export async function getAnimationsCollectivesACloreServerSide(
-  idEtablissement: string,
+  idConseiller: string,
   accessToken: string
 ): Promise<{
   animationsCollectives: AnimationCollectivePilotage[]
   metadonnees: MetadonneesPagination
 }> {
-  return getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
+  return getAnimationsCollectivesAClore(idConseiller, 1, accessToken)
 }
 
 export async function getDetailsEvenement(
@@ -188,7 +188,7 @@ async function cloreRdvIndividuel(
 }
 
 async function getAnimationsCollectivesAClore(
-  idEtablissement: string,
+  idConseiller: string,
   page: number,
   accessToken: string
 ): Promise<{
@@ -201,7 +201,7 @@ async function getAnimationsCollectivesAClore(
     pagination: { total: number; limit: number }
     resultats: AnimationCollectivePilotage[]
   }>(
-    `/v2/etablissements/${idEtablissement}/animations-collectives?aClore=true&page=${page}`,
+    `/conseillers/${idConseiller}/rendezvous/a-clore?page=${page}`,
     accessToken
   )
 

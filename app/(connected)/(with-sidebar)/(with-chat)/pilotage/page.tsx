@@ -53,7 +53,7 @@ export default async function Pilotage({
 
   if (conseiller.agence?.id) {
     evenements = await getAnimationsCollectivesACloreServerSide(
-      conseiller.agence.id,
+      conseiller.id,
       accessToken
     )
   }

@@ -131,7 +131,7 @@ function PilotagePage({
     metadonnees: MetadonneesPagination
   }> {
     const result = await getAnimationsCollectivesACloreClientSide(
-      conseiller.agence!.id!,
+      conseiller.id,
       page
     )
 
@@ -165,7 +165,7 @@ function PilotagePage({
 
   useEffect(() => {
     if (conseiller.agence?.id && !animationsCollectivesAffichees) {
-      getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1).then(
+      getAnimationsCollectivesACloreClientSide(conseiller.id, 1).then(
         (result) => {
           setAnimationsCollectivesAffichees({
             donnees: result.animationsCollectives,

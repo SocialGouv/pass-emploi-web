@@ -156,7 +156,7 @@ describe('PilotagePage client side - Animations collectives', () => {
 
       // Then
       expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-        'id-test',
+        'id-conseiller-1',
         2
       )
       expect(screen.getByText('Animation page 2')).toBeInTheDocument()
