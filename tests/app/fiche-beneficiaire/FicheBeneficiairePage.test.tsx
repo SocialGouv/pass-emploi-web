@@ -2,6 +2,7 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction } from 'react'
 
@@ -24,6 +25,8 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import {
+  getDemarchesBeneficiaire,
+  getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
   modifierDispositif,
 } from 'services/beneficiaires.service'
@@ -350,6 +353,12 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers départementaux', () => {
+    beforeEach(() => {
+      ;(getDemarchesBeneficiaireClientSide as jest.Mock).mockResolvedValue({
+        data: uneListeDeDemarches(),
+        isState: false,
+      })
+    })
     it('affiche le tableau des démarches', async () => {
       // When
       await renderFicheJeuneNonMilo({

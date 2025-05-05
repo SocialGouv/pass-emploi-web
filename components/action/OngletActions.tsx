@@ -26,7 +26,7 @@ interface OngletActionsProps {
   shouldFocus: boolean
   onLienExterne: (label: string) => void
   semaine: Periode
-  labelSemaine?: string
+  labelSemaine: string
 }
 
 export default function OngletActions({
@@ -142,7 +142,7 @@ export default function OngletActions({
           categories={categories}
           actions={actions}
           shouldFocus={shouldFocus}
-          labelSemaine={labelSemaine!}
+          labelSemaine={labelSemaine}
           avecQualification={
             estCEJ(beneficiaire)
               ? {

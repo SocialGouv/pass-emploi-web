@@ -24,6 +24,7 @@ import {
 } from 'services/beneficiaires.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
+import { toLongMonthDate } from 'utils/date'
 
 type FicheBeneficiaireParams = Promise<{ idJeune: string }>
 type FicheBeneficiaireSearchParams = Promise<{
@@ -152,10 +153,16 @@ async function renderFichePasMilo(
   >
 ): Promise<ReactElement> {
   const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+  const aujourdhui = DateTime.now()
+  const periode = {
+    debut: trenteJoursAvant,
+    fin: aujourdhui,
+    label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
+  }
   const demarches = estConseilDepartemental(conseiller.structure)
     ? await getDemarchesBeneficiaire(
         props.beneficiaire.id,
-        trenteJoursAvant,
+        periode,
         conseiller.id,
         accessToken
       )

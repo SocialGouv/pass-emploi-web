@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon'
 
-import { EntreeAgenda } from 'interfaces/agenda'
 import {
   getNomBeneficiaireComplet,
   IdentiteBeneficiaire,
@@ -17,7 +16,7 @@ import {
   SessionMiloBeneficiairesJson,
 } from 'interfaces/json/session'
 import { structureMilo } from 'interfaces/structure'
-import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
+import { minutesEntreDeuxDates } from 'utils/date'
 import { filtrerUndefinedNullEtChaineVide } from 'utils/helpers'
 
 type Auteur = { id: string; nom: string; prenom: string }
@@ -98,6 +97,9 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
 export function jsonToListItem(
   json: EvenementJson | EvenementJeuneJson
 ): EvenementListItem {
+  const beneficiaires =
+    typeof json === 'object' && 'jeunes' in json ? json.jeunes : undefined
+
   const evenement: EvenementListItem = {
     id: json.id,
     type: json.type.label,
@@ -106,32 +108,32 @@ export function jsonToListItem(
     createur: json.createur,
     source: json.source,
     titre: json.title,
+    nombreMaxParticipants: json.nombreMaxParticipants,
+    modality: json.modality,
+    futPresent: json.futPresent,
+    ...parseBeneficiaires(beneficiaires),
   }
-  if (json.nombreMaxParticipants)
-    evenement.nombreMaxParticipants = json.nombreMaxParticipants
-  if (json.modality) evenement.modality = json.modality
-  if (json.futPresent !== undefined) evenement.futPresent = json.futPresent
-  if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
-    evenement.labelBeneficiaires = jsonToBeneficiaires(
-      (json as EvenementJson).jeunes
-    )
-    evenement.beneficiaires = (json as EvenementJson).jeunes
-  }
-
-  return evenement
+  return filtrerUndefinedNullEtChaineVide<EvenementListItem>(
+    evenement
+  ) as EvenementListItem
 }
 
-export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
-  const date = DateTime.fromISO(rdv.date)
-  const titre = `${toFrenchTime(date)} - ${rdv.title}`
-
-  return {
-    id: rdv.id,
-    date,
-    type: 'evenement',
-    titre,
-    source: rdv.source,
-  }
+function parseBeneficiaires(
+  beneficiaires:
+    | Array<IdentiteBeneficiaire & { futPresent?: boolean }>
+    | undefined
+): {
+  labelBeneficiaires: string | undefined
+  beneficiaires:
+    | Array<IdentiteBeneficiaire & { futPresent?: boolean }>
+    | undefined
+} {
+  return beneficiaires
+    ? {
+        labelBeneficiaires: jsonToBeneficiaires(beneficiaires),
+        beneficiaires: beneficiaires,
+      }
+    : { labelBeneficiaires: undefined, beneficiaires: undefined }
 }
 
 export function jsonToAnimationCollective(
@@ -146,12 +148,12 @@ export function jsonToAnimationCollective(
     statut: jsonToStatutEvenement(json.statut),
     nombreParticipants: json.jeunes.length,
     etatVisibilite: 'visible',
+    nombreMaxParticipants: json.nombreMaxParticipants,
   }
 
-  if (json.nombreMaxParticipants)
-    animationCollective.nombreMaxParticipants = json.nombreMaxParticipants
-
-  return animationCollective
+  return filtrerUndefinedNullEtChaineVide<AnimationCollective>(
+    animationCollective
+  ) as AnimationCollective
 }
 
 export function sessionMiloJsonToEvenementListItem(
@@ -178,13 +180,14 @@ export function sessionMiloJsonToEvenementListItem(
     isSession: true,
     beneficiaires: beneficiairesSession,
     titre: json.nomSession,
+    nombreMaxParticipants: json.nbPlacesRestantes
+      ? json.beneficiaires.length + (json.nbPlacesRestantes ?? 0)
+      : undefined,
   }
 
-  if (json.nbPlacesRestantes)
-    evenement.nombreMaxParticipants =
-      json.beneficiaires.length + json.nbPlacesRestantes
-
-  return evenement
+  return filtrerUndefinedNullEtChaineVide<EvenementListItem>(
+    evenement
+  ) as EvenementListItem
 }
 
 function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {

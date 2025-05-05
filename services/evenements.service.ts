@@ -7,7 +7,6 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
-  isCodeTypeAnimationCollective,
 } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
@@ -156,35 +155,22 @@ export async function supprimerEvenement(idRendezVous: string): Promise<void> {
 
 export async function cloreEvenement(
   idEvenement: string,
-  codeEvenement: string,
   idsBeneficiaires: string[]
 ): Promise<void> {
-  if (isCodeTypeAnimationCollective(codeEvenement)) {
-    return cloreAnimationCollective(idEvenement, idsBeneficiaires)
-  }
-  return cloreRdvIndividuel(idEvenement, idsBeneficiaires.length === 1)
+  return cloreRdvDuCEJ(idEvenement, idsBeneficiaires)
 }
 
-async function cloreAnimationCollective(
-  idAnimationCollective: string,
-  idsJeunes: string[]
+async function cloreRdvDuCEJ(
+  idEvenement: string,
+  idsJeunesPresents: string[]
 ): Promise<void> {
   const session = await getSession()
-  const payload = { idsJeunes }
+  const payload = { idsJeunesPresents }
   await apiPost(
-    `/structures-milo/animations-collectives/${idAnimationCollective}/cloturer`,
+    `/rendezvous/${idEvenement}/cloturer`,
     payload,
     session!.accessToken
   )
-}
-
-async function cloreRdvIndividuel(
-  idRdv: string,
-  present: boolean
-): Promise<void> {
-  const session = await getSession()
-  const payload = { present }
-  await apiPost(`/rendezvous/${idRdv}/cloturer`, payload, session!.accessToken)
 }
 
 async function getAnimationsCollectivesAClore(
