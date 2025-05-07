@@ -17,6 +17,9 @@ import { Periode } from 'types/dates'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { getPeriodeComprenant, LUNDI } from 'utils/date'
 
+import EmptyState from '../EmptyState'
+import { IllustrationName } from '../ui/IllustrationComponent'
+
 const TableauOffres = dynamic(
   () => import('components/favoris/offres/TableauOffres')
 )
@@ -48,6 +51,8 @@ export default function OngletsBeneficiairePasMilo({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [demarches, setDemarches] = useState<Demarche[] | undefined>(undefined)
 
+  const trenteJoursAvant = DateTime.now().minus({ days: 30 })
+
   const debutPeriodeInitiale = debutSemaineInitiale
     ? DateTime.fromISO(debutSemaineInitiale)
     : DateTime.now().startOf('week')
@@ -65,6 +70,10 @@ export default function OngletsBeneficiairePasMilo({
     })
   )
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
+  const [
+    periodePermetDAfficherLesDemarches,
+    setPeriodePermetDAfficherLesDemarches,
+  ] = useState<boolean>(true)
 
   async function chargerNouvelleSemaine(
     nouvellePeriode: Periode,
@@ -81,6 +90,7 @@ export default function OngletsBeneficiairePasMilo({
   }
 
   useEffect(() => {
+    setPeriodePermetDAfficherLesDemarches(semaine.fin >= trenteJoursAvant)
     if (conseillerEstCD) {
       setIsLoading(true)
 
@@ -143,7 +153,7 @@ export default function OngletsBeneficiairePasMilo({
         {conseillerEstCD && (
           <Tab
             label='Démarches'
-            count={demarches?.length}
+            count={periodePermetDAfficherLesDemarches ? demarches?.length : 0}
             selected={currentTab === 'demarches'}
             controls='liste-demarches'
             onSelectTab={() => switchTab('demarches')}
@@ -174,19 +184,33 @@ export default function OngletsBeneficiairePasMilo({
       </TabList>
 
       {currentTab === 'demarches' && demarches !== undefined && semaine && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-demarches--tab'
-          tabIndex={0}
-          id='liste-demarches'
-          className='mt-8 pb-8'
-        >
-          <OngletDemarches
-            beneficiaire={beneficiaire}
-            demarches={demarches}
-            isLoading={isLoading}
-          />
-        </div>
+        <>
+          {periodePermetDAfficherLesDemarches && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-demarches--tab'
+              tabIndex={0}
+              id='liste-demarches'
+              className='mt-8 pb-8'
+            >
+              <OngletDemarches
+                beneficiaire={beneficiaire}
+                demarches={demarches}
+                isLoading={isLoading}
+              />
+            </div>
+          )}
+
+          {!periodePermetDAfficherLesDemarches && (
+            <div className='flex flex-col justify-center items-center'>
+              <EmptyState
+                illustrationName={IllustrationName.Checklist}
+                titre='Suivi des démarches'
+                sousTitre='Vous ne pouvez consulter que les démarches créées par le bénéficiaire dans les 30 jours suivant sa date de création. '
+              />
+            </div>
+          )}
+        </>
       )}
 
       {currentTab === 'offres' && semaine && (
