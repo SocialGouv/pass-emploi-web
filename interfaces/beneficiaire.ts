@@ -140,6 +140,11 @@ export type Demarche = {
   sousTitre?: string
 }
 
+export type CompteurHeuresPortefeuille = {
+  idBeneficiaire: string
+  nbHeuresDeclarees: number
+}
+
 export function estCEJ({ dispositif }: { dispositif: string }): boolean {
   return dispositif === 'CEJ'
 }
