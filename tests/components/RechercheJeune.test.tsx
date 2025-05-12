@@ -8,6 +8,7 @@ import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/messages.service')
+jest.mock('services/beneficiaires.service')
 
 describe('Recherche', () => {
   beforeEach(async () => {

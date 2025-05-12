@@ -38,8 +38,9 @@ jest.mock('services/favoris.service')
 jest.mock('services/conseiller.service')
 
 describe('FicheBeneficiairePage server side', () => {
+  const now = DateTime.now()
   const rdvAVenir = unEvenementListItem({
-    date: DateTime.now().plus({ day: 1 }).toISO(),
+    date: now.plus({ day: 1 }).toISO(),
   })
   const sessionAVenir = {
     id: '1',
@@ -53,6 +54,7 @@ describe('FicheBeneficiairePage server side', () => {
   }
 
   beforeEach(() => {
+    jest.spyOn(DateTime, 'now').mockReturnValue(now)
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
       unDetailBeneficiaire({ structureMilo: { id: 'id-test' } })
     )
