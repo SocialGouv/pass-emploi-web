@@ -407,7 +407,7 @@ describe('EvenementsApiService', () => {
 
         // Then
         expect(apiPost).toHaveBeenCalledWith(
-          '/rendezvous/id-rdv/cloturer',
+          '/rendezvous/id-rdv/clore',
           {
             idsJeunesPresents: ['id-beneficiaire-1', 'id-beneficiaire-2'],
           },
@@ -427,7 +427,7 @@ describe('EvenementsApiService', () => {
 
           // Then
           expect(apiPost).toHaveBeenCalledWith(
-            '/rendezvous/id-rdv/cloturer',
+            '/rendezvous/id-rdv/clore',
             {
               idsJeunesPresents,
             },
@@ -446,7 +446,7 @@ describe('EvenementsApiService', () => {
 
           // Then
           expect(apiPost).toHaveBeenCalledWith(
-            '/rendezvous/id-rdv/cloturer',
+            '/rendezvous/id-rdv/clore',
             {
               idsJeunesPresents,
             },
