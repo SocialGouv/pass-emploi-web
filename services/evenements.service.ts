@@ -167,7 +167,7 @@ async function cloreRdvDuCEJ(
   const session = await getSession()
   const payload = { idsJeunesPresents }
   await apiPost(
-    `/rendezvous/${idEvenement}/cloturer`,
+    `/rendezvous/${idEvenement}/clore`,
     payload,
     session!.accessToken
   )
