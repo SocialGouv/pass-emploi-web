@@ -17,6 +17,7 @@ import { Conseiller } from 'interfaces/conseiller'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import {
+  getComptageHeuresFicheBeneficiaire,
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
   getJeuneDetails,
@@ -125,16 +126,30 @@ async function renderFicheMilo(
     | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
-  const categoriesActions = await getSituationsNonProfessionnelles(
-    { avecNonSNP: false },
-    accessToken
-  )
+  const aujourdHui = DateTime.now()
+  const debut = aujourdHui.startOf('week')
+  const fin = aujourdHui.endOf('week')
+  const periode = {
+    debut,
+    fin,
+    label: `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`,
+  }
+
+  const [categoriesActions, comptageHeures] = await Promise.all([
+    getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+    getComptageHeuresFicheBeneficiaire(
+      props.beneficiaire.id,
+      periode,
+      accessToken
+    ),
+  ])
 
   return (
     <FicheBeneficiairePage
       {...props}
       estMilo={true}
       categoriesActions={categoriesActions}
+      comptageHeures={comptageHeures}
     />
   )
 }
