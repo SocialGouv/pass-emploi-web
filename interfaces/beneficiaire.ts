@@ -128,6 +128,10 @@ export type IndicateursSemaine = {
     sauvegardees: number
     postulees: number
   }
+  heures?: {
+    declarees: number
+    validees: number
+  }
 }
 
 export type Demarche = {
@@ -143,6 +147,12 @@ export type Demarche = {
 export type CompteurHeuresPortefeuille = {
   idBeneficiaire: string
   nbHeuresDeclarees: number
+}
+
+export type CompteurHeuresFicheBeneficiaire = {
+  nbHeuresDeclarees: number
+  nbHeuresValidees: number
+  dateDerniereMiseAJour: string
 }
 
 export function estCEJ({ dispositif }: { dispositif: string }): boolean {

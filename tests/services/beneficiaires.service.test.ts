@@ -31,6 +31,7 @@ import {
   getBeneficiairesDeLEtablissementClientSide,
   getBeneficiairesDuConseillerClientSide,
   getBeneficiairesDuConseillerServerSide,
+  getComptageHeuresFicheBeneficiaire,
   getComptageHeuresPortefeuille,
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
@@ -723,6 +724,47 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual({
         dateDerniereMiseAJour,
         comptages,
+      })
+    })
+  })
+
+  describe('.getComptageHeuresFicheBeneficiaire', () => {
+    it('renvoie le comptage des heures pour la fiche bénéficiaire', async () => {
+      // Given
+      const idBeneficiaire = 'id-beneficiaire-1'
+      const nbHeuresDeclarees = 10
+      const nbHeuresValidees = 12
+      const periode = {
+        debut: DateTime.fromISO('2025-04-10'),
+        fin: DateTime.fromISO('2025-04-16'),
+        label: 'periode du 10 au 16 avril',
+      }
+      const dateDerniereMiseAJour = '2025-04-12'
+      const accessToken = 'accessToken'
+
+      const dateDebut = periode.debut.toFormat('yyyy-MM-dd')
+      const dateFin = periode.fin.toFormat('yyyy-MM-dd')
+
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: { dateDerniereMiseAJour, nbHeuresDeclarees, nbHeuresValidees },
+      })
+
+      // When
+      const actual = await getComptageHeuresFicheBeneficiaire(
+        idBeneficiaire,
+        periode,
+        accessToken
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        `/jeunes/${idBeneficiaire}/comptage?dateDebut=${dateDebut}&dateFin=${dateFin}`,
+        'accessToken'
+      )
+      expect(actual).toEqual({
+        dateDerniereMiseAJour,
+        nbHeuresDeclarees,
+        nbHeuresValidees,
       })
     })
   })

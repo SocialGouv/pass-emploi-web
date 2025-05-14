@@ -2,7 +2,6 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
-import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction } from 'react'
 
@@ -20,12 +19,12 @@ import { uneListeDOffres } from 'fixtures/favoris'
 import {
   BeneficiaireEtChat,
   CategorieSituation,
+  CompteurHeuresFicheBeneficiaire,
   Demarche,
 } from 'interfaces/beneficiaire'
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import {
-  getDemarchesBeneficiaire,
   getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
   modifierDispositif,
@@ -160,6 +159,28 @@ describe('FicheBeneficiairePage client side', () => {
       expect(getByDescriptionTerm('Situation')).toHaveTextContent(
         'Contrat de volontariat - bénévolat'
       )
+    })
+
+    it('affiche le nombre d’heures déclarées et validées', async () => {
+      // When
+      await renderFicheJeuneMilo({
+        comptageHeures: {
+          nbHeuresDeclarees: 1,
+          nbHeuresValidees: 12,
+          dateDerniereMiseAJour: '2025-05-15',
+        },
+      })
+
+      // Then
+      expect(
+        screen.getByText('Dernière mise à jour le 15/05/2025 à 00:00')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('progressbar', { name: '1h déclarée' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('progressbar', { name: '12h validées' })
+      ).toBeInTheDocument()
     })
 
     it('affiche le dispositif du bénéficiaire', async () => {
@@ -427,10 +448,12 @@ async function renderFicheJeuneMilo({
   lastActivity,
   structureDifferente,
   situation,
+  comptageHeures,
 }: {
   lastActivity?: string
   structureDifferente?: boolean
   situation?: CategorieSituation
+  comptageHeures?: CompteurHeuresFicheBeneficiaire
 } = {}): Promise<HTMLElement> {
   const beneficiaire = unDetailBeneficiaire({
     lastActivity,
@@ -443,6 +466,7 @@ async function renderFicheJeuneMilo({
       beneficiaire={beneficiaire}
       historiqueConseillers={[]}
       rdvs={[]}
+      comptageHeures={comptageHeures ?? null}
       categoriesActions={desCategories()}
       ongletInitial='actions'
     />,
