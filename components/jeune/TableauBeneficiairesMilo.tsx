@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { ProgressComptageHeure } from 'components/ui/Indicateurs/ProgressComptageHeure'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TH from 'components/ui/Table/TH'
@@ -17,8 +18,6 @@ import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime } from 'utils/date'
-
-import { CompteurHeuresBeneficiairePortefeuille } from './CompteurHeuresBeneficiairePortefeuille'
 
 interface TableauBeneficiairesMiloProps {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
@@ -37,9 +36,8 @@ export default function TableauBeneficiairesMilo({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const [comptagesHeures, setComptagesHeures] = useState<
-    Array<CompteurHeuresPortefeuille>
-  >([])
+  const [comptagesHeures, setComptagesHeures] =
+    useState<Array<CompteurHeuresPortefeuille> | null>(null)
 
   const comptageHeuresColumn = 'Nombre d’heures déclarées'
   const actionsColumn = 'Actions créées'
@@ -51,7 +49,7 @@ export default function TableauBeneficiairesMilo({
   }
 
   function getHeuresCalculeesParBeneficiaire(idBeneficiaire: string) {
-    const compteurHeures = comptagesHeures.find(
+    const compteurHeures = comptagesHeures?.find(
       (compteur) => compteur.idBeneficiaire === idBeneficiaire
     )
     return compteurHeures?.nbHeuresDeclarees ?? 0
@@ -63,7 +61,7 @@ export default function TableauBeneficiairesMilo({
 
   useEffect(() => {
     recupererHeuresDeclarees().then((nouveauComptage) => {
-      setComptagesHeures(nouveauComptage?.comptages ?? [])
+      setComptagesHeures(nouveauComptage?.comptages ?? null)
     })
   }, [])
 
@@ -144,16 +142,16 @@ export default function TableauBeneficiairesMilo({
 
               <TD className='relative h-full p-2! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
                 {estCEJ(beneficiaire) && comptagesHeures && (
-                  <CompteurHeuresBeneficiairePortefeuille
-                    value={getHeuresCalculeesParBeneficiaire(beneficiaire.id)}
+                  <ProgressComptageHeure
+                    heures={getHeuresCalculeesParBeneficiaire(beneficiaire.id)}
+                    label='déclarée'
                   />
                 )}
 
                 {estCEJ(beneficiaire) && !comptagesHeures && (
-                  <>
-                    <span aria-hidden={true}>--</span>
-                    <span className='sr-only'>information non disponible</span>
-                  </>
+                  <p className='text-s-regular text-warning'>
+                    Comptage des heures indisponible
+                  </p>
                 )}
               </TD>
 

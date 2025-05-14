@@ -2,21 +2,29 @@ import { DateTime } from 'luxon'
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Demarche, IndicateursSemaine } from 'interfaces/beneficiaire'
+import {
+  CompteurHeuresFicheBeneficiaire,
+  Demarche,
+  IndicateursSemaine,
+} from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
+
+import { CompteursHeuresBeneficiaireFicheBeneficiaire } from './CompteursHeuresBeneficiaireFicheBeneficiaire'
 
 type IndicateursBeneficiaireProps = {
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
   demarches?: Demarche[]
+  comptageHeures?: CompteurHeuresFicheBeneficiaire
 }
 export default function IndicateursBeneficiaire({
   debutDeLaSemaine,
   finDeLaSemaine,
+  comptageHeures,
   indicateursSemaine,
   demarches,
 }: IndicateursBeneficiaireProps) {
@@ -71,7 +79,9 @@ export default function IndicateursBeneficiaire({
           {toShortDate(finDeLaSemaine)}
         </span>
       </h2>
-
+      <CompteursHeuresBeneficiaireFicheBeneficiaire
+        comptageHeures={comptageHeures}
+      />
       <ul
         aria-describedby='indicateurs-semaine'
         className={`grid ${withActionsEtRdvs || demarches ? 'grid-rows-3' : 'grid-rows-2'} gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}

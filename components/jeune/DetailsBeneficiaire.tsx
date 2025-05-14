@@ -9,6 +9,7 @@ import IndicateursBeneficiaire from 'components/jeune/IndicateursBeneficiaire'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal' // FIXME should use dynamic(() => import() but issue with jest
 import { ModalHandles } from 'components/ModalContainer'
 import {
+  CompteurHeuresFicheBeneficiaire,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
@@ -29,6 +30,7 @@ interface DetailsBeneficiaireProps {
   historiqueConseillers: ConseillerHistorique[]
   withCreations: boolean
   demarches?: { data: Demarche[] } | null
+  comptageHeures?: CompteurHeuresFicheBeneficiaire
   indicateursSemaine?: IndicateursSemaine
   onSupprimerBeneficiaire?: () => void
   className?: string
@@ -39,6 +41,7 @@ export default function DetailsBeneficiaire({
   historiqueConseillers,
   withCreations,
   demarches,
+  comptageHeures,
   indicateursSemaine,
   onSupprimerBeneficiaire,
   className,
@@ -120,6 +123,7 @@ export default function DetailsBeneficiaire({
           <IndicateursBeneficiaire
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
+            comptageHeures={comptageHeures}
             indicateursSemaine={indicateursSemaine}
             demarches={demarches?.data}
           />

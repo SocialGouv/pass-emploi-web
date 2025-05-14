@@ -110,6 +110,12 @@ export type CompteursHeuresDeclareesPortefeuilleJson = {
   dateDerniereMiseAJour: string
 }
 
+export type CompteurHeuresFicheBeneficiaireJson = {
+  nbHeuresDeclarees: number
+  nbHeuresValidees: number
+  dateDerniereMiseAJour: string
+}
+
 export type DemarcheJson = {
   id: string
   statut: StatutDemarche
