@@ -1,31 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import TableauAnimationsAClore from 'components/pilotage/TableauAnimationsAClore'
+import TableauRdvsEtAnimationsCollectivesAClore from 'components/pilotage/TableauRdvsEtAnimationsCollectivesAClore'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
-import { AnimationCollectivePilotage } from 'interfaces/evenement'
-import { MetadonneesPagination } from 'types/pagination'
+import { RdvEtAnimationCollectivePilotage } from 'interfaces/evenement'
+import { MetadonneesPilotage } from 'types/pagination'
 
-interface OngletAnimationsCollectivesPilotageProps {
-  animationsCollectivesInitiales?: AnimationCollectivePilotage[]
-  metadonneesInitiales?: MetadonneesPagination
-  getAnimationsCollectives: (page: number) => Promise<{
-    animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesPagination
+interface OngletRdvsEtAnimationsCollectivesPilotageProps {
+  rdvsEtAnimationsCollectivesInitiaux?: RdvEtAnimationCollectivePilotage[]
+  metadonneesInitiales?: MetadonneesPilotage
+  getRdvsEtAnimationsCollectives: (page: number) => Promise<{
+    rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
+    metadonnees: MetadonneesPilotage
   }>
 }
 
-export default function OngletAnimationsCollectivesPilotage({
-  animationsCollectivesInitiales,
+export default function OngletRdvsEtAnimationsCollectivesPilotage({
+  rdvsEtAnimationsCollectivesInitiaux,
   metadonneesInitiales,
-  getAnimationsCollectives,
-}: OngletAnimationsCollectivesPilotageProps) {
-  const [animationsCollectives, setAnimationsCollectives] = useState<
-    AnimationCollectivePilotage[] | undefined
-  >(animationsCollectivesInitiales)
+  getRdvsEtAnimationsCollectives,
+}: OngletRdvsEtAnimationsCollectivesPilotageProps) {
+  const [rdvsEtAnimationsCollectives, setRdvsEtAnimationsCollectives] =
+    useState<RdvEtAnimationCollectivePilotage[] | undefined>(
+      rdvsEtAnimationsCollectivesInitiaux
+    )
   const [metadonnees, setMetadonnees] = useState<
-    MetadonneesPagination | undefined
+    MetadonneesPilotage | undefined
   >(metadonneesInitiales)
 
   const [pageCourante, setPageCourante] = useState<number>(1)
@@ -40,8 +41,10 @@ export default function OngletAnimationsCollectivesPilotage({
 
   useEffect(() => {
     if (pageChangee.current) {
-      getAnimationsCollectives(pageCourante).then((update) => {
-        setAnimationsCollectives(update.animationsCollectives)
+      getRdvsEtAnimationsCollectives(pageCourante).then((update) => {
+        setRdvsEtAnimationsCollectives(
+          update.rdvsEtAnimationsCollectivesInitiaux
+        )
         setMetadonnees(update.metadonnees)
         setPageCourante(Math.min(pageCourante, update.metadonnees.nombrePages))
       })
@@ -54,15 +57,15 @@ export default function OngletAnimationsCollectivesPilotage({
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             illustrationName={IllustrationName.Event}
-            titre='Vous n’avez pas d’animation collective à clore.'
+            titre='Vous n’avez pas de rendez-vous ou d’animation collective à clore.'
           />
         </div>
       )}
 
       {metadonnees && metadonnees.nombreTotal > 0 && (
         <>
-          <TableauAnimationsAClore
-            animationsCollectives={animationsCollectives!}
+          <TableauRdvsEtAnimationsCollectivesAClore
+            rdvsEtAnimationsCollectives={rdvsEtAnimationsCollectives!}
           />
           {metadonnees.nombrePages > 1 && (
             <div className='mt-6'>

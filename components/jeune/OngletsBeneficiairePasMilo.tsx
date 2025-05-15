@@ -7,6 +7,7 @@ import {
   OngletPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -18,7 +19,6 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { getPeriodeComprenant, LUNDI } from 'utils/date'
 
 import EmptyState from '../EmptyState'
-import { IllustrationName } from '../ui/IllustrationComponent'
 
 const TableauOffres = dynamic(
   () => import('components/favoris/offres/TableauOffres')

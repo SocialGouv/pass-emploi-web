@@ -5,7 +5,10 @@ import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/page'
 import PilotagePage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
-import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
+import {
+  uneListeDAnimationCollectiveAClore,
+  uneListeDeRendezVousAClore,
+} from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { structureMilo } from 'interfaces/structure'
 import {
@@ -13,7 +16,7 @@ import {
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
+import { getRdvsEtAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
@@ -75,12 +78,15 @@ describe('PilotagePage server side', () => {
         })
       )
       ;(
-        getAnimationsCollectivesACloreServerSide as jest.Mock
+        getRdvsEtAnimationsCollectivesACloreServerSide as jest.Mock
       ).mockResolvedValue({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        rdvsEtAnimationsCollectivesInitiaux: [
+          ...uneListeDAnimationCollectiveAClore(),
+          ...uneListeDeRendezVousAClore(),
+        ],
         metadonnees: {
-          nombreTotal: 5,
-          nombrePages: 1,
+          nombreTotal: 11,
+          nombrePages: 2,
         },
       })
     })
@@ -102,10 +108,9 @@ describe('PilotagePage server side', () => {
         { id: 'conseiller-id', structure: 'MILO' },
         'accessToken'
       )
-      expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
-        'id-etablissement',
-        'accessToken'
-      )
+      expect(
+        getRdvsEtAnimationsCollectivesACloreServerSide
+      ).toHaveBeenCalledWith('id-conseiller-1', 'accessToken')
       expect(getSessionsACloreServerSide).toHaveBeenCalledWith(
         'conseiller-id',
         'accessToken'
@@ -117,9 +122,17 @@ describe('PilotagePage server side', () => {
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
           },
           categoriesActions: desCategories(),
-          animationsCollectives: {
-            donnees: uneListeDAnimationCollectiveAClore(),
-            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          rdvsEtAnimationsCollectivesInitiaux: {
+            donnees: [
+              ...uneListeDAnimationCollectiveAClore(),
+              ...uneListeDeRendezVousAClore(),
+            ],
+            metadonnees: {
+              nombreAC: 5,
+              nombreRdvs: 6,
+              nombreTotal: 11,
+              nombrePages: 2,
+            },
           },
           sessions: uneListeDeSessionsAClore(),
           onglet: 'ACTIONS',
@@ -157,35 +170,18 @@ describe('PilotagePage server side', () => {
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
           },
           categoriesActions: desCategories(),
-          animationsCollectives: undefined,
-          sessions: undefined,
-        },
-        undefined
-      )
-    })
-
-    it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
-      // Given
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(unConseiller())
-
-      // When
-      render(
-        await Pilotage({
-          searchParams: Promise.resolve({ onglet: 'animationsCollectives' }),
-        })
-      )
-
-      // Then
-      expect(getAnimationsCollectivesACloreServerSide).not.toHaveBeenCalled()
-      expect(PilotagePage).toHaveBeenCalledWith(
-        {
-          onglet: 'ANIMATIONS_COLLECTIVES',
-          actions: {
-            donnees: uneListeDActionsAQualifier(),
-            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          rdvsEtAnimationsCollectivesInitiaux: {
+            donnees: [
+              ...uneListeDAnimationCollectiveAClore(),
+              ...uneListeDeRendezVousAClore(),
+            ],
+            metadonnees: {
+              nombreAC: 5,
+              nombreRdvs: 6,
+              nombreTotal: 11,
+              nombrePages: 2,
+            },
           },
-          categoriesActions: desCategories(),
-          animationsCollectives: undefined,
           sessions: undefined,
         },
         undefined

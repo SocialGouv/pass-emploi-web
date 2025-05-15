@@ -50,7 +50,12 @@ describe('PilotagePage client side - Actions', () => {
               dateFinReelle: '2022-12-18',
             },
           ],
-          metadonnees: { nombrePages: 3, nombreTotal: 25 },
+          metadonnees: {
+            nombreAC: 0,
+            nombreRdvs: 0,
+            nombrePages: 3,
+            nombreTotal: 25,
+          },
         })
       )
       ;(qualifierActions as jest.Mock).mockResolvedValue({
@@ -65,9 +70,14 @@ describe('PilotagePage client side - Actions', () => {
             metadonnees: { nombrePages: 3, nombreTotal: 25 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 1,
+              nombreTotal: 0,
+            },
           }}
         />
       ))
@@ -92,7 +102,7 @@ describe('PilotagePage client side - Actions', () => {
         '25 À qualifier'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Actions 25 éléments'
+        'Actions'
       )
     })
 
@@ -632,9 +642,14 @@ describe('PilotagePage client side - Actions', () => {
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 0, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 0,
+              nombreTotal: 0,
+            },
           }}
         />
       )
