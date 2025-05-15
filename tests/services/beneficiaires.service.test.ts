@@ -48,9 +48,8 @@ import {
   rechercheBeneficiairesDeLEtablissement,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
+import { Periode } from 'types/dates'
 import { ApiError } from 'utils/httpClient'
-
-import { Periode } from '../../types/dates'
 
 jest.mock('clients/api.client')
 

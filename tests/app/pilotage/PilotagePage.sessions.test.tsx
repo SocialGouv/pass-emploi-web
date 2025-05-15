@@ -7,10 +7,12 @@ import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/Pilota
 import { desCategories } from 'fixtures/action'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { structureMilo } from 'interfaces/structure'
+import { getRdvsEtAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
 
 describe('PilotagePage client side - Sessions', () => {
@@ -21,6 +23,12 @@ describe('PilotagePage client side - Sessions', () => {
       ;(getSessionsACloreServerSide as jest.Mock).mockImplementation(
         async () => {}
       )
+      ;(
+        getRdvsEtAnimationsCollectivesACloreClientSide as jest.Mock
+      ).mockResolvedValue({
+        rdvsEtAnimationsCollectivesInitiaux: [],
+        metadonnees: { nombrePages: 1, nombreTotal: 0 },
+      })
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
       ;({ container } = await renderWithContexts(
         <Pilotage
@@ -30,9 +38,14 @@ describe('PilotagePage client side - Sessions', () => {
             metadonnees: { nombrePages: 1, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 1,
+              nombreTotal: 0,
+            },
           }}
           sessions={sessions}
         />,
@@ -71,7 +84,7 @@ describe('PilotagePage client side - Sessions', () => {
         '3 À clore'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Sessions i-milo 3 éléments'
+        'Sessions i-milo'
       )
     })
 
@@ -160,9 +173,14 @@ describe('PilotagePage client side - Sessions', () => {
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 0, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 0,
+              nombreTotal: 0,
+            },
           }}
           sessions={[]}
         />,
