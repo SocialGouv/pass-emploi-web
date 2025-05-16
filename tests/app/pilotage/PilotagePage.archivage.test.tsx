@@ -33,9 +33,14 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
             metadonnees: { nombrePages: 1, nombreTotal: 0 },
           }}
           categoriesActions={[]}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 1,
+              nombreTotal: 0,
+            },
           }}
         />,
         {
@@ -79,7 +84,7 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
         '2 À archiver'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Archivage des comptes 2 éléments'
+        'Archivage des comptes'
       )
     })
 
@@ -137,9 +142,14 @@ describe('PilotagePage client side - Archivage des bénéficiaires', () => {
             metadonnees: { nombrePages: 1, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 1, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 0,
+              nombrePages: 1,
+              nombreTotal: 0,
+            },
           }}
         />,
         { customPortefeuille: { value: [] } }

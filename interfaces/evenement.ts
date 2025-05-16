@@ -29,11 +29,12 @@ export type AnimationCollective = {
   nombreMaxParticipants?: number
 }
 
-export type AnimationCollectivePilotage = {
+export type RdvEtAnimationCollectivePilotage = {
   id: string
   titre: string
   date: string
   nombreInscrits: number
+  type: string
 }
 
 type Createur = {

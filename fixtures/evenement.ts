@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import {
   AnimationCollective,
-  AnimationCollectivePilotage,
+  RdvEtAnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
   StatutEvenement,
@@ -169,37 +169,90 @@ export function uneAnimationCollective(
 }
 
 export const uneListeDAnimationCollectiveAClore =
-  (): AnimationCollectivePilotage[] => {
+  (): RdvEtAnimationCollectivePilotage[] => {
     return [
       {
         id: 'id-ac-1',
         titre: 'titre 1',
         date: '2018-11-21T06:20:32.232Z',
         nombreInscrits: 3,
+        type: 'ATELIER',
       },
       {
         id: 'id-ac-2',
         titre: 'titre 2',
         date: '2018-11-22T06:20:32.232Z',
         nombreInscrits: 12,
+        type: 'ATELIER',
       },
       {
         id: 'id-ac-3',
         titre: 'titre 3',
         date: '2018-11-23T06:20:32.232Z',
         nombreInscrits: 5,
+        type: 'ATELIER',
       },
       {
         id: 'id-ac-4',
         titre: 'titre 4',
         date: '2018-11-24T06:20:32.232Z',
         nombreInscrits: 7,
+        type: 'ATELIER',
       },
       {
         id: 'id-ac-5',
         titre: 'titre 5',
         date: '2018-11-25T06:20:32.232Z',
         nombreInscrits: 9,
+        type: 'ATELIER',
+      },
+    ]
+  }
+
+export const uneListeDeRendezVousAClore =
+  (): RdvEtAnimationCollectivePilotage[] => {
+    return [
+      {
+        id: 'id-rdv-1',
+        titre: 'titre rdv 1',
+        date: '2018-11-20T06:20:32.232Z',
+        nombreInscrits: 2,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      },
+      {
+        id: 'id-rdv-2',
+        titre: 'titre rdv 2',
+        date: '2018-11-26T06:20:32.232Z',
+        nombreInscrits: 1,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      },
+      {
+        id: 'id-rdv-3',
+        titre: 'titre rdv 3',
+        date: '2018-11-27T06:20:32.232Z',
+        nombreInscrits: 8,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      },
+      {
+        id: 'id-rdv-4',
+        titre: 'titre rdv 4',
+        date: '2018-11-28T06:20:32.232Z',
+        nombreInscrits: 10,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      },
+      {
+        id: 'id-rdv-5',
+        titre: 'titre rdv 5',
+        date: '2018-11-29T06:20:32.232Z',
+        nombreInscrits: 4,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      },
+      {
+        id: 'id-rdv-6',
+        titre: 'titre rdv 6',
+        date: '2018-11-30T06:20:32.232Z',
+        nombreInscrits: 15,
+        type: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
       },
     ]
   }

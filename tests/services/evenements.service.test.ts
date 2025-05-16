@@ -19,8 +19,8 @@ import { modalites } from 'referentiel/evenement'
 import {
   cloreEvenement,
   creerEvenement,
-  getAnimationsCollectivesACloreClientSide,
-  getAnimationsCollectivesACloreServerSide,
+  getRdvsEtAnimationsCollectivesACloreClientSide,
+  getRdvsEtAnimationsCollectivesACloreServerSide,
   getDetailsEvenement,
   getRendezVousConseiller,
   getRendezVousEtablissement,
@@ -291,18 +291,19 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual = await getAnimationsCollectivesACloreClientSide(
+      const actual = await getRdvsEtAnimationsCollectivesACloreClientSide(
         'id-etablissement',
         2
       )
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
+        '/conseillers/id-etablissement/rendezvous/a-clore?page=2',
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        rdvsEtAnimationsCollectivesInitiaux:
+          uneListeDAnimationCollectiveAClore(),
         metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
@@ -319,18 +320,19 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual = await getAnimationsCollectivesACloreServerSide(
+      const actual = await getRdvsEtAnimationsCollectivesACloreServerSide(
         'id-etablissement',
         'accessToken'
       )
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
+        '/conseillers/id-etablissement/rendezvous/a-clore?page=1',
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        rdvsEtAnimationsCollectivesInitiaux:
+          uneListeDAnimationCollectiveAClore(),
         metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
