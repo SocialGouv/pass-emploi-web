@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/CloturePage'
 import Cloture from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[idEvenement]/cloture/page'
 import { unEvenement } from 'fixtures/evenement'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import { structureFTCej } from 'interfaces/structure'
 import { getDetailsEvenement } from 'services/evenements.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
@@ -24,7 +24,7 @@ describe('CloturePage server side', () => {
         accessToken: 'accessToken',
       })
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
-        unEvenement({ statut: StatutAnimationCollective.AClore })
+        unEvenement({ statut: StatutEvenement.AClore })
       )
     })
 
@@ -45,7 +45,7 @@ describe('CloturePage server side', () => {
       expect(CloturePage).toHaveBeenCalledWith(
         {
           evenement: unEvenement({
-            statut: StatutAnimationCollective.AClore,
+            statut: StatutEvenement.AClore,
           }),
           returnTo:
             '/mes-jeunes/edition-rdv?idRdv=id-evenement-1&redirectUrl=redirectUrl',
@@ -71,7 +71,7 @@ describe('CloturePage server side', () => {
     it("renvoie une 404 si l’animation collective n'est pas à clore", async () => {
       // Given
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
-        unEvenement({ statut: StatutAnimationCollective.AVenir })
+        unEvenement({ statut: StatutEvenement.AVenir })
       )
 
       // When

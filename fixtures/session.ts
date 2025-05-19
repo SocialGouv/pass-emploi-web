@@ -1,4 +1,4 @@
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
   SessionMiloBeneficiaireJson,
@@ -61,7 +61,7 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
       estVisible: true,
       autoinscription: true,
       nbPlacesDisponibles: 20,
-      statut: StatutAnimationCollective.AVenir,
+      statut: StatutEvenement.AVenir,
     },
     offre: {
       titre: 'aide',

@@ -21,7 +21,7 @@ import {
   getNomBeneficiaireComplet,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
+import { Evenement, StatutEvenement } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -1396,6 +1396,58 @@ describe('EditionRdvPage client side', () => {
         ).not.toBeInTheDocument()
       })
     })
+
+    describe('quand le rendez-vous est passé', () => {
+      describe('quand il n’y a pas de bénéficiaires inscrits', () => {
+        beforeEach(async () => {
+          // When
+          ;({ container } = await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={unEvenement({
+                jeunes: [],
+                statut: StatutEvenement.AClore,
+              })}
+              conseillerEstObservateur={false}
+              lectureSeule={false}
+            />
+          ))
+        })
+
+        it('affiche un message d’information sur le fait que le rendez-vous est passé et doit être supprimé', () => {
+          // Then
+          expect(
+            screen.getByText('Cet événement est passé et doit être supprimé')
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe('quand il y a un ou plusieurs bénéficiaires inscrits', () => {
+        beforeEach(async () => {
+          // When
+          ;({ container } = await renderWithContexts(
+            <EditionRdvPage
+              typesRendezVous={typesRendezVous}
+              returnTo='https://localhost:3000/agenda'
+              evenement={unEvenement({
+                jeunes: [uneBaseBeneficiaire()],
+                statut: StatutEvenement.AClore,
+              })}
+              conseillerEstObservateur={false}
+              lectureSeule={false}
+            />
+          ))
+        })
+
+        it('affiche un message d’information sur le fait que le rendez-vous est passé et doit être clos', () => {
+          // Then
+          expect(
+            screen.getByText('Cet événement est passé et doit être clos')
+          ).toBeInTheDocument()
+        })
+      })
+    })
   })
 
   describe('Animation collective', () => {
@@ -1591,7 +1643,7 @@ describe('EditionRdvPage client side', () => {
         it("n'affiche pas le lien Clore", async () => {
           // Given
           const evenement = unEvenement({
-            statut: StatutAnimationCollective.AVenir,
+            statut: StatutEvenement.AVenir,
           })
 
           // When
@@ -1618,7 +1670,7 @@ describe('EditionRdvPage client side', () => {
         it('affiche un lien pour la clore', async () => {
           // Given
           const evenement = unEvenement({
-            statut: StatutAnimationCollective.AClore,
+            statut: StatutEvenement.AClore,
           })
 
           // When
@@ -1665,7 +1717,7 @@ describe('EditionRdvPage client side', () => {
         const evenement = unEvenement({
           jeunes: [beneficiaireAbsent, beneficiairePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
-          statut: StatutAnimationCollective.Close,
+          statut: StatutEvenement.Close,
         })
 
         ;({ container } = await renderWithContexts(

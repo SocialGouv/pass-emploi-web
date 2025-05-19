@@ -17,6 +17,7 @@ import {
   getJeuneDetails,
 } from 'services/beneficiaires.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
+import { toLongMonthDate } from 'utils/date'
 
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock('services/actions.service')
@@ -65,6 +66,12 @@ describe('DetailDemarchePage server side', () => {
     it('récupère les info de la démarche', async () => {
       const demarche = uneDemarche()
       const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
+      const aujourdhui = DateTime.now()
+      const periode = {
+        debut: trenteJoursAvant,
+        fin: aujourdhui,
+        label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
+      }
       ;(getDemarchesBeneficiaire as jest.Mock).mockResolvedValue({
         data: uneListeDeDemarches(),
         isState: false,
@@ -82,7 +89,7 @@ describe('DetailDemarchePage server side', () => {
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
         'id-beneficiaire-1',
-        trenteJoursAvant,
+        periode,
         'id-conseiller-1',
         'accessToken'
       )

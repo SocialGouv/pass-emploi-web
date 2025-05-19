@@ -4,7 +4,7 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   AnimationCollective,
-  AnimationCollectivePilotage,
+  RdvEtAnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
 } from 'interfaces/evenement'
@@ -71,30 +71,30 @@ export async function getRendezVousEtablissement(
   return animationsCollectivesJson.map(jsonToAnimationCollective)
 }
 
-export async function getAnimationsCollectivesACloreClientSide(
-  idEtablissement: string,
+export async function getRdvsEtAnimationsCollectivesACloreClientSide(
+  idConseiller: string,
   page: number
 ): Promise<{
-  animationsCollectives: AnimationCollectivePilotage[]
+  rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
 
-  return getAnimationsCollectivesAClore(
-    idEtablissement,
+  return getRdvsEtAnimationsCollectivesAClore(
+    idConseiller,
     page,
     session!.accessToken
   )
 }
 
-export async function getAnimationsCollectivesACloreServerSide(
-  idEtablissement: string,
+export async function getRdvsEtAnimationsCollectivesACloreServerSide(
+  idConseiller: string,
   accessToken: string
 ): Promise<{
-  animationsCollectives: AnimationCollectivePilotage[]
+  rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
   metadonnees: MetadonneesPagination
 }> {
-  return getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
+  return getRdvsEtAnimationsCollectivesAClore(idConseiller, 1, accessToken)
 }
 
 export async function getDetailsEvenement(
@@ -153,41 +153,48 @@ export async function supprimerEvenement(idRendezVous: string): Promise<void> {
   await apiDelete(`/rendezvous/${idRendezVous}`, session!.accessToken)
 }
 
-export async function cloreAnimationCollective(
-  idAnimationCollective: string,
-  idsJeunes: string[]
+export async function cloreEvenement(
+  idEvenement: string,
+  idsBeneficiaires: string[]
+): Promise<void> {
+  return cloreRdvDuCEJ(idEvenement, idsBeneficiaires)
+}
+
+async function cloreRdvDuCEJ(
+  idEvenement: string,
+  idsJeunesPresents: string[]
 ): Promise<void> {
   const session = await getSession()
-  const payload = { idsJeunes }
+  const payload = { idsJeunesPresents }
   await apiPost(
-    `/structures-milo/animations-collectives/${idAnimationCollective}/cloturer`,
+    `/rendezvous/${idEvenement}/clore`,
     payload,
     session!.accessToken
   )
 }
 
-async function getAnimationsCollectivesAClore(
-  idEtablissement: string,
+async function getRdvsEtAnimationsCollectivesAClore(
+  idConseiller: string,
   page: number,
   accessToken: string
 ): Promise<{
-  animationsCollectives: AnimationCollectivePilotage[]
+  rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
   metadonnees: MetadonneesPagination
 }> {
   const {
     content: { pagination, resultats },
   } = await apiGet<{
     pagination: { total: number; limit: number }
-    resultats: AnimationCollectivePilotage[]
+    resultats: RdvEtAnimationCollectivePilotage[]
   }>(
-    `/v2/etablissements/${idEtablissement}/animations-collectives?aClore=true&page=${page}`,
+    `/conseillers/${idConseiller}/rendezvous/a-clore?page=${page}`,
     accessToken
   )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 
   return {
-    animationsCollectives: resultats,
+    rdvsEtAnimationsCollectivesInitiaux: resultats,
     metadonnees: {
       nombreTotal: pagination.total,
       nombrePages: nombrePages,

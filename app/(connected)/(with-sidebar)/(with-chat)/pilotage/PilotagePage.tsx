@@ -10,12 +10,15 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import {
+  RdvEtAnimationCollectivePilotage,
+  isCodeTypeAnimationCollective,
+} from 'interfaces/evenement'
 import { TriActionsAQualifier } from 'services/actions.service'
-import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
+import { getRdvsEtAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import { SessionsAClore } from 'services/sessions.service'
-import { MetadonneesPagination } from 'types/pagination'
+import { MetadonneesPagination, MetadonneesPilotage } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -23,8 +26,8 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 const OngletActionsPilotage = dynamic(
   () => import('components/pilotage/OngletActionsPilotage')
 )
-const OngletAnimationsCollectivesPilotage = dynamic(
-  () => import('components/pilotage/OngletAnimationsCollectivesPilotage')
+const OngletRdvsEtAnimationsCollectivesPilotage = dynamic(
+  () => import('components/pilotage/OngletRdvsEtAnimationsCollectivesPilotage')
 )
 const OngletSessionsImiloPilotage = dynamic(
   () => import('components/pilotage/OngletSessionsImiloPilotage')
@@ -36,18 +39,14 @@ const EncartMissionLocaleRequise = dynamic(
   () => import('components/EncartMissionLocaleRequise')
 )
 
-export type Onglet =
-  | 'ACTIONS'
-  | 'ANIMATIONS_COLLECTIVES'
-  | 'SESSIONS_IMILO'
-  | 'ARCHIVAGE'
+export type Onglet = 'ACTIONS' | 'RDVS_ET_AC' | 'SESSIONS_IMILO' | 'ARCHIVAGE'
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
 } = {
   ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
-  ANIMATIONS_COLLECTIVES: {
-    queryParam: 'animationsCollectives',
+  RDVS_ET_AC: {
+    queryParam: 'rdvsEtAnimationsCollectives',
     trackingLabel: 'Animations collectives',
   },
   SESSIONS_IMILO: {
@@ -65,15 +64,15 @@ type PilotageProps = {
   categoriesActions: SituationNonProfessionnelle[]
   onglet: Onglet
   sessions?: SessionsAClore[]
-  animationsCollectives?: {
-    donnees: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesPagination
+  rdvsEtAnimationsCollectivesInitiaux?: {
+    donnees: RdvEtAnimationCollectivePilotage[]
+    metadonnees: MetadonneesPilotage
   }
 }
 
 function PilotagePage({
   actions,
-  animationsCollectives,
+  rdvsEtAnimationsCollectivesInitiaux,
   sessions,
   categoriesActions,
   onglet,
@@ -83,20 +82,24 @@ function PilotagePage({
   const router = useRouter()
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
-  const [totalActions, setTotalActions] = useState<number>(
-    actions.metadonnees.nombreTotal
-  )
-  const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
-    useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
+
+  const totalAnimationsCollectives = rdvsEtAnimationsCollectivesInitiaux
+    ? calculeNombreAC(rdvsEtAnimationsCollectivesInitiaux.donnees)
+    : 0
+
+  const totalRdv = rdvsEtAnimationsCollectivesInitiaux?.metadonnees.nombreTotal
+    ? rdvsEtAnimationsCollectivesInitiaux?.metadonnees.nombreTotal -
+      totalAnimationsCollectives
+    : 0
 
   const [animationsCollectivesAffichees, setAnimationsCollectivesAffichees] =
     useState<
       | {
-          donnees: AnimationCollectivePilotage[]
-          metadonnees: MetadonneesPagination
+          donnees: RdvEtAnimationCollectivePilotage[]
+          metadonnees: MetadonneesPilotage
         }
       | undefined
-    >(animationsCollectives)
+    >(rdvsEtAnimationsCollectivesInitiaux)
 
   const beneficiairesAArchiver = portefeuille.filter(
     (beneficiaire) => beneficiaire.estAArchiver
@@ -120,23 +123,30 @@ function PilotagePage({
     const { getActionsAQualifierClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsAQualifierClientSide(conseiller.id, options)
 
-    setTotalActions(result.metadonnees.nombreTotal)
-    return result
+    return getActionsAQualifierClientSide(conseiller.id, options)
   }
 
-  async function chargerAnimationsCollectives(page: number): Promise<{
-    animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesPagination
+  async function chargerRdvsEtAC(page: number): Promise<{
+    rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
+    metadonnees: MetadonneesPilotage
   }> {
-    const result = await getAnimationsCollectivesACloreClientSide(
-      conseiller.agence!.id!,
+    const result = await getRdvsEtAnimationsCollectivesACloreClientSide(
+      conseiller.id,
       page
     )
 
-    setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
-    return result
+    const nombreAC = calculeNombreAC(result.rdvsEtAnimationsCollectivesInitiaux)
+
+    return {
+      rdvsEtAnimationsCollectivesInitiaux:
+        result.rdvsEtAnimationsCollectivesInitiaux,
+      metadonnees: {
+        nombreAC,
+        nombreRdvs: result.metadonnees.nombreTotal - nombreAC,
+        ...result.metadonnees,
+      },
+    }
   }
 
   async function renseignerMissionLocale(agence: {
@@ -147,6 +157,12 @@ function PilotagePage({
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel(pageTracking + ' - Succès ajout agence')
+  }
+
+  function calculeNombreAC(evenements: RdvEtAnimationCollectivePilotage[]) {
+    return evenements.filter((evenement) =>
+      isCodeTypeAnimationCollective(evenement.type)
+    ).length
   }
 
   function trackAgenceModal(trackingMessage: string) {
@@ -165,13 +181,20 @@ function PilotagePage({
 
   useEffect(() => {
     if (conseiller.agence?.id && !animationsCollectivesAffichees) {
-      getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1).then(
+      getRdvsEtAnimationsCollectivesACloreClientSide(conseiller.id, 1).then(
         (result) => {
+          const nombreAC = calculeNombreAC(
+            result.rdvsEtAnimationsCollectivesInitiaux
+          )
+
           setAnimationsCollectivesAffichees({
-            donnees: result.animationsCollectives,
-            metadonnees: result.metadonnees,
+            donnees: result.rdvsEtAnimationsCollectivesInitiaux,
+            metadonnees: {
+              nombreAC,
+              nombreRdvs: result.metadonnees.nombreTotal - nombreAC,
+              ...result.metadonnees,
+            },
           })
-          setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
         }
       )
     }
@@ -197,6 +220,14 @@ function PilotagePage({
 
           {conseiller.agence?.id && (
             <>
+              <div>
+                <dt className='text-base-bold'>Les rendez-vous</dt>
+                <dd className='mt-2 rounded-base px-3 py-2 bg-primary-lighten text-primary-darken'>
+                  <div className='text-xl-bold'>{totalRdv}</div>
+                  <span className='text-base-bold'> À clore</span>
+                </dd>
+              </div>
+
               <div>
                 <dt className='text-base-bold'>Les animations</dt>
                 <dd className='mt-2 rounded-base px-3 py-2 bg-primary-lighten text-primary-darken'>
@@ -252,25 +283,22 @@ function PilotagePage({
       <TabList label='Activités à qualifier ou émarger' className='mt-10'>
         <Tab
           label='Actions'
-          count={totalActions}
           selected={currentTab === 'ACTIONS'}
           controls='liste-actions-à-qualifier'
           onSelectTab={() => switchTab('ACTIONS')}
           iconName={IconName.EventFill}
         />
         <Tab
-          label='AC app CEJ'
-          ariaLabel='Animations collectives de l’application du CEJ'
-          count={conseiller.agence?.id ? totalAnimationsCollectives : undefined}
-          selected={currentTab === 'ANIMATIONS_COLLECTIVES'}
-          controls='liste-animations-collectives-a-clore'
-          onSelectTab={() => switchTab('ANIMATIONS_COLLECTIVES')}
+          label='Rdvs et AC app CEJ'
+          ariaLabel='Rendez-vous et animations collectives de l’application du CEJ'
+          selected={currentTab === 'RDVS_ET_AC'}
+          controls='liste-rdvs-et-ac-a-clore'
+          onSelectTab={() => switchTab('RDVS_ET_AC')}
           iconName={IconName.EventFill}
         />
         {peutAccederAuxSessions(conseiller) && sessions !== null && (
           <Tab
             label='Sessions i-milo'
-            count={sessions?.length}
             selected={currentTab === 'SESSIONS_IMILO'}
             controls='liste-sessions-i-milo-a-clore'
             onSelectTab={() => switchTab('SESSIONS_IMILO')}
@@ -279,7 +307,6 @@ function PilotagePage({
         )}
         <Tab
           label='Archivage des comptes'
-          count={nbBeneficiairesAArchiver}
           selected={currentTab === 'ARCHIVAGE'}
           controls='liste-beneficiaires-a-archiver'
           onSelectTab={() => switchTab('ARCHIVAGE')}
@@ -306,12 +333,12 @@ function PilotagePage({
         </div>
       )}
 
-      {currentTab === 'ANIMATIONS_COLLECTIVES' && (
+      {currentTab === 'RDVS_ET_AC' && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-animations-collectives-a-clore--tab'
+          aria-labelledby='liste-rdvs-et-ac-a-clore--tab'
           tabIndex={0}
-          id='liste-animations-collectives-a-clore'
+          id='liste-rdvs-et-ac-a-clore'
           className='mt-8 pb-8 border-b border-primary-lighten'
         >
           {!animationsCollectivesAffichees && (
@@ -323,12 +350,12 @@ function PilotagePage({
           )}
 
           {animationsCollectivesAffichees && (
-            <OngletAnimationsCollectivesPilotage
-              animationsCollectivesInitiales={
+            <OngletRdvsEtAnimationsCollectivesPilotage
+              rdvsEtAnimationsCollectivesInitiaux={
                 animationsCollectivesAffichees?.donnees
               }
               metadonneesInitiales={animationsCollectivesAffichees?.metadonnees}
-              getAnimationsCollectives={chargerAnimationsCollectives}
+              getRdvsEtAnimationsCollectives={chargerRdvsEtAC}
             />
           )}
         </div>

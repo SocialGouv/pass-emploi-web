@@ -8,7 +8,7 @@ export type TypeEvenement = {
   label: string
 }
 
-export enum StatutAnimationCollective {
+export enum StatutEvenement {
   AVenir = 'AVenir',
   AClore = 'AClore',
   Close = 'Close',
@@ -21,7 +21,7 @@ export type AnimationCollective = {
   titre: string
   date: DateTime
   duree: number
-  statut: StatutAnimationCollective
+  statut: StatutEvenement
   etatVisibilite: EtatVisibilite
   sousTitre?: string
   isSession?: boolean
@@ -29,11 +29,12 @@ export type AnimationCollective = {
   nombreMaxParticipants?: number
 }
 
-export type AnimationCollectivePilotage = {
+export type RdvEtAnimationCollectivePilotage = {
   id: string
   titre: string
   date: string
   nombreInscrits: number
+  type: string
 }
 
 type Createur = {
@@ -75,7 +76,7 @@ export type Evenement = {
   precisionType?: string
   adresse?: string
   organisme?: string
-  statut?: StatutAnimationCollective
+  statut?: StatutEvenement
   source?: string
   nombreMaxParticipants?: number
 }

@@ -1,4 +1,4 @@
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 
 export type Session = {
   session: {
@@ -13,7 +13,7 @@ export type Session = {
     autoinscription: boolean
     animateur?: string
     commentaire?: string
-    statut: StatutAnimationCollective
+    statut: StatutEvenement
   }
   offre: {
     titre: string

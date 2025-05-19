@@ -34,6 +34,7 @@ import {
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
@@ -363,18 +364,33 @@ async function getIdentitesBeneficiaires(
   return beneficiaires
 }
 
+export async function getDemarchesBeneficiaireClientSide(
+  idBeneficiaire: string,
+  semaine: Periode,
+  idConseiller: string
+) {
+  const session = await getSession()
+  return getDemarchesBeneficiaire(
+    idBeneficiaire,
+    semaine,
+    idConseiller,
+    session!.accessToken
+  )
+}
+
 export async function getDemarchesBeneficiaire(
   idBeneficiaire: string,
-  dateDebut: DateTime,
+  semaine: Periode,
   idConseiller: string,
   accessToken: string
 ): Promise<{ data: Demarche[]; isStale: boolean } | null> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateDebutUrlEncoded = encodeURIComponent(semaine.debut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(semaine.fin.toISO())
   try {
     const {
       content: { queryModel: demarchesJson, dateDuCache },
     } = await apiGet<{ queryModel: DemarcheJson[]; dateDuCache?: string }>(
-      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}`,
+      `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/demarches?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
       accessToken
     )
 

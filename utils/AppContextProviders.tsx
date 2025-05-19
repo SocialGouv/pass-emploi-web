@@ -4,6 +4,7 @@ import { apm } from '@elastic/apm-rum'
 import { ThemeProvider } from 'next-themes'
 import React, { ReactNode } from 'react'
 
+import ClientOnlyContainer from 'components/ClientOnlyContainer'
 import {
   BeneficiaireFromListe,
   compareBeneficiairesByNom,
@@ -54,13 +55,15 @@ export default function AppContextProviders({
                   <ShowRubriqueListeDeDiffusionProvider>
                     <ListeDeDiffusionSelectionneeProvider>
                       <AlerteProvider>
-                        <ThemeProvider
-                          defaultTheme={'neutral'}
-                          themes={['neutral', 'darker']}
-                          forcedTheme={theme}
-                        >
-                          {children}
-                        </ThemeProvider>
+                        <ClientOnlyContainer>
+                          <ThemeProvider
+                            defaultTheme={'neutral'}
+                            themes={['neutral', 'darker']}
+                            forcedTheme={theme}
+                          >
+                            {children}
+                          </ThemeProvider>
+                        </ClientOnlyContainer>
                       </AlerteProvider>
                     </ListeDeDiffusionSelectionneeProvider>
                   </ShowRubriqueListeDeDiffusionProvider>

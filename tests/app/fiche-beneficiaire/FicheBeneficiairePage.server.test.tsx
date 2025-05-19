@@ -24,6 +24,7 @@ import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
+import { toLongMonthDate } from 'utils/date'
 
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock(
@@ -208,6 +209,13 @@ describe('FicheBeneficiairePage server side', () => {
           structure: 'CONSEIL_DEPT',
         })
       )
+      const aujourdhui = DateTime.now()
+      const trenteJoursAvant = aujourdhui.minus({ day: 30 }).startOf('day')
+      const periode = {
+        debut: trenteJoursAvant,
+        fin: aujourdhui,
+        label: `du ${toLongMonthDate(trenteJoursAvant)} au ${toLongMonthDate(aujourdhui)}`,
+      }
 
       // When
       render(
@@ -219,7 +227,7 @@ describe('FicheBeneficiairePage server side', () => {
       // Then
       expect(getDemarchesBeneficiaire).toHaveBeenCalledWith(
         'id-beneficiaire-1',
-        DateTime.now().minus({ day: 30 }).startOf('day'),
+        periode,
         'id-conseiller-1',
         'accessToken'
       )

@@ -12,11 +12,11 @@ import React, {
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 
 type FiltresStatutAnimationsCollectivesProps = {
-  onFiltres: (statutsSelectionnes: StatutAnimationCollective[]) => void
-  defaultValue: StatutAnimationCollective[]
+  onFiltres: (statutsSelectionnes: StatutEvenement[]) => void
+  defaultValue: StatutEvenement[]
 }
 
 export type FiltresHandles = { focus: () => void; reset: () => void }
@@ -33,10 +33,10 @@ function FiltresStatutAnimationsCollectives(
 
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
-    StatutAnimationCollective[]
+    StatutEvenement[]
   >([])
 
-  function actionnerStatut(statut: StatutAnimationCollective) {
+  function actionnerStatut(statut: StatutEvenement) {
     if (statutsSelectionnes.includes(statut)) {
       setStatutsSelectionnes(statutsSelectionnes.filter((s) => s !== statut))
     } else {
@@ -98,7 +98,7 @@ function FiltresStatutAnimationsCollectives(
             <legend className='sr-only'>
               Choisir un ou plusieurs statuts à filtrer
             </legend>
-            {Object.values(StatutAnimationCollective).map((statut) => (
+            {Object.values(StatutEvenement).map((statut) => (
               <FiltreStatut
                 key={statut}
                 statut={statut}
@@ -116,13 +116,13 @@ function FiltresStatutAnimationsCollectives(
   )
 }
 
-function label(statut: StatutAnimationCollective): string {
+function label(statut: StatutEvenement): string {
   switch (statut) {
-    case StatutAnimationCollective.AVenir:
+    case StatutEvenement.AVenir:
       return 'À venir'
-    case StatutAnimationCollective.AClore:
+    case StatutEvenement.AClore:
       return 'À clore'
-    case StatutAnimationCollective.Close:
+    case StatutEvenement.Close:
       return 'Clos'
   }
 }
@@ -132,7 +132,7 @@ function FiltreStatut({
   checked,
   onChange,
 }: {
-  statut: StatutAnimationCollective
+  statut: StatutEvenement
   checked: boolean
   onChange: () => void
 }): ReactElement {

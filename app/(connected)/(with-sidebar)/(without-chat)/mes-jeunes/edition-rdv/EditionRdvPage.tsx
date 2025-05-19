@@ -70,6 +70,11 @@ function EditionRdvPage({
   const [showDeleteRdvModal, setShowDeleteRdvModal] = useState<boolean>(false)
   const [showDeleteRdvError, setShowDeleteRdvError] = useState<boolean>(false)
 
+  const labelClotureEvenement =
+    evenement?.jeunes.length && evenement.jeunes.length > 0
+      ? 'Cet événement est passé et doit être clos'
+      : 'Cet événement est passé et doit être supprimé'
+
   const [
     formHasBeneficiaireAutrePortefeuille,
     setFormHasBeneficiaireAutrePortefeuille,
@@ -285,15 +290,8 @@ function EditionRdvPage({
 
       {evenement && (
         <>
-          {estAClore(evenement) && evenement.jeunes.length > 0 && (
-            <div className='pt-6'>
-              <FailureAlert label='Cet événement est passé et doit être clos' />
-            </div>
-          )}
-          {estAClore(evenement) && !evenement.jeunes.length && (
-            <div className='pt-6'>
-              <FailureAlert label='Cet événement est passé et doit être supprimé' />
-            </div>
+          {estAClore(evenement) && (
+            <FailureAlert className='mt-6' label={labelClotureEvenement} />
           )}
 
           <dl>

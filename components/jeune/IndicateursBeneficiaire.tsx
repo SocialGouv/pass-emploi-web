@@ -57,7 +57,7 @@ export default function IndicateursBeneficiaire({
   )
 
   return (
-    <div className='grow shrink border-r border-grey-500 px-6'>
+    <div className='grow shrink px-6'>
       <h2
         className='text-base-bold text-content-color'
         id='indicateurs-semaine'

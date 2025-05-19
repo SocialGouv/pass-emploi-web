@@ -12,7 +12,7 @@ import {
   BeneficiaireEtablissement,
   CategorieSituation,
 } from 'interfaces/beneficiaire'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import { Session } from 'interfaces/session'
 import {
   changerInscriptionsSession,
@@ -748,7 +748,7 @@ describe('Détails Session Page Client', () => {
         const session = unDetailSession({
           session: {
             ...unDetailSession().session,
-            statut: StatutAnimationCollective.AVenir,
+            statut: StatutEvenement.AVenir,
           },
         })
 
@@ -775,7 +775,7 @@ describe('Détails Session Page Client', () => {
         const session = unDetailSession({
           session: {
             ...unDetailSession().session,
-            statut: StatutAnimationCollective.AClore,
+            statut: StatutEvenement.AClore,
           },
         })
         ;({ container } = await renderWithContexts(

@@ -9,7 +9,7 @@ import AgendaPage from 'app/(connected)/(with-sidebar)/(with-chat)/agenda/Agenda
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
 import { structureMilo } from 'interfaces/structure'
 import { modifierAgence } from 'services/conseiller.service'
@@ -52,7 +52,7 @@ describe('Agenda - Onglet Mission Locale', () => {
       uneAnimationCollective({
         id: 'ac-1',
         date: SEPTEMBRE_1_14H.minus({ day: 3 }),
-        statut: StatutAnimationCollective.Close,
+        statut: StatutEvenement.Close,
       }),
       uneAnimationCollective({
         id: 'ac-2',
@@ -61,13 +61,13 @@ describe('Agenda - Onglet Mission Locale', () => {
         duree: 30,
         nombreParticipants: 2,
         nombreMaxParticipants: 2,
-        statut: StatutAnimationCollective.AClore,
+        statut: StatutEvenement.AClore,
       }),
       uneAnimationCollective({
         id: 'ac-3',
         titre: 'Écriture de lettre de motivation',
         date: SEPTEMBRE_1_14H.plus({ day: 3 }),
-        statut: StatutAnimationCollective.AVenir,
+        statut: StatutEvenement.AVenir,
       }),
     ])
     ;(getSessionsMissionLocaleClientSide as jest.Mock).mockResolvedValue([

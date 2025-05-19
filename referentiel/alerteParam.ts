@@ -6,7 +6,7 @@ export enum AlerteParam {
   creationAnimationCollective = 'creationAnimationCollective',
   modificationAnimationCollective = 'modificationAnimationCollective',
   suppressionAnimationCollective = 'suppressionAnimationCollective',
-  clotureAC = 'clotureAC',
+  clotureEvenement = 'clotureEvenement',
   clotureSession = 'clotureSession',
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperationBeneficiaires',

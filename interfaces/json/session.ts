@@ -4,10 +4,10 @@ import { EntreeAgenda } from 'interfaces/agenda'
 import {
   AnimationCollective,
   EtatVisibilite,
-  StatutAnimationCollective,
+  StatutEvenement,
   TypeEvenement,
 } from 'interfaces/evenement'
-import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
+import { StatutEvenementJson } from 'interfaces/json/evenement'
 import { structureMilo } from 'interfaces/structure'
 import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
@@ -37,7 +37,7 @@ export type SessionMiloJson = {
   estVisible: boolean
   autoinscription: boolean
   type: TypeEvenement
-  statut: StatutAnimationCollectiveJson
+  statut: StatutEvenementJson
   nombreParticipants: number
   nombreMaxParticipants?: number
 }
@@ -55,7 +55,7 @@ export type DetailsSessionJson = {
     autoinscription: boolean
     animateur?: string
     commentaire?: string
-    statut: StatutAnimationCollectiveJson
+    statut: StatutEvenementJson
   }
   offre: {
     id: string
@@ -125,21 +125,21 @@ export function sessionJsonToEntree(
 }
 
 export function jsonToStatutSession(
-  jsonStatus: StatutAnimationCollectiveJson
-): StatutAnimationCollective {
+  jsonStatus: StatutEvenementJson
+): StatutEvenement {
   switch (jsonStatus) {
     case 'A_VENIR':
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
     case 'A_CLOTURER':
-      return StatutAnimationCollective.AClore
+      return StatutEvenement.AClore
     case 'CLOTUREE':
-      return StatutAnimationCollective.Close
+      return StatutEvenement.Close
 
     default:
       console.warn(
         `Statut de session ${jsonStatus} incorrect, traité comme AVenir`
       )
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
   }
 }
 

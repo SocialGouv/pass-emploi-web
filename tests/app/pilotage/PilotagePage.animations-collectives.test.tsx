@@ -7,12 +7,15 @@ import { useRouter } from 'next/navigation'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories } from 'fixtures/action'
-import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
+import {
+  uneListeDAnimationCollectiveAClore,
+  uneListeDeRendezVousAClore,
+} from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { Agence } from 'interfaces/referentiel'
 import { structureMilo } from 'interfaces/structure'
 import { modifierAgence } from 'services/conseiller.service'
-import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
+import { getRdvsEtAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getMissionsLocalesClientSide } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -29,9 +32,9 @@ describe('PilotagePage client side - Animations collectives', () => {
 
     beforeEach(async () => {
       ;(
-        getAnimationsCollectivesACloreClientSide as jest.Mock
+        getRdvsEtAnimationsCollectivesACloreClientSide as jest.Mock
       ).mockImplementation(async (_, page) => ({
-        animationsCollectives: [
+        rdvsEtAnimationsCollectivesInitiaux: [
           {
             id: 'evenement-page-' + page,
             titre: 'Animation page ' + page,
@@ -39,20 +42,33 @@ describe('PilotagePage client side - Animations collectives', () => {
             nombreInscrits: 5,
           },
         ],
-        metadonnees: { nombrePages: 3, nombreTotal: 25 },
+        metadonnees: {
+          nombreAC: 0,
+          nombreRdvs: 0,
+          nombrePages: 3,
+          nombreTotal: 25,
+        },
       }))
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
       ;({ container } = await renderWithContexts(
         <Pilotage
-          onglet='ANIMATIONS_COLLECTIVES'
+          onglet='RDVS_ET_AC'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 1, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
-            donnees: uneListeDAnimationCollectiveAClore(),
-            metadonnees: { nombrePages: 3, nombreTotal: 25 },
+          rdvsEtAnimationsCollectivesInitiaux={{
+            donnees: [
+              ...uneListeDAnimationCollectiveAClore(),
+              ...uneListeDeRendezVousAClore(),
+            ],
+            metadonnees: {
+              nombreAC: 5,
+              nombreRdvs: 6,
+              nombrePages: 2,
+              nombreTotal: 11,
+            },
           }}
         />,
         {
@@ -87,17 +103,20 @@ describe('PilotagePage client side - Animations collectives', () => {
         'Nouvelles activités'
       )
       expect(getByDescriptionTerm('Les animations')).toHaveTextContent(
-        '25 À clore'
+        '5 À clore'
+      )
+      expect(getByDescriptionTerm('Les rendez-vous')).toHaveTextContent(
+        '6 À clore'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Animations collectives de l’application du CEJ 25 éléments'
+        'Rendez-vous et animations collectives de l’application du CEJ'
       )
     })
 
     it('affiche un tableau d’animations collectives à clore ', () => {
       // Given
       const tableau = screen.getByRole('table', {
-        name: 'Liste des animations collectives à clore',
+        name: 'Liste des rendez-vous et animations collectives à clore',
       })
 
       // Then
@@ -106,7 +125,7 @@ describe('PilotagePage client side - Animations collectives', () => {
       ).toBeInTheDocument()
       expect(
         within(tableau).getByRole('columnheader', {
-          name: 'Titre de l’animation collective',
+          name: 'Titre de l’évènement',
         })
       ).toBeInTheDocument()
       expect(
@@ -119,7 +138,7 @@ describe('PilotagePage client side - Animations collectives', () => {
     it('affiche les animations collectives de l’établissement à clore', async () => {
       // Given
       const tableau = screen.getByRole('table', {
-        name: 'Liste des animations collectives à clore',
+        name: 'Liste des rendez-vous et animations collectives à clore',
       })
 
       // Then
@@ -141,7 +160,7 @@ describe('PilotagePage client side - Animations collectives', () => {
         ).toBeInTheDocument()
         expect(
           within(tableau).getByRole('link', {
-            name: `Accéder au détail de l’animation collective du ${dateFormatee} ${animation.titre} ${animation.nombreInscrits}`,
+            name: `Accéder au détail de l’évènement du ${dateFormatee} ${animation.titre} ${animation.nombreInscrits}`,
           })
         ).toHaveAttribute(
           'href',
@@ -155,10 +174,9 @@ describe('PilotagePage client side - Animations collectives', () => {
       await userEvent.click(screen.getByLabelText('Page 2'))
 
       // Then
-      expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-        'id-test',
-        2
-      )
+      expect(
+        getRdvsEtAnimationsCollectivesACloreClientSide
+      ).toHaveBeenCalledWith('id-conseiller-1', 2)
       expect(screen.getByText('Animation page 2')).toBeInTheDocument()
     })
   })
@@ -168,22 +186,29 @@ describe('PilotagePage client side - Animations collectives', () => {
       // Given
       await renderWithContexts(
         <Pilotage
-          onglet='ANIMATIONS_COLLECTIVES'
+          onglet='RDVS_ET_AC'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
           categoriesActions={desCategories()}
-          animationsCollectives={{
+          rdvsEtAnimationsCollectivesInitiaux={{
             donnees: [],
-            metadonnees: { nombrePages: 0, nombreTotal: 0 },
+            metadonnees: {
+              nombreAC: 0,
+              nombreRdvs: 1,
+              nombrePages: 0,
+              nombreTotal: 0,
+            },
           }}
         />
       )
 
       // Then
       expect(
-        screen.getByText('Vous n’avez pas d’animation collective à clore.')
+        screen.getByText(
+          'Vous n’avez pas de rendez-vous ou d’animation collective à clore.'
+        )
       ).toBeInTheDocument()
     })
   })
@@ -195,9 +220,9 @@ describe('PilotagePage client side - Animations collectives', () => {
       agences = uneListeDAgencesMILO()
       ;(getMissionsLocalesClientSide as jest.Mock).mockResolvedValue(agences)
       ;(
-        getAnimationsCollectivesACloreClientSide as jest.Mock
+        getRdvsEtAnimationsCollectivesACloreClientSide as jest.Mock
       ).mockImplementation(async (_, page) => ({
-        animationsCollectives: [
+        rdvsEtAnimationsCollectivesInitiaux: [
           {
             id: 'evenement-page-' + page,
             titre: 'Animation page ' + page,
@@ -205,13 +230,18 @@ describe('PilotagePage client side - Animations collectives', () => {
             nombreInscrits: 5,
           },
         ],
-        metadonnees: { nombrePages: 3, nombreTotal: 25 },
+        metadonnees: {
+          nombreAC: 0,
+          nombreRdvs: 0,
+          nombrePages: 3,
+          nombreTotal: 25,
+        },
       }))
 
       // When
       await renderWithContexts(
         <Pilotage
-          onglet='ANIMATIONS_COLLECTIVES'
+          onglet='RDVS_ET_AC'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
@@ -293,7 +323,7 @@ describe('PilotagePage client side - Animations collectives', () => {
         ).not.toBeInTheDocument()
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives à clore',
+            name: 'Liste des rendez-vous et animations collectives à clore',
           })
         ).toBeInTheDocument()
       })

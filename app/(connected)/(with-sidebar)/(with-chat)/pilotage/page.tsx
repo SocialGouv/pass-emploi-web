@@ -9,19 +9,22 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
-import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import {
+  isCodeTypeAnimationCollective,
+  RdvEtAnimationCollectivePilotage,
+} from 'interfaces/evenement'
 import { estMilo } from 'interfaces/structure'
 import {
   getActionsAQualifierServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
+import { getRdvsEtAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
 import {
   getSessionsACloreServerSide,
   SessionsAClore,
 } from 'services/sessions.service'
-import { MetadonneesPagination } from 'types/pagination'
+import { MetadonneesPagination, MetadonneesPilotage } from 'types/pagination'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = {
@@ -43,20 +46,15 @@ export default async function Pilotage({
     getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])
 
-  let evenements:
-    | {
-        animationsCollectives: AnimationCollectivePilotage[]
-        metadonnees: MetadonneesPagination
-      }
-    | undefined
-  let sessions: SessionsAClore[] | undefined
+  const evenements: {
+    rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
+    metadonnees: MetadonneesPagination
+  } = await getRdvsEtAnimationsCollectivesACloreServerSide(
+    conseiller.id,
+    accessToken
+  )
 
-  if (conseiller.agence?.id) {
-    evenements = await getAnimationsCollectivesACloreServerSide(
-      conseiller.agence.id,
-      accessToken
-    )
-  }
+  let sessions: SessionsAClore[] | undefined
 
   if (peutAccederAuxSessions(conseiller)) {
     try {
@@ -69,7 +67,7 @@ export default async function Pilotage({
   let onglet: Onglet = 'ACTIONS'
   switch ((await searchParams)?.onglet) {
     case 'animationsCollectives':
-      onglet = 'ANIMATIONS_COLLECTIVES'
+      onglet = 'RDVS_ET_AC'
       break
     case 'sessionsImilo':
       onglet = 'SESSIONS_IMILO'
@@ -87,10 +85,10 @@ export default async function Pilotage({
       <PilotagePage
         actions={{ donnees: actions.actions, metadonnees: actions.metadonnees }}
         categoriesActions={categoriesActions}
-        animationsCollectives={
+        rdvsEtAnimationsCollectivesInitiaux={
           evenements && {
-            donnees: evenements.animationsCollectives,
-            metadonnees: evenements.metadonnees,
+            donnees: evenements.rdvsEtAnimationsCollectivesInitiaux,
+            metadonnees: calculerMetadonnees(evenements),
           }
         }
         sessions={sessions}
@@ -98,4 +96,22 @@ export default async function Pilotage({
       />
     </>
   )
+}
+
+function calculerMetadonnees(evenements: {
+  rdvsEtAnimationsCollectivesInitiaux: RdvEtAnimationCollectivePilotage[]
+  metadonnees: MetadonneesPagination
+}): MetadonneesPilotage {
+  const nombreAnimationsCollectivesAClore =
+    evenements.rdvsEtAnimationsCollectivesInitiaux.filter((evenement) =>
+      isCodeTypeAnimationCollective(evenement.type)
+    ).length
+  const nombreRdvsAClore =
+    evenements.metadonnees.nombreTotal - nombreAnimationsCollectivesAClore
+
+  return {
+    nombreAC: nombreAnimationsCollectivesAClore,
+    nombreRdvs: nombreRdvsAClore,
+    ...evenements.metadonnees,
+  }
 }

@@ -47,6 +47,7 @@ import {
   rechercheBeneficiairesDeLEtablissement,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
+import { Periode } from 'types/dates'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -581,6 +582,14 @@ describe('JeunesApiService', () => {
   })
 
   describe('.getDemarchesBeneficiaire', () => {
+    let periode: Periode
+    beforeEach(() => {
+      periode = {
+        debut: DateTime.fromISO('2024-09-10'),
+        fin: DateTime.fromISO('2024-09-16'),
+        label: 'periode du 10 au 16 septembre',
+      }
+    })
     it('renvoie les démarches du bénéficiaire à partir d’une date', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -597,19 +606,18 @@ describe('JeunesApiService', () => {
           ],
         },
       })
-      const dateDebut = DateTime.fromISO('2024-09-10')
 
       // When
       const actual = await getDemarchesBeneficiaire(
         'id-beneficiaire-1',
-        dateDebut,
+        periode,
         'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00&dateFin=2024-09-16T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: false })
@@ -637,14 +645,14 @@ describe('JeunesApiService', () => {
       // When
       const actual = await getDemarchesBeneficiaire(
         'id-beneficiaire-1',
-        dateDebut,
+        periode,
         'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00&dateFin=2024-09-16T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual({ data: uneListeDeDemarches(), isStale: true })
@@ -656,18 +664,24 @@ describe('JeunesApiService', () => {
         new ApiError(404, 'Erreur lors de la récupération des démarches')
       )
       const dateDebut = DateTime.fromISO('2024-09-10')
+      const dateFin = DateTime.fromISO('2024-09-16')
+      const label = ''
 
       // When
       const actual = await getDemarchesBeneficiaire(
         'id-beneficiaire-1',
-        dateDebut,
+        {
+          debut: dateDebut,
+          fin: dateFin,
+          label,
+        },
         'id-conseiller-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00',
+        '/conseillers/id-conseiller-1/jeunes/id-beneficiaire-1/demarches?dateDebut=2024-09-10T00%3A00%3A00.000%2B02%3A00&dateFin=2024-09-16T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual(null)
