@@ -209,8 +209,8 @@ describe('FicheBeneficiairePage server side', () => {
           structure: 'CONSEIL_DEPT',
         })
       )
-      const trenteJoursAvant = DateTime.now().minus({ day: 30 }).startOf('day')
       const aujourdhui = DateTime.now()
+      const trenteJoursAvant = aujourdhui.minus({ day: 30 }).startOf('day')
       const periode = {
         debut: trenteJoursAvant,
         fin: aujourdhui,
