@@ -5,6 +5,7 @@ import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
+  CompteurHeuresFicheBeneficiaire,
   CompteurHeuresPortefeuille,
   ConseillerHistorique,
   Demarche,
@@ -16,6 +17,7 @@ import {
 import {
   BaseBeneficiaireJson,
   BeneficiaireEtablissementJson,
+  CompteurHeuresFicheBeneficiaireJson,
   CompteursHeuresDeclareesPortefeuilleJson,
   DemarcheJson,
   DetailBeneficiaireJson,
@@ -423,6 +425,32 @@ export async function getComptageHeuresPortefeuille(
     )
     return {
       comptages: comptages.map(jsonToComptageHeuresPortefeuille),
+      dateDerniereMiseAJour,
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
+}
+
+export async function getComptageHeuresFicheBeneficiaire(
+  idBeneficiaire: string,
+  periode: Periode,
+  accessToken: string
+): Promise<CompteurHeuresFicheBeneficiaire | null> {
+  const dateDebut = periode.debut.toFormat('yyyy-MM-dd')
+  const dateFin = periode.fin.toFormat('yyyy-MM-dd')
+
+  try {
+    const {
+      content: { nbHeuresDeclarees, nbHeuresValidees, dateDerniereMiseAJour },
+    } = await apiGet<CompteurHeuresFicheBeneficiaireJson>(
+      `/jeunes/${idBeneficiaire}/comptage?dateDebut=${dateDebut}&dateFin=${dateFin}`,
+      accessToken
+    )
+    return {
+      nbHeuresDeclarees,
+      nbHeuresValidees,
       dateDerniereMiseAJour,
     }
   } catch (e) {
