@@ -90,13 +90,8 @@ export function isCodeTypeAnimationCollective(code?: string): boolean {
   return code === 'ATELIER' || code === 'INFORMATION_COLLECTIVE'
 }
 
-export enum PeriodeEvenements {
-  PASSES = 'PASSES',
-  FUTURS = 'FUTURS',
-}
-
-export function estAClore(animationCollective: Evenement) {
-  return animationCollective.statut === 'AClore'
+export function estAClore(evenement: Evenement) {
+  return evenement.statut === 'AClore'
 }
 
 export function estClos({ statut }: Pick<Evenement, 'statut'>) {
