@@ -5,7 +5,7 @@ import { toFrenchDateTime } from 'utils/date'
 export function CompteursHeuresBeneficiaireFicheBeneficiaire({
   comptageHeures,
 }: {
-  comptageHeures?: CompteurHeuresFicheBeneficiaire
+  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
 }) {
   return (
     <>

@@ -17,13 +17,15 @@ import { CompteursHeuresBeneficiaireFicheBeneficiaire } from './CompteursHeuresB
 type IndicateursBeneficiaireProps = {
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
+  doitAfficherComptageHeures: boolean
   indicateursSemaine: IndicateursSemaine | undefined
   demarches?: Demarche[]
-  comptageHeures?: CompteurHeuresFicheBeneficiaire
+  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
 }
 export default function IndicateursBeneficiaire({
   debutDeLaSemaine,
   finDeLaSemaine,
+  doitAfficherComptageHeures,
   comptageHeures,
   indicateursSemaine,
   demarches,
@@ -79,9 +81,13 @@ export default function IndicateursBeneficiaire({
           {toShortDate(finDeLaSemaine)}
         </span>
       </h2>
-      <CompteursHeuresBeneficiaireFicheBeneficiaire
-        comptageHeures={comptageHeures}
-      />
+
+      {doitAfficherComptageHeures && (
+        <CompteursHeuresBeneficiaireFicheBeneficiaire
+          comptageHeures={comptageHeures}
+        />
+      )}
+
       <ul
         aria-describedby='indicateurs-semaine'
         className={`grid ${withActionsEtRdvs || demarches ? 'grid-rows-3' : 'grid-rows-2'} gap-x-1 grid-flow-col overflow-hidden ${!indicateursSemaine ? 'animate-pulse' : ''}`}
