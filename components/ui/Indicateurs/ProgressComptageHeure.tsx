@@ -12,11 +12,11 @@ export function ProgressComptageHeure({
 
   function getColorClass(nbHeures: number) {
     if (nbHeures < 10) {
-      return 'warning'
+      return 'bg-warning'
     } else if (nbHeures < MAX_HEURES) {
-      return 'alert'
+      return 'bg-alert'
     } else {
-      return 'success'
+      return 'bg-success'
     }
   }
 
@@ -31,7 +31,7 @@ export function ProgressComptageHeure({
         aria-labelledby={`progressLabel-${heures}`}
       >
         <div
-          className={`h-full transition-all duration-300 bg-${getColorClass(heures)}`}
+          className={`h-full transition-all duration-300 ${getColorClass(heures)}`}
           style={{ width: `${PROGRESSION_HEURES}%` }}
         />
       </div>
