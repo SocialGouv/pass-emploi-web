@@ -14,19 +14,20 @@ import {
   estCEJ,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime } from 'utils/date'
 
 interface TableauBeneficiairesMiloProps {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
+  comptagesHeures: Array<CompteurHeuresPortefeuille> | null
   page: number
   total: number
 }
 
 export default function TableauBeneficiairesMilo({
   beneficiaires,
+  comptagesHeures,
   page,
   total,
 }: TableauBeneficiairesMiloProps) {
@@ -36,17 +37,10 @@ export default function TableauBeneficiairesMilo({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const [comptagesHeures, setComptagesHeures] =
-    useState<Array<CompteurHeuresPortefeuille> | null>(null)
-
   const comptageHeuresColumn = 'Nombre d’heures déclarées'
   const actionsColumn = 'Actions créées'
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
-
-  async function recupererHeuresDeclarees() {
-    return getComptageHeuresPortefeuille(conseiller.id)
-  }
 
   function getHeuresCalculeesParBeneficiaire(idBeneficiaire: string) {
     const compteurHeures = comptagesHeures?.find(
@@ -58,12 +52,6 @@ export default function TableauBeneficiairesMilo({
   useEffect(() => {
     setBeneficiairesAffiches(beneficiaires.slice(10 * (page - 1), 10 * page))
   }, [beneficiaires, page])
-
-  useEffect(() => {
-    recupererHeuresDeclarees().then((nouveauComptage) => {
-      setComptagesHeures(nouveauComptage?.comptages ?? null)
-    })
-  }, [])
 
   useMatomo('Mes jeunes', total > 0)
 

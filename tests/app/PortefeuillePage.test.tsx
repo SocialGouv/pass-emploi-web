@@ -377,6 +377,26 @@ describe('PortefeuillePage client side', () => {
         within(row3).getByRole('cell', { name: '12h déclarées' })
       ).toBeInTheDocument()
     })
+
+    it('permet de trier bénéficiaires par heures déclarées', async () => {
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par heures/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par heures ordre alphabétique inversé'
+      )
+
+      await userEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par heures ordre alphabétique'
+      )
+    })
   })
 
   describe('quand le conseiller est France Travail', () => {
