@@ -140,7 +140,7 @@ export default function TableauBeneficiairesMilo({
                 </div>
               </TD>
 
-              <TD className='relative h-full p-2! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
+              <TD className='relative h-full p-4! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
                 {estCEJ(beneficiaire) && comptagesHeures && (
                   <ProgressComptageHeure
                     heures={getHeuresCalculeesParBeneficiaire(beneficiaire.id)}
