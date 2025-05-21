@@ -41,7 +41,7 @@ export type FicheMiloProps = BaseFiche & {
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   erreurSessions?: boolean
-  comptageHeures?: CompteurHeuresFicheBeneficiaire
+  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
 }
 
 // Pas Milo

@@ -13,6 +13,7 @@ import {
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
+  estCEJ,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
 import { estMilo, structureFTCej } from 'interfaces/structure'
@@ -30,7 +31,7 @@ interface DetailsBeneficiaireProps {
   historiqueConseillers: ConseillerHistorique[]
   withCreations: boolean
   demarches?: { data: Demarche[] } | null
-  comptageHeures?: CompteurHeuresFicheBeneficiaire
+  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
   indicateursSemaine?: IndicateursSemaine
   onSupprimerBeneficiaire?: () => void
   className?: string
@@ -67,6 +68,8 @@ export default function DetailsBeneficiaire({
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
   const finSemaine = aujourdHui.endOf('week')
+
+  const doitAfficherComptageHeures = estCEJ(beneficiaire)
 
   async function updateIdentifiantPartenaire(
     nouvelleValeur: string
@@ -126,6 +129,7 @@ export default function DetailsBeneficiaire({
             comptageHeures={comptageHeures}
             indicateursSemaine={indicateursSemaine}
             demarches={demarches?.data}
+            doitAfficherComptageHeures={doitAfficherComptageHeures}
           />
           <BlocInformationBeneficiaire
             beneficiaire={beneficiaire}
