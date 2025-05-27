@@ -278,7 +278,7 @@ describe('PortefeuillePage client side', () => {
     it('permet de filtrer bénéficiaires par dispositif', async () => {
       // Given
       const buttonFiltres = screen.getByRole('button', {
-        name: 'Filtrer par dispositifs',
+        name: 'Filtrer par dispositif',
       })
 
       // When

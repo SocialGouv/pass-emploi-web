@@ -137,9 +137,17 @@ export default function TableauBeneficiairesMilo({
                 )}
 
                 {estCEJ(beneficiaire) && !comptagesHeures && (
-                  <p className='text-s-regular text-warning'>
-                    Comptage des heures indisponible
-                  </p>
+                  <>
+                    <p className='text-s-regular text-warning'>
+                      <IconComponent
+                        name={IconName.Info}
+                        focusable={false}
+                        aria-hidden={true}
+                        className='inline h-6 w-6 mr-1 fill-current'
+                      />
+                      Comptage des heures indisponible
+                    </p>
+                  </>
                 )}
               </TD>
 

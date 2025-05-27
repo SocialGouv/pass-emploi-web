@@ -69,12 +69,11 @@ function FiltresDispositifs(
         aria-controls='filtres-dispositifs'
         aria-expanded={afficherFiltres}
         onClick={() => setAfficherFiltres(!afficherFiltres)}
-        title='Filtrer par dispositifs'
-        aria-label='Filtrer par dispositifs'
+        title='Filtrer par dispositif'
         className='flex items-center text-s-regular w-full h-full gap-2'
         type='button'
       >
-        Dispositif
+        Filtrer par dispositif
         <IconComponent
           name={IconName.Filter}
           aria-hidden={true}

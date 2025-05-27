@@ -15,7 +15,7 @@ describe('FiltresDispositifs', () => {
     // When
     await userEvent.click(
       screen.getByRole('button', {
-        name: 'Filtrer par dispositifs',
+        name: 'Filtrer par dispositif',
       })
     )
   })
@@ -37,7 +37,7 @@ describe('FiltresDispositifs', () => {
   it('cache la liste des dispositifs', async () => {
     // When
     await userEvent.click(
-      screen.getByRole('button', { name: 'Filtrer par dispositifs' })
+      screen.getByRole('button', { name: 'Filtrer par dispositif' })
     )
 
     // Then
@@ -52,12 +52,12 @@ describe('FiltresDispositifs', () => {
     // Given
     await userEvent.click(screen.getByRole('radio', { name: 'CEJ' }))
     await userEvent.click(
-      screen.getByRole('button', { name: 'Filtrer par dispositifs' })
+      screen.getByRole('button', { name: /Filtrer par dispositif/ })
     )
 
     // When
     await userEvent.click(
-      screen.getByRole('button', { name: 'Filtrer par dispositifs' })
+      screen.getByRole('button', { name: /Filtrer par dispositif/ })
     )
 
     // Then

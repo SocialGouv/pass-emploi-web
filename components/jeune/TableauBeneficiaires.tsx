@@ -216,7 +216,7 @@ function TableauBeneficiaires(
             {toShortDate(FIN_PERIODE)}
           </h2>
 
-          <div className='my-4 flex justify-end gap-6'>
+          <div className='my-4 flex justify-between gap-6'>
             {afficherFiltres && (
               <FiltresDispositifs
                 ref={filtresDispositifsRef}
@@ -226,71 +226,73 @@ function TableauBeneficiaires(
               />
             )}
 
-            <button
-              onClick={handleTriNom}
-              className='flex text-s-regular'
-              title={
-                triActif.type === 'nom' && triActif.ordreCroissant
-                  ? 'Trier par nom ordre alphabétique'
-                  : 'Trier par nom ordre alphabétique inversé'
-              }
-              aria-label={
-                triActif.type === 'nom' && triActif.ordreCroissant
-                  ? 'Trier par nom ordre alphabétique'
-                  : 'Trier par nom ordre alphabétique inversé'
-              }
-              type='button'
-            >
-              Trier par nom
-              <SortIcon
-                isSorted={triActif.type === 'nom'}
-                isDesc={!triActif.ordreCroissant}
-              />
-            </button>
+            <div className='flex gap-6'>
+              <button
+                onClick={handleTriNom}
+                className='flex text-s-regular'
+                title={
+                  triActif.type === 'nom' && triActif.ordreCroissant
+                    ? 'Trier par nom ordre alphabétique'
+                    : 'Trier par nom ordre alphabétique inversé'
+                }
+                aria-label={
+                  triActif.type === 'nom' && triActif.ordreCroissant
+                    ? 'Trier par nom ordre alphabétique'
+                    : 'Trier par nom ordre alphabétique inversé'
+                }
+                type='button'
+              >
+                Trier par nom
+                <SortIcon
+                  isSorted={triActif.type === 'nom'}
+                  isDesc={!triActif.ordreCroissant}
+                />
+              </button>
 
-            <button
-              onClick={handleTriHeuresDeclarees}
-              className='flex text-s-regular'
-              title={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              aria-label={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              type='button'
-            >
-              Trier par heures déclarées
-              <SortIcon
-                isSorted={triActif.type === 'heures'}
-                isDesc={!triActif.ordreCroissant}
-              />
-            </button>
+              <button
+                onClick={handleTriHeuresDeclarees}
+                className='flex text-s-regular'
+                title={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                aria-label={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                type='button'
+              >
+                Trier par heures déclarées
+                <SortIcon
+                  isSorted={triActif.type === 'heures'}
+                  isDesc={!triActif.ordreCroissant}
+                />
+              </button>
 
-            <button
-              onClick={handleTriActivite}
-              className='flex text-s-regular'
-              title={
-                triActif.type === 'activite' && triActif.ordreCroissant
-                  ? 'Trier par dernière activité ordre antichronologique'
-                  : 'Trier par dernière activité ordre chronologique'
-              }
-              aria-label={
-                triActif.type === 'activite' && triActif.ordreCroissant
-                  ? 'Trier par dernière activité ordre antichronologique'
-                  : 'Trier par dernière activité ordre chronologique'
-              }
-              type='button'
-            >
-              Trier par dernière activité
-              <SortIcon
-                isSorted={triActif.type === 'activite'}
-                isDesc={!triActif.ordreCroissant}
-              />
-            </button>
+              <button
+                onClick={handleTriActivite}
+                className='flex text-s-regular'
+                title={
+                  triActif.type === 'activite' && triActif.ordreCroissant
+                    ? 'Trier par dernière activité ordre antichronologique'
+                    : 'Trier par dernière activité ordre chronologique'
+                }
+                aria-label={
+                  triActif.type === 'activite' && triActif.ordreCroissant
+                    ? 'Trier par dernière activité ordre antichronologique'
+                    : 'Trier par dernière activité ordre chronologique'
+                }
+                type='button'
+              >
+                Trier par dernière activité
+                <SortIcon
+                  isSorted={triActif.type === 'activite'}
+                  isDesc={!triActif.ordreCroissant}
+                />
+              </button>
+            </div>
           </div>
 
           <Table
