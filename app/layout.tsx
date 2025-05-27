@@ -50,18 +50,13 @@ Settings.throwOnInvalid = true
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='fr' className={marianne.className}>
-      {/* fixme: permet d'injecter un favicon en dur pour éviter que document.querySelector("link[rel='icon']" soit null*/}
-      <head>
-        <title>Espace conseiller</title>
-        <link rel='icon' href='/cej-favicon.png' />
-        <link rel='shortcut icon' href='/cej-favicon.png' />
-        <link rel='apple-touch-icon' href='/cej-favicon.png' />
-      </head>
       <body>
         <ProgressBar />
+
         <Analytics />
         <RealUserMonitoring />
         <WebVitals />
+
         <DateSettings />
         {children}
       </body>

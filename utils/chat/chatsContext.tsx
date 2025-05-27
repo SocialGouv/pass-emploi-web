@@ -129,8 +129,9 @@ function aUnNouveauMessage(
 function displayNotificationInBrowserTab(conseiller: Conseiller) {
   const siteTitle = document.title.split(' - ').at(-1)
   document.title = 'Nouveau(x) message(s) - ' + siteTitle
-  const faviconLink: HTMLLinkElement =
-    document.querySelector("link[rel='icon']")!
+  const faviconLink =
+    document.querySelector<HTMLLinkElement>("link[rel='icon']")
+  if (!faviconLink) return
 
   if (estPassEmploi(conseiller.structure)) {
     faviconLink.href = '/pass-emploi-favicon-notif.png'
@@ -142,7 +143,9 @@ function displayNotificationInBrowserTab(conseiller: Conseiller) {
 function resetBrowserTab(backupTitle: string) {
   document.title = backupTitle
 
-  const faviconLink: HTMLLinkElement =
-    document.querySelector("link[rel='icon']")!
+  const faviconLink =
+    document.querySelector<HTMLLinkElement>("link[rel='icon']")
+  if (!faviconLink) return
+
   faviconLink.href = '/cej-favicon.png'
 }
