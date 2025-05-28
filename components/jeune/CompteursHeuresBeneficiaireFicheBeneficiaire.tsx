@@ -15,8 +15,8 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
             Dernière mise à jour le{' '}
             {toFrenchDateTime(comptageHeures.dateDerniereMiseAJour)}
           </p>
-          <div className='flex gap-2 mt-2'>
-            <div className='grow flex flex-col gap-1'>
+          <div className='flex gap-6 mt-2'>
+            <div className='flex-0 grow flex flex-col gap-1'>
               <ProgressComptageHeure
                 heures={comptageHeures.nbHeuresDeclarees}
                 label='déclarée'
@@ -24,7 +24,7 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
               />
             </div>
 
-            <div className='grow flex flex-col gap-1'>
+            <div className='flex-0 grow flex flex-col gap-1'>
               <ProgressComptageHeure
                 heures={comptageHeures.nbHeuresValidees}
                 label='validée'

@@ -133,11 +133,18 @@ export default function TableauBeneficiairesMilo({
                   <ProgressComptageHeure
                     heures={getHeuresCalculeesParBeneficiaire(beneficiaire.id)}
                     label='déclarée'
+                    className='w-3/4'
                   />
                 )}
 
                 {estCEJ(beneficiaire) && !comptagesHeures && (
-                  <p className='text-s-regular text-warning'>
+                  <p className='text-s-regular text-warning flex'>
+                    <IconComponent
+                      name={IconName.Info}
+                      aria-hidden={true}
+                      focusable={false}
+                      className='w-6 h-6 mr-2 fill-warning shrink-0'
+                    />
                     Comptage des heures indisponible
                   </p>
                 )}
