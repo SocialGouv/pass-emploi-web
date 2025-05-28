@@ -2,10 +2,12 @@ export function ProgressComptageHeure({
   heures,
   label,
   bgColor = 'grey-100',
+  className,
 }: {
   heures: number
   label: string
   bgColor?: string
+  className?: string
 }) {
   const MAX_HEURES = 15
   const PROGRESSION_HEURES = Math.min((heures / MAX_HEURES) * 100, 100)
@@ -23,7 +25,7 @@ export function ProgressComptageHeure({
   return (
     <>
       <div
-        className={`h-2 rounded-full bg-${bgColor} overflow-hidden w-3/4`}
+        className={`h-2 rounded-full bg-${bgColor} overflow-hidden ${className ?? ''}`}
         role='progressbar'
         aria-valuemin={0}
         aria-valuemax={MAX_HEURES}

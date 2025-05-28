@@ -223,6 +223,7 @@ function TableauBeneficiaires(
                 defaultValue={filtreDispositif}
                 dispositifs={['CEJ', 'PACEA']}
                 onFiltres={handleFiltreDispositif}
+                className='grow'
               />
             )}
 
