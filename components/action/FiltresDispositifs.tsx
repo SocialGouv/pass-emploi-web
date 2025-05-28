@@ -16,10 +16,11 @@ type FiltresDispositifsProps = {
   dispositifs: string[]
   onFiltres: (dispositifSelectionne?: string) => void
   defaultValue?: string
+  className?: string
 }
 
 function FiltresDispositifs(
-  { defaultValue, dispositifs, onFiltres }: FiltresDispositifsProps,
+  { defaultValue, dispositifs, onFiltres, className }: FiltresDispositifsProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
@@ -63,7 +64,7 @@ function FiltresDispositifs(
   }, [afficherFiltres])
 
   return (
-    <div className='relative'>
+    <div className={'relative ' + (className ?? '')}>
       <button
         ref={ref}
         aria-controls='filtres-dispositifs'
