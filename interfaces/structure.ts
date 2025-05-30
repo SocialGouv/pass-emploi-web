@@ -90,7 +90,7 @@ export function labelStructure(structure: StructureFTConnect): string {
     case structureAij:
       return 'AIJ'
     case structureAccompagnementIntensif:
-      return 'REN-Intensif'
+      return 'REN-Intensif / FTT-FTX'
     case structureAccompagnementGlobal:
       return 'Accompagnement global'
     case structureEquipEmploiRecrut:
