@@ -123,7 +123,7 @@ function erreurConseiller(
     case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_INTENSIF':
       return {
         erreur:
-          "Votre compte est déjà associé à l'accompagnement France Travail REN-Intensif.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail REN-Intensif pour le supprimer ou contactez le support.",
+          "Votre compte est déjà associé à l'accompagnement France Travail REN-Intensif / FTT-FTX.\nPour vous connecter avec un autre dispositif, connectez vous au compte lié à l'accompagnement France Travail REN-Intensif pour le supprimer ou contactez le support.",
         withTuto: true,
       }
     case 'UTILISATEUR_DEJA_ACCOMPAGNEMENT_GLOBAL':
