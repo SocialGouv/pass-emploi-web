@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -198,7 +198,9 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
 
       // Then
       expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(1)
-      expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
+      })
     })
   })
 })
