@@ -277,6 +277,7 @@ export default function TableauActionsBeneficiaire({
                 Date de l’action
                 <SortIcon isSorted={true} isDesc={triAntichronologique} />
               </button>
+
               <FiltresCategories
                 ref={filtresCategoriesRef}
                 categories={categories}
