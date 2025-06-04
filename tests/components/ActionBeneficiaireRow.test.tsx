@@ -19,7 +19,10 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={action}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
     expect(
@@ -37,7 +40,10 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={actionCommencee}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
     expect(screen.getByText('À faire')).toBeInTheDocument()
@@ -48,23 +54,29 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={actionTerminee}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
     expect(screen.getByText('Terminée')).toBeInTheDocument()
   })
 
-  it("devrait afficher un badge 'Terminée - À qualifier' quand l'action est à qualifier", () => {
+  it("devrait afficher un badge 'À qualifier' quand l'action est à qualifier", () => {
     const actionAQualifier = uneAction({
       status: StatutAction.TermineeAQualifier,
     })
     renderInTable(
       <ActionBeneficiaireRow
         action={actionAQualifier}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
-    expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
+    expect(screen.getByText('À qualifier')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'Qualifiée' quand l'action est qualifiée", () => {
@@ -74,7 +86,10 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={actionQualifiee}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
     expect(screen.getByText('Qualifiée')).toBeInTheDocument()
@@ -85,7 +100,10 @@ describe('<ActionRow/>', () => {
     renderInTable(
       <ActionBeneficiaireRow
         action={action}
-        avecQualification={{ isChecked: false, onSelection: () => {} }}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
       />
     )
     expect(screen.getByText('En retard')).toBeInTheDocument()
@@ -97,7 +115,10 @@ describe('<ActionRow/>', () => {
       renderInTable(
         <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.TermineeAQualifier })}
-          avecQualification={{ isChecked: false, onSelection: () => {} }}
+          avecQualification={{
+            isChecked: false,
+            onSelection: () => {},
+          }}
         />
       )
 
@@ -114,7 +135,10 @@ describe('<ActionRow/>', () => {
       renderInTable(
         <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.TermineeAQualifier })}
-          avecQualification={{ isChecked: true, onSelection: () => {} }}
+          avecQualification={{
+            isChecked: true,
+            onSelection: () => {},
+          }}
         />
       )
 
@@ -131,7 +155,10 @@ describe('<ActionRow/>', () => {
       renderInTable(
         <ActionBeneficiaireRow
           action={uneAction({ status: StatutAction.AFaire })}
-          avecQualification={{ isChecked: true, onSelection: () => {} }}
+          avecQualification={{
+            isChecked: true,
+            onSelection: () => {},
+          }}
         />
       )
 

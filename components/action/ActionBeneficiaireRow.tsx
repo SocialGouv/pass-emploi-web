@@ -39,7 +39,7 @@ export default function ActionBeneficiaireRow({
       {avecQualification && (
         <TD className='relative'>
           {actionAQualifier && (
-            <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+            <label className='absolute inset-0 z-20 cursor-pointer self-center p-4'>
               <span className='sr-only'>
                 Sélection {action.titre} {action.qualification?.libelle}
               </span>
@@ -56,20 +56,19 @@ export default function ActionBeneficiaireRow({
           )}
         </TD>
       )}
-      <TD className='rounded-l-base max-w-[400px]'>
-        <span
-          className={`flex items-baseline wrap text-ellipsis overflow-hidden ${avecQualification?.isChecked ? 'text-base-bold' : ''}`}
-        >
-          {action.titre}
-        </span>
-      </TD>
-      <TD>
-        <p className='flex flex-row items-center'>{dateEcheance}</p>
-      </TD>
       <TD>
         <p className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
           <TagCategorie categorie={action.qualification?.libelle} />
         </p>
+        <p className='flex flex-row items-center text-base-bold'>
+          {dateEcheance}
+        </p>
+      </TD>
+      <TD className='rounded-l-base max-w-[400px]'>
+        <span className='flex items-baseline wrap text-ellipsis overflow-hidden text-base-bold'>
+          {action.titre}
+        </span>
+        {action.comment && <p className='line-clamp-2'>{action.comment}</p>}
       </TD>
       <TD>
         <p className='flex items-center'>

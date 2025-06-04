@@ -19,7 +19,7 @@ const propsStatutsActions: {
     style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeAQualifier: {
-    label: 'Terminée - À qualifier',
+    label: 'À qualifier',
     style: 'text-primary-darken bg-accent-3-lighten',
   },
   TermineeQualifiee: {
