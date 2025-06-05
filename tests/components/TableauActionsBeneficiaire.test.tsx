@@ -42,11 +42,12 @@ describe('TableauActionsJeune', () => {
         jeune={jeune}
         actions={actions}
         categories={desCategories()}
-        isLoading={false}
         avecQualification={{
           onLienExterne: jest.fn(),
           onQualification: jest.fn(),
         }}
+        shouldFocus={true}
+        labelSemaine='semaine du 20 au 27 février 2022'
       />
     )
     rerender = renderResult.rerender
@@ -76,7 +77,7 @@ describe('TableauActionsJeune', () => {
 
       // Then
       expect(
-        screen.getByRole('radio', { name: 'Terminée - À qualifier' })
+        screen.getByRole('radio', { name: 'À qualifier' })
       ).not.toHaveAttribute('checked')
       expect(screen.getByRole('radio', { name: 'À faire' })).toHaveAttribute(
         'checked'
@@ -106,11 +107,12 @@ describe('TableauActionsJeune', () => {
           jeune={jeune}
           actions={actions.slice(1)}
           categories={desCategories()}
-          isLoading={false}
           avecQualification={{
             onLienExterne: jest.fn(),
             onQualification: jest.fn(),
           }}
+          shouldFocus={true}
+          labelSemaine='semaine du 20 au 27 février 2022'
         />
       )
 
@@ -133,11 +135,12 @@ describe('TableauActionsJeune', () => {
           jeune={jeune}
           actions={actionsPasAFaire}
           categories={desCategories()}
-          isLoading={false}
           avecQualification={{
             onLienExterne: jest.fn(),
             onQualification: jest.fn(),
           }}
+          shouldFocus={true}
+          labelSemaine='semaine du 20 au 27 février 2022'
         />
       )
       expect(() => screen.getByRole('table')).toThrow()
@@ -213,11 +216,12 @@ describe('TableauActionsJeune', () => {
           jeune={jeune}
           actions={actions.slice(0, -1)}
           categories={desCategories()}
-          isLoading={false}
           avecQualification={{
             onLienExterne: jest.fn(),
             onQualification: jest.fn(),
           }}
+          shouldFocus={true}
+          labelSemaine='semaine du 20 au 27 février 2022'
         />
       )
 
@@ -232,11 +236,12 @@ describe('TableauActionsJeune', () => {
           jeune={jeune}
           actions={actions.slice(0, -1)}
           categories={desCategories()}
-          isLoading={false}
           avecQualification={{
             onLienExterne: jest.fn(),
             onQualification: jest.fn(),
           }}
+          shouldFocus={true}
+          labelSemaine='semaine du 20 au 27 février 2022'
         />
       )
       expect(() => screen.getByRole('table')).toThrow()
@@ -277,11 +282,11 @@ describe('TableauActionsJeune', () => {
       const tbody = screen.getAllByRole('rowgroup')[1]
       let actionRows = within(tbody).getAllByRole('row')
       expect(actionRows[0]).toHaveTextContent(
-        'Identifier ses atouts et ses compétences 20 février 2022'
+        '20 février 2022 Identifier ses atouts et ses compétences'
       )
-      expect(actionRows[1]).toHaveTextContent('Action SNP 1 20 février 2022')
+      expect(actionRows[1]).toHaveTextContent('20 février 2022 Action SNP 1')
       expect(actionRows[2]).toHaveTextContent(
-        'Compléter son cv 20 février 2022'
+        '20 février 2022 Compléter son cv'
       )
       expect(actionRows[3]).toHaveTextContent('21 février 2022')
 
@@ -293,9 +298,9 @@ describe('TableauActionsJeune', () => {
       expect(actionRows[0]).toHaveTextContent('22 février 2022')
       expect(actionRows[1]).toHaveTextContent('21 février 2022')
       expect(actionRows[2]).toHaveTextContent(
-        'Identifier ses atouts et ses compétences 20 février 2022'
+        '20 février 2022 Identifier ses atouts et ses compétences'
       )
-      expect(actionRows[3]).toHaveTextContent('Action SNP 1 20 février 2022')
+      expect(actionRows[3]).toHaveTextContent('20 février 2022 Action SNP 1')
     })
 
     it('conserve le tri quand les actions changent', async () => {
@@ -306,11 +311,12 @@ describe('TableauActionsJeune', () => {
           jeune={jeune}
           actions={actions.slice(1, 4)}
           categories={desCategories()}
-          isLoading={false}
           avecQualification={{
             onLienExterne: jest.fn(),
             onQualification: jest.fn(),
           }}
+          shouldFocus={true}
+          labelSemaine='semaine du 20 au 27 février 2022'
         />
       )
 
@@ -320,7 +326,7 @@ describe('TableauActionsJeune', () => {
       expect(actionRows[0]).toHaveTextContent('22 février 2022')
       expect(actionRows[1]).toHaveTextContent('21 février 2022')
       expect(actionRows[2]).toHaveTextContent(
-        'Compléter son cv 20 février 2022'
+        '20 février 2022 Compléter son cv'
       )
     })
   })
@@ -335,22 +341,27 @@ describe('TableauActionsJeune', () => {
       // Then
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Titre de l’action',
+          name: 'Sélection',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Date de l’action',
+          name: 'Catégorie et date de l’action',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Catégorie Filtrer les actions',
+          name: 'Titre et commentaire de l’action',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Statut Filtrer les actions',
+          name: 'Statut de l’action',
+        })
+      ).toBeInTheDocument()
+      expect(
+        within(tableauDActions).getByRole('columnheader', {
+          name: 'Voir le détail',
         })
       ).toBeInTheDocument()
     })

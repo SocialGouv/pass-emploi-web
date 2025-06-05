@@ -12,8 +12,6 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import TH from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import {
   Action,
   ActionAQualifier,
@@ -256,68 +254,67 @@ export default function TableauActionsBeneficiaire({
             </>
           )}
 
+          <div className='my-4 flex justify-between gap-6'>
+            <label className='cursor-pointer p-4 flex flex-row-reverse items-center gap-2'>
+              Tout sélectionner
+              <input
+                type='checkbox'
+                title='Tout sélectionner'
+                onChange={selectionnerToutesLesActions}
+                className='w-4 h-4 p-4'
+                ref={toutSelectionnerCheckboxRef}
+              />
+            </label>
+
+            <div className='flex gap-2 items-center'>
+              <button
+                onClick={() => setTriAntichronologique(!triAntichronologique)}
+                aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
+                title={getOrdreTriParDate()}
+                className={columnHeaderButtonStyle}
+                type='button'
+              >
+                Date de l’action
+                <SortIcon isSorted={true} isDesc={triAntichronologique} />
+              </button>
+
+              <FiltresCategories
+                ref={filtresCategoriesRef}
+                categories={categories}
+                defaultValue={categoriesValidees}
+                entites='actions'
+                onFiltres={filtrerActionsParCategorie}
+              />
+
+              <FiltresStatuts
+                ref={filtresStatutRef}
+                defaultValue={statutsValides}
+                onFiltres={filtrerActionsParStatuts}
+                statuts={
+                  avecQualification
+                    ? statutsAvecQualification
+                    : statutsSansQualification
+                }
+                entites='actions'
+                propsStatuts={propsStatutsActions}
+              />
+            </div>
+          </div>
+
           <Table
             ref={listeActionsRef}
             caption={{
               text: `Liste des actions de ${jeune.prenom} ${jeune.nom} ${labelSemaine}`,
             }}
           >
-            <thead>
-              <TR isHeader={true}>
-                {avecQualification && (
-                  <TH estCliquable={true}>
-                    <label className='cursor-pointer p-4'>
-                      <span className='sr-only'>Tout sélectionner</span>
-                      <input
-                        type='checkbox'
-                        title='Tout sélectionner'
-                        onChange={selectionnerToutesLesActions}
-                        className='w-4 h-4 p-4'
-                        ref={toutSelectionnerCheckboxRef}
-                      />
-                    </label>
-                  </TH>
-                )}
-                <TH>Titre de l’action</TH>
-                <TH estCliquable={true}>
-                  <button
-                    onClick={() =>
-                      setTriAntichronologique(!triAntichronologique)
-                    }
-                    aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
-                    title={getOrdreTriParDate()}
-                    className={columnHeaderButtonStyle}
-                    type='button'
-                  >
-                    Date de l’action
-                    <SortIcon isSorted={true} isDesc={triAntichronologique} />
-                  </button>
-                </TH>
-                <TH estCliquable={true}>
-                  <FiltresCategories
-                    ref={filtresCategoriesRef}
-                    categories={categories}
-                    defaultValue={categoriesValidees}
-                    entites='actions'
-                    onFiltres={filtrerActionsParCategorie}
-                  />
-                </TH>
-                <TH estCliquable={true}>
-                  <FiltresStatuts
-                    ref={filtresStatutRef}
-                    defaultValue={statutsValides}
-                    onFiltres={filtrerActionsParStatuts}
-                    statuts={
-                      avecQualification
-                        ? statutsAvecQualification
-                        : statutsSansQualification
-                    }
-                    entites='actions'
-                    propsStatuts={propsStatutsActions}
-                  />
-                </TH>
-                <TH>Voir le détail</TH>
-              </TR>
+            <thead className='sr-only'>
+              <tr>
+                <th scope='col'>Sélection</th>
+                <th scope='col'>Catégorie et date de l’action</th>
+                <th scope='col'>Titre et commentaire de l’action</th>
+                <th scope='col'>Statut de l’action</th>
+                <th scope='col'>Voir le détail</th>
+              </tr>
             </thead>
 
             <tbody>
