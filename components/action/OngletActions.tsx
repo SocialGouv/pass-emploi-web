@@ -175,7 +175,7 @@ function updateSiQualifiee(
       : {
           code: CODE_QUALIFICATION_NON_SNP,
           isSituationNonProfessionnelle: false,
-          libelle: 'Action non qualifiée en Situation Non Professionnelle',
+          libelle: 'Action non SNP',
         },
   }
 }
