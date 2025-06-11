@@ -435,9 +435,9 @@ export async function getComptageHeuresPortefeuille(
 
 export async function getComptageHeuresFicheBeneficiaire(
   idBeneficiaire: string,
-  periode: Periode,
-  accessToken: string
+  periode: Periode
 ): Promise<CompteurHeuresFicheBeneficiaire | null> {
+  const session = await getSession()
   const dateDebut = periode.debut.toFormat('yyyy-MM-dd')
   const dateFin = periode.fin.toFormat('yyyy-MM-dd')
 
@@ -446,7 +446,7 @@ export async function getComptageHeuresFicheBeneficiaire(
       content: { nbHeuresDeclarees, nbHeuresValidees, dateDerniereMiseAJour },
     } = await apiGet<CompteurHeuresFicheBeneficiaireJson>(
       `/jeunes/${idBeneficiaire}/comptage?dateDebut=${dateDebut}&dateFin=${dateFin}`,
-      accessToken
+      session!.accessToken
     )
     return {
       nbHeuresDeclarees,

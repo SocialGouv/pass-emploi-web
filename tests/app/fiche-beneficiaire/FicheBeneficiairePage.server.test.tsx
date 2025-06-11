@@ -166,36 +166,6 @@ describe('FicheBeneficiairePage server side', () => {
     })
   })
 
-  describe('Quand le conseiller est Milo', () => {
-    it('récupère les heures déclarées et validées', async () => {
-      // Given
-      ;(getComptageHeuresFicheBeneficiaire as jest.Mock).mockResolvedValue({
-        nbHeuresDeclarees: 5,
-        nbHeuresValidees: 10,
-        dateDerniereMiseAJour: '2025-05-15',
-      })
-
-      // When
-      render(
-        await FicheBeneficiaire({
-          params: Promise.resolve({ idJeune: 'id-jeune' }),
-        })
-      )
-
-      // Then
-      expect(FicheBeneficiairePage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          comptageHeures: {
-            dateDerniereMiseAJour: '2025-05-15',
-            nbHeuresDeclarees: 5,
-            nbHeuresValidees: 10,
-          },
-        }),
-        undefined
-      )
-    })
-  })
-
   describe('Quand le conseiller n’est pas Milo', () => {
     beforeEach(async () => {
       // Given
