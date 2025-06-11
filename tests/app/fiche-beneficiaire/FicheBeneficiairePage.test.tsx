@@ -167,6 +167,10 @@ describe('FicheBeneficiairePage client side', () => {
     })
 
     it('affiche le nombre d’heures déclarées et validées', async () => {
+      // Given
+      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
+        'id-structure-meaux'
+
       // When
       await renderFicheJeuneMilo()
 
@@ -468,6 +472,7 @@ async function renderFicheJeuneMilo({
     />,
     {
       customConseiller: {
+        agence: { id: 'id-structure-meaux', nom: 'Agence de Meaux' },
         structure: structureMilo,
         structureMilo: structureDifferente
           ? {

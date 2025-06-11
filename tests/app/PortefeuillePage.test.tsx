@@ -224,6 +224,8 @@ describe('PortefeuillePage client side', () => {
 
     beforeEach(async () => {
       //GIVEN
+      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
+        'id-structure-meaux'
       ;(getComptageHeuresPortefeuille as jest.Mock).mockResolvedValue({
         comptages: [
           { idBeneficiaire: 'id-beneficiaire-1', nbHeuresDeclarees: 15 },
@@ -240,6 +242,7 @@ describe('PortefeuillePage client side', () => {
         />,
         {
           customConseiller: {
+            agence: { id: 'id-structure-meaux', nom: 'Agence de Meaux' },
             structure: structureMilo,
             structureMilo: { nom: 'Agence', id: 'id-agence' },
           },

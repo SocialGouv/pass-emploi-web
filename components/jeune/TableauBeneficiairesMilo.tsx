@@ -42,6 +42,18 @@ export default function TableauBeneficiairesMilo({
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
 
+  function doitAfficherComptageHeures(
+    beneficiaire: BeneficiaireAvecInfosComplementaires
+  ) {
+    return (
+      estCEJ(beneficiaire) &&
+      conseiller.agence?.id &&
+      (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
+        .split(',')
+        .includes(conseiller.agence.id)
+    )
+  }
+
   function getHeuresCalculeesParBeneficiaire(idBeneficiaire: string) {
     const compteurHeures = comptagesHeures?.find(
       (compteur) => compteur.idBeneficiaire === idBeneficiaire
@@ -129,25 +141,29 @@ export default function TableauBeneficiairesMilo({
               </TD>
 
               <TD className='relative h-full p-4! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
-                {estCEJ(beneficiaire) && comptagesHeures && (
-                  <ProgressComptageHeure
-                    heures={getHeuresCalculeesParBeneficiaire(beneficiaire.id)}
-                    label='déclarée'
-                    className='w-3/4'
-                  />
-                )}
-
-                {estCEJ(beneficiaire) && !comptagesHeures && (
-                  <p className='text-s-regular text-warning flex'>
-                    <IconComponent
-                      name={IconName.Info}
-                      aria-hidden={true}
-                      focusable={false}
-                      className='w-6 h-6 mr-2 fill-warning shrink-0'
+                {doitAfficherComptageHeures(beneficiaire) &&
+                  comptagesHeures && (
+                    <ProgressComptageHeure
+                      heures={getHeuresCalculeesParBeneficiaire(
+                        beneficiaire.id
+                      )}
+                      label='déclarée'
+                      className='w-3/4'
                     />
-                    Comptage des heures indisponible
-                  </p>
-                )}
+                  )}
+
+                {doitAfficherComptageHeures(beneficiaire) &&
+                  !comptagesHeures && (
+                    <p className='text-s-regular text-warning flex'>
+                      <IconComponent
+                        name={IconName.Info}
+                        aria-hidden={true}
+                        focusable={false}
+                        className='w-6 h-6 mr-2 fill-warning shrink-0'
+                      />
+                      Comptage des heures indisponible
+                    </p>
+                  )}
               </TD>
 
               <TD className='h-full p-2!'>
