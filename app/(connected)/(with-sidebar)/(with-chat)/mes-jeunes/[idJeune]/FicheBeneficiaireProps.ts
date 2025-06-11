@@ -1,6 +1,5 @@
 import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
-  CompteurHeuresFicheBeneficiaire,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
@@ -41,7 +40,6 @@ export type FicheMiloProps = BaseFiche & {
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   erreurSessions?: boolean
-  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
 }
 
 // Pas Milo

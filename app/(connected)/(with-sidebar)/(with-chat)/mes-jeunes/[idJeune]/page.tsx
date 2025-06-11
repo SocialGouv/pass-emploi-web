@@ -12,12 +12,11 @@ import {
   valeursOngletsPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import { PageFilArianePortal } from 'components/PageNavigationPortals'
-import { estCEJ, MetadonneesFavoris } from 'interfaces/beneficiaire'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { estConseilDepartemental, estMilo } from 'interfaces/structure'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import {
-  getComptageHeuresFicheBeneficiaire,
   getConseillersDuJeuneServerSide,
   getDemarchesBeneficiaire,
   getJeuneDetails,
@@ -126,34 +125,16 @@ async function renderFicheMilo(
     | 'debutSemaineInitiale'
   >
 ): Promise<ReactElement> {
-  const aujourdHui = DateTime.now()
-  const debut = aujourdHui.startOf('week')
-  const fin = aujourdHui.endOf('week')
-  const periode = {
-    debut,
-    fin,
-    label: `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`,
-  }
-
   const categoriesActions = await getSituationsNonProfessionnelles(
     { avecNonSNP: false },
     accessToken
   )
-
-  const comptageHeures = estCEJ(props.beneficiaire)
-    ? await getComptageHeuresFicheBeneficiaire(
-        props.beneficiaire.id,
-        periode,
-        accessToken
-      )
-    : null
 
   return (
     <FicheBeneficiairePage
       {...props}
       estMilo={true}
       categoriesActions={categoriesActions}
-      comptageHeures={comptageHeures}
     />
   )
 }

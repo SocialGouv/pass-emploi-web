@@ -147,7 +147,6 @@ function FicheBeneficiairePage(props: FicheBeneficiaireProps) {
       <DetailsBeneficiaire
         beneficiaire={beneficiaire}
         historiqueConseillers={historiqueConseillers}
-        comptageHeures={estBeneficiaireMilo ? props.comptageHeures : undefined}
         demarches={estBeneficiaireMilo ? undefined : props.demarches}
         indicateursSemaine={indicateursSemaine}
         withCreations={!lectureSeule && estBeneficiaireMilo}

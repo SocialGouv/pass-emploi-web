@@ -9,11 +9,9 @@ import IndicateursBeneficiaire from 'components/jeune/IndicateursBeneficiaire'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal' // FIXME should use dynamic(() => import() but issue with jest
 import { ModalHandles } from 'components/ModalContainer'
 import {
-  CompteurHeuresFicheBeneficiaire,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
-  estCEJ,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
 import { estMilo, structureFTCej } from 'interfaces/structure'
@@ -31,7 +29,6 @@ interface DetailsBeneficiaireProps {
   historiqueConseillers: ConseillerHistorique[]
   withCreations: boolean
   demarches?: { data: Demarche[] } | null
-  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
   indicateursSemaine?: IndicateursSemaine
   onSupprimerBeneficiaire?: () => void
   className?: string
@@ -42,7 +39,6 @@ export default function DetailsBeneficiaire({
   historiqueConseillers,
   withCreations,
   demarches,
-  comptageHeures,
   indicateursSemaine,
   onSupprimerBeneficiaire,
   className,
@@ -68,8 +64,6 @@ export default function DetailsBeneficiaire({
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
   const finSemaine = aujourdHui.endOf('week')
-
-  const doitAfficherComptageHeures = estCEJ(beneficiaire)
 
   async function updateIdentifiantPartenaire(
     nouvelleValeur: string
@@ -124,12 +118,11 @@ export default function DetailsBeneficiaire({
 
         <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex flex-wrap gap-4'>
           <IndicateursBeneficiaire
+            beneficiaire={beneficiaire}
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
-            comptageHeures={comptageHeures}
             indicateursSemaine={indicateursSemaine}
             demarches={demarches?.data}
-            doitAfficherComptageHeures={doitAfficherComptageHeures}
           />
           <BlocInformationBeneficiaire
             beneficiaire={beneficiaire}

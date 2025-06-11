@@ -19,12 +19,12 @@ import { uneListeDOffres } from 'fixtures/favoris'
 import {
   BeneficiaireEtChat,
   CategorieSituation,
-  CompteurHeuresFicheBeneficiaire,
   Demarche,
 } from 'interfaces/beneficiaire'
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import {
+  getComptageHeuresFicheBeneficiaire,
   getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
   modifierDispositif,
@@ -43,6 +43,11 @@ describe('FicheBeneficiairePage client side', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
+    ;(getComptageHeuresFicheBeneficiaire as jest.Mock).mockResolvedValue({
+      nbHeuresDeclarees: 1,
+      nbHeuresValidees: 12,
+      dateDerniereMiseAJour: '2025-05-15T00:00:00.000Z',
+    })
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
     ;(getOffres as jest.Mock).mockResolvedValue([])
     ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
@@ -163,17 +168,11 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche le nombre d’heures déclarées et validées', async () => {
       // When
-      await renderFicheJeuneMilo({
-        comptageHeures: {
-          nbHeuresDeclarees: 1,
-          nbHeuresValidees: 12,
-          dateDerniereMiseAJour: '2025-05-15',
-        },
-      })
+      await renderFicheJeuneMilo()
 
       // Then
       expect(
-        screen.getByText('Dernière mise à jour le 15/05/2025 à 00:00')
+        screen.getByText('Dernière mise à jour le 15/05/2025 à 02:00')
       ).toBeInTheDocument()
       expect(
         screen.getByRole('progressbar', { name: '1h déclarée' })
@@ -448,12 +447,10 @@ async function renderFicheJeuneMilo({
   lastActivity,
   structureDifferente,
   situation,
-  comptageHeures,
 }: {
   lastActivity?: string
   structureDifferente?: boolean
   situation?: CategorieSituation
-  comptageHeures?: CompteurHeuresFicheBeneficiaire
 } = {}): Promise<HTMLElement> {
   const beneficiaire = unDetailBeneficiaire({
     lastActivity,
@@ -466,7 +463,6 @@ async function renderFicheJeuneMilo({
       beneficiaire={beneficiaire}
       historiqueConseillers={[]}
       rdvs={[]}
-      comptageHeures={comptageHeures ?? null}
       categoriesActions={desCategories()}
       ongletInitial='actions'
     />,

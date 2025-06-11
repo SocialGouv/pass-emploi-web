@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   CompteurHeuresFicheBeneficiaire,
   Demarche,
+  DetailBeneficiaire,
+  estCEJ,
   IndicateursSemaine,
 } from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
@@ -12,26 +14,32 @@ import { estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
+import { getComptageHeuresFicheBeneficiaire } from '../../services/beneficiaires.service'
+
 import { CompteursHeuresBeneficiaireFicheBeneficiaire } from './CompteursHeuresBeneficiaireFicheBeneficiaire'
 
 type IndicateursBeneficiaireProps = {
+  beneficiaire: DetailBeneficiaire
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
-  doitAfficherComptageHeures: boolean
   indicateursSemaine: IndicateursSemaine | undefined
   demarches?: Demarche[]
-  comptageHeures?: CompteurHeuresFicheBeneficiaire | null
 }
 export default function IndicateursBeneficiaire({
+  beneficiaire,
   debutDeLaSemaine,
   finDeLaSemaine,
-  doitAfficherComptageHeures,
-  comptageHeures,
   indicateursSemaine,
   demarches,
 }: IndicateursBeneficiaireProps) {
   const [conseiller] = useConseiller()
   const withActionsEtRdvs = estMilo(conseiller.structure)
+
+  const doitAfficherComptageHeures =
+    estCEJ(beneficiaire) && estMilo(conseiller.structure)
+
+  const [comptageHeures, setComptageHeures] =
+    useState<CompteurHeuresFicheBeneficiaire | null>(null)
 
   const { demarchesCreees, demarchesTerminees, demarchesEnRetard } = (
     demarches ?? []
@@ -65,6 +73,26 @@ export default function IndicateursBeneficiaire({
     },
     { demarchesCreees: [], demarchesTerminees: [], demarchesEnRetard: [] }
   )
+
+  async function chargerComptageHeures(
+    idBeneficiaire: string,
+    debut: DateTime,
+    fin: DateTime
+  ): Promise<CompteurHeuresFicheBeneficiaire | null> {
+    return await getComptageHeuresFicheBeneficiaire(idBeneficiaire, {
+      debut,
+      fin,
+      label: `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`,
+    })
+  }
+
+  useEffect(() => {
+    chargerComptageHeures(
+      beneficiaire.id,
+      debutDeLaSemaine,
+      finDeLaSemaine
+    ).then(setComptageHeures)
+  }, [])
 
   return (
     <div className='grow shrink px-6'>

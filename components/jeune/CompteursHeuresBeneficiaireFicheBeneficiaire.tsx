@@ -23,7 +23,6 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
                 bgColor='white'
               />
             </div>
-
             <div className='flex-0 grow flex flex-col gap-1'>
               <ProgressComptageHeure
                 heures={comptageHeures.nbHeuresValidees}
