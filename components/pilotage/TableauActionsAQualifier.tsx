@@ -11,8 +11,6 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import TH from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import {
   ActionAQualifier,
   ActionPilotage,
@@ -232,97 +230,102 @@ export default function TableauActionsAQualifier({
       )}
 
       {actionsFiltrees.length > 0 && (
-        <Table
-          caption={{ text: 'Liste des actions à qualifier' }}
-          ref={listeActionsRef}
-        >
-          <thead>
-            <TR isHeader={true}>
-              <TH estCliquable={true}>
-                <label className='cursor-pointer p-4'>
-                  <span className='sr-only'>Tout sélectionner</span>
-                  <input
-                    type='checkbox'
-                    title='Tout sélectionner'
-                    onChange={selectionnerToutesLesActions}
-                    className='w-4 h-4 p-4'
-                    ref={toutSelectionnerCheckboxRef}
-                  />
-                </label>
-              </TH>
-              <TH estCliquable={true}>
-                <button
-                  className='flex border-none items-center w-full h-full p-4'
-                  onClick={inverserTriBeneficiaires}
-                  aria-label={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
-                    tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
-                  }`}
-                  title={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
-                    tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
-                  }`}
-                  type='button'
-                >
-                  Bénéficiaire
-                  <SortIcon
-                    isSorted={
-                      tri === 'BENEFICIAIRE_ALPHABETIQUE' ||
-                      tri === 'BENEFICIAIRE_INVERSE'
-                    }
-                    isDesc={tri === 'BENEFICIAIRE_INVERSE'}
-                  />
-                </button>
-              </TH>
-              <TH>Titre de l’action</TH>
-              <TH estCliquable={true}>
-                <FiltresCategories
-                  ref={filtresRef}
-                  categories={categories}
-                  defaultValue={categoriesValidees}
-                  entites='actions'
-                  onFiltres={filtrerActionsParCategorie}
-                />
-              </TH>
-              <TH estCliquable={true}>
-                <button
-                  className='flex border-none items-center w-full h-full p-4'
-                  onClick={inverserTriDateRealisation}
-                  aria-label={`Afficher la liste des actions triées par date de réalisation ${
-                    tri === 'REALISATION_ANTICHRONOLOGIQUE'
-                      ? 'croissante'
-                      : 'décroissante'
-                  }`}
-                  title={`Afficher la liste des actions triées par date de réalisation ${
-                    tri === 'REALISATION_ANTICHRONOLOGIQUE'
-                      ? 'croissante'
-                      : 'décroissante'
-                  }`}
-                  type='button'
-                >
-                  Date de réalisation
-                  <SortIcon
-                    isSorted={
-                      tri === 'REALISATION_CHRONOLOGIQUE' ||
-                      tri === 'REALISATION_ANTICHRONOLOGIQUE'
-                    }
-                    isDesc={tri === 'REALISATION_ANTICHRONOLOGIQUE'}
-                  />
-                </button>
-              </TH>
-              <TH>Voir le détail</TH>
-            </TR>
-          </thead>
-
-          <tbody>
-            {actionsFiltrees.map((action: ActionPilotage) => (
-              <ActionRowPilotage
-                action={action}
-                key={action.id}
-                isChecked={selectionContientId(action.id)}
-                onSelection={selectionnerAction}
+        <>
+          <div className='my-4 flex justify-between gap-6'>
+            <label className='cursor-pointer p-4 flex flex-row-reverse items-center gap-2'>
+              Tout sélectionner
+              <input
+                type='checkbox'
+                title='Tout sélectionner'
+                onChange={selectionnerToutesLesActions}
+                className='w-4 h-4 p-4'
+                ref={toutSelectionnerCheckboxRef}
               />
-            ))}
-          </tbody>
-        </Table>
+            </label>
+
+            <div className='flex gap-2 items-center'>
+              <FiltresCategories
+                ref={filtresRef}
+                categories={categories}
+                defaultValue={categoriesValidees}
+                entites='actions'
+                onFiltres={filtrerActionsParCategorie}
+              />
+
+              <button
+                className='flex border-none items-center w-full h-full p-4'
+                onClick={inverserTriBeneficiaires}
+                aria-label={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
+                  tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
+                }`}
+                title={`Afficher la liste des actions triées par bénéficiaire par ordre alphabétique${
+                  tri === 'BENEFICIAIRE_ALPHABETIQUE' ? ' inversé' : ''
+                }`}
+                type='button'
+              >
+                Bénéficiaire
+                <SortIcon
+                  isSorted={
+                    tri === 'BENEFICIAIRE_ALPHABETIQUE' ||
+                    tri === 'BENEFICIAIRE_INVERSE'
+                  }
+                  isDesc={tri === 'BENEFICIAIRE_INVERSE'}
+                />
+              </button>
+
+              <button
+                className='flex border-none items-center w-full h-full p-4'
+                onClick={inverserTriDateRealisation}
+                aria-label={`Afficher la liste des actions triées par date de réalisation ${
+                  tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                    ? 'croissante'
+                    : 'décroissante'
+                }`}
+                title={`Afficher la liste des actions triées par date de réalisation ${
+                  tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                    ? 'croissante'
+                    : 'décroissante'
+                }`}
+                type='button'
+              >
+                Date de réalisation
+                <SortIcon
+                  isSorted={
+                    tri === 'REALISATION_CHRONOLOGIQUE' ||
+                    tri === 'REALISATION_ANTICHRONOLOGIQUE'
+                  }
+                  isDesc={tri === 'REALISATION_ANTICHRONOLOGIQUE'}
+                />
+              </button>
+            </div>
+          </div>
+
+          <Table
+            caption={{ text: 'Liste des actions à qualifier' }}
+            ref={listeActionsRef}
+          >
+            <thead className='sr-only'>
+              <tr>
+                <th scope='col'>Sélection</th>
+                <th scope='col'>Bénéficiaire</th>
+                <th scope='col'>Catégorie et date de l’action</th>
+                <th scope='col'>Titre et commentaire de l’action</th>
+                <th scope='col'>Voir le détail</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {actionsFiltrees.map((action: ActionPilotage) => (
+                <ActionRowPilotage
+                  action={action}
+                  key={action.id}
+                  isChecked={selectionContientId(action.id)}
+                  onSelection={selectionnerAction}
+                />
+              ))}
+            </tbody>
+          </Table>
+        </>
       )}
     </>
   )

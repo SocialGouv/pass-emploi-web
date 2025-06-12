@@ -37,6 +37,7 @@ export interface ActionPilotage {
     code: string
     libelle: string
   }
+  comment: string
 }
 
 export interface ActionAQualifier {
