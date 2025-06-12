@@ -5,6 +5,8 @@ import { apiDelete, apiGet, apiPatch, apiPost } from 'clients/api.client'
 import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
+  CompteurHeuresFicheBeneficiaire,
+  CompteurHeuresPortefeuille,
   ConseillerHistorique,
   Demarche,
   DetailBeneficiaire,
@@ -15,12 +17,15 @@ import {
 import {
   BaseBeneficiaireJson,
   BeneficiaireEtablissementJson,
+  CompteurHeuresFicheBeneficiaireJson,
+  CompteursHeuresDeclareesPortefeuilleJson,
   DemarcheJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
   jsonToBaseBeneficiaire,
   jsonToBeneficiaireEtablissement,
+  jsonToComptageHeuresPortefeuille,
   jsonToDemarche,
   jsonToDetailBeneficiaire,
   jsonToIndicateursSemaine,
@@ -397,6 +402,56 @@ export async function getDemarchesBeneficiaire(
     return {
       data: demarchesJson.map(jsonToDemarche),
       isStale: Boolean(dateDuCache),
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
+}
+
+export async function getComptageHeuresPortefeuille(
+  idConseiller: string
+): Promise<{
+  comptages: CompteurHeuresPortefeuille[]
+  dateDerniereMiseAJour: string
+} | null> {
+  const session = await getSession()
+  try {
+    const {
+      content: { comptages, dateDerniereMiseAJour },
+    } = await apiGet<CompteursHeuresDeclareesPortefeuilleJson>(
+      `/conseillers/${idConseiller}/jeunes/comptage`,
+      session!.accessToken
+    )
+    return {
+      comptages: comptages.map(jsonToComptageHeuresPortefeuille),
+      dateDerniereMiseAJour,
+    }
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) return null
+    throw e
+  }
+}
+
+export async function getComptageHeuresFicheBeneficiaire(
+  idBeneficiaire: string,
+  periode: Periode
+): Promise<CompteurHeuresFicheBeneficiaire | null> {
+  const session = await getSession()
+  const dateDebut = periode.debut.toFormat('yyyy-MM-dd')
+  const dateFin = periode.fin.toFormat('yyyy-MM-dd')
+
+  try {
+    const {
+      content: { nbHeuresDeclarees, nbHeuresValidees, dateDerniereMiseAJour },
+    } = await apiGet<CompteurHeuresFicheBeneficiaireJson>(
+      `/jeunes/${idBeneficiaire}/comptage?dateDebut=${dateDebut}&dateFin=${dateFin}`,
+      session!.accessToken
+    )
+    return {
+      nbHeuresDeclarees,
+      nbHeuresValidees,
+      dateDerniereMiseAJour,
     }
   } catch (e) {
     if (e instanceof ApiError && e.statusCode === 404) return null

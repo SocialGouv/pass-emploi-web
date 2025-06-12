@@ -15,12 +15,14 @@ import { unConseiller } from 'fixtures/conseiller'
 import { Conseiller } from 'interfaces/conseiller'
 import { structureFTCej, structureMilo } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { toLongMonthDate, toShortDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
+jest.mock('services/beneficiaires.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/PageActionsPortal')
 
@@ -112,26 +114,6 @@ describe('PortefeuillePage client side', () => {
         'title',
         'Trier par dernière activité ordre chronologique'
       )
-    })
-
-    it('affiche la date de fin du CEJ', () => {
-      jeunes.forEach((jeune) => {
-        const nomBeneficiaire = `${jeune.nom} ${jeune.prenom}`
-        const row = within(
-          screen.getByRole('cell', {
-            name: new RegExp('^Accéder.*' + nomBeneficiaire),
-          }).parentElement!
-        )
-
-        if (jeune.dateFinCEJ)
-          expect(
-            row.getByText(toLongMonthDate(DateTime.fromISO(jeune.dateFinCEJ)))
-          ).toBeInTheDocument()
-        else
-          expect(
-            row.getByText('information non disponible')
-          ).toBeInTheDocument()
-      })
     })
 
     describe("affiche le statut d'activation du compte d'un jeune", () => {
@@ -242,6 +224,16 @@ describe('PortefeuillePage client side', () => {
 
     beforeEach(async () => {
       //GIVEN
+      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
+        'id-structure-meaux'
+      ;(getComptageHeuresPortefeuille as jest.Mock).mockResolvedValue({
+        comptages: [
+          { idBeneficiaire: 'id-beneficiaire-1', nbHeuresDeclarees: 15 },
+          { idBeneficiaire: 'id-beneficiaire-2', nbHeuresDeclarees: 1 },
+          { idBeneficiaire: 'id-beneficiaire-3', nbHeuresDeclarees: 12 },
+        ],
+        dateDerniereMiseAJour: '07/05/2025T18:30:00.000Z',
+      })
       ;({ container } = await renderWithContexts(
         <PortefeuillePage
           conseillerJeunes={[...jeunes, beneficiaireAvecStructureDifferente]}
@@ -250,6 +242,7 @@ describe('PortefeuillePage client side', () => {
         />,
         {
           customConseiller: {
+            agence: { id: 'id-structure-meaux', nom: 'Agence de Meaux' },
             structure: structureMilo,
             structureMilo: { nom: 'Agence', id: 'id-agence' },
           },
@@ -349,6 +342,13 @@ describe('PortefeuillePage client side', () => {
       ).toBeInTheDocument()
     })
 
+    it('affiche la colonne nombre d’heures déclarées', () => {
+      // Then
+      expect(
+        screen.getByRole('columnheader', { name: 'Nombre d’heures déclarées' })
+      ).toBeInTheDocument()
+    })
+
     it('affiche si la structure du bénéficiaire est différente', () => {
       //THEN
       expect(
@@ -356,6 +356,49 @@ describe('PortefeuillePage client side', () => {
           name: /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Jirac Kenji/,
         }).parentElement!
       ).toBeInTheDocument()
+    })
+
+    it('affiche les heures déclarées', () => {
+      const row1 = screen.getByRole('cell', {
+        name: /Accéder à la fiche de Jirac Kenji/,
+      }).parentElement!
+      const row2 = screen.getByRole('cell', {
+        name: /Accéder à la fiche de Sanfamiye Nadia/,
+      }).parentElement!
+      const row3 = screen.getByRole('cell', {
+        name: /Accéder à la fiche de D'Aböville-Muñoz François Maria/,
+      }).parentElement!
+
+      //THEN
+      expect(
+        within(row1).getByRole('cell', { name: '15h déclarées' })
+      ).toBeInTheDocument()
+      expect(
+        within(row2).getByRole('cell', { name: '1h déclarée' })
+      ).toBeInTheDocument()
+      expect(
+        within(row3).getByRole('cell', { name: '12h déclarées' })
+      ).toBeInTheDocument()
+    })
+
+    it('permet de trier bénéficiaires par heures déclarées', async () => {
+      //when
+      const button = screen.getByRole('button', {
+        name: /Trier par heures/i,
+      })
+
+      //then
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par heures ordre alphabétique inversé'
+      )
+
+      await userEvent.click(button)
+
+      expect(button).toHaveAttribute(
+        'title',
+        'Trier par heures ordre alphabétique'
+      )
     })
   })
 

@@ -1,31 +1,33 @@
-import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
 import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagDate } from 'components/ui/Indicateurs/Tag'
+import { ProgressComptageHeure } from 'components/ui/Indicateurs/ProgressComptageHeure'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireAvecInfosComplementaires,
+  CompteurHeuresPortefeuille,
   estCEJ,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
+import { toRelativeDateTime } from 'utils/date'
 
 interface TableauBeneficiairesMiloProps {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
+  comptagesHeures: Array<CompteurHeuresPortefeuille> | null
   page: number
   total: number
 }
 
 export default function TableauBeneficiairesMilo({
   beneficiaires,
+  comptagesHeures,
   page,
   total,
 }: TableauBeneficiairesMiloProps) {
@@ -35,10 +37,29 @@ export default function TableauBeneficiairesMilo({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const dateFinCEJColumn = 'Fin de CEJ'
+  const comptageHeuresColumn = 'Nombre d’heures déclarées'
   const actionsColumn = 'Actions créées'
   const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
+
+  function doitAfficherComptageHeures(
+    beneficiaire: BeneficiaireAvecInfosComplementaires
+  ) {
+    return (
+      estCEJ(beneficiaire) &&
+      conseiller.agence?.id &&
+      (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
+        .split(',')
+        .includes(conseiller.agence.id)
+    )
+  }
+
+  function getHeuresCalculeesParBeneficiaire(idBeneficiaire: string) {
+    const compteurHeures = comptagesHeures?.find(
+      (compteur) => compteur.idBeneficiaire === idBeneficiaire
+    )
+    return compteurHeures?.nbHeuresDeclarees ?? 0
+  }
 
   useEffect(() => {
     setBeneficiairesAffiches(beneficiaires.slice(10 * (page - 1), 10 * page))
@@ -51,7 +72,7 @@ export default function TableauBeneficiairesMilo({
       <thead className='sr-only'>
         <TR isHeader={true}>
           <TH>Bénéficiaire et situation</TH>
-          <TH>{dateFinCEJColumn}</TH>
+          <TH>{comptageHeuresColumn}</TH>
           <TH>{actionsColumn}</TH>
           <TH>{rdvColumn}</TH>
           <TH>{derniereActiviteColumn}</TH>
@@ -119,34 +140,30 @@ export default function TableauBeneficiairesMilo({
                 </div>
               </TD>
 
-              <TD className='relative h-full p-2! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
-                {estCEJ(beneficiaire) && (
-                  <>
-                    <div
-                      className='text-s-regular text-grey-800 mb-2'
-                      aria-hidden={true}
-                    >
-                      {dateFinCEJColumn}
-                    </div>
+              <TD className='relative h-full p-4! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
+                {doitAfficherComptageHeures(beneficiaire) &&
+                  comptagesHeures && (
+                    <ProgressComptageHeure
+                      heures={getHeuresCalculeesParBeneficiaire(
+                        beneficiaire.id
+                      )}
+                      label='déclarée'
+                      className='w-3/4'
+                    />
+                  )}
 
-                    {beneficiaire.dateFinCEJ && (
-                      <TagDate
-                        label={toLongMonthDate(
-                          DateTime.fromISO(beneficiaire.dateFinCEJ)
-                        )}
+                {doitAfficherComptageHeures(beneficiaire) &&
+                  !comptagesHeures && (
+                    <p className='text-s-regular text-warning flex'>
+                      <IconComponent
+                        name={IconName.Info}
+                        aria-hidden={true}
+                        focusable={false}
+                        className='w-6 h-6 mr-2 fill-warning shrink-0'
                       />
-                    )}
-
-                    {!beneficiaire.dateFinCEJ && (
-                      <>
-                        --
-                        <span className='sr-only'>
-                          information non disponible
-                        </span>
-                      </>
-                    )}
-                  </>
-                )}
+                      Comptage des heures indisponible
+                    </p>
+                  )}
               </TD>
 
               <TD className='h-full p-2!'>

@@ -2,6 +2,7 @@ import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   CategorieSituation,
+  CompteurHeuresPortefeuille,
   Demarche,
   DetailBeneficiaire,
   IdentiteBeneficiaire,
@@ -97,6 +98,22 @@ export type IndicateursSemaineJson = {
     sauvegardees: number
     postulees: number
   }
+}
+
+type CompteurHeuresDecalareesBeneficiaireUnique = {
+  idJeune: string
+  nbHeuresDeclarees: number
+}
+
+export type CompteursHeuresDeclareesPortefeuilleJson = {
+  comptages: CompteurHeuresDecalareesBeneficiaireUnique[]
+  dateDerniereMiseAJour: string
+}
+
+export type CompteurHeuresFicheBeneficiaireJson = {
+  nbHeuresDeclarees: number
+  nbHeuresValidees: number
+  dateDerniereMiseAJour: string
 }
 
 export type DemarcheJson = {
@@ -245,6 +262,15 @@ export function jsonToIndicateursSemaine(
       sauvegardees: indicateursJson.offres.sauvegardees,
       postulees: indicateursJson.offres.postulees,
     },
+  }
+}
+
+export function jsonToComptageHeuresPortefeuille(
+  comptageJson: CompteurHeuresDecalareesBeneficiaireUnique
+): CompteurHeuresPortefeuille {
+  return {
+    idBeneficiaire: comptageJson.idJeune,
+    nbHeuresDeclarees: comptageJson.nbHeuresDeclarees,
   }
 }
 

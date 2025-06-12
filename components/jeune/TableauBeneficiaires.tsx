@@ -15,8 +15,12 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
-import { BeneficiaireAvecInfosComplementaires } from 'interfaces/beneficiaire'
+import {
+  BeneficiaireAvecInfosComplementaires,
+  CompteurHeuresPortefeuille,
+} from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/structure'
+import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
@@ -49,7 +53,7 @@ function TableauBeneficiaires(
   const filtresDispositifsRef = useRef<HTMLButtonElement>(null)
   const [filtreDispositif, setFiltreDispositif] = useState<string>()
   const [triActif, setTriActif] = useState<{
-    type: 'nom' | 'activite'
+    type: 'nom' | 'heures' | 'activite'
     ordreCroissant: boolean
   }>({ type: 'nom', ordreCroissant: true })
   const afficherFiltres =
@@ -65,6 +69,9 @@ function TableauBeneficiaires(
     BeneficiaireAvecInfosComplementaires[]
   >(trierParNom(beneficiaires, true))
 
+  const [comptagesHeuresMilo, setComptagesHeuresMilo] =
+    useState<Array<CompteurHeuresPortefeuille> | null>(null)
+
   function handleFiltreDispositif(dispositif?: string) {
     setFiltreDispositif(dispositif)
     filtresDispositifsRef.current!.focus()
@@ -74,6 +81,14 @@ function TableauBeneficiaires(
     setTriActif({
       type: 'nom',
       ordreCroissant: triActif.type === 'nom' ? !triActif.ordreCroissant : true,
+    })
+  }
+
+  function handleTriHeuresDeclarees() {
+    setTriActif({
+      type: 'heures',
+      ordreCroissant:
+        triActif.type === 'heures' ? !triActif.ordreCroissant : true,
     })
   }
 
@@ -110,6 +125,26 @@ function TableauBeneficiaires(
     })
   }
 
+  function trierParHeures(
+    beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
+    ordreCroissant: boolean
+  ): BeneficiaireAvecInfosComplementaires[] {
+    return [...beneficiairesATrier].sort((a, b) => {
+      const heuresA =
+        comptagesHeuresMilo?.find(
+          (compteur) => a.id === compteur.idBeneficiaire
+        )?.nbHeuresDeclarees ?? 0
+
+      const heuresB =
+        comptagesHeuresMilo?.find(
+          (compteur) => b.id === compteur.idBeneficiaire
+        )?.nbHeuresDeclarees ?? 0
+
+      const diff = heuresA - heuresB
+      return ordreCroissant ? diff : -diff
+    })
+  }
+
   function trierParDerniereActivite(
     beneficiairesATrier: BeneficiaireAvecInfosComplementaires[],
     ordreChronologique: boolean
@@ -123,6 +158,10 @@ function TableauBeneficiaires(
       const diff = dateA.toMillis() - dateB.toMillis()
       return ordreChronologique ? diff : -diff
     })
+  }
+
+  async function recupererHeuresDeclarees() {
+    return getComptageHeuresPortefeuille(conseiller.id)
   }
 
   useEffect(() => {
@@ -140,12 +179,24 @@ function TableauBeneficiaires(
       setBeneficiairesTries(
         trierParNom(beneficiairesFiltres, triActif.ordreCroissant)
       )
+    } else if (triActif.type === 'heures') {
+      setBeneficiairesTries(
+        trierParHeures(beneficiairesFiltres, triActif.ordreCroissant)
+      )
     } else if (triActif.type === 'activite') {
       setBeneficiairesTries(
         trierParDerniereActivite(beneficiairesFiltres, triActif.ordreCroissant)
       )
     }
   }, [beneficiairesFiltres, triActif])
+
+  useEffect(() => {
+    if (estMilo(conseiller.structure)) {
+      recupererHeuresDeclarees().then((nouveauComptage) => {
+        setComptagesHeuresMilo(nouveauComptage?.comptages ?? null)
+      })
+    }
+  }, [])
 
   return (
     <>
@@ -172,6 +223,7 @@ function TableauBeneficiaires(
                 defaultValue={filtreDispositif}
                 dispositifs={['CEJ', 'PACEA']}
                 onFiltres={handleFiltreDispositif}
+                className='grow'
               />
             )}
 
@@ -193,6 +245,28 @@ function TableauBeneficiaires(
               Trier par nom
               <SortIcon
                 isSorted={triActif.type === 'nom'}
+                isDesc={!triActif.ordreCroissant}
+              />
+            </button>
+
+            <button
+              onClick={handleTriHeuresDeclarees}
+              className='flex text-s-regular'
+              title={
+                triActif.type === 'heures' && triActif.ordreCroissant
+                  ? 'Trier par heures ordre alphabétique'
+                  : 'Trier par heures ordre alphabétique inversé'
+              }
+              aria-label={
+                triActif.type === 'heures' && triActif.ordreCroissant
+                  ? 'Trier par heures ordre alphabétique'
+                  : 'Trier par heures ordre alphabétique inversé'
+              }
+              type='button'
+            >
+              Trier par heures déclarées
+              <SortIcon
+                isSorted={triActif.type === 'heures'}
                 isDesc={!triActif.ordreCroissant}
               />
             </button>
@@ -231,6 +305,7 @@ function TableauBeneficiaires(
             {estMilo(conseiller.structure) && (
               <TableauBeneficiairesMilo
                 beneficiaires={beneficiairesTries}
+                comptagesHeures={comptagesHeuresMilo}
                 page={page}
                 total={total}
               />

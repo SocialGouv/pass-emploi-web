@@ -1,20 +1,32 @@
 import { DateTime } from 'luxon'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Demarche, IndicateursSemaine } from 'interfaces/beneficiaire'
+import {
+  CompteurHeuresFicheBeneficiaire,
+  Demarche,
+  DetailBeneficiaire,
+  estCEJ,
+  IndicateursSemaine,
+} from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
+import { getComptageHeuresFicheBeneficiaire } from '../../services/beneficiaires.service'
+
+import { CompteursHeuresBeneficiaireFicheBeneficiaire } from './CompteursHeuresBeneficiaireFicheBeneficiaire'
+
 type IndicateursBeneficiaireProps = {
+  beneficiaire: DetailBeneficiaire
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
   demarches?: Demarche[]
 }
 export default function IndicateursBeneficiaire({
+  beneficiaire,
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
@@ -22,6 +34,17 @@ export default function IndicateursBeneficiaire({
 }: IndicateursBeneficiaireProps) {
   const [conseiller] = useConseiller()
   const withActionsEtRdvs = estMilo(conseiller.structure)
+
+  const doitAfficherComptageHeures =
+    estCEJ(beneficiaire) &&
+    estMilo(conseiller.structure) &&
+    conseiller.agence?.id &&
+    (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
+      .split(',')
+      .includes(conseiller.agence.id)
+
+  const [comptageHeures, setComptageHeures] =
+    useState<CompteurHeuresFicheBeneficiaire | null>(null)
 
   const { demarchesCreees, demarchesTerminees, demarchesEnRetard } = (
     demarches ?? []
@@ -56,6 +79,26 @@ export default function IndicateursBeneficiaire({
     { demarchesCreees: [], demarchesTerminees: [], demarchesEnRetard: [] }
   )
 
+  async function chargerComptageHeures(
+    idBeneficiaire: string,
+    debut: DateTime,
+    fin: DateTime
+  ): Promise<CompteurHeuresFicheBeneficiaire | null> {
+    return await getComptageHeuresFicheBeneficiaire(idBeneficiaire, {
+      debut,
+      fin,
+      label: `du ${toLongMonthDate(debut)} au ${toLongMonthDate(fin)}`,
+    })
+  }
+
+  useEffect(() => {
+    chargerComptageHeures(
+      beneficiaire.id,
+      debutDeLaSemaine,
+      finDeLaSemaine
+    ).then(setComptageHeures)
+  }, [])
+
   return (
     <div className='grow shrink px-6'>
       <h2
@@ -71,6 +114,12 @@ export default function IndicateursBeneficiaire({
           {toShortDate(finDeLaSemaine)}
         </span>
       </h2>
+
+      {doitAfficherComptageHeures && (
+        <CompteursHeuresBeneficiaireFicheBeneficiaire
+          comptageHeures={comptageHeures}
+        />
+      )}
 
       <ul
         aria-describedby='indicateurs-semaine'

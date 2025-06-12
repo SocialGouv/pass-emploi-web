@@ -118,6 +118,7 @@ export default function DetailsBeneficiaire({
 
         <div className='rounded-b-[inherit] border border-t-0 border-grey-500 py-4 flex flex-wrap gap-4'>
           <IndicateursBeneficiaire
+            beneficiaire={beneficiaire}
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
             indicateursSemaine={indicateursSemaine}

@@ -2,7 +2,6 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
-import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction } from 'react'
 
@@ -25,7 +24,7 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import {
-  getDemarchesBeneficiaire,
+  getComptageHeuresFicheBeneficiaire,
   getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
   modifierDispositif,
@@ -44,6 +43,11 @@ describe('FicheBeneficiairePage client side', () => {
     ;(getIndicateursBeneficiaire as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
+    ;(getComptageHeuresFicheBeneficiaire as jest.Mock).mockResolvedValue({
+      nbHeuresDeclarees: 1,
+      nbHeuresValidees: 12,
+      dateDerniereMiseAJour: '2025-05-15T00:00:00.000Z',
+    })
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue([])
     ;(getOffres as jest.Mock).mockResolvedValue([])
     ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
@@ -160,6 +164,26 @@ describe('FicheBeneficiairePage client side', () => {
       expect(getByDescriptionTerm('Situation')).toHaveTextContent(
         'Contrat de volontariat - bénévolat'
       )
+    })
+
+    it('affiche le nombre d’heures déclarées et validées', async () => {
+      // Given
+      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
+        'id-structure-meaux'
+
+      // When
+      await renderFicheJeuneMilo()
+
+      // Then
+      expect(
+        screen.getByText('Dernière mise à jour le 15/05/2025 à 02:00')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('progressbar', { name: '1h déclarée' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('progressbar', { name: '12h validées' })
+      ).toBeInTheDocument()
     })
 
     it('affiche le dispositif du bénéficiaire', async () => {
@@ -448,6 +472,7 @@ async function renderFicheJeuneMilo({
     />,
     {
       customConseiller: {
+        agence: { id: 'id-structure-meaux', nom: 'Agence de Meaux' },
         structure: structureMilo,
         structureMilo: structureDifferente
           ? {
