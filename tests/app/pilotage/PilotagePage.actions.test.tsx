@@ -32,6 +32,7 @@ describe('PilotagePage client side - Actions', () => {
         prenom: 'L’âne',
       },
       dateFinReelle: '2024-01-16',
+      comment: 'On va regarder Tchoupi faire du tricycle',
     }
     let container: HTMLElement
 
@@ -115,22 +116,27 @@ describe('PilotagePage client side - Actions', () => {
       // Then
       expect(
         within(tableauDActions).getByRole('columnheader', {
+          name: 'Sélection',
+        })
+      ).toBeInTheDocument()
+      expect(
+        within(tableauDActions).getByRole('columnheader', {
           name: 'Bénéficiaire',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Date de réalisation',
+          name: 'Catégorie et date de l’action',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Titre de l’action',
+          name: 'Titre et commentaire de l’action',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Catégorie Filtrer les actions',
+          name: 'Voir le détail',
         })
       ).toBeInTheDocument()
     })
@@ -157,6 +163,7 @@ describe('PilotagePage client side - Actions', () => {
         )
         expect(screen.getByText(action.titre)).toBeInTheDocument()
         expect(screen.getByText(dateFinReelle)).toBeInTheDocument()
+        expect(screen.getByText(action.comment)).toBeInTheDocument()
         expect(
           screen.getByText(
             `${action.beneficiaire.nom} ${action.beneficiaire.prenom}`
@@ -164,7 +171,7 @@ describe('PilotagePage client side - Actions', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', {
-            name: `Accéder au détail de l’action de ${action.beneficiaire.nom} ${action.beneficiaire.prenom} ${action.titre} ${action.categorie?.libelle} ${toLongMonthDate(action.dateFinReelle)}`,
+            name: `Accéder au détail de l’action de ${action.beneficiaire.nom} ${action.beneficiaire.prenom} ${action.categorie?.libelle} ${toLongMonthDate(action.dateFinReelle)} ${action.titre} ${action.comment}`,
           })
         ).toHaveAttribute(
           'href',

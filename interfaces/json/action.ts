@@ -44,6 +44,7 @@ export interface ActionPilotageJson {
     code: string
     libelle: string
   }
+  comment: string
 }
 
 export interface QualificationActionJson {
@@ -124,6 +125,7 @@ export function jsonToActionPilotage(
       prenom: action.jeune.prenom,
     },
     dateFinReelle: action.dateFinReelle,
+    comment: action.comment,
   }
 
   if (action.categorie)

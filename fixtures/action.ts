@@ -141,6 +141,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         code: 'EMPLOI',
         libelle: 'Emploi',
       },
+      comment: 'Nous voulons faire du polynectar.',
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -155,6 +156,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
       },
+      comment: 'Nous voulons identifier des pistes de métier.',
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -169,6 +171,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         code: 'FORMATION',
         libelle: 'Formation',
       },
+      comment: 'Nous voulons mettre à jour le CV.',
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -183,6 +186,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         code: 'LOGEMENT',
         libelle: 'Logement',
       },
+      comment: 'Nous voulons identifier des entreprises.',
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -197,6 +201,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         code: 'SANTE',
         libelle: 'Santé',
       },
+      comment: 'Nous voulons aller au forum le 08/12.',
     },
   ]
 }
@@ -216,6 +221,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         code: 'EMPLOI',
         libelle: 'Emploi',
       },
+      comment: 'Nous voulons faire du polynectar.',
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -230,6 +236,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
       },
+      comment: 'Nous voulons identifier des pistes de métier.',
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -244,6 +251,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         code: 'FORMATION',
         libelle: 'Formation',
       },
+      comment: 'Nous voulons mettre à jour le CV.',
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -258,6 +266,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         code: 'LOGEMENT',
         libelle: 'Logement',
       },
+      comment: 'Nous voulons identifier des entreprises.',
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -272,6 +281,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         code: 'SANTE',
         libelle: 'Santé',
       },
+      comment: 'Nous voulons aller au forum le 08/12.',
     },
   ]
 }

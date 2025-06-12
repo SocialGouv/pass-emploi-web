@@ -41,12 +41,19 @@ export default function ActionRowPilotage({
       <TD isBold={isChecked}>
         {action.beneficiaire.nom} {action.beneficiaire.prenom}
       </TD>
-      <TD isBold>{action.titre}</TD>
       <TD>
-        <TagCategorie categorie={action.categorie?.libelle} />
+        <p className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
+          <TagCategorie categorie={action.categorie?.libelle} />
+        </p>
+        <p className='flex flex-row items-center text-base-bold'>
+          {dateFinReelle}
+        </p>
       </TD>
       <TD>
-        <span className='flex flex-row'>{dateFinReelle}</span>
+        <span className='flex items-baseline wrap text-ellipsis overflow-hidden text-base-bold'>
+          {action.titre}
+        </span>
+        {action.comment && <p className='line-clamp-2'>{action.comment}</p>}
       </TD>
       <TDLink
         href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
