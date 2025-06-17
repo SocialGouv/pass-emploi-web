@@ -145,8 +145,11 @@ export type Demarche = {
 }
 
 export type CompteurHeuresPortefeuille = {
-  idBeneficiaire: string
-  nbHeuresDeclarees: number
+  comptages: Array<{
+    idBeneficiaire: string
+    nbHeuresDeclarees: number
+  }>
+  dateDerniereMiseAJour: string
 }
 
 export type CompteurHeuresFicheBeneficiaire = {
