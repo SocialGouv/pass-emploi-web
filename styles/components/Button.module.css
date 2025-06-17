@@ -1,25 +1,24 @@
 @reference "../tailwind.css";
 
 .button {
-  padding: 0.5rem 1rem;
-  height: max-content;
-  border-radius: var(--radius-large);
-  transition:
-    border-color 0.2s,
+    padding: 0.5rem 1rem;
+    height: max-content;
+    border-radius: var(--radius-base);
+    transition: border-color 0.2s,
     color 0.2s,
     background-color 0.2s;
 }
 
 .button:hover {
-  box-shadow: theme(--shadow-m);
+    box-shadow: theme(--shadow-m);
 }
 
 .button[disabled]:hover {
-  box-shadow: none;
+    box-shadow: none;
 }
 
 .button svg {
-  fill: currentColor;
+    fill: currentColor;
 }
 
 /**
@@ -27,29 +26,29 @@
 */
 
 .buttonPrimary {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border: 1px solid transparent;
-  box-shadow: theme(--shadow-md);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: 1px solid transparent;
+    box-shadow: theme(--shadow-md);
 }
 
 .buttonPrimary:hover,
 .buttonPrimary:active {
-  background-color: var(--color-primary-darken);
-  color: var(--color-white);
-  border: 1px solid var(--color-primary);
+    background-color: var(--color-primary-darken);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary);
 }
 
 .buttonPrimary[disabled] {
-  background-color: var(--color-primary);
-  opacity: 50%;
-  cursor: not-allowed;
-  border: 1px solid transparent;
+    background-color: var(--color-primary);
+    opacity: 50%;
+    cursor: not-allowed;
+    border: 1px solid transparent;
 }
 
 .buttonPrimary[disabled]:hover {
-  color: var(--color-white);
-  border: 1px solid transparent;
+    color: var(--color-white);
+    border: 1px solid transparent;
 }
 
 /**
@@ -58,25 +57,25 @@
 
 .buttonSecondary,
 .buttonTertiary {
-  background-color: var(--color-white);
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
 }
 
 .buttonTertiary {
-  background-color: var(--color-primary-lighten);
-  border: 1px solid transparent;
+    background-color: var(--color-primary-lighten);
+    border: 1px solid transparent;
 }
 
 .buttonSecondary:hover,
 .buttonSecondary:active {
-  background-color: var(--color-primary-lighten);
+    background-color: var(--color-primary-lighten);
 }
 
 .buttonSecondary[disabled],
 .buttonTertiary[disabled] {
-  opacity: 50%;
-  cursor: not-allowed;
+    opacity: 50%;
+    cursor: not-allowed;
 }
 
 /**
@@ -84,23 +83,23 @@
 */
 
 .buttonWarning {
-  background-color: var(--color-warning-lighten);
-  color: var(--color-warning);
-  box-shadow: theme(--shadow-base);
+    background-color: var(--color-warning-lighten);
+    color: var(--color-warning);
+    box-shadow: theme(--shadow-base);
 }
 
 .buttonWarning:hover {
-  background-color: var(--color-warning);
-  color: var(--color-white);
+    background-color: var(--color-warning);
+    color: var(--color-white);
 }
 
 .buttonWarning[disabled] {
-  cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 .buttonWarning[disabled]:hover {
-  background-color: var(--color-warning-lighten);
-  color: var(--color-warning);
+    background-color: var(--color-warning-lighten);
+    color: var(--color-warning);
 }
 
 /**
@@ -108,15 +107,15 @@
 */
 
 .buttonPrimaryDark {
-  background-color: var(--color-primary-darken);
-  color: var(--color-white);
-  border: 1px solid transparent;
-  box-shadow: theme(--shadow-base);
+    background-color: var(--color-primary-darken);
+    color: var(--color-white);
+    border: 1px solid transparent;
+    box-shadow: theme(--shadow-base);
 }
 
 .buttonPrimaryDark:hover,
 .buttonPrimaryDark:active {
-  background-color: var(--color-primary-darken-strong);
-  color: var(--color-white);
-  border: 1px solid var(--color-primary-darken-strong);
+    background-color: var(--color-primary-darken-strong);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary-darken-strong);
 }
