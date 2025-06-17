@@ -26,6 +26,7 @@ export interface Action {
 
 export interface ActionPilotage {
   id: string
+  description: string
   titre: string
   beneficiaire: {
     id: string
