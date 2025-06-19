@@ -15,6 +15,7 @@ import {
   estCEJ,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
+import { estMilo } from 'interfaces/structure'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime } from 'utils/date'
@@ -48,6 +49,7 @@ export default function TableauBeneficiairesMilo({
   ) {
     return (
       estCEJ(beneficiaire) &&
+      estMilo(conseiller.structure) &&
       conseiller.agence?.id &&
       (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
         .split(',')

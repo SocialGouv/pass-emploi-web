@@ -18,7 +18,7 @@ export default function SortIcon({
       }
       focusable={false}
       aria-hidden={true}
-      className={`w-6 h-6 min-w-6 self-start ml-2 fill-primary`}
+      className={`w-6 h-6 min-w-6 ml-2 fill-primary`}
     />
   )
 }
