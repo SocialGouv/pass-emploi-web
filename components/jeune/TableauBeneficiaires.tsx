@@ -70,7 +70,7 @@ function TableauBeneficiaires(
   >(trierParNom(beneficiaires, true))
 
   const [comptagesHeuresMilo, setComptagesHeuresMilo] =
-    useState<Array<CompteurHeuresPortefeuille> | null>(null)
+    useState<CompteurHeuresPortefeuille | null>(null)
 
   function handleFiltreDispositif(dispositif?: string) {
     setFiltreDispositif(dispositif)
@@ -131,12 +131,12 @@ function TableauBeneficiaires(
   ): BeneficiaireAvecInfosComplementaires[] {
     return [...beneficiairesATrier].sort((a, b) => {
       const heuresA =
-        comptagesHeuresMilo?.find(
+        comptagesHeuresMilo?.comptages?.find(
           (compteur) => a.id === compteur.idBeneficiaire
         )?.nbHeuresDeclarees ?? 0
 
       const heuresB =
-        comptagesHeuresMilo?.find(
+        comptagesHeuresMilo?.comptages?.find(
           (compteur) => b.id === compteur.idBeneficiaire
         )?.nbHeuresDeclarees ?? 0
 
@@ -193,7 +193,7 @@ function TableauBeneficiaires(
   useEffect(() => {
     if (estMilo(conseiller.structure)) {
       recupererHeuresDeclarees().then((nouveauComptage) => {
-        setComptagesHeuresMilo(nouveauComptage?.comptages ?? null)
+        setComptagesHeuresMilo(nouveauComptage ?? null)
       })
     }
   }, [])

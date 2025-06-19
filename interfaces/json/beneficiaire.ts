@@ -2,7 +2,6 @@ import {
   BeneficiaireEtablissement,
   BeneficiaireFromListe,
   CategorieSituation,
-  CompteurHeuresPortefeuille,
   Demarche,
   DetailBeneficiaire,
   IdentiteBeneficiaire,
@@ -267,7 +266,7 @@ export function jsonToIndicateursSemaine(
 
 export function jsonToComptageHeuresPortefeuille(
   comptageJson: CompteurHeuresDecalareesBeneficiaireUnique
-): CompteurHeuresPortefeuille {
+): { idBeneficiaire: string; nbHeuresDeclarees: number } {
   return {
     idBeneficiaire: comptageJson.idJeune,
     nbHeuresDeclarees: comptageJson.nbHeuresDeclarees,
