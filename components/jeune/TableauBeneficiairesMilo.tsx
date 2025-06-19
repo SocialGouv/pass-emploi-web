@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
 import DispositifTag from 'components/jeune/DispositifTag'
@@ -62,27 +61,6 @@ export default function TableauBeneficiairesMilo({
       (compteur) => compteur.idBeneficiaire === idBeneficiaire
     )
     return compteurHeures?.nbHeuresDeclarees ?? 0
-  }
-
-  function getTempsDerniereMiseAJour(date: string) {
-    const dateTime = DateTime.fromISO(date)
-    const now = DateTime.now()
-    const diff = now.diff(dateTime, ['hours', 'minutes']).toObject()
-
-    const hours = Math.floor(diff.hours ?? 0)
-    const minutes = Math.floor(diff.minutes ?? 0)
-
-    let result = 'il y a '
-    if (hours === 0 && minutes === 0) {
-      return 'maintenant'
-    }
-
-    if (hours > 0) {
-      result += `${hours}h `
-    }
-    result += `${minutes}min`
-
-    return result.trim()
   }
 
   useEffect(() => {
@@ -167,21 +145,13 @@ export default function TableauBeneficiairesMilo({
               <TD className='relative h-full p-4! after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey-500 layout-m:after:content-[""]'>
                 {doitAfficherComptageHeures(beneficiaire) &&
                   comptagesHeures && (
-                    <>
-                      <span className='text-s-regular mb-4'>
-                        Actualisé{' '}
-                        {getTempsDerniereMiseAJour(
-                          comptagesHeures.dateDerniereMiseAJour
-                        )}
-                      </span>
-                      <ProgressComptageHeure
-                        heures={getHeuresCalculeesParBeneficiaire(
-                          beneficiaire.id
-                        )}
-                        label='déclarée'
-                        className='w-3/4'
-                      />
-                    </>
+                    <ProgressComptageHeure
+                      heures={getHeuresCalculeesParBeneficiaire(
+                        beneficiaire.id
+                      )}
+                      label='déclarée'
+                      className='w-3/4'
+                    />
                   )}
 
                 {doitAfficherComptageHeures(beneficiaire) &&

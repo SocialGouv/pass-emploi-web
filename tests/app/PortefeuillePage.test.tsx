@@ -279,6 +279,14 @@ describe('PortefeuillePage client side', () => {
       ).toBeInTheDocument()
     })
 
+    it('affiche la date de dernière mise à jour des heures', () => {
+      expect(
+        screen.getByText(
+          'Mise à jour du compteur d’heures il y a 1 heures 5 minutes'
+        )
+      ).toBeInTheDocument()
+    })
+
     it('permet de filtrer bénéficiaires par dispositif', async () => {
       // Given
       const buttonFiltres = screen.getByRole('button', {
@@ -373,17 +381,17 @@ describe('PortefeuillePage client side', () => {
       //THEN
       expect(
         within(row1).getByRole('cell', {
-          name: 'Actualisé il y a 1h 5min 15h déclarées',
+          name: '15h déclarées',
         })
       ).toBeInTheDocument()
       expect(
         within(row2).getByRole('cell', {
-          name: 'Actualisé il y a 1h 5min 1h déclarée',
+          name: '1h déclarée',
         })
       ).toBeInTheDocument()
       expect(
         within(row3).getByRole('cell', {
-          name: 'Actualisé il y a 1h 5min 12h déclarées',
+          name: '12h déclarées',
         })
       ).toBeInTheDocument()
     })

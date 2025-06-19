@@ -18,6 +18,7 @@ import Table from 'components/ui/Table/Table'
 import {
   BeneficiaireAvecInfosComplementaires,
   CompteurHeuresPortefeuille,
+  estCEJ,
 } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/structure'
 import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
@@ -71,6 +72,19 @@ function TableauBeneficiaires(
 
   const [comptagesHeuresMilo, setComptagesHeuresMilo] =
     useState<CompteurHeuresPortefeuille | null>(null)
+
+  function doitAfficherDateDerniereMiseAJourEtTriComptageHeure(
+    beneficiaires: BeneficiaireAvecInfosComplementaires[]
+  ) {
+    return (
+      estMilo(conseiller.structure) &&
+      conseiller.agence?.id &&
+      (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
+        .split(',')
+        .includes(conseiller.agence.id) &&
+      beneficiaires.some((beneficiaire) => estCEJ(beneficiaire))
+    )
+  }
 
   function handleFiltreDispositif(dispositif?: string) {
     setFiltreDispositif(dispositif)
@@ -164,6 +178,27 @@ function TableauBeneficiaires(
     return getComptageHeuresPortefeuille(conseiller.id)
   }
 
+  function getTempsDerniereMiseAJour(date: string) {
+    const dateTime = DateTime.fromISO(date)
+    const now = DateTime.now()
+    const diff = now.diff(dateTime, ['hours', 'minutes']).toObject()
+
+    const hours = Math.floor(diff.hours ?? 0)
+    const minutes = Math.floor(diff.minutes ?? 0)
+
+    let result = 'il y a '
+    if (hours === 0 && minutes < 1) {
+      return 'maintenant'
+    }
+
+    if (hours > 0) {
+      result += `${hours} heures `
+    }
+    result += `${minutes} minute${minutes > 1 ? 's' : ''}`
+
+    return result.trim()
+  }
+
   useEffect(() => {
     setPage(page)
   }, [beneficiaires])
@@ -216,6 +251,16 @@ function TableauBeneficiaires(
             {toShortDate(FIN_PERIODE)}
           </h2>
 
+          {doitAfficherDateDerniereMiseAJourEtTriComptageHeure(beneficiaires) &&
+            comptagesHeuresMilo && (
+              <span className='text-s-regular mb-4'>
+                Mise à jour du compteur d’heures{' '}
+                {getTempsDerniereMiseAJour(
+                  comptagesHeuresMilo.dateDerniereMiseAJour
+                )}
+              </span>
+            )}
+
           <div className='my-4 flex justify-end gap-6'>
             {afficherFiltres && (
               <FiltresDispositifs
@@ -249,27 +294,31 @@ function TableauBeneficiaires(
               />
             </button>
 
-            <button
-              onClick={handleTriHeuresDeclarees}
-              className='flex text-s-regular'
-              title={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              aria-label={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              type='button'
-            >
-              Trier par heures déclarées
-              <SortIcon
-                isSorted={triActif.type === 'heures'}
-                isDesc={!triActif.ordreCroissant}
-              />
-            </button>
+            {doitAfficherDateDerniereMiseAJourEtTriComptageHeure(
+              beneficiaires
+            ) && (
+              <button
+                onClick={handleTriHeuresDeclarees}
+                className='flex text-s-regular'
+                title={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                aria-label={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                type='button'
+              >
+                Trier par heures déclarées
+                <SortIcon
+                  isSorted={triActif.type === 'heures'}
+                  isDesc={!triActif.ordreCroissant}
+                />
+              </button>
+            )}
 
             <button
               onClick={handleTriActivite}
