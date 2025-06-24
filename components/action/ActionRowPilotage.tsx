@@ -43,7 +43,7 @@ export default function ActionRowPilotage({
       </TD>
       <TD isBold>
         <TagCategorie categorie={action.categorie?.libelle} />
-        {dateFinReelle}
+        <span className='whitespace-nowrap'>{dateFinReelle}</span>
       </TD>
       <TD>
         <span className='text-base-bold'>{action.titre}</span>
