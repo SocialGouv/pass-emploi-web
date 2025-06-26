@@ -411,10 +411,7 @@ export async function getDemarchesBeneficiaire(
 
 export async function getComptageHeuresPortefeuille(
   idConseiller: string
-): Promise<{
-  comptages: CompteurHeuresPortefeuille[]
-  dateDerniereMiseAJour: string
-} | null> {
+): Promise<CompteurHeuresPortefeuille | null> {
   const session = await getSession()
   try {
     const {

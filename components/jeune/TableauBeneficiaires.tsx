@@ -18,6 +18,7 @@ import Table from 'components/ui/Table/Table'
 import {
   BeneficiaireAvecInfosComplementaires,
   CompteurHeuresPortefeuille,
+  estCEJ,
 } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/structure'
 import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
@@ -70,7 +71,20 @@ function TableauBeneficiaires(
   >(trierParNom(beneficiaires, true))
 
   const [comptagesHeuresMilo, setComptagesHeuresMilo] =
-    useState<Array<CompteurHeuresPortefeuille> | null>(null)
+    useState<CompteurHeuresPortefeuille | null>(null)
+
+  function doitAfficherDateDerniereMiseAJourEtTriComptageHeure(
+    beneficiaires: BeneficiaireAvecInfosComplementaires[]
+  ) {
+    return (
+      estMilo(conseiller.structure) &&
+      conseiller.agence?.id &&
+      (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
+        .split(',')
+        .includes(conseiller.agence.id) &&
+      beneficiaires.some((beneficiaire) => estCEJ(beneficiaire))
+    )
+  }
 
   function handleFiltreDispositif(dispositif?: string) {
     setFiltreDispositif(dispositif)
@@ -131,12 +145,12 @@ function TableauBeneficiaires(
   ): BeneficiaireAvecInfosComplementaires[] {
     return [...beneficiairesATrier].sort((a, b) => {
       const heuresA =
-        comptagesHeuresMilo?.find(
+        comptagesHeuresMilo?.comptages?.find(
           (compteur) => a.id === compteur.idBeneficiaire
         )?.nbHeuresDeclarees ?? 0
 
       const heuresB =
-        comptagesHeuresMilo?.find(
+        comptagesHeuresMilo?.comptages?.find(
           (compteur) => b.id === compteur.idBeneficiaire
         )?.nbHeuresDeclarees ?? 0
 
@@ -162,6 +176,27 @@ function TableauBeneficiaires(
 
   async function recupererHeuresDeclarees() {
     return getComptageHeuresPortefeuille(conseiller.id)
+  }
+
+  function getTempsDerniereMiseAJour(date: string) {
+    const dateTime = DateTime.fromISO(date)
+    const now = DateTime.now()
+    const diff = now.diff(dateTime, ['hours', 'minutes']).toObject()
+
+    const hours = Math.floor(diff.hours ?? 0)
+    const minutes = Math.floor(diff.minutes ?? 0)
+
+    let result = 'il y a '
+    if (hours === 0 && minutes < 1) {
+      return 'maintenant'
+    }
+
+    if (hours > 0) {
+      result += `${hours} heures `
+    }
+    result += `${minutes} minute${minutes > 1 ? 's' : ''}`
+
+    return result.trim()
   }
 
   useEffect(() => {
@@ -193,7 +228,7 @@ function TableauBeneficiaires(
   useEffect(() => {
     if (estMilo(conseiller.structure)) {
       recupererHeuresDeclarees().then((nouveauComptage) => {
-        setComptagesHeuresMilo(nouveauComptage?.comptages ?? null)
+        setComptagesHeuresMilo(nouveauComptage ?? null)
       })
     }
   }, [])
@@ -215,6 +250,16 @@ function TableauBeneficiaires(
             Semaine du {toShortDate(DEBUT_PERIODE)} au{' '}
             {toShortDate(FIN_PERIODE)}
           </h2>
+
+          {doitAfficherDateDerniereMiseAJourEtTriComptageHeure(beneficiaires) &&
+            comptagesHeuresMilo && (
+              <span className='text-s-regular mb-4'>
+                Mise à jour du compteur d’heures{' '}
+                {getTempsDerniereMiseAJour(
+                  comptagesHeuresMilo.dateDerniereMiseAJour
+                )}
+              </span>
+            )}
 
           <div className='my-4 flex justify-end gap-6'>
             {afficherFiltres && (
@@ -249,27 +294,31 @@ function TableauBeneficiaires(
               />
             </button>
 
-            <button
-              onClick={handleTriHeuresDeclarees}
-              className='flex text-s-regular'
-              title={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              aria-label={
-                triActif.type === 'heures' && triActif.ordreCroissant
-                  ? 'Trier par heures ordre alphabétique'
-                  : 'Trier par heures ordre alphabétique inversé'
-              }
-              type='button'
-            >
-              Trier par heures déclarées
-              <SortIcon
-                isSorted={triActif.type === 'heures'}
-                isDesc={!triActif.ordreCroissant}
-              />
-            </button>
+            {doitAfficherDateDerniereMiseAJourEtTriComptageHeure(
+              beneficiaires
+            ) && (
+              <button
+                onClick={handleTriHeuresDeclarees}
+                className='flex text-s-regular'
+                title={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                aria-label={
+                  triActif.type === 'heures' && triActif.ordreCroissant
+                    ? 'Trier par heures ordre alphabétique'
+                    : 'Trier par heures ordre alphabétique inversé'
+                }
+                type='button'
+              >
+                Trier par heures déclarées
+                <SortIcon
+                  isSorted={triActif.type === 'heures'}
+                  isDesc={!triActif.ordreCroissant}
+                />
+              </button>
+            )}
 
             <button
               onClick={handleTriActivite}

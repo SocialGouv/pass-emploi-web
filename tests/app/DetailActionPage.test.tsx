@@ -110,7 +110,7 @@ describe('ActionPage client side', () => {
     describe('Quand l’action passe en statut Terminée', () => {
       it('affiche la date de réalisation', async () => {
         // Given
-        const statutRadio = screen.getByText('Terminée - À qualifier')
+        const statutRadio = screen.getByText('À qualifier')
 
         // When
         await userEvent.click(statutRadio)

@@ -32,6 +32,7 @@ describe('PilotagePage client side - Actions', () => {
         prenom: 'L’âne',
       },
       dateFinReelle: '2024-01-16',
+      description: 'C’est un tricycle',
     }
     let container: HTMLElement
 
@@ -115,22 +116,17 @@ describe('PilotagePage client side - Actions', () => {
       // Then
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Bénéficiaire',
+          name: 'Nom et prénom du bénéficiaire',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Date de réalisation',
+          name: 'Catégorie et date de l’action',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Titre de l’action',
-        })
-      ).toBeInTheDocument()
-      expect(
-        within(tableauDActions).getByRole('columnheader', {
-          name: 'Catégorie Filtrer les actions',
+          name: 'Titre et commentaire de l’action',
         })
       ).toBeInTheDocument()
     })
@@ -164,7 +160,7 @@ describe('PilotagePage client side - Actions', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', {
-            name: `Accéder au détail de l’action de ${action.beneficiaire.nom} ${action.beneficiaire.prenom} ${action.titre} ${action.categorie?.libelle} ${toLongMonthDate(action.dateFinReelle)}`,
+            name: `Accéder au détail de l’action de ${action.beneficiaire.nom} ${action.beneficiaire.prenom} ${action.categorie?.libelle} ${toLongMonthDate(action.dateFinReelle)} ${action.titre} ${action.description}`,
           })
         ).toHaveAttribute(
           'href',

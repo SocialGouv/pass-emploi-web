@@ -5481,6 +5481,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-chars@npm:^1.0.0":
+  version: 1.0.13
+  resolution: "emoji-chars@npm:1.0.13"
+  dependencies:
+    emoji-unicode-map: "npm:^1.0.0"
+  checksum: 10c0/70b05ef4a3f02f987e5be8d61bcaae5415fb7f112a224ea15f447eae4ebc1855f997725e72e440d7d331b2a875b5226039325b776c3b39a58b0d3010b854f348
+  languageName: node
+  linkType: hard
+
+"emoji-dictionary@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "emoji-dictionary@npm:1.0.12"
+  dependencies:
+    emoji-chars: "npm:^1.0.0"
+    emoji-name-map: "npm:^1.0.0"
+    emoji-names: "npm:^1.0.1"
+    emoji-unicode-map: "npm:^1.0.0"
+    emojilib: "npm:^2.0.2"
+  checksum: 10c0/0de848b8fc8fe895fc3a5961d37aa0f09a9b5d9c6233ef31e8b656bfc4305eafb40b6306b99900795dc96a1b82b28e894ca27e62260186d5d6177c6051894856
+  languageName: node
+  linkType: hard
+
+"emoji-name-map@npm:^1.0.0, emoji-name-map@npm:^1.1.0":
+  version: 1.2.9
+  resolution: "emoji-name-map@npm:1.2.9"
+  dependencies:
+    emojilib: "npm:^2.0.2"
+    iterate-object: "npm:^1.3.1"
+    map-o: "npm:^2.0.1"
+  checksum: 10c0/e89ea01de2d6873d7dc275444f103d7ec16fcc5872c794d4e4f745bba5759fe92fdc9864ae669c611033da74d6ec207ebe98afaf0e59f984f85879eecf07cc8c
+  languageName: node
+  linkType: hard
+
+"emoji-names@npm:^1.0.1":
+  version: 1.0.13
+  resolution: "emoji-names@npm:1.0.13"
+  dependencies:
+    emoji-name-map: "npm:^1.0.0"
+  checksum: 10c0/f84a9facd489fcf4487bec56a48e53f9ac7dcc07da56e4011d49f411c3f7dd80602b7aaafbae9136a3f4a353a207b0a599b8452b5e7efe87ab4c9a1c79ed6254
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -5492,6 +5534,23 @@ __metadata:
   version: 9.2.2
   resolution: "emoji-regex@npm:9.2.2"
   checksum: 10c0/af014e759a72064cf66e6e694a7fc6b0ed3d8db680427b021a89727689671cefe9d04151b2cad51dbaf85d5ba790d061cd167f1cf32eb7b281f6368b3c181639
+  languageName: node
+  linkType: hard
+
+"emoji-unicode-map@npm:^1.0.0":
+  version: 1.1.12
+  resolution: "emoji-unicode-map@npm:1.1.12"
+  dependencies:
+    emoji-name-map: "npm:^1.1.0"
+    iterate-object: "npm:^1.3.1"
+  checksum: 10c0/6e59609074fe00da768a8ef644b22d9f5278895ccd1d3d81f55969ddb397d83eea0383966c03b4368fc7f737081114104c41626e34d004f1ae5c962ccef20a50
+  languageName: node
+  linkType: hard
+
+"emojilib@npm:^2.0.2":
+  version: 2.4.0
+  resolution: "emojilib@npm:2.4.0"
+  checksum: 10c0/6e66ba8921175842193f974e18af448bb6adb0cf7aeea75e08b9d4ea8e9baba0e4a5347b46ed901491dcaba277485891c33a8d70b0560ca5cc9672a94c21ab8f
   languageName: node
   linkType: hard
 
@@ -7437,6 +7496,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iterate-object@npm:^1.3.0, iterate-object@npm:^1.3.1":
+  version: 1.3.5
+  resolution: "iterate-object@npm:1.3.5"
+  checksum: 10c0/ee24365493f5ec812906b8cb851c9342040e15419138f8b70b2d38b1759f5f3c016943da11c2d83ad0328de455861280d64ad3bee8a2f1a597f3bd12b4806a71
+  languageName: node
+  linkType: hard
+
 "iterator.prototype@npm:^1.1.4":
   version: 1.1.5
   resolution: "iterator.prototype@npm:1.1.5"
@@ -8597,6 +8663,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"map-o@npm:^2.0.1":
+  version: 2.0.11
+  resolution: "map-o@npm:2.0.11"
+  dependencies:
+    iterate-object: "npm:^1.3.0"
+  checksum: 10c0/9914f74bfde026ddb0fc1f73a81ead0564bffdc52a1a8d1e376b18b5882ddef9639b58c6e5c2c67782b4069a6f99b8cb8e034ab3a48a49bc3ef95a83544eb519
+  languageName: node
+  linkType: hard
+
 "mapcap@npm:^1.0.0":
   version: 1.0.0
   resolution: "mapcap@npm:1.0.0"
@@ -9467,6 +9542,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     dotenv: "npm:16.5.0"
     elastic-apm-node: "npm:4.13.0"
+    emoji-dictionary: "npm:^1.0.12"
     eslint: "npm:^9.28.0"
     eslint-config-next: "npm:^15.3.3"
     eslint-config-prettier: "npm:^10.1.5"

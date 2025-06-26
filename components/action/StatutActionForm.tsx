@@ -42,8 +42,7 @@ function StatutActionForm({
           onChange={() => updateStatutAction(actionTerminee)}
           name='option-statut'
           label={
-            'Terminée' +
-            (avecQualification && !estQualifiee ? ' - À qualifier' : '')
+            avecQualification && !estQualifiee ? 'À qualifier' : 'Terminée'
           }
           disabled={disabled}
         />

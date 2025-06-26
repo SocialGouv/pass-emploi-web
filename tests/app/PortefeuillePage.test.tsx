@@ -213,6 +213,7 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
+    const now = DateTime.fromISO('2025-06-18T13:23:13.600+00:00')
     const beneficiaireAvecStructureDifferente =
       unBeneficiaireAvecActionsNonTerminees({
         prenom: 'Aline',
@@ -220,19 +221,19 @@ describe('PortefeuillePage client side', () => {
         structureMilo: { id: '2' },
         dispositif: 'PACEA',
       })
-    jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2024-01-01'))
 
     beforeEach(async () => {
       //GIVEN
       process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
         'id-structure-meaux'
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       ;(getComptageHeuresPortefeuille as jest.Mock).mockResolvedValue({
         comptages: [
           { idBeneficiaire: 'id-beneficiaire-1', nbHeuresDeclarees: 15 },
           { idBeneficiaire: 'id-beneficiaire-2', nbHeuresDeclarees: 1 },
           { idBeneficiaire: 'id-beneficiaire-3', nbHeuresDeclarees: 12 },
         ],
-        dateDerniereMiseAJour: '07/05/2025T18:30:00.000Z',
+        dateDerniereMiseAJour: now.minus({ hour: 1, minute: 5 }).toISO(),
       })
       ;({ container } = await renderWithContexts(
         <PortefeuillePage
@@ -275,6 +276,14 @@ describe('PortefeuillePage client side', () => {
 
       expect(
         screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
+      ).toBeInTheDocument()
+    })
+
+    it('affiche la date de dernière mise à jour des heures', () => {
+      expect(
+        screen.getByText(
+          'Mise à jour du compteur d’heures il y a 1 heures 5 minutes'
+        )
       ).toBeInTheDocument()
     })
 
@@ -371,13 +380,19 @@ describe('PortefeuillePage client side', () => {
 
       //THEN
       expect(
-        within(row1).getByRole('cell', { name: '15h déclarées' })
+        within(row1).getByRole('cell', {
+          name: '15h déclarées',
+        })
       ).toBeInTheDocument()
       expect(
-        within(row2).getByRole('cell', { name: '1h déclarée' })
+        within(row2).getByRole('cell', {
+          name: '1h déclarée',
+        })
       ).toBeInTheDocument()
       expect(
-        within(row3).getByRole('cell', { name: '12h déclarées' })
+        within(row3).getByRole('cell', {
+          name: '12h déclarées',
+        })
       ).toBeInTheDocument()
     })
 

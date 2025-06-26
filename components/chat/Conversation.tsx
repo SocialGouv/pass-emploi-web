@@ -301,7 +301,8 @@ export function Conversation({
   }, [beneficiaireChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (!nombrePagesChargees) return
+    if (!nombrePagesChargees || document.activeElement === inputRef.current)
+      return
 
     if (!messagesByDay!.days.length) {
       headerChatRef.current!.focusRetour()

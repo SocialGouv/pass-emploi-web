@@ -14,13 +14,14 @@ import {
   estCEJ,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
+import { estMilo } from 'interfaces/structure'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime } from 'utils/date'
 
 interface TableauBeneficiairesMiloProps {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
-  comptagesHeures: Array<CompteurHeuresPortefeuille> | null
+  comptagesHeures: CompteurHeuresPortefeuille | null
   page: number
   total: number
 }
@@ -47,6 +48,7 @@ export default function TableauBeneficiairesMilo({
   ) {
     return (
       estCEJ(beneficiaire) &&
+      estMilo(conseiller.structure) &&
       conseiller.agence?.id &&
       (process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS ?? '')
         .split(',')
@@ -55,7 +57,7 @@ export default function TableauBeneficiairesMilo({
   }
 
   function getHeuresCalculeesParBeneficiaire(idBeneficiaire: string) {
-    const compteurHeures = comptagesHeures?.find(
+    const compteurHeures = comptagesHeures?.comptages?.find(
       (compteur) => compteur.idBeneficiaire === idBeneficiaire
     )
     return compteurHeures?.nbHeuresDeclarees ?? 0

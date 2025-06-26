@@ -33,6 +33,7 @@ export interface ActionJson {
 
 export interface ActionPilotageJson {
   id: string
+  description: string
   titre: string
   jeune: {
     id: string
@@ -117,6 +118,7 @@ export function jsonToActionPilotage(
 ): ActionPilotage {
   const actionPilotage: ActionPilotage = {
     id: action.id,
+    description: action.description,
     titre: action.titre,
     beneficiaire: {
       id: action.jeune.id,

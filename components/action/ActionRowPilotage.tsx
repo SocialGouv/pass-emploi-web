@@ -23,7 +23,7 @@ export default function ActionRowPilotage({
   return (
     <TR isSelected={isChecked}>
       <TD className='relative'>
-        <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+        <label className='absolute inset-0 z-20 cursor-pointer p-4 self-center'>
           <span className='sr-only'>
             Sélection {action.titre} {action.categorie?.libelle}
           </span>
@@ -41,12 +41,15 @@ export default function ActionRowPilotage({
       <TD isBold={isChecked}>
         {action.beneficiaire.nom} {action.beneficiaire.prenom}
       </TD>
-      <TD isBold>{action.titre}</TD>
-      <TD>
+      <TD isBold>
         <TagCategorie categorie={action.categorie?.libelle} />
+        <span className='whitespace-nowrap'>{dateFinReelle}</span>
       </TD>
       <TD>
-        <span className='flex flex-row'>{dateFinReelle}</span>
+        <span className='text-base-bold'>{action.titre}</span>
+        {action.description && (
+          <p className='line-clamp-2'>{action.description}</p>
+        )}
       </TD>
       <TDLink
         href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
