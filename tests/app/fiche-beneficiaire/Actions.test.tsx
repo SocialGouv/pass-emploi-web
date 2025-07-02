@@ -202,11 +202,10 @@ describe('Actions dans la fiche jeune', () => {
     it('permet la création d’une action', async () => {
       // When
       await renderFicheJeuneMILO(actions)
+      await userEvent.click(screen.getByRole('button', { name: 'Ajouter' }))
 
       // Then
-      expect(
-        screen.getByRole('link', { name: 'Créer une action' })
-      ).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Une action' })).toHaveAttribute(
         'href',
         '/mes-jeunes/id-beneficiaire-1/actions/nouvelle-action'
       )
