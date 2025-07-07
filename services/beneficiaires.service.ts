@@ -226,6 +226,20 @@ export async function modifierDispositif(
   )
 }
 
+export async function changerVisibiliteComptageHeures(
+  idBeneficiaire: string,
+  peutVoirLeComptageDesHeures: boolean
+): Promise<void> {
+  const session = await getSession()
+  const idConseiller = session?.user.id
+
+  return apiPatch(
+    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}`,
+    { peutVoirLeComptageDesHeures },
+    session!.accessToken
+  )
+}
+
 export async function modifierIdentifiantPartenaire(
   idJeune: string,
   idPartenaire: string

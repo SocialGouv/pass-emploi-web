@@ -51,6 +51,7 @@ export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   situations?: Situation[]
   idPartenaire?: string
   estAArchiver?: boolean
+  peutVoirLeComptageDesHeures?: boolean
 }
 
 export type BeneficiaireEtablissementJson = {
