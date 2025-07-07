@@ -1,12 +1,41 @@
+import React, { useState } from 'react'
+
+import Label from 'components/ui/Form/Label'
+import { Switch } from 'components/ui/Form/Switch'
 import { ProgressComptageHeure } from 'components/ui/Indicateurs/ProgressComptageHeure'
-import { CompteurHeuresFicheBeneficiaire } from 'interfaces/beneficiaire'
+import {
+  CompteurHeuresFicheBeneficiaire,
+  DetailBeneficiaire,
+} from 'interfaces/beneficiaire'
 import { toFrenchDateTime } from 'utils/date'
 
 export function CompteursHeuresBeneficiaireFicheBeneficiaire({
   comptageHeures,
+  beneficiaire,
 }: {
   comptageHeures?: CompteurHeuresFicheBeneficiaire | null
+  beneficiaire: DetailBeneficiaire
 }) {
+  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
+    useState<boolean>(false)
+  const [peutVoirLeComptageDesHeures, setPeutVoirLeComptageDesHeures] =
+    useState<boolean>(beneficiaire.peutVoirLeComptageDesHeures ?? false)
+
+  async function handleChangerVisibilite() {
+    setLoadingChangerVisibilite(true)
+
+    const { changerVisibiliteComptageHeures } = await import(
+      'services/beneficiaires.service'
+    )
+    await changerVisibiliteComptageHeures(
+      beneficiaire.id,
+      !peutVoirLeComptageDesHeures
+    )
+
+    setPeutVoirLeComptageDesHeures(!peutVoirLeComptageDesHeures)
+    setLoadingChangerVisibilite(false)
+  }
+
   return (
     <>
       {comptageHeures && (
@@ -30,6 +59,17 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
                 bgColor='white'
               />
             </div>
+          </div>
+          <div className='flex gap-6 mt-4 justify-between'>
+            <Label htmlFor='afficher-compteur-heures'>
+              Afficher le compteur à votre bénéficiaire
+            </Label>
+            <Switch
+              id='afficher-compteur-heures'
+              checked={peutVoirLeComptageDesHeures}
+              onChange={handleChangerVisibilite}
+              isLoading={loadingChangerVisibilite}
+            />
           </div>
         </div>
       )}
