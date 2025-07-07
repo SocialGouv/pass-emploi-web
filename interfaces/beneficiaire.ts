@@ -49,6 +49,7 @@ export type DetailBeneficiaire = BaseBeneficiaire & {
   email?: string
   urlDossier?: string
   idPartenaire?: string
+  peutVoirLeComptageDesHeures?: boolean
 }
 
 export type MetadonneesFavoris = {

@@ -27,6 +27,7 @@ import {
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import {
   archiverJeune,
+  changerVisibiliteComptageHeures,
   getBeneficiairesDeLaStructureMilo,
   getBeneficiairesDeLEtablissementClientSide,
   getBeneficiairesDuConseillerClientSide,
@@ -386,6 +387,27 @@ describe('JeunesApiService', () => {
     })
   })
 
+  describe('.changerVisibiliteComptageHeures', () => {
+    it('change la visibilité du comptage des heures pour un bénéficiaire', async function () {
+      // Given
+      const idJeune = 'idJeune'
+      const peutVoirLeComptageDesHeures = true
+
+      // When
+      await changerVisibiliteComptageHeures(
+        idJeune,
+        peutVoirLeComptageDesHeures
+      )
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller-1/jeunes/' + idJeune,
+        { peutVoirLeComptageDesHeures },
+        'accessToken'
+      )
+    })
+  })
+
   describe('.getIndicateursBeneficiaire', () => {
     it('renvoie les indicateurs complets du jeune entre une date de début et une date de fin', async () => {
       // Given
@@ -740,7 +762,6 @@ describe('JeunesApiService', () => {
         label: 'periode du 10 au 16 avril',
       }
       const dateDerniereMiseAJour = '2025-04-12'
-      const accessToken = 'accessToken'
 
       const dateDebut = periode.debut.toFormat('yyyy-MM-dd')
       const dateFin = periode.fin.toFormat('yyyy-MM-dd')
@@ -752,8 +773,7 @@ describe('JeunesApiService', () => {
       // When
       const actual = await getComptageHeuresFicheBeneficiaire(
         idBeneficiaire,
-        periode,
-        accessToken
+        periode
       )
 
       // Then

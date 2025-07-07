@@ -24,6 +24,7 @@ import {
 import { Structure, structureFTCej, structureMilo } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import {
+  changerVisibiliteComptageHeures,
   getComptageHeuresFicheBeneficiaire,
   getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
@@ -166,26 +167,6 @@ describe('FicheBeneficiairePage client side', () => {
       )
     })
 
-    it('affiche le nombre d’heures déclarées et validées', async () => {
-      // Given
-      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
-        'id-structure-meaux'
-
-      // When
-      await renderFicheJeuneMilo()
-
-      // Then
-      expect(
-        screen.getByText('Dernière mise à jour le 15/05/2025 à 02:00')
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('progressbar', { name: '1h déclarée' })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('progressbar', { name: '12h validées' })
-      ).toBeInTheDocument()
-    })
-
     it('affiche le dispositif du bénéficiaire', async () => {
       // When
       await renderFicheJeuneMilo()
@@ -197,6 +178,45 @@ describe('FicheBeneficiairePage client side', () => {
           name: 'Changer le bénéficiaire de dispositif',
         })
       ).toBeInTheDocument()
+    })
+
+    describe('compteur d’heures', () => {
+      process.env.NEXT_PUBLIC_COMPTAGE_HEURES_EARLY_ADOPTERS =
+        'id-structure-meaux'
+
+      beforeEach(async () => {
+        await renderFicheJeuneMilo()
+      })
+
+      it('affiche le nombre d’heures déclarées et validées', async () => {
+        // Then
+        expect(
+          screen.getByText('Dernière mise à jour le 15/05/2025 à 02:00')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('progressbar', { name: '1h déclarée' })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('progressbar', { name: '12h validées' })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de changer la visibilité du compteur d’heures', async () => {
+        // Given
+        const switchComptageHeures = screen.getByRole('switch', {
+          name: 'Afficher le compteur à votre bénéficiaire',
+        })
+
+        // When
+        await userEvent.click(switchComptageHeures)
+
+        // Then
+        expect(switchComptageHeures).toBeChecked()
+        expect(changerVisibiliteComptageHeures).toHaveBeenCalledWith(
+          'id-beneficiaire-1',
+          true
+        )
+      })
     })
 
     describe('changement de dispositif', () => {
