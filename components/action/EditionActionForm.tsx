@@ -34,6 +34,7 @@ interface EditionActionFormProps {
   soumettreAction: (payload: ActionFormData) => Promise<void>
   action?: Action
 }
+
 export function EditionActionForm({
   action,
   actionsPredefinies,
@@ -45,6 +46,7 @@ export function EditionActionForm({
   const [codeCategorie, setCodeCategorie] = useState<
     ValueWithError<string | undefined>
   >({ value: action?.qualification?.code })
+  const [isCreationEnCours, setIsCreationEnCours] = useState<boolean>(false)
 
   function titreEstPersonnalise({ titre: titreAction }: Action) {
     return !actionsPredefinies.some(
@@ -271,9 +273,11 @@ export function EditionActionForm({
 
   async function handleSoumettreAction(e: FormEvent) {
     e.preventDefault()
+    setIsCreationEnCours(true)
 
     if (!formulaireEstValide()) {
       formErrorsRef.current!.focus()
+      setIsCreationEnCours(false)
       return Promise.resolve()
     }
 
@@ -289,6 +293,7 @@ export function EditionActionForm({
       statut,
     }
     await soumettreAction(actionFormData)
+    setIsCreationEnCours(false)
   }
 
   return (
@@ -497,7 +502,7 @@ export function EditionActionForm({
           <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
             Annuler
           </ButtonLink>
-          <Button type='submit' className='ml-6'>
+          <Button type='submit' className='ml-6' isLoading={isCreationEnCours}>
             {!action && (
               <IconComponent
                 name={IconName.Add}
