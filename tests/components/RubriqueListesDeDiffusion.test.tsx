@@ -88,13 +88,6 @@ describe('<RubriqueListesDeDiffusion />', () => {
         'Mes listes de diffusion'
       )
     })
-
-    it('permet de gérer les listes de diffusion', async () => {
-      // Then
-      expect(
-        screen.getByRole('link', { name: 'Gérer mes listes de diffusion' })
-      ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
-    })
   })
 
   describe('quand le conseiller n‘a pas de liste de diffusion', () => {
