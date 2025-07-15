@@ -101,7 +101,7 @@ function PartageRecherchePage({
 
   function updateIdsDestinataires(selectedIds: {
     beneficiaires?: string[]
-    listesDeDiffusion?: string[]
+    listes?: string[]
   }) {
     setIdsDestinataires({
       value: selectedIds.beneficiaires!,

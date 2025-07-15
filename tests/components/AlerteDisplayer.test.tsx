@@ -290,12 +290,12 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand on crée une liste de diffusion', () => {
+  describe('quand on crée une liste', () => {
     it("affiche l'alerte de succès", async () => {
       await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
-            key: AlerteParam.creationListeDiffusion,
+            key: AlerteParam.creationListe,
           },
           setter: alerteSetter,
         },
@@ -305,19 +305,17 @@ describe('AlerteDisplayer', () => {
       })
 
       // Then
-      expect(
-        screen.getByText(/La liste de diffusion a bien été créée/)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/La liste a bien été créée/)).toBeInTheDocument()
     })
   })
 
-  describe('quand on modifie une liste de diffusion', () => {
+  describe('quand on modifie une liste', () => {
     it("affiche l'alerte de succès", async () => {
       // Given - When
       await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
-            key: AlerteParam.modificationListeDiffusion,
+            key: AlerteParam.modificationListe,
           },
           setter: alerteSetter,
         },
@@ -328,18 +326,18 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/La liste de diffusion a bien été modifiée/)
+        screen.getByText(/La liste a bien été modifiée/)
       ).toBeInTheDocument()
     })
   })
 
-  describe('quand on supprime une liste de diffusion', () => {
+  describe('quand on supprime une liste', () => {
     it("affiche l'alerte de succès", async () => {
       // Given - When
       await renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           value: {
-            key: AlerteParam.suppressionListeDiffusion,
+            key: AlerteParam.suppressionListe,
           },
           setter: alerteSetter,
         },
@@ -350,7 +348,7 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/La liste de diffusion a bien été supprimée/)
+        screen.getByText(/La liste a bien été supprimée/)
       ).toBeInTheDocument()
     })
   })

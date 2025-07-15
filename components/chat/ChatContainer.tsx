@@ -2,19 +2,19 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
-import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
-import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
+import ListeListes from 'components/chat/ListeListes'
+import RubriqueListes from 'components/chat/RubriqueListes'
 import {
   BeneficiaireEtChat,
   ConseillerHistorique,
 } from 'interfaces/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
-import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
+import { getListesClientSide } from 'services/listes.service'
 import { useChats } from 'utils/chat/chatsContext'
 import { useCurrentConversation } from 'utils/chat/currentConversationContext'
-import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
-import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
+import { useListeSelectionnee } from 'utils/chat/listeSelectionneeContext'
+import { useShowRubriqueListe } from 'utils/chat/showRubriqueListeContext'
 
 type ChatContainerProps = {
   onShowMenu: () => void
@@ -26,7 +26,7 @@ export default function ChatContainer({
   messagerieFullScreen,
 }: ChatContainerProps) {
   const chatRoomRef = useRef<{
-    focusAccesListesDiffusion: () => void
+    focusAccesListes: () => void
     focusConversation: (id: string) => void
   }>(null)
   const listeListesDifffusion = useRef<{
@@ -40,12 +40,9 @@ export default function ChatContainer({
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
   const conversationAFocus = useRef<string | undefined>(undefined)
 
-  const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
-    useShowRubriqueListeDeDiffusion()
-  const [listesDeDiffusion, setListesDeDiffusion] =
-    useState<ListeDeDiffusion[]>()
-  const [listeSelectionnee, setListeSelectionnee] =
-    useListeDeDiffusionSelectionnee()
+  const [showRubriqueListes, setShowRubriqueListes] = useShowRubriqueListe()
+  const [listes, setListes] = useState<Liste[]>()
+  const [listeSelectionnee, setListeSelectionnee] = useListeSelectionnee()
 
   function afficherConversation(conversation: BeneficiaireEtChat | undefined) {
     if (conversation) conversationAFocus.current = conversation.id
@@ -53,17 +50,15 @@ export default function ChatContainer({
   }
 
   useEffect(() => {
-    if (showRubriqueListesDeDiffusion && !listesDeDiffusion)
-      getListesDeDiffusionClientSide().then(setListesDeDiffusion)
-    if (showRubriqueListesDeDiffusion === false)
-      chatRoomRef.current?.focusAccesListesDiffusion()
-  }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
+    if (showRubriqueListes && !listes) getListesClientSide().then(setListes)
+    if (showRubriqueListes === false) chatRoomRef.current?.focusAccesListes()
+  }, [listes, showRubriqueListes])
 
   useEffect(() => {
     if (
       currentConversation &&
       !listeSelectionnee.liste &&
-      !showRubriqueListesDeDiffusion
+      !showRubriqueListes
     ) {
       getConseillersDuJeuneClientSide(currentConversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
@@ -80,12 +75,12 @@ export default function ChatContainer({
 
   useEffect(() => {
     if (!messagerieFullScreen) return
-    if (showRubriqueListesDeDiffusion && !listeSelectionnee.idAFocus)
+    if (showRubriqueListes && !listeSelectionnee.idAFocus)
       listeListesDifffusion.current!.focusRetour()
-  }, [showRubriqueListesDeDiffusion])
+  }, [showRubriqueListes])
 
   useEffect(() => {
-    if (!messagerieFullScreen || !showRubriqueListesDeDiffusion) return
+    if (!messagerieFullScreen || !showRubriqueListes) return
     if (!listeSelectionnee.liste && listeSelectionnee.idAFocus) {
       listeListesDifffusion.current!.focusListe(listeSelectionnee.idAFocus)
       setListeSelectionnee({})
@@ -96,26 +91,24 @@ export default function ChatContainer({
     <>
       {messagerieFullScreen && (
         <>
-          {showRubriqueListesDeDiffusion && (
-            <ListeListesDeDiffusion
+          {showRubriqueListes && (
+            <ListeListes
               ref={listeListesDifffusion}
-              listesDeDiffusion={listesDeDiffusion}
+              listes={listes}
               onAfficherListe={(liste) => setListeSelectionnee({ liste })}
               onBack={() => {
-                setShowRubriqueListesDeDiffusion(false)
+                setShowRubriqueListes(false)
                 setListeSelectionnee({})
               }}
             />
           )}
 
-          {!showRubriqueListesDeDiffusion && (
+          {!showRubriqueListes && (
             <ChatRoom
               ref={chatRoomRef}
               beneficiairesChats={chats}
               onOuvertureMenu={onShowMenu}
-              onAccesListesDiffusion={() =>
-                setShowRubriqueListesDeDiffusion(true)
-              }
+              onAccesListes={() => setShowRubriqueListes(true)}
               onAccesConversation={afficherConversation}
             />
           )}
@@ -124,15 +117,15 @@ export default function ChatContainer({
 
       {!messagerieFullScreen && (
         <>
-          {showRubriqueListesDeDiffusion && (
-            <RubriqueListesDeDiffusion
-              listesDeDiffusion={listesDeDiffusion}
+          {showRubriqueListes && (
+            <RubriqueListes
+              listes={listes}
               chats={chats}
-              onBack={() => setShowRubriqueListesDeDiffusion(false)}
+              onBack={() => setShowRubriqueListes(false)}
             />
           )}
 
-          {!showRubriqueListesDeDiffusion && currentConversation && (
+          {!showRubriqueListes && currentConversation && (
             <ConversationBeneficiaire
               onBack={() => afficherConversation(undefined)}
               beneficiaireChat={currentConversation}
@@ -140,14 +133,12 @@ export default function ChatContainer({
             />
           )}
 
-          {!showRubriqueListesDeDiffusion && !currentConversation && (
+          {!showRubriqueListes && !currentConversation && (
             <ChatRoom
               ref={chatRoomRef}
               beneficiairesChats={chats}
               onOuvertureMenu={onShowMenu}
-              onAccesListesDiffusion={() =>
-                setShowRubriqueListesDeDiffusion(true)
-              }
+              onAccesListes={() => setShowRubriqueListes(true)}
               onAccesConversation={afficherConversation}
             />
           )}

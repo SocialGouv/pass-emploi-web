@@ -1,30 +1,30 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import EditionListePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes/edition-liste/EditionListePage'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
+import {
+  creerListe,
+  modifierListe,
+  supprimerListe,
+} from 'services/listes.service'
 
-import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
-import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
+import { uneListe } from 'fixtures/listes'
 import {
   getNomBeneficiaireComplet,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  creerListeDeDiffusion,
-  modifierListeDeDiffusion,
-  supprimerListeDeDiffusion,
-} from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/listes.service')
 jest.mock('components/ModalContainer')
 jest.mock('components/PageActionsPortal')
 
-describe('Page d’édition d’une liste de diffusion', () => {
+describe('Page d’édition d’une liste ', () => {
   let beneficiaires: IdentiteBeneficiaire[]
   let container: HTMLElement
 
@@ -43,7 +43,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
   describe('contenu', () => {
     beforeEach(async () => {
       ;({ container } = await renderWithContexts(
-        <EditionListeDiffusionPage returnTo='/mes-jeunes/listes-de-diffusion' />,
+        <EditionListePage returnTo='/mes-jeunes/listes' />,
         {
           customAlerte: { setter: alerteSetter },
         }
@@ -79,7 +79,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
       expect(screen.getByRole('link', { name: 'Annuler' })).toHaveAttribute(
         'href',
-        '/mes-jeunes/listes-de-diffusion'
+        '/mes-jeunes/listes'
       )
     })
 
@@ -109,7 +109,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.click(creationButton)
 
         // Then
-        expect(creerListeDeDiffusion).not.toHaveBeenCalled()
+        expect(creerListe).not.toHaveBeenCalled()
         expect(
           screen.getByText(/Le champ “Titre” est vide./)
         ).toBeInTheDocument()
@@ -123,7 +123,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.click(creationButton)
 
         // Then
-        expect(creerListeDeDiffusion).not.toHaveBeenCalled()
+        expect(creerListe).not.toHaveBeenCalled()
         expect(
           screen.getByText(
             'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.'
@@ -170,30 +170,28 @@ describe('Page d’édition d’une liste de diffusion', () => {
       describe('quand le formulaire est validé', () => {
         it('crée la liste', async () => {
           // Then
-          expect(creerListeDeDiffusion).toHaveBeenCalledWith({
+          expect(creerListe).toHaveBeenCalledWith({
             titre: 'Liste métiers aéronautique',
             idsBeneficiaires: [beneficiaires[2].id, beneficiaires[0].id],
           })
         })
 
-        it('redirige vers mes listes de diffusion', async () => {
+        it('redirige vers mes listes', async () => {
           // Then
           expect(routerPush).toHaveBeenCalledWith(
-            expect.stringMatching('/mes-jeunes/listes-de-diffusion')
+            expect.stringMatching('/mes-jeunes/listes')
           )
         })
 
         it('affiche un message de succès', async () => {
           // Then
-          expect(alerteSetter).toHaveBeenCalledWith(
-            AlerteParam.creationListeDiffusion
-          )
+          expect(alerteSetter).toHaveBeenCalledWith(AlerteParam.creationListe)
         })
       })
 
       it('affiche un message d’erreur si la création échoue', async () => {
         // Given
-        ;(creerListeDeDiffusion as jest.Mock).mockRejectedValue({})
+        ;(creerListe as jest.Mock).mockRejectedValue({})
 
         // When
         await userEvent.click(screen.getByText('Créer la liste'))
@@ -209,7 +207,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
   })
 
   describe('modification', () => {
-    let listeDeDiffusion: ListeDeDiffusion
+    let liste: Liste
     beforeEach(async () => {
       // When
       const beneficiaire0 = {
@@ -224,14 +222,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
         nom: 'Chirac',
         estDansLePortefeuille: false,
       }
-      listeDeDiffusion = uneListeDeDiffusion({
+      liste = uneListe({
         beneficiaires: [beneficiaire0, beneficiaire2],
       })
       ;({ container } = await renderWithContexts(
-        <EditionListeDiffusionPage
-          returnTo='/mes-jeunes/listes-de-diffusion'
-          liste={listeDeDiffusion}
-        />,
+        <EditionListePage returnTo='/mes-jeunes/listes' liste={liste} />,
         {
           customAlerte: { setter: alerteSetter },
         }
@@ -256,14 +251,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
       )
 
       // Then
-      expect(supprimerListeDeDiffusion).toHaveBeenCalledWith(
-        listeDeDiffusion.id
-      )
-      expect(alerteSetter).toHaveBeenCalledWith(
-        AlerteParam.suppressionListeDiffusion
-      )
+      expect(supprimerListe).toHaveBeenCalledWith(liste.id)
+      expect(alerteSetter).toHaveBeenCalledWith(AlerteParam.suppressionListe)
       expect(routerPush).toHaveBeenCalledWith(
-        expect.stringMatching('/mes-jeunes/listes-de-diffusion')
+        expect.stringMatching('/mes-jeunes/listes')
       )
     })
 
@@ -302,14 +293,14 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     it('charge le titre de la liste', () => {
       // When
-      expect(screen.getByLabelText(/Titre/)).toHaveValue(listeDeDiffusion.titre)
+      expect(screen.getByLabelText(/Titre/)).toHaveValue(liste.titre)
     })
 
     it('contient un lien pour annuler', async () => {
       // Then
       expect(screen.getByText('Annuler la modification')).toHaveAttribute(
         'href',
-        '/mes-jeunes/listes-de-diffusion'
+        '/mes-jeunes/listes'
       )
     })
 
@@ -320,7 +311,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       )
 
       //Then
-      expect(modifierListeDeDiffusion).not.toHaveBeenCalled()
+      expect(modifierListe).not.toHaveBeenCalled()
     })
 
     describe('liste modifiée', () => {
@@ -358,26 +349,21 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
       it('modifie la liste', async () => {
         // Then
-        expect(modifierListeDeDiffusion).toHaveBeenCalledWith(
-          listeDeDiffusion.id,
-          {
-            titre: 'Nouveau titre',
-            idsBeneficiaires: [beneficiaires[1].id, beneficiaires[0].id],
-          }
-        )
+        expect(modifierListe).toHaveBeenCalledWith(liste.id, {
+          titre: 'Nouveau titre',
+          idsBeneficiaires: [beneficiaires[1].id, beneficiaires[0].id],
+        })
       })
 
       it('affiche un message de succès', async () => {
         // Then
-        expect(alerteSetter).toHaveBeenCalledWith(
-          AlerteParam.modificationListeDiffusion
-        )
+        expect(alerteSetter).toHaveBeenCalledWith(AlerteParam.modificationListe)
       })
 
-      it('redirige vers mes listes de diffusion', async () => {
+      it('redirige vers mes listes', async () => {
         // Then
         expect(routerPush).toHaveBeenCalledWith(
-          expect.stringMatching('/mes-jeunes/listes-de-diffusion')
+          expect.stringMatching('/mes-jeunes/listes')
         )
       })
     })

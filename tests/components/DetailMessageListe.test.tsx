@@ -1,26 +1,26 @@
 import { screen, within } from '@testing-library/react'
+import DetailMessageListe from 'components/chat/DetailMessageListe'
 import { DateTime } from 'luxon'
 
-import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
 import { unBeneficiaireChat } from 'fixtures/beneficiaire'
-import { unMessageListeDiffusion } from 'fixtures/message'
+import { unMessageListe } from 'fixtures/message'
 import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
-import { MessageListeDiffusion } from 'interfaces/message'
+import { MessageListe } from 'interfaces/message'
 import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 
-describe('DetailMessageListeDeDiffusion', () => {
-  let message: MessageListeDiffusion
+describe('DetailMessageListe', () => {
+  let message: MessageListe
 
   beforeEach(async () => {
     // Given
     jest
       .spyOn(DateTime, 'now')
       .mockReturnValue(DateTime.fromISO('2022-09-01T14:00:00.000+02:00'))
-    message = unMessageListeDiffusion({
+    message = unMessageListe({
       idsDestinataires: ['id-destinataire-1', 'id-destinataire-2'],
     })
     const destinataire1: IdentiteBeneficiaire = {
@@ -40,7 +40,7 @@ describe('DetailMessageListeDeDiffusion', () => {
 
     // When
     await renderWithContexts(
-      <DetailMessageListeDeDiffusion
+      <DetailMessageListe
         message={message}
         onBack={() => {}}
         chats={[

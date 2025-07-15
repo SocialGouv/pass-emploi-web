@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
+import { desListes } from 'fixtures/listes'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { uploadFichier } from 'services/fichiers.service'
 import { sendNouveauMessageGroupe, signIn } from 'services/messages.service'
@@ -23,7 +23,7 @@ describe('EnvoiMessageGroupePage client side', () => {
   let container: HTMLElement
 
   let beneficiaires: BeneficiaireFromListe[]
-  let listesDeDiffusion: ListeDeDiffusion[]
+  let listes: Liste[]
 
   let inputSearchBeneficiaire: HTMLSelectElement
   let inputMessage: HTMLInputElement
@@ -38,7 +38,7 @@ describe('EnvoiMessageGroupePage client side', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ push })
 
     beneficiaires = desItemsBeneficiaires()
-    listesDeDiffusion = desListesDeDiffusion()
+    listes = desListes()
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(sendNouveauMessageGroupe as jest.Mock).mockResolvedValue(undefined)
     ;(uploadFichier as jest.Mock).mockResolvedValue({
@@ -46,10 +46,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       nom: 'imageupload.png',
     })
     ;({ container } = await renderWithContexts(
-      <EnvoiMessageGroupePage
-        listesDiffusion={listesDeDiffusion}
-        returnTo='/mes-jeunes'
-      />,
+      <EnvoiMessageGroupePage listes={listes} returnTo='/mes-jeunes' />,
       {
         customAlerte: { setter: alerteSetter },
       }
@@ -101,11 +98,11 @@ describe('EnvoiMessageGroupePage client side', () => {
       ).toBeInTheDocument()
     })
 
-    it('affiche un lien qui renvoie vers la page de gestion des listes de diffusion', () => {
+    it('affiche un lien qui renvoie vers la page de gestion des listes', () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Gérer mes listes de diffusion' })
-      ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
+        screen.getByRole('link', { name: 'Gérer mes listes' })
+      ).toHaveAttribute('href', '/mes-jeunes/listes')
     })
 
     it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
@@ -175,7 +172,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       expect(uploadFichier).toHaveBeenCalledTimes(0)
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
         idsBeneficiaires: [beneficiaires[1].id],
-        idsListesDeDiffusion: ['liste-1'],
+        idsListes: ['liste-1'],
         newMessage,
         cleChiffrement: 'cleChiffrement',
       })
@@ -307,7 +304,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       )
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
         idsBeneficiaires: [beneficiaires[1].id],
-        idsListesDeDiffusion: ['liste-1'],
+        idsListes: ['liste-1'],
         newMessage,
         cleChiffrement: 'cleChiffrement',
         infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
@@ -329,7 +326,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       )
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
         idsBeneficiaires: [beneficiaires[1].id],
-        idsListesDeDiffusion: ['liste-1'],
+        idsListes: ['liste-1'],
         newMessage:
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
         cleChiffrement: 'cleChiffrement',

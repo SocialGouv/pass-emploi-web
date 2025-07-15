@@ -151,7 +151,7 @@ function PortefeuillePage({
     <>
       <PageActionsPortal>
         <ButtonLink
-          href='/mes-jeunes/listes-de-diffusion'
+          href='/mes-jeunes/listes'
           style={ButtonStyle.SECONDARY}
           className='mr-auto'
         >
@@ -161,7 +161,7 @@ function PortefeuillePage({
             aria-hidden={true}
             className='w-4 h-4 fill-primary mr-3'
           />
-          Gérer mes listes de diffusion
+          Gérer mes listes
         </ButtonLink>
 
         <ButtonLink href='/mes-jeunes/creation-jeune'>

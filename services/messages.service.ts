@@ -37,7 +37,7 @@ import {
   ByDay,
   ChatCredentials,
   Message,
-  MessageListeDiffusion,
+  MessageListe,
   MessageRechercheMatch,
   OfDay,
   TypeMessage,
@@ -65,7 +65,7 @@ export type FormNouveauMessageImportant = {
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsBeneficiaires: string[]
-  idsListesDeDiffusion: string[]
+  idsListes: string[]
 }
 
 type PartageOffre = {
@@ -200,12 +200,12 @@ export function observeJeuneReadingDate(
   })
 }
 
-export async function getMessagesListeDeDiffusion(
-  idListeDiffusion: string,
+export async function getMessagesListe(
+  idListe: string,
   cleChiffrement: string
-): Promise<ByDay<MessageListeDiffusion>> {
+): Promise<ByDay<MessageListe>> {
   const session = await getSession()
-  const messages = await getMessagesGroupe(session!.user.id, idListeDiffusion)
+  const messages = await getMessagesGroupe(session!.user.id, idListe)
 
   return grouperMessagesParJour(messages, cleChiffrement)
 }
@@ -402,7 +402,7 @@ export async function desactiverMessageImportant(
 export async function sendNouveauMessageGroupe({
   cleChiffrement,
   idsBeneficiaires,
-  idsListesDeDiffusion,
+  idsListes,
   infoPieceJointe,
   newMessage,
 }: FormNouveauMessageGroupe) {
@@ -427,7 +427,7 @@ export async function sendNouveauMessageGroupe({
       message: encryptedMessage.encryptedText,
       iv: encryptedMessage.iv,
       idsBeneficiaires: idsBeneficiaires,
-      idsListesDeDiffusion,
+      idsListesDeDiffusion: idsListes,
       idConseiller: session!.user.id,
       infoPieceJointe: encryptedPieceJointe ? encryptedPieceJointe : undefined,
     },
@@ -646,7 +646,7 @@ async function evenementMessage(
   )
 }
 
-function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
+function grouperMessagesParJour<T extends Message | MessageListe>(
   messages: T[],
   cleChiffrement: string
 ): ByDay<T> {

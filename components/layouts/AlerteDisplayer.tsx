@@ -122,12 +122,12 @@ const ALERTES: DictAlertes = {
   },
   clotureEvenement: { title: 'Cet événement a bien été clos' },
   clotureSession: { title: 'Cet événement a bien été clos' },
-  creationListeDiffusion: { title: 'La liste de diffusion a bien été créée' },
-  modificationListeDiffusion: {
-    title: 'La liste de diffusion a bien été modifiée',
+  creationListe: { title: 'La liste a bien été créée' },
+  modificationListe: {
+    title: 'La liste a bien été modifiée',
   },
-  suppressionListeDiffusion: {
-    title: 'La liste de diffusion a bien été supprimée',
+  suppressionListe: {
+    title: 'La liste a bien été supprimée',
   },
   modificationAtelier: {
     title: 'L’atelier a bien été mis à jour',

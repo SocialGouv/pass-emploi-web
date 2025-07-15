@@ -9,7 +9,7 @@ export function BeneficiaireListeItem({
   value,
   id,
 }: BeneficiaireIndicationProps) {
-  const infoLabel = 'Liste de diffusion'
+  const infoLabel = 'Liste'
   return (
     <p className='flex items-center'>
       <IconComponent

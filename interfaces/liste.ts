@@ -1,6 +1,6 @@
 import { IdentiteBeneficiaire } from 'interfaces/beneficiaire'
 
-export type ListeDeDiffusion = {
+export type Liste = {
   id: string
   titre: string
   beneficiaires: Array<
@@ -10,6 +10,6 @@ export type ListeDeDiffusion = {
   >
 }
 
-export function getListeInformations(l: ListeDeDiffusion): string {
+export function getListeInformations(l: Liste): string {
   return `${l.titre} (${l.beneficiaires.length})`
 }

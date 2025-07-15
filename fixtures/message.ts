@@ -1,11 +1,6 @@
 import { DateTime } from 'luxon'
 
-import {
-  ByDay,
-  Message,
-  MessageListeDiffusion,
-  TypeMessage,
-} from 'interfaces/message'
+import { ByDay, Message, MessageListe, TypeMessage } from 'interfaces/message'
 import { TypeOffre } from 'interfaces/offre'
 
 export const unMessage = (args: Partial<Message> = {}): Message => {
@@ -226,10 +221,10 @@ export const desMessagesParJour = (): ByDay<Message> => ({
   ],
 })
 
-export const unMessageListeDiffusion = (
-  args: Partial<MessageListeDiffusion> = {}
-): MessageListeDiffusion => {
-  const defaults: MessageListeDiffusion = {
+export const unMessageListe = (
+  args: Partial<MessageListe> = {}
+): MessageListe => {
+  const defaults: MessageListe = {
     id: 'idMessage',
     content: `Encrypted: content`,
     creationDate: DateTime.now(),
@@ -242,24 +237,24 @@ export const unMessageListeDiffusion = (
   return { ...defaults, ...args }
 }
 
-export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
+export function desMessagesListe(): MessageListe[] {
   return [
-    unMessageListeDiffusion({
+    unMessageListe({
       id: 'message-1',
       content: 'Message du 22/12/2021',
       creationDate: DateTime.local(2021, 12, 22),
     }),
-    unMessageListeDiffusion({
+    unMessageListe({
       id: 'message-2',
       content: 'Message du 10/1/2022',
       creationDate: DateTime.local(2022, 1, 10),
     }),
-    unMessageListeDiffusion({
+    unMessageListe({
       id: 'message-3',
       content: 'Message du 13/1/2022 9h',
       creationDate: DateTime.local(2022, 1, 13, 9),
     }),
-    unMessageListeDiffusion({
+    unMessageListe({
       id: 'message-4',
       content: 'Message du 13/1/2022 10h',
       creationDate: DateTime.local(2022, 1, 13, 10),
@@ -267,44 +262,43 @@ export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
   ]
 }
 
-export const desMessagesListeDeDiffusionParJour =
-  (): ByDay<MessageListeDiffusion> => ({
-    countMessagesFetched: 4,
-    days: [
-      {
-        date: DateTime.local(2021, 12, 22),
-        messages: [
-          unMessageListeDiffusion({
-            id: 'message-1',
-            content: 'Decrypted: Message du 22/12/2021',
-            creationDate: DateTime.local(2021, 12, 22),
-          }),
-        ],
-      },
-      {
-        date: DateTime.local(2022, 1, 10),
-        messages: [
-          unMessageListeDiffusion({
-            id: 'message-2',
-            content: 'Decrypted: Message du 10/1/2022',
-            creationDate: DateTime.local(2022, 1, 10),
-          }),
-        ],
-      },
-      {
-        date: DateTime.local(2022, 1, 13, 9),
-        messages: [
-          unMessageListeDiffusion({
-            id: 'message-3',
-            content: 'Decrypted: Message du 13/1/2022 9h',
-            creationDate: DateTime.local(2022, 1, 13, 9),
-          }),
-          unMessageListeDiffusion({
-            id: 'message-4',
-            content: 'Decrypted: Message du 13/1/2022 10h',
-            creationDate: DateTime.local(2022, 1, 13, 10),
-          }),
-        ],
-      },
-    ],
-  })
+export const desMessagesListeParJour = (): ByDay<MessageListe> => ({
+  countMessagesFetched: 4,
+  days: [
+    {
+      date: DateTime.local(2021, 12, 22),
+      messages: [
+        unMessageListe({
+          id: 'message-1',
+          content: 'Decrypted: Message du 22/12/2021',
+          creationDate: DateTime.local(2021, 12, 22),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 10),
+      messages: [
+        unMessageListe({
+          id: 'message-2',
+          content: 'Decrypted: Message du 10/1/2022',
+          creationDate: DateTime.local(2022, 1, 10),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 13, 9),
+      messages: [
+        unMessageListe({
+          id: 'message-3',
+          content: 'Decrypted: Message du 13/1/2022 9h',
+          creationDate: DateTime.local(2022, 1, 13, 9),
+        }),
+        unMessageListe({
+          id: 'message-4',
+          content: 'Decrypted: Message du 13/1/2022 10h',
+          creationDate: DateTime.local(2022, 1, 13, 10),
+        }),
+      ],
+    },
+  ],
+})
