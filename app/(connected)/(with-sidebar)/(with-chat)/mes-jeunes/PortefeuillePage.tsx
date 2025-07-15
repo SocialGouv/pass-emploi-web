@@ -9,7 +9,7 @@ import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import TableauBeneficiaires from 'components/jeune/TableauBeneficiaires'
 import PageActionsPortal from 'components/PageActionsPortal'
-import Button from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -150,6 +150,20 @@ function PortefeuillePage({
   return (
     <>
       <PageActionsPortal>
+        <ButtonLink
+          href='/mes-jeunes/listes-de-diffusion'
+          style={ButtonStyle.SECONDARY}
+          className='mr-auto'
+        >
+          <IconComponent
+            name={IconName.Edit}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 fill-primary mr-3'
+          />
+          Gérer mes listes de diffusion
+        </ButtonLink>
+
         <ButtonLink href='/mes-jeunes/creation-jeune'>
           <IconComponent
             name={IconName.Add}

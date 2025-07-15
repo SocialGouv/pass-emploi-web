@@ -10,8 +10,6 @@ import React, {
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import EmptyState from 'components/EmptyState'
-import { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
@@ -22,6 +20,7 @@ type ListeListesDeDiffusionProps = {
   onAfficherListe: (liste: ListeDeDiffusion) => void
   onBack: () => void
 }
+
 function ListeListesDeDiffusion(
   { listesDeDiffusion, onAfficherListe, onBack }: ListeListesDeDiffusionProps,
   ref: ForwardedRef<{
@@ -72,78 +71,60 @@ function ListeListesDeDiffusion(
 
       {messagerieEstVisible && (
         <>
-          <div className='hidden layout-s:block w-fit ml-4 mb-8'>
-            <ButtonLink
-              href='/mes-jeunes/listes-de-diffusion'
-              style={ButtonStyle.TERTIARY}
-              className='mr-auto'
+          {!listesDeDiffusion && <SpinningLoader alert={true} />}
+
+          {listesDeDiffusion && listesDeDiffusion.length === 0 && (
+            <div
+              ref={containerRef}
+              className='bg-grey-100 flex flex-col justify-center items-center'
             >
-              <IconComponent
-                name={IconName.Edit}
-                focusable={false}
-                aria-hidden={true}
-                className='w-4 h-4 fill-primary mr-3'
+              <EmptyState
+                illustrationName={IllustrationName.Send}
+                titre='Vous n’avez pas encore créé de liste de diffusion.'
+                sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+                lien={{
+                  href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+                  label: 'Créer une liste',
+                  iconName: IconName.Add,
+                }}
               />
-              Gérer mes listes de diffusion
-            </ButtonLink>
-          </div>
+            </div>
+          )}
 
-          <>
-            {!listesDeDiffusion && <SpinningLoader alert={true} />}
-
-            {listesDeDiffusion && listesDeDiffusion.length === 0 && (
-              <div
-                ref={containerRef}
-                className='bg-grey-100 flex flex-col justify-center items-center'
+          {listesDeDiffusion && listesDeDiffusion.length > 0 && (
+            <div
+              ref={containerRef}
+              className='flex flex-col m-4 overflow-y-auto'
+            >
+              <h3
+                id='listes-de-diffusion'
+                className='text-m-medium text-primary mb-4'
               >
-                <EmptyState
-                  illustrationName={IllustrationName.Send}
-                  titre='Vous n’avez pas encore créé de liste de diffusion.'
-                  sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
-                  lien={{
-                    href: '/mes-jeunes/listes-de-diffusion/edition-liste',
-                    label: 'Créer une liste',
-                    iconName: IconName.Add,
-                  }}
-                />
-              </div>
-            )}
-
-            {listesDeDiffusion && listesDeDiffusion.length > 0 && (
-              <div
-                ref={containerRef}
-                className='flex flex-col m-4 overflow-y-auto'
+                Listes ({listesDeDiffusion.length})
+              </h3>
+              <ul
+                aria-describedby='listes-de-diffusion'
+                className='overflow-y-auto'
               >
-                <h3
-                  id='listes-de-diffusion'
-                  className='text-m-medium text-primary mb-4'
-                >
-                  Listes ({listesDeDiffusion.length})
-                </h3>
-                <ul
-                  aria-describedby='listes-de-diffusion'
-                  className='overflow-y-auto'
-                >
-                  {listesDeDiffusion.map((liste) => (
-                    <li
-                      key={liste.id}
-                      className='bg-white rounded-base mb-2 last:mb-0'
-                    >
-                      <ListeDeDiffusionTile
-                        ref={
-                          liste.id === idListeAFocus
-                            ? (e) => e?.focus()
-                            : undefined
-                        }
-                        liste={liste}
-                        onAfficherListe={onAfficherListe}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </>
+                {listesDeDiffusion.map((liste) => (
+                  <li
+                    key={liste.id}
+                    className='bg-white rounded-base mb-2 last:mb-0'
+                  >
+                    <ListeDeDiffusionTile
+                      ref={
+                        liste.id === idListeAFocus
+                          ? (e) => e?.focus()
+                          : undefined
+                      }
+                      liste={liste}
+                      onAfficherListe={onAfficherListe}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </>
       )}
 
