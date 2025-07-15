@@ -25,27 +25,24 @@ import {
   compareParId,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
+import { ListeFormData } from 'services/listes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { unsafeRandomId } from 'utils/helpers'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-const ConfirmationDeleteListeDiffusionModal = dynamic(
-  () => import('components/ConfirmationDeleteListeDiffusionModal')
+const ConfirmationDeleteListeModal = dynamic(
+  () => import('components/ConfirmationDeleteListeModal')
 )
 
-type EditionListeDiffusionProps = {
+type EditionListeProps = {
   returnTo: string
-  liste?: ListeDeDiffusion
+  liste?: Liste
 }
 
-function EditionListeDiffusionPage({
-  returnTo,
-  liste,
-}: EditionListeDiffusionProps) {
+function EditionListePage({ returnTo, liste }: EditionListeProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
@@ -140,15 +137,15 @@ function EditionListeDiffusionPage({
     if (!hasChanges()) return
 
     setIsLoading(true)
-    const payload: ListeDeDiffusionFormData = {
+    const payload: ListeFormData = {
       titre: titre.value!,
       idsBeneficiaires: idsBeneficiaires.value,
     }
     try {
       if (!liste) {
-        await creerListe(payload)
+        await handleCreationListe(payload)
       } else {
-        await modifierListe(liste.id, payload)
+        await handleModificationListe(liste.id, payload)
       }
       // FIXME : dirty fix, problème de rafraichissement de la liste
       router.push(returnTo + '?misc=' + unsafeRandomId())
@@ -160,33 +157,27 @@ function EditionListeDiffusionPage({
     }
   }
 
-  async function creerListe(payload: ListeDeDiffusionFormData) {
-    const { creerListeDeDiffusion } = await import(
-      'services/listes-de-diffusion.service'
-    )
-    await creerListeDeDiffusion(payload)
-    setAlerte(AlerteParam.creationListeDiffusion)
+  async function handleCreationListe(payload: ListeFormData) {
+    const { creerListe } = await import('services/listes.service')
+    await creerListe(payload)
+    setAlerte(AlerteParam.creationListe)
   }
 
-  async function modifierListe(
+  async function handleModificationListe(
     idListe: string,
-    payload: ListeDeDiffusionFormData
+    payload: ListeFormData
   ) {
-    const { modifierListeDeDiffusion } = await import(
-      'services/listes-de-diffusion.service'
-    )
-    await modifierListeDeDiffusion(idListe, payload)
-    setAlerte(AlerteParam.modificationListeDiffusion)
+    const { modifierListe } = await import('services/listes.service')
+    await modifierListe(idListe, payload)
+    setAlerte(AlerteParam.modificationListe)
   }
 
-  async function supprimerListe() {
+  async function handleSuppressionListe() {
     setIsLoading(true)
     try {
-      const { supprimerListeDeDiffusion } = await import(
-        'services/listes-de-diffusion.service'
-      )
-      await supprimerListeDeDiffusion(liste!.id)
-      setAlerte(AlerteParam.suppressionListeDiffusion)
+      const { supprimerListe } = await import('services/listes.service')
+      await supprimerListe(liste!.id)
+      setAlerte(AlerteParam.suppressionListe)
       // FIXME : dirty fix, problème de rafraichissement de la liste
       router.push(returnTo + '?misc=' + unsafeRandomId())
     } catch (e) {
@@ -285,10 +276,7 @@ function EditionListeDiffusionPage({
         />
 
         <div className='flex gap-2 mt-6 justify-center'>
-          <ButtonLink
-            href='/mes-jeunes/listes-de-diffusion'
-            style={ButtonStyle.SECONDARY}
-          >
+          <ButtonLink href='/mes-jeunes/listes' style={ButtonStyle.SECONDARY}>
             Annuler {liste ? 'la modification' : ''}
           </ButtonLink>
 
@@ -313,9 +301,9 @@ function EditionListeDiffusionPage({
       </form>
 
       {showConfirmationSuppression && (
-        <ConfirmationDeleteListeDiffusionModal
-          titreListeDeDiffusion={liste!.titre}
-          onConfirmation={supprimerListe}
+        <ConfirmationDeleteListeModal
+          titreListe={liste!.titre}
+          onConfirmation={handleSuppressionListe}
           onCancel={() => setShowConfirmationSuppression(false)}
         />
       )}
@@ -323,7 +311,4 @@ function EditionListeDiffusionPage({
   )
 }
 
-export default withTransaction(
-  EditionListeDiffusionPage.name,
-  'page'
-)(EditionListeDiffusionPage)
+export default withTransaction(EditionListePage.name, 'page')(EditionListePage)

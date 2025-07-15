@@ -1,31 +1,31 @@
 import { screen } from '@testing-library/react'
 import { axe } from 'jest-axe'
 import React from 'react'
+import { getListesClientSide } from 'services/listes.service'
 
 import MessageriePage from 'app/(connected)/(with-sidebar)/messagerie/MessageriePage'
 import {
   desItemsBeneficiaires,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
+import { desListes } from 'fixtures/listes'
+import { desMessagesListeParJour } from 'fixtures/message'
 import {
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { ByDay, MessageListeDiffusion } from 'interfaces/message'
+import { ByDay, MessageListe } from 'interfaces/message'
 import { structureFTCej } from 'interfaces/structure'
-import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {
-  getMessagesListeDeDiffusion,
+  getMessagesListe,
   observeConseillerChats,
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/messages.service')
-jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/listes.service')
 
 describe('MessageriePage client side', () => {
   let container: HTMLElement
@@ -35,10 +35,10 @@ describe('MessageriePage client side', () => {
   let beneficiairesChats: BeneficiaireEtChat[]
 
   let updateChatsRef: (chats: BeneficiaireEtChat[]) => void
-  let messages: ByDay<MessageListeDiffusion>
+  let messages: ByDay<MessageListe>
 
   beforeEach(async () => {
-    messages = desMessagesListeDeDiffusionParJour()
+    messages = desMessagesListeParJour()
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_jeune, _cle, fn) => {
         updateChatsRef = fn
@@ -46,10 +46,8 @@ describe('MessageriePage client side', () => {
         return Promise.resolve(() => {})
       }
     )
-    ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue(messages)
-    ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
-      desListesDeDiffusion()
-    )
+    ;(getMessagesListe as jest.Mock).mockResolvedValue(messages)
+    ;(getListesClientSide as jest.Mock).mockResolvedValue(desListes())
     beneficiairesChats = [
       unBeneficiaireChat({
         ...jeunes[0],
@@ -92,15 +90,15 @@ describe('MessageriePage client side', () => {
     })
   })
 
-  describe('tunnel des listes de diffusion', () => {
-    describe('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', () => {
+  describe('tunnel des listes', () => {
+    describe('conseille à l’utilisateur de sélectionner une liste au clic sur ”voir mes listes”', () => {
       beforeEach(async () => {
         //When
         ;({ container } = await renderWithContexts(<MessageriePage />, {
           customConseiller: {
             structure: structureFTCej,
           },
-          customShowRubriqueListeDeDiffusion: { value: true },
+          customShowRubriqueListe: { value: true },
         }))
       })
 
@@ -111,7 +109,7 @@ describe('MessageriePage client side', () => {
       it('contenu', async () => {
         //Then
         expect(
-          screen.getByText('Veuillez sélectionner une liste de diffusion.')
+          screen.getByText('Veuillez sélectionner une liste.')
         ).toBeInTheDocument()
       })
     })
@@ -119,15 +117,15 @@ describe('MessageriePage client side', () => {
     describe('quand une liste est sélectionée', () => {
       beforeEach(async () => {
         //Given
-        const listeSelectionnee = desListesDeDiffusion()[0]
+        const listeSelectionnee = desListes()[0]
 
         //When
         ;({ container } = await renderWithContexts(<MessageriePage />, {
           customConseiller: {
             structure: structureFTCej,
           },
-          customShowRubriqueListeDeDiffusion: { value: true },
-          customListeDeDiffusionSelectionnee: {
+          customShowRubriqueListe: { value: true },
+          customListeSelectionnee: {
             value: { liste: listeSelectionnee },
           },
         }))
@@ -144,12 +142,11 @@ describe('MessageriePage client side', () => {
           })
         ).toBeInTheDocument()
       })
-      it('affiche les messages de la liste de diffusion', async () => {
-        const messageRandom =
-          desMessagesListeDeDiffusionParJour().days[0].messages[0]
+      it('affiche les messages de la liste', async () => {
+        const messageRandom = desMessagesListeParJour().days[0].messages[0]
         //Then
         expect(
-          screen.getByText('Messages envoyés à la liste de diffusion')
+          screen.getByText('Messages envoyés à la liste')
         ).toBeInTheDocument()
 
         expect(screen.getByText(messageRandom.content)).toBeInTheDocument()

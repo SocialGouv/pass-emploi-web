@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
-import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
-import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
+import DetailMessageListe from 'components/chat/DetailMessageListe'
+import ListeListes from 'components/chat/ListeListes'
+import MessagesListe from 'components/chat/MessagesListe'
 import { BeneficiaireEtChat } from 'interfaces/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { MessageListeDiffusion } from 'interfaces/message'
-import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import { Liste } from 'interfaces/liste'
+import { MessageListe } from 'interfaces/message'
+import { useListeSelectionnee } from 'utils/chat/listeSelectionneeContext'
 
-type RubriqueListesDeDiffusionProps = {
-  listesDeDiffusion: ListeDeDiffusion[] | undefined
+type RubriqueListesProps = {
+  listes: Liste[] | undefined
   chats: BeneficiaireEtChat[] | undefined
   onBack: () => void
 }
 
-export default function RubriqueListesDeDiffusion({
-  listesDeDiffusion,
+export default function RubriqueListes({
+  listes,
   chats,
   onBack,
-}: RubriqueListesDeDiffusionProps) {
-  const listeListesDiffusionRef = useRef<{
+}: RubriqueListesProps) {
+  const listeListesRef = useRef<{
     focusRetour: () => void
     focusListe: (id: string) => void
   }>(null)
@@ -29,10 +29,9 @@ export default function RubriqueListesDeDiffusion({
   }>(null)
   const messageRef = useRef<{ focusRetour: () => void }>(null)
 
-  const [listeSelectionnee, setListeSelectionnee] =
-    useListeDeDiffusionSelectionnee()
+  const [listeSelectionnee, setListeSelectionnee] = useListeSelectionnee()
   const [messageSelectionne, setMessageSelectionne] = useState<
-    MessageListeDiffusion | undefined
+    MessageListe | undefined
   >()
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
 
@@ -44,11 +43,11 @@ export default function RubriqueListesDeDiffusion({
   useEffect(() => {
     if (listeSelectionnee.liste) messagesListeRef.current!.focusRetour()
     if (!listeSelectionnee.liste && listeSelectionnee.idAFocus) {
-      listeListesDiffusionRef.current!.focusListe(listeSelectionnee.idAFocus)
+      listeListesRef.current!.focusListe(listeSelectionnee.idAFocus)
       setListeSelectionnee({})
     }
     if (!listeSelectionnee.liste && !listeSelectionnee.idAFocus)
-      listeListesDiffusionRef.current!.focusRetour()
+      listeListesRef.current!.focusRetour()
   }, [listeSelectionnee.liste])
 
   useEffect(() => {
@@ -62,16 +61,16 @@ export default function RubriqueListesDeDiffusion({
   return (
     <div className='h-full flex flex-col'>
       {!listeSelectionnee.liste && (
-        <ListeListesDeDiffusion
-          ref={listeListesDiffusionRef}
-          listesDeDiffusion={listesDeDiffusion}
+        <ListeListes
+          ref={listeListesRef}
+          listes={listes}
           onAfficherListe={(liste) => setListeSelectionnee({ liste })}
           onBack={onBack}
         />
       )}
 
       {listeSelectionnee.liste && !messageSelectionne && (
-        <MessagesListeDeDiffusion
+        <MessagesListe
           ref={messagesListeRef}
           liste={listeSelectionnee.liste}
           onAfficherDetailMessage={setMessageSelectionne}
@@ -85,7 +84,7 @@ export default function RubriqueListesDeDiffusion({
       )}
 
       {listeSelectionnee.liste && messageSelectionne && (
-        <DetailMessageListeDeDiffusion
+        <DetailMessageListe
           ref={messageRef}
           message={messageSelectionne}
           onBack={fermerMessage}

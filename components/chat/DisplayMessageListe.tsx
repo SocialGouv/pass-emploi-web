@@ -3,22 +3,22 @@ import React from 'react'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { MessageListeDiffusion, TypeMessage } from 'interfaces/message'
+import { MessageListe, TypeMessage } from 'interfaces/message'
 import { toFrenchTime, toShortDate } from 'utils/date'
 
-interface DisplayMessageListeDeDiffusionProps {
+interface DisplayMessageListeProps {
   id: string
-  message: MessageListeDiffusion
+  message: MessageListe
   onAfficherDetailMessage?: () => void
   messagerieFullScreen?: boolean
 }
 
-export default function DisplayMessageListeDeDiffusion({
+export default function DisplayMessageListe({
   id,
   message,
   onAfficherDetailMessage,
   messagerieFullScreen,
-}: DisplayMessageListeDeDiffusionProps) {
+}: DisplayMessageListeProps) {
   const creationTime = toFrenchTime(message.creationDate)
   const a11yTime = toFrenchTime(message.creationDate, { a11y: true })
 

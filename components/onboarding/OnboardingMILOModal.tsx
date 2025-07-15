@@ -129,8 +129,7 @@ export default function OnboardingMILOModal({
               <p>
                 Dès le compte activé, échangez avec un ou plusieurs
                 bénéficiaires et partagez leur des événements et offres
-                d’emploi. Créez et gérez vos listes de diffusion pour gagner du
-                temps.
+                d’emploi. Créez et gérez vos listes pour gagner du temps.
               </p>
             </div>
             <div className='p-4 border border-grey-100 rounded-base flex-1'>

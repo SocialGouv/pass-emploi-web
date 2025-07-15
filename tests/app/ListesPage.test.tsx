@@ -3,20 +3,18 @@ import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 
-import ListesDiffusionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/listes-de-diffusion/ListesDiffusionPage'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import ListesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/listes/ListesPage'
+import { desListes } from 'fixtures/listes'
+import { Liste } from 'interfaces/liste'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/PageActionsPortal')
 
-describe('Page Listes de Diffusion', () => {
+describe('Page Listes de ', () => {
   let container: HTMLElement
   describe('contenu', () => {
     beforeEach(async () => {
-      ;({ container } = await renderWithContexts(
-        <ListesDiffusionPage listesDiffusion={[]} />
-      ))
+      ;({ container } = await renderWithContexts(<ListesPage listes={[]} />))
     })
 
     it('a11y', async () => {
@@ -27,7 +25,7 @@ describe('Page Listes de Diffusion', () => {
       expect(results!).toHaveNoViolations()
     })
 
-    it('afficher un lien pour créer une liste de diffusion', () => {
+    it('afficher un lien pour créer une liste', () => {
       // Given - When
       const pageActionPortal = screen.getByTestId('page-action-portal')
 
@@ -36,16 +34,14 @@ describe('Page Listes de Diffusion', () => {
         within(pageActionPortal).getByRole('link', {
           name: 'Créer une liste',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion/edition-liste')
+      ).toHaveAttribute('href', '/mes-jeunes/listes/edition-liste')
     })
   })
 
-  describe('quand il n’y a pas de listes de diffusion', () => {
+  describe('quand il n’y a pas de listes', () => {
     beforeEach(async () => {
       // Given - When
-      ;({ container } = await renderWithContexts(
-        <ListesDiffusionPage listesDiffusion={[]} />
-      ))
+      ;({ container } = await renderWithContexts(<ListesPage listes={[]} />))
     })
 
     it('a11y', async () => {
@@ -61,30 +57,30 @@ describe('Page Listes de Diffusion', () => {
     it('affiche le message idoine', async () => {
       // Then
       expect(
-        screen.getByText('Vous n’avez pas encore créé de liste de diffusion.')
+        screen.getByText('Vous n’avez pas encore créé de liste.')
       ).toBeInTheDocument()
     })
 
-    it('affiche un empty state comprenant un lien pour créer une liste de diffusion', () => {
-      const emptyState = screen.getByTestId('empty-state-liste-de-diffusion')
+    it('affiche un empty state comprenant un lien pour créer une liste', () => {
+      const emptyState = screen.getByTestId('empty-state-liste')
 
       // Then
       expect(
         within(emptyState).getByRole('link', {
           name: 'Créer une liste',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion/edition-liste')
+      ).toHaveAttribute('href', '/mes-jeunes/listes/edition-liste')
     })
   })
 
-  describe('quand il y a des listes de diffusion', () => {
-    let listesDeDiffusion: ListeDeDiffusion[]
+  describe('quand il y a des listes', () => {
+    let listeListes: Liste[]
     beforeEach(async () => {
       // Given
-      listesDeDiffusion = desListesDeDiffusion()
+      listeListes = desListes()
       // When
       ;({ container } = await renderWithContexts(
-        <ListesDiffusionPage listesDiffusion={listesDeDiffusion} />
+        <ListesPage listes={listeListes} />
       ))
     })
 
@@ -112,14 +108,14 @@ describe('Page Listes de Diffusion', () => {
 
     it('permet de modifier la liste', () => {
       // Then
-      listesDeDiffusion.forEach((liste) => {
+      listeListes.forEach((liste) => {
         expect(
           screen.getByRole('link', {
             name: `Consulter la liste ${liste.titre} ${liste.beneficiaires.length} destinataire(s)`,
           })
         ).toHaveAttribute(
           'href',
-          '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' + liste.id
+          '/mes-jeunes/listes/edition-liste?idListe=' + liste.id
         )
       })
     })
@@ -135,41 +131,33 @@ describe('Page Listes de Diffusion', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Trier les listes de diffusion par ordre alphabétique inversé',
+          name: 'Trier les listes par ordre alphabétique inversé',
         })
       )
 
       // Then
       const [_header, ...listes] = screen.getAllByRole('row')
-      expect(listes[0]).toHaveAccessibleName(
-        new RegExp(listesDeDiffusion[1].titre)
-      )
-      expect(listes[1]).toHaveAccessibleName(
-        new RegExp(listesDeDiffusion[0].titre)
-      )
+      expect(listes[0]).toHaveAccessibleName(new RegExp(listeListes[1].titre))
+      expect(listes[1]).toHaveAccessibleName(new RegExp(listeListes[0].titre))
     })
 
     it('permet de trier les listes par ordre alphabétique', async () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Trier les listes de diffusion par ordre alphabétique inversé',
+          name: 'Trier les listes par ordre alphabétique inversé',
         })
       )
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Trier les listes de diffusion par ordre alphabétique',
+          name: 'Trier les listes par ordre alphabétique',
         })
       )
 
       // Then
       const [_header, ...listes] = screen.getAllByRole('row')
-      expect(listes[0]).toHaveAccessibleName(
-        new RegExp(listesDeDiffusion[0].titre)
-      )
-      expect(listes[1]).toHaveAccessibleName(
-        new RegExp(listesDeDiffusion[1].titre)
-      )
+      expect(listes[0]).toHaveAccessibleName(new RegExp(listeListes[0].titre))
+      expect(listes[1]).toHaveAccessibleName(new RegExp(listeListes[1].titre))
     })
   })
 })

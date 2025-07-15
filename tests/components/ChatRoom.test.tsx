@@ -70,7 +70,7 @@ describe('<ChatRoom />', () => {
         <ChatRoom
           beneficiairesChats={beneficiairesChats}
           onAccesConversation={accederConversation}
-          onAccesListesDiffusion={() => {}}
+          onAccesListes={() => {}}
           onOuvertureMenu={() => {}}
         />,
         {
@@ -106,7 +106,7 @@ describe('<ChatRoom />', () => {
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
             onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
+            onAccesListes={() => {}}
             onOuvertureMenu={() => {}}
           />,
           {
@@ -132,7 +132,7 @@ describe('<ChatRoom />', () => {
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
             onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
+            onAccesListes={() => {}}
             onOuvertureMenu={() => {}}
           />,
           {
@@ -171,7 +171,7 @@ describe('<ChatRoom />', () => {
               <ChatRoom
                 beneficiairesChats={beneficiairesChats}
                 onAccesConversation={accederConversation}
-                onAccesListesDiffusion={() => {}}
+                onAccesListes={() => {}}
                 onOuvertureMenu={() => {}}
               />,
               {
@@ -267,7 +267,7 @@ describe('<ChatRoom />', () => {
               <ChatRoom
                 beneficiairesChats={beneficiairesChats}
                 onAccesConversation={accederConversation}
-                onAccesListesDiffusion={() => {}}
+                onAccesListes={() => {}}
                 onOuvertureMenu={() => {}}
               />,
               {
@@ -319,7 +319,7 @@ describe('<ChatRoom />', () => {
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
             onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
+            onAccesListes={() => {}}
             onOuvertureMenu={() => {}}
           />,
           {
@@ -362,7 +362,7 @@ describe('<ChatRoom />', () => {
         <ChatRoom
           beneficiairesChats={beneficiairesChats}
           onAccesConversation={accederConversation}
-          onAccesListesDiffusion={() => {}}
+          onAccesListes={() => {}}
           onOuvertureMenu={() => {}}
         />
       ))
@@ -454,7 +454,7 @@ describe('<ChatRoom />', () => {
         <ChatRoom
           beneficiairesChats={[]}
           onAccesConversation={() => {}}
-          onAccesListesDiffusion={() => {}}
+          onAccesListes={() => {}}
           onOuvertureMenu={() => {}}
         />
       )
@@ -482,7 +482,7 @@ describe('<ChatRoom />', () => {
         <ChatRoom
           beneficiairesChats={beneficiairesChats}
           onAccesConversation={() => {}}
-          onAccesListesDiffusion={() => {}}
+          onAccesListes={() => {}}
           onOuvertureMenu={() => {}}
         />
       )

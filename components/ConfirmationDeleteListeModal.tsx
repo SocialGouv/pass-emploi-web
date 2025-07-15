@@ -4,22 +4,22 @@ import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
-interface ConfirmationDeleteListeDiffusionModalProps {
-  titreListeDeDiffusion: string
+interface ConfirmationDeleteListeModalProps {
+  titreListe: string
   onConfirmation: () => void
   onCancel: () => void
 }
 
-export default function ConfirmationDeleteListeDiffusionModal({
-  titreListeDeDiffusion,
+export default function ConfirmationDeleteListeModal({
+  titreListe,
   onCancel,
   onConfirmation,
-}: ConfirmationDeleteListeDiffusionModalProps) {
+}: ConfirmationDeleteListeModalProps) {
   const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal
-      title={`Souhaitez-vous supprimer la liste de diffusion : ${titreListeDeDiffusion} ?`}
+      title={`Souhaitez-vous supprimer la liste : ${titreListe} ?`}
       onClose={onCancel}
       ref={modalRef}
       titleIllustration={IllustrationName.Delete}

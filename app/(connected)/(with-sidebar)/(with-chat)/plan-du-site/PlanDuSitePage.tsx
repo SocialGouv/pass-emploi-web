@@ -45,6 +45,7 @@ function PlanDuSitePage() {
     </>
   )
 }
+
 export default withTransaction(PlanDuSitePage.name, 'page')(PlanDuSitePage)
 
 function LiensMilo({
@@ -129,13 +130,11 @@ function LiensMilo({
             <Link href='/profil'>Profil</Link>
           </li>
           <li>
-            <Link href='/mes-jeunes/listes-de-diffusion'>
-              Mes listes de diffusion
-            </Link>
+            <Link href='/mes-jeunes/listes'>Mes listes</Link>
             <ul className='list-[circle] ml-4'>
               <li>
-                <Link href='/mes-jeunes/listes-de-diffusion/edition-liste'>
-                  Créer une liste de diffusion
+                <Link href='/mes-jeunes/listes/edition-liste'>
+                  Créer une liste
                 </Link>
               </li>
             </ul>

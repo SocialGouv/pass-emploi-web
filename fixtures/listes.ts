@@ -1,10 +1,10 @@
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 
-export function desListesDeDiffusion(): ListeDeDiffusion[] {
+export function desListes(): Liste[] {
   return [
-    uneListeDeDiffusion(),
-    uneListeDeDiffusion({
+    uneListe(),
+    uneListe({
       id: 'liste-2',
       titre: 'Liste métiers pâtisserie',
       beneficiaires: [
@@ -14,10 +14,8 @@ export function desListesDeDiffusion(): ListeDeDiffusion[] {
   ]
 }
 
-export function uneListeDeDiffusion(
-  overrides: Partial<ListeDeDiffusion> = {}
-): ListeDeDiffusion {
-  const defaults: ListeDeDiffusion = {
+export function uneListe(overrides: Partial<Liste> = {}): Liste {
+  const defaults: Liste = {
     id: 'liste-1',
     titre: 'Liste export international',
     beneficiaires: [{ ...uneBaseBeneficiaire(), estDansLePortefeuille: true }],

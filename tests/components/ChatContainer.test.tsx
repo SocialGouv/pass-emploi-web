@@ -1,26 +1,26 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { getListesClientSide } from 'services/listes.service'
 
 import ChatContainer from 'components/chat/ChatContainer'
 import {
   desItemsBeneficiaires,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
+import { desListes } from 'fixtures/listes'
 import {
   BeneficiaireEtChat,
   extractBaseBeneficiaire,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
-import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/beneficiaires.service')
 jest.mock('services/messages.service')
-jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/listes.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>
   // eslint-disable-next-line react/display-name
   ({ beneficiaireChat }: { beneficiaireChat: BeneficiaireEtChat }) => (
@@ -37,9 +37,7 @@ describe('<ChatContainer />', () => {
 
   beforeEach(async () => {
     ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue([])
-    ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
-      desListesDeDiffusion()
-    )
+    ;(getListesClientSide as jest.Mock).mockResolvedValue(desListes())
     ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
     beneficiairesChats = [
       unBeneficiaireChat({
@@ -106,18 +104,18 @@ describe('<ChatContainer />', () => {
     })
   })
 
-  describe('listes de diffusion', () => {
+  describe('listes', () => {
     beforeEach(async () => {
       await renderWithContexts(<ChatContainer onShowMenu={() => {}} />, {
         customChats: [],
       })
     })
 
-    it('permet d’accéder aux messages envoyés aux listes de diffusion', async () => {
+    it('permet d’accéder aux messages envoyés aux listes', async () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir mes listes de diffusion',
+          name: 'Voir mes listes',
         })
       )
 
@@ -125,25 +123,21 @@ describe('<ChatContainer />', () => {
       expect(
         screen.getByRole('heading', {
           level: 2,
-          name: 'Mes listes de diffusion',
+          name: 'Mes listes',
         })
       ).toBeInTheDocument()
     })
 
-    it('ne charge les listes de diffusion qu’une fois', async () => {
+    it('ne charge les listes qu’une fois', async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: /mes listes de diffusion/ })
-      )
+      await userEvent.click(screen.getByRole('button', { name: /mes listes/ }))
       await userEvent.click(
         screen.getByRole('button', { name: 'Retour sur ma messagerie' })
       )
-      await userEvent.click(
-        screen.getByRole('button', { name: /mes listes de diffusion/ })
-      )
+      await userEvent.click(screen.getByRole('button', { name: /mes listes/ }))
 
       // Then
-      expect(getListesDeDiffusionClientSide).toHaveBeenCalledTimes(1)
+      expect(getListesClientSide).toHaveBeenCalledTimes(1)
     })
   })
 })

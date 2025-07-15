@@ -2,50 +2,46 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { getMessagesListeDeDiffusion } from 'services/messages.service'
+import RubriqueListes from 'components/chat/RubriqueListes'
+import { desListes } from 'fixtures/listes'
+import { Liste } from 'interfaces/liste'
+import { getMessagesListe } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/messages.service')
 
-describe('<RubriqueListesDeDiffusion />', () => {
-  let listesDeDiffusion: ListeDeDiffusion[]
+describe('<RubriqueListes />', () => {
+  let listes: Liste[]
 
-  describe('quand le conseiller a des listes de diffusion', () => {
+  describe('quand le conseiller a des listes', () => {
     beforeEach(async () => {
       // Given
-      ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue({
+      ;(getMessagesListe as jest.Mock).mockResolvedValue({
         countMessagesFetched: 0,
         days: [],
       })
-      listesDeDiffusion = desListesDeDiffusion()
+      listes = desListes()
 
       // When
       await renderWithContexts(
-        <RubriqueListesDeDiffusion
-          listesDeDiffusion={listesDeDiffusion}
-          onBack={() => {}}
-          chats={[]}
-        />,
+        <RubriqueListes listes={listes} onBack={() => {}} chats={[]} />,
         {}
       )
     })
 
-    it('affiche les listes de diffusion', async () => {
+    it('affiche les listes', async () => {
       // Then
       expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
-        'Mes listes de diffusion'
+        'Mes listes'
       )
-      const listes = screen.getByRole('list', {
+      const listesHTML = screen.getByRole('list', {
         description: 'Listes (2)',
       })
-      expect(within(listes).getAllByRole('listitem')).toHaveLength(
-        listesDeDiffusion.length
+      expect(within(listesHTML).getAllByRole('listitem')).toHaveLength(
+        listes.length
       )
-      listesDeDiffusion.forEach((liste) => {
-        const titreListe = within(listes).getByRole('heading', {
+      listes.forEach((liste) => {
+        const titreListe = within(listesHTML).getByRole('heading', {
           level: 4,
           name: new RegExp(liste.titre),
         })
@@ -64,7 +60,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
           level: 4,
           name:
             'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement. ' +
-            listesDeDiffusion[1].titre,
+            listes[1].titre,
         })
       ).toBeInTheDocument()
     })
@@ -73,37 +69,33 @@ describe('<RubriqueListesDeDiffusion />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: new RegExp(listesDeDiffusion[0].titre),
+          name: new RegExp(listes[0].titre),
         })
       )
       // Then
       expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
-        listesDeDiffusion[0].titre
+        listes[0].titre
       )
 
       // When
       await userEvent.click(screen.getByRole('button', { name: /Retour/ }))
       // Then
       expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
-        'Mes listes de diffusion'
+        'Mes listes'
       )
     })
   })
 
-  describe('quand le conseiller n‘a pas de liste de diffusion', () => {
+  describe('quand le conseiller n‘a pas de liste', () => {
     it('prévient le conseiller qu’il n’a pas de liste', async () => {
       // When
       await renderWithContexts(
-        <RubriqueListesDeDiffusion
-          listesDeDiffusion={[]}
-          onBack={() => {}}
-          chats={[]}
-        />
+        <RubriqueListes listes={[]} onBack={() => {}} chats={[]} />
       )
 
       // Then
       expect(
-        screen.getByText('Vous n’avez pas encore créé de liste de diffusion.')
+        screen.getByText('Vous n’avez pas encore créé de liste.')
       ).toBeInTheDocument()
     })
   })

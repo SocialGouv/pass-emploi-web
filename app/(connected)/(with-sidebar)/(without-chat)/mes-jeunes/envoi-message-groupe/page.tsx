@@ -9,7 +9,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { utiliseChat } from 'interfaces/conseiller'
-import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
+import { getListesServerSide } from 'services/listes.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { redirectedFromHome } from 'utils/helpers'
 
@@ -19,10 +19,7 @@ export default async function EnvoiMessageGroupe() {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!utiliseChat(user)) notFound()
 
-  const listesDeDiffusion = await getListesDeDiffusionServerSide(
-    user.id,
-    accessToken
-  )
+  const listes = await getListesServerSide(user.id, accessToken)
 
   const referer = (await headers()).get('referer')
   const previousUrl =
@@ -33,10 +30,7 @@ export default async function EnvoiMessageGroupe() {
       <PageRetourPortal lien={previousUrl} />
       <PageHeaderPortal header='Message multi-destinataires' />
 
-      <EnvoiMessageGroupePage
-        listesDiffusion={listesDeDiffusion}
-        returnTo={previousUrl}
-      />
+      <EnvoiMessageGroupePage listes={listes} returnTo={previousUrl} />
     </>
   )
 }

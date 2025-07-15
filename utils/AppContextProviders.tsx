@@ -17,8 +17,8 @@ import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 import { CurrentConversationProvider } from 'utils/chat/currentConversationContext'
-import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
-import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
+import { ListeSelectionneeProvider } from 'utils/chat/listeSelectionneeContext'
+import { ShowRubriqueListeProvider } from 'utils/chat/showRubriqueListeContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { MobileViewportProvider } from 'utils/mobileViewportContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
@@ -52,8 +52,8 @@ export default function AppContextProviders({
             <ChatCredentialsProvider>
               <ChatsProvider>
                 <CurrentConversationProvider>
-                  <ShowRubriqueListeDeDiffusionProvider>
-                    <ListeDeDiffusionSelectionneeProvider>
+                  <ShowRubriqueListeProvider>
+                    <ListeSelectionneeProvider>
                       <AlerteProvider>
                         <ClientOnlyContainer>
                           <ThemeProvider
@@ -65,8 +65,8 @@ export default function AppContextProviders({
                           </ThemeProvider>
                         </ClientOnlyContainer>
                       </AlerteProvider>
-                    </ListeDeDiffusionSelectionneeProvider>
-                  </ShowRubriqueListeDeDiffusionProvider>
+                    </ListeSelectionneeProvider>
+                  </ShowRubriqueListeProvider>
                 </CurrentConversationProvider>
               </ChatsProvider>
             </ChatCredentialsProvider>

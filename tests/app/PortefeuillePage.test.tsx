@@ -63,11 +63,11 @@ describe('PortefeuillePage client side', () => {
       expect(results!).toHaveNoViolations()
     })
 
-    it('permet de gérer les listes de diffusion', async () => {
+    it('permet de gérer les listes', async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Gérer mes listes de diffusion' })
-      ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
+        screen.getByRole('link', { name: 'Gérer mes listes' })
+      ).toHaveAttribute('href', '/mes-jeunes/listes')
     })
 
     it("affiche la liste des bénéficiaires s'il en a", async () => {

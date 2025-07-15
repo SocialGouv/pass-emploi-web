@@ -287,7 +287,7 @@ export default function ContenuCGUConseillerCEJ() {
       </h4>
       <p className='mb-4'>
         Les Utilisateurs peuvent envoyer des messages à un ou plusieurs
-        destinataires, ainsi qu’à une liste de diffusion.
+        destinataires, ainsi qu’à une liste.
       </p>
       <h4 className='mb-2 mt-2 text-s-bold text-accent-2'>
         Paramétrage d’un message important

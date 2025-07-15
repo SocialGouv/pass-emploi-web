@@ -62,7 +62,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
 
   function updateIdsDestinataires(selectedIds: {
     beneficiaires?: string[]
-    listesDeDiffusion?: string[]
+    listes?: string[]
   }) {
     setIdsDestinataires({
       value: selectedIds.beneficiaires!,

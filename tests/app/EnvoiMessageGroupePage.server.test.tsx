@@ -1,15 +1,15 @@
 import { render } from '@testing-library/react'
 import { headers } from 'next/headers'
+import { getListesServerSide } from 'services/listes.service'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
 import EnvoiMessageGroupe, {
   metadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/page'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
+import { desListes } from 'fixtures/listes'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
-jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/listes.service')
 jest.mock('utils/auth/getMandatorySessionServerSide', () => jest.fn())
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
@@ -17,24 +17,22 @@ jest.mock(
 jest.mock('next/headers', () => ({ headers: jest.fn(() => new Map()) }))
 
 describe('EnvoiMessageGroupePage server side', () => {
-  const listesDeDiffusion = desListesDeDiffusion()
+  const listes = desListes()
   beforeEach(() => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
       user: { id: 'id-conseiller-1' },
       accessToken: 'accessToken',
     })
-    ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
-      listesDeDiffusion
-    )
+    ;(getListesServerSide as jest.Mock).mockResolvedValue(listes)
   })
 
-  it('récupère les listes de diffusion du conseiller', async () => {
+  it('récupère les listes du conseiller', async () => {
     // When
     await EnvoiMessageGroupe()
 
     // Then
-    expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
+    expect(getListesServerSide).toHaveBeenCalledWith(
       'id-conseiller-1',
       'accessToken'
     )
@@ -53,7 +51,7 @@ describe('EnvoiMessageGroupePage server side', () => {
     expect(metadata).toEqual({ title: 'Message multi-destinataires' })
     expect(EnvoiMessageGroupePage).toHaveBeenCalledWith(
       {
-        listesDiffusion: listesDeDiffusion,
+        listes: listes,
         returnTo: 'http://localhost:3000/agenda',
       },
       undefined
@@ -78,7 +76,7 @@ describe('EnvoiMessageGroupePage server side', () => {
     expect(metadata).toEqual({ title: 'Message multi-destinataires' })
     expect(EnvoiMessageGroupePage).toHaveBeenCalledWith(
       {
-        listesDiffusion: listesDeDiffusion,
+        listes: listes,
         returnTo: '/mes-jeunes',
       },
       undefined

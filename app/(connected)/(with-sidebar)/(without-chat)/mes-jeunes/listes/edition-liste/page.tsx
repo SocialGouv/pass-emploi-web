@@ -2,52 +2,50 @@ import { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
+import EditionListePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes/edition-liste/EditionListePage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import { recupererListeDeDiffusion } from 'services/listes-de-diffusion.service'
+import { recupererListe } from 'services/listes.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 import { redirectedFromHome } from 'utils/helpers'
 
-type EditionListeDiffusionSearchParams = Promise<Partial<{ idListe: string }>>
+type EditionListeSearchParams = Promise<Partial<{ idListe: string }>>
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams?: EditionListeDiffusionSearchParams
+  searchParams?: EditionListeSearchParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
   const { idListe } = (await searchParams) ?? {}
 
   if (idListe) {
-    const liste = await recupererListeDeDiffusion(idListe, accessToken)
+    const liste = await recupererListe(idListe, accessToken)
     if (!liste) notFound()
     return {
-      title: `Modifier liste de diffusion ${liste.titre} - Portefeuille`,
+      title: `Modifier liste ${liste.titre} - Portefeuille`,
     }
   }
 
-  return { title: 'Créer liste de diffusion - Portefeuille' }
+  return { title: 'Créer liste - Portefeuille' }
 }
 
-export default async function EditionListeDiffusion({
+export default async function EditionListe({
   searchParams,
 }: {
-  searchParams?: EditionListeDiffusionSearchParams
+  searchParams?: EditionListeSearchParams
 }) {
   const { accessToken } = await getMandatorySessionServerSide()
 
   const referer = (await headers()).get('referer')
   const previousUrl =
-    referer && !redirectedFromHome(referer)
-      ? referer
-      : '/mes-jeunes/listes-de-diffusion'
+    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes/listes'
   const { idListe } = (await searchParams) ?? {}
 
   if (idListe) {
-    const liste = await recupererListeDeDiffusion(idListe, accessToken)
+    const liste = await recupererListe(idListe, accessToken)
     if (!liste) notFound()
 
     return (
@@ -55,7 +53,7 @@ export default async function EditionListeDiffusion({
         <PageRetourPortal lien={previousUrl} />
         <PageHeaderPortal header='Modifier la liste' />
 
-        <EditionListeDiffusionPage liste={liste} returnTo={previousUrl} />
+        <EditionListePage liste={liste} returnTo={previousUrl} />
       </>
     )
   }
@@ -65,7 +63,7 @@ export default async function EditionListeDiffusion({
       <PageRetourPortal lien={previousUrl} />
       <PageHeaderPortal header='Créer une nouvelle liste' />
 
-      <EditionListeDiffusionPage returnTo={previousUrl} />
+      <EditionListePage returnTo={previousUrl} />
     </>
   )
 }

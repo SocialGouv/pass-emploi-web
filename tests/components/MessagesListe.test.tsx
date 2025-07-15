@@ -1,53 +1,50 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import MessagesListe from 'components/chat/MessagesListe'
 import React from 'react'
 
-import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
-import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { getMessagesListeDeDiffusion } from 'services/messages.service'
+import { uneListe } from 'fixtures/listes'
+import { desMessagesListeParJour } from 'fixtures/message'
+import { Liste } from 'interfaces/liste'
+import { ByDay, MessageListe } from 'interfaces/message'
+import { getMessagesListe } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
 
-describe('<MessagesListeDeDiffusion />', () => {
-  let messages: ByDay<MessageListeDiffusion>
+describe('<MessagesListe />', () => {
+  let messages: ByDay<MessageListe>
 
-  let listeDeDiffusion: ListeDeDiffusion
-  let afficherDetailMessage: (message: MessageListeDiffusion) => void
+  let liste: Liste
+  let afficherDetailMessage: (message: MessageListe) => void
   beforeEach(async () => {
     // Given
-    messages = desMessagesListeDeDiffusionParJour()
-    ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue(messages)
-    listeDeDiffusion = uneListeDeDiffusion()
+    messages = desMessagesListeParJour()
+    ;(getMessagesListe as jest.Mock).mockResolvedValue(messages)
+    liste = uneListe()
     afficherDetailMessage = jest.fn()
 
     // When
     await renderWithContexts(
-      <MessagesListeDeDiffusion
-        liste={listeDeDiffusion}
+      <MessagesListe
+        liste={liste}
         onAfficherDetailMessage={afficherDetailMessage}
         onBack={() => {}}
       />
     )
   })
 
-  it('charge les messages envoyé à la liste de diffusion', async () => {
+  it('charge les messages envoyé à la liste', async () => {
     // Then
-    expect(getMessagesListeDeDiffusion).toHaveBeenCalledTimes(1)
-    expect(getMessagesListeDeDiffusion).toHaveBeenCalledWith(
-      listeDeDiffusion.id,
-      'cleChiffrement'
-    )
+    expect(getMessagesListe).toHaveBeenCalledTimes(1)
+    expect(getMessagesListe).toHaveBeenCalledWith(liste.id, 'cleChiffrement')
   })
 
   it('affiche les messages groupés par jour', async () => {
     // Then
     const listeJours = screen.getByRole('list', {
-      description: 'Messages envoyés à la liste de diffusion',
+      description: 'Messages envoyés à la liste',
     })
     messages.days.forEach((jour) => {
       expect(
