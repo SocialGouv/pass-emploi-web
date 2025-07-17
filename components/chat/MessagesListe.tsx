@@ -113,7 +113,7 @@ function MessagesListe(
           <div className='hidden layout-s:block w-fit ml-4 mb-8'>
             <ButtonLink
               href={`/mes-jeunes/listes/edition-liste?idListe=${liste.id}`}
-              style={ButtonStyle.TERTIARY}
+              style={ButtonStyle.SECONDARY}
               className='mr-auto'
             >
               <IconComponent
