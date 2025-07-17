@@ -2,11 +2,12 @@ import React from 'react'
 
 import DispositifTag from 'components/jeune/DispositifTag'
 import SituationTag from 'components/jeune/SituationTag'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation } from 'interfaces/beneficiaire'
 import { estMilo } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+
+import ListeBoutonsAjoutsFicheBeneficiaire from './ListeBoutonsAjoutsFicheBeneficiaire'
 
 type HeaderDetailBeneficiaireProps = {
   beneficiaire: { id: string; nomComplet: string }
@@ -46,31 +47,9 @@ export default function HeaderDetailBeneficiaire({
 
       <div className='flex gap-2 items-center justify-end flex-wrap layout-base:flex-nowrap'>
         {withCreations && (
-          <>
-            <ButtonLink
-              href={`/mes-jeunes/edition-rdv?idJeune=${beneficiaire.id}`}
-            >
-              <IconComponent
-                name={IconName.Add}
-                focusable={false}
-                aria-hidden={true}
-                className='shrink-0 mr-2 w-4 h-4'
-              />
-              Créer un rendez-vous
-            </ButtonLink>
-
-            <ButtonLink
-              href={`/mes-jeunes/${beneficiaire.id}/actions/nouvelle-action`}
-            >
-              <IconComponent
-                name={IconName.Add}
-                focusable={false}
-                aria-hidden={true}
-                className='shrink-0 mr-2 w-4 h-4'
-              />
-              Créer une action
-            </ButtonLink>
-          </>
+          <ListeBoutonsAjoutsFicheBeneficiaire
+            idBeneficiaire={beneficiaire.id}
+          />
         )}
 
         {onSupprimerBeneficiaire && (
