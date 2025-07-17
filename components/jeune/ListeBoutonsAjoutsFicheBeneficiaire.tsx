@@ -53,7 +53,7 @@ export default function ListeBoutonsAjoutsFicheBeneficiaire({
             Une action
           </Link>
           <Link
-            href='/mes-jeunes/edition-rdv?type=ac'
+            href='/agenda?onglet=mission-locale'
             title='Ajouter une animation collective'
             className='p-2 cursor-pointer flex gap-5 items-center hover:text-primary font-bold'
           >
