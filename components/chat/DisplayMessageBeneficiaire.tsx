@@ -15,6 +15,8 @@ import {
   MessageRechercheMatch,
   TypeMessage,
 } from 'interfaces/message'
+import { estAvenirPro } from 'interfaces/structure'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchTime, toLongMonthDate, toShortDate } from 'utils/date'
 
 type MessageBeneficiaireProps = {
@@ -36,6 +38,8 @@ export default function DisplayMessageBeneficiaire(
   props: DisplayMessageBeneficiaireProps
 ) {
   const { message, beneficiaireNomComplet } = props
+  const [conseiller] = useConseiller()
+  const estConseillerAvenirPro = estAvenirPro(conseiller.structure)
 
   return (
     <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
@@ -58,6 +62,7 @@ export default function DisplayMessageBeneficiaire(
                     key={key}
                     infoFichier={pj}
                     highlight={props.highlight}
+                    estConseillerAvenirPro={estConseillerAvenirPro}
                   />
                 )
               })}
@@ -144,18 +149,24 @@ export default function DisplayMessageBeneficiaire(
 function MessagePJ({
   infoFichier,
   highlight,
+  estConseillerAvenirPro,
 }: {
   infoFichier: InfoFichier
   highlight?: MessageRechercheMatch
+  estConseillerAvenirPro: boolean
 }) {
+  const wordingPJTransmiseParBeneficiaire = `Votre bénéficiaire vous a transmis une nouvelle pièce jointe. Celle-ci sera conservée 4 mois. ${
+    estConseillerAvenirPro
+      ? ''
+      : 'Enregistrez la dans i-milo pour la conserver de manière sécurisée.'
+  }`
+
   switch (infoFichier.statut) {
     case 'valide':
       return (
         <>
           <p className='whitespace-pre-wrap'>
-            Votre bénéficiaire vous a transmis une nouvelle pièce jointe.
-            Celle-ci sera conservée 4 mois. Enregistrez la dans i-milo pour la
-            conserver de manière sécurisée.
+            {wordingPJTransmiseParBeneficiaire}
           </p>
           <LienPieceJointe
             infoFichier={infoFichier}
@@ -179,9 +190,7 @@ function MessagePJ({
       return (
         <>
           <p className='whitespace-pre-wrap'>
-            Votre bénéficiaire vous a transmis une nouvelle pièce jointe.
-            Celle-ci sera conservée 4 mois. Enregistrez la dans i-milo pour la
-            conserver de manière sécurisée.
+            {wordingPJTransmiseParBeneficiaire}
           </p>
           <div className='flex flex-row justify-end items-center break-all'>
             <SpinningLoader className='w-4! h-4! mr-2 fill-primary-lighten' />

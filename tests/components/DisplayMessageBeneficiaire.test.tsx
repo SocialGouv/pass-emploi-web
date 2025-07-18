@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import React from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { unMessage } from 'fixtures/message'
 import { TypeMessage } from 'interfaces/message'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -195,38 +196,92 @@ describe('<DiplayMessageBeneficiaire />', () => {
       ).toThrow()
     })
 
-    it('statut valide', async () => {
-      const beneficiaireNomComplet = 'Père Castor'
+    describe('statut valide', () => {
+      it('conseiller Avenir Pro', async () => {
+        const conseiller = unConseiller({ structure: 'AVENIR_PRO' })
+        const beneficiaireNomComplet = 'Père Castor'
 
-      //Given
-      const message = unMessage({
-        sentBy: 'jeune',
-        content: 'Rdv demain 10h',
-        infoPiecesJointes: [
+        //Given
+        const message = unMessage({
+          sentBy: 'jeune',
+          content: 'Rdv demain 10h',
+          infoPiecesJointes: [
+            {
+              id: 'id-pj',
+              nom: 'piece-jointe.jpg',
+              statut: 'valide',
+            },
+          ],
+          type: TypeMessage.MESSAGE_PJ,
+        })
+
+        //When
+        await renderWithContexts(
+          <DisplayMessageBeneficiaire
+            message={message}
+            beneficiaireNomComplet={beneficiaireNomComplet}
+          />,
           {
-            id: 'id-pj',
-            nom: 'piece-jointe.jpg',
-            statut: 'valide',
-          },
-        ],
-        type: TypeMessage.MESSAGE_PJ,
+            customConseiller: conseiller,
+          }
+        )
+
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name:
+              'Télécharger la pièce jointe ' +
+              message.infoPiecesJointes![0].nom,
+          })
+        ).toBeInTheDocument()
+
+        expect(() =>
+          screen.getByText(
+            'Enregistrez la dans i-milo pour la conserver de manière sécurisée.'
+          )
+        ).toThrow()
       })
 
-      //When
-      await renderWithContexts(
-        <DisplayMessageBeneficiaire
-          message={message}
-          beneficiaireNomComplet={beneficiaireNomComplet}
-        />
-      )
+      it('conseiller pas Avenir Pro', async () => {
+        const beneficiaireNomComplet = 'Père Castor'
 
-      // Then
-      expect(
-        screen.getByRole('link', {
-          name:
-            'Télécharger la pièce jointe ' + message.infoPiecesJointes![0].nom,
+        //Given
+        const message = unMessage({
+          sentBy: 'jeune',
+          content: 'Rdv demain 10h',
+          infoPiecesJointes: [
+            {
+              id: 'id-pj',
+              nom: 'piece-jointe.jpg',
+              statut: 'valide',
+            },
+          ],
+          type: TypeMessage.MESSAGE_PJ,
         })
-      ).toBeInTheDocument()
+
+        //When
+        await renderWithContexts(
+          <DisplayMessageBeneficiaire
+            message={message}
+            beneficiaireNomComplet={beneficiaireNomComplet}
+          />
+        )
+
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name:
+              'Télécharger la pièce jointe ' +
+              message.infoPiecesJointes![0].nom,
+          })
+        ).toBeInTheDocument()
+
+        expect(
+          screen.getByText(
+            /Enregistrez la dans i-milo pour la conserver de manière sécurisée./
+          )
+        ).toBeInTheDocument()
+      })
     })
 
     it('statut expirée', async () => {
