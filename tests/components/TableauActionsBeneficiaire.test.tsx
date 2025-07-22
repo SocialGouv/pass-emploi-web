@@ -20,6 +20,7 @@ describe('TableauActionsJeune', () => {
       id: 'id-action-snp-1',
       titre: 'Action SNP 1',
       status: StatutAction.TermineeAQualifier,
+      dateFinReelle: '2022-02-23T14:50:46.000Z',
       qualification: {
         code: 'SNP_1',
         libelle: 'SNP 1',
@@ -284,23 +285,35 @@ describe('TableauActionsJeune', () => {
       expect(actionRows[0]).toHaveTextContent(
         '20 février 2022 Identifier ses atouts et ses compétences'
       )
-      expect(actionRows[1]).toHaveTextContent('20 février 2022 Action SNP 1')
-      expect(actionRows[2]).toHaveTextContent(
-        '20 février 2022 Compléter son cv'
+      expect(actionRows[1]).toHaveTextContent(
+        '21 février 2022 Compléter son cv'
       )
-      expect(actionRows[3]).toHaveTextContent('21 février 2022')
+      expect(actionRows[2]).toHaveTextContent('23 février 2022 Action SNP 1')
+      expect(actionRows[3]).toHaveTextContent(
+        '23 février 2022 Chercher une formation'
+      )
+      expect(actionRows[4]).toHaveTextContent(
+        "25 février 2022 Consulter les offres d'emploi"
+      )
 
       // When
       await userEvent.click(headerColonneDate)
 
       // Then
       actionRows = within(tbody).getAllByRole('row')
-      expect(actionRows[0]).toHaveTextContent('22 février 2022')
-      expect(actionRows[1]).toHaveTextContent('21 février 2022')
+      expect(actionRows[0]).toHaveTextContent(
+        "25 février 2022 Consulter les offres d'emploi"
+      )
+      expect(actionRows[1]).toHaveTextContent('23 février 2022 Action SNP 1')
       expect(actionRows[2]).toHaveTextContent(
+        '23 février 2022 Chercher une formation'
+      )
+      expect(actionRows[3]).toHaveTextContent(
+        '21 février 2022 Compléter son cv'
+      )
+      expect(actionRows[4]).toHaveTextContent(
         '20 février 2022 Identifier ses atouts et ses compétences'
       )
-      expect(actionRows[3]).toHaveTextContent('20 février 2022 Action SNP 1')
     })
 
     it('conserve le tri quand les actions changent', async () => {
@@ -323,11 +336,9 @@ describe('TableauActionsJeune', () => {
       // Then
       const tbody = screen.getAllByRole('rowgroup')[1]
       const actionRows = within(tbody).getAllByRole('row')
-      expect(actionRows[0]).toHaveTextContent('22 février 2022')
-      expect(actionRows[1]).toHaveTextContent('21 février 2022')
-      expect(actionRows[2]).toHaveTextContent(
-        '20 février 2022 Compléter son cv'
-      )
+      expect(actionRows[0]).toHaveTextContent('25 février 2022')
+      expect(actionRows[1]).toHaveTextContent('23 février 2022')
+      expect(actionRows[2]).toHaveTextContent('21 février 2022')
     })
   })
 

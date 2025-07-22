@@ -7,7 +7,7 @@ import { TagCategorie } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
-import { Action, StatutAction } from 'interfaces/action'
+import { Action, getDateReferenceAction, StatutAction } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
 
 type ActionBeneficiaireRowProps = {
@@ -32,7 +32,7 @@ export default function ActionBeneficiaireRow({
 
   const actionAQualifier = action.status === StatutAction.TermineeAQualifier
 
-  const dateEcheance = toLongMonthDate(action.dateEcheance)
+  const dateEcheance = toLongMonthDate(getDateReferenceAction(action))
 
   return (
     <TR isSelected={avecQualification?.isChecked}>
