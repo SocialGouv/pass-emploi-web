@@ -89,24 +89,32 @@ export function estSupprimable({
   )
 }
 
-export function comparerParDateEcheance(
+export function comparerParDate(
   action1: Action,
   action2: Action,
   antechronologique: boolean
 ): number {
-  const compareDateEcheance = antechronologique
-    ? compareDatesDesc
-    : compareDates
-  const comparaisonDateEcheance = compareDateEcheance(
-    DateTime.fromISO(action1.dateEcheance),
-    DateTime.fromISO(action2.dateEcheance)
+  const compareDate = antechronologique ? compareDatesDesc : compareDates
+
+  const comparaisonDate = compareDate(
+    getDateReferenceAction(action1),
+    getDateReferenceAction(action2)
   )
 
   return (
-    comparaisonDateEcheance ||
+    comparaisonDate ||
     compareDates(
       DateTime.fromISO(action1.dateCreation),
       DateTime.fromISO(action2.dateCreation)
     )
   )
+}
+
+export function getDateReferenceAction(action: Action): DateTime {
+  const date =
+    action.status === StatutAction.Annulee ||
+    action.status === StatutAction.AFaire
+      ? action.dateEcheance
+      : action.dateFinReelle
+  return DateTime.fromISO(date!)
 }
