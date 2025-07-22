@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { ReactElement, useEffect, useState } from 'react'
 
+import { CompteursHeuresBeneficiaireFicheBeneficiaire } from 'components/jeune/CompteursHeuresBeneficiaireFicheBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   CompteurHeuresFicheBeneficiaire,
@@ -11,12 +12,9 @@ import {
 } from 'interfaces/beneficiaire'
 import { StatutDemarche } from 'interfaces/json/beneficiaire'
 import { estMilo } from 'interfaces/structure'
+import { getComptageHeuresFicheBeneficiaire } from 'services/beneficiaires.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toLongMonthDate, toShortDate } from 'utils/date'
-
-import { getComptageHeuresFicheBeneficiaire } from '../../services/beneficiaires.service'
-
-import { CompteursHeuresBeneficiaireFicheBeneficiaire } from './CompteursHeuresBeneficiaireFicheBeneficiaire'
 
 type IndicateursBeneficiaireProps = {
   beneficiaire: DetailBeneficiaire
@@ -118,6 +116,7 @@ export default function IndicateursBeneficiaire({
       {doitAfficherComptageHeures && (
         <CompteursHeuresBeneficiaireFicheBeneficiaire
           comptageHeures={comptageHeures}
+          beneficiaire={beneficiaire}
         />
       )}
 

@@ -24,7 +24,7 @@ import RecapitulatifErreursFormulaire, {
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -39,14 +39,11 @@ const LeavePageConfirmationModal = dynamic(
 )
 
 type EnvoiMessageGroupeProps = {
-  listesDiffusion: ListeDeDiffusion[]
+  listes: Liste[]
   returnTo: string
 }
 
-function EnvoiMessageGroupePage({
-  listesDiffusion,
-  returnTo,
-}: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupePage({ listes, returnTo }: EnvoiMessageGroupeProps) {
   const chatCredentials = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
@@ -71,6 +68,7 @@ function EnvoiMessageGroupePage({
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
       id: jeune.id,
@@ -179,7 +177,7 @@ function EnvoiMessageGroupePage({
     try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
         idsBeneficiaires: selectedJeunesIds,
-        idsListesDeDiffusion: selectedListesIds,
+        idsListes: selectedListesIds,
         newMessage:
           message ||
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
@@ -223,12 +221,12 @@ function EnvoiMessageGroupePage({
 
   function updateDestinataires(selectedIds: {
     beneficiaires?: string[]
-    listesDeDiffusion?: string[]
+    listeListes?: string[]
   }) {
-    const { beneficiaires, listesDeDiffusion } = selectedIds
+    const { beneficiaires, listeListes } = selectedIds
     setSelectionError(undefined)
     if (beneficiaires) setSelectedJeunesIds(beneficiaires)
-    if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
+    if (listeListes) setSelectedListesIds(listeListes)
   }
 
   function getErreurs(): LigneErreur[] {
@@ -279,16 +277,16 @@ function EnvoiMessageGroupePage({
           <BeneficiairesMultiselectAutocomplete
             id={'select-beneficiaires'}
             beneficiaires={buildOptionsJeunes()}
-            listesDeDiffusion={listesDiffusion}
+            listes={listes}
             typeSelection='Destinataires'
             onUpdate={updateDestinataires}
             error={selectionError}
           />
           <Link
-            href='/mes-jeunes/listes-de-diffusion'
+            href='/mes-jeunes/listes'
             className='flex items-center pt-2 text-s-regular text-content-color underline hover:text-primary-darken'
           >
-            Gérer mes listes de diffusion
+            Gérer mes listes
             <IconComponent
               name={IconName.ChevronRight}
               aria-hidden={true}

@@ -63,6 +63,13 @@ describe('PortefeuillePage client side', () => {
       expect(results!).toHaveNoViolations()
     })
 
+    it('permet de gérer les listes', async () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Gérer mes listes' })
+      ).toHaveAttribute('href', '/mes-jeunes/listes')
+    })
+
     it("affiche la liste des bénéficiaires s'il en a", async () => {
       //THEN
       expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)

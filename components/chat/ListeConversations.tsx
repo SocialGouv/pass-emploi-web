@@ -92,7 +92,7 @@ function ListeConversations(
 
       {conversations && conversations.length > 0 && (
         <ButtonLink
-          // FIXME : dirty fix, problème de rafraichissement des listes de diffusion
+          // FIXME : dirty fix, problème de rafraichissement des listes
           href={'/mes-jeunes/envoi-message-groupe?misc=' + unsafeRandomId()}
           style={ButtonStyle.PRIMARY}
           className='absolute bottom-8 self-center'

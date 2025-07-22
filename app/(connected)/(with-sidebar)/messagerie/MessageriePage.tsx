@@ -5,16 +5,16 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ImageConversation from 'assets/images/conversation.svg'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
-import DetailMessageListeDeDiffusion from 'components/chat/DetailMessageListeDeDiffusion'
-import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
+import DetailMessageListe from 'components/chat/DetailMessageListe'
+import MessagesListe from 'components/chat/MessagesListe'
 import { ConseillerHistorique } from 'interfaces/beneficiaire'
-import { MessageListeDiffusion } from 'interfaces/message'
+import { MessageListe } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/beneficiaires.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChats } from 'utils/chat/chatsContext'
 import { useCurrentConversation } from 'utils/chat/currentConversationContext'
-import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
-import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
+import { useListeSelectionnee } from 'utils/chat/listeSelectionneeContext'
+import { useShowRubriqueListe } from 'utils/chat/showRubriqueListeContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function MessageriePage() {
@@ -30,13 +30,12 @@ function MessageriePage() {
     focusRetour: () => void
   }>(null)
 
-  const [showRubriqueListesDeDiffusion] = useShowRubriqueListeDeDiffusion()
-  const [listeSelectionnee, setListeSelectionnee] =
-    useListeDeDiffusionSelectionnee()
+  const [showRubriqueListes] = useShowRubriqueListe()
+  const [listeSelectionnee, setListeSelectionnee] = useListeSelectionnee()
 
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
   const [messageSelectionne, setMessageSelectionne] = useState<
-    MessageListeDiffusion | undefined
+    MessageListe | undefined
   >()
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
 
@@ -44,7 +43,7 @@ function MessageriePage() {
     if (
       currentConversation &&
       !listeSelectionnee.liste &&
-      !showRubriqueListesDeDiffusion
+      !showRubriqueListes
     ) {
       getConseillersDuJeuneClientSide(currentConversation.id).then(
         (conseillersJeunes) => setConseillers(conseillersJeunes)
@@ -68,7 +67,7 @@ function MessageriePage() {
 
   return (
     <>
-      {!showRubriqueListesDeDiffusion && (
+      {!showRubriqueListes && (
         <>
           {!currentConversation && (
             <div className='flex flex-col justify-center items-center h-full'>
@@ -96,13 +95,13 @@ function MessageriePage() {
         </>
       )}
 
-      {showRubriqueListesDeDiffusion && (
+      {showRubriqueListes && (
         <>
           {!listeSelectionnee.liste && (
             <div className='flex flex-col justify-center items-center h-full'>
               <ImageConversation focusable={false} aria-hidden={true} />
               <p className='mt-4 text-base-medium w-2/3 text-center'>
-                Veuillez sélectionner une liste de diffusion.
+                Veuillez sélectionner une liste.
               </p>
             </div>
           )}
@@ -110,7 +109,7 @@ function MessageriePage() {
           {listeSelectionnee.liste && (
             <div className='h-full min-h-0 px-6 flex flex-col overflow-y-auto'>
               {!messageSelectionne && (
-                <MessagesListeDeDiffusion
+                <MessagesListe
                   ref={messagesListeRef}
                   liste={listeSelectionnee.liste}
                   onAfficherDetailMessage={setMessageSelectionne}
@@ -125,7 +124,7 @@ function MessageriePage() {
               )}
 
               {messageSelectionne && (
-                <DetailMessageListeDeDiffusion
+                <DetailMessageListe
                   ref={detailMessageRef}
                   message={messageSelectionne}
                   onBack={() => {

@@ -17,10 +17,10 @@ import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 import { CurrentConversationProvider } from 'utils/chat/currentConversationContext'
 import {
-  ListeDeDiffusionSelectionneeProvider,
+  ListeSelectionneeProvider,
   ListeSelectionnee,
-} from 'utils/chat/listeDeDiffusionSelectionneeContext'
-import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
+} from 'utils/chat/listeSelectionneeContext'
+import { ShowRubriqueListeProvider } from 'utils/chat/showRubriqueListeContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
@@ -45,13 +45,13 @@ export default async function renderWithContexts(
       value: Alerte
       setter: (key: AlerteParam | undefined, target?: string) => void
     }>
-    customShowRubriqueListeDeDiffusion?: Partial<{
+    customShowRubriqueListe?: Partial<{
       value: boolean | undefined
-      setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
+      setter: (showRubriqueListe: boolean | undefined) => void
     }>
-    customListeDeDiffusionSelectionnee?: Partial<{
+    customListeSelectionnee?: Partial<{
       value: ListeSelectionnee
-      setter: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
+      setter: (listeSelectionnee: ListeSelectionnee) => void
     }>
   } = {}
 ): Promise<RenderResult> {
@@ -61,8 +61,8 @@ export default async function renderWithContexts(
     customChats,
     customCurrentConversation,
     customAlerte,
-    customShowRubriqueListeDeDiffusion,
-    customListeDeDiffusionSelectionnee,
+    customShowRubriqueListe,
+    customListeSelectionnee,
   } = options
   const conseiller = unConseiller(customConseiller)
 
@@ -77,8 +77,8 @@ export default async function renderWithContexts(
 
   const alerte = { ...customAlerte }
 
-  const showRubriqueListeDeDiffusion = { ...customShowRubriqueListeDeDiffusion }
-  const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
+  const showRubriqueListe = { ...customShowRubriqueListe }
+  const listeSelectionnee = { ...customListeSelectionnee }
   const withContexts = (element: ReactNode) =>
     provideContexts(
       element,
@@ -87,8 +87,8 @@ export default async function renderWithContexts(
       customChats,
       currentConversation,
       alerte,
-      showRubriqueListeDeDiffusion,
-      listeDeDiffusionSelectionnee
+      showRubriqueListe,
+      listeSelectionnee
     )
 
   let renderResult: RenderResult
@@ -119,13 +119,13 @@ function provideContexts(
     value: Alerte
     setter: (key: AlerteParam | undefined, target?: string) => void
   }>,
-  showRubriqueListeDeDiffusion: Partial<{
+  showRubriqueListe: Partial<{
     value: boolean | undefined
-    setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
+    setter: (showRubriqueListe: boolean | undefined) => void
   }>,
-  listeDeDiffusionSelectionnee: Partial<{
+  listeSelectionnee: Partial<{
     value: ListeSelectionnee
-    setter: (listeDeDiffusionSelectionnee: ListeSelectionnee) => void
+    setter: (listeSelectionnee: ListeSelectionnee) => void
   }>
 ) {
   return (
@@ -150,17 +150,17 @@ function provideContexts(
                   alerteForTests={alerte.value}
                   setterForTests={alerte.setter}
                 >
-                  <ShowRubriqueListeDeDiffusionProvider
-                    valueForTests={showRubriqueListeDeDiffusion.value}
-                    setterForTests={showRubriqueListeDeDiffusion.setter}
+                  <ShowRubriqueListeProvider
+                    valueForTests={showRubriqueListe.value}
+                    setterForTests={showRubriqueListe.setter}
                   >
-                    <ListeDeDiffusionSelectionneeProvider
-                      setterForTests={listeDeDiffusionSelectionnee.setter}
-                      valueForTests={listeDeDiffusionSelectionnee.value}
+                    <ListeSelectionneeProvider
+                      setterForTests={listeSelectionnee.setter}
+                      valueForTests={listeSelectionnee.value}
                     >
                       {children}
-                    </ListeDeDiffusionSelectionneeProvider>
-                  </ShowRubriqueListeDeDiffusionProvider>
+                    </ListeSelectionneeProvider>
+                  </ShowRubriqueListeProvider>
                 </AlerteProvider>
               </CurrentConversationProvider>
             </ChatsProvider>

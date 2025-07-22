@@ -34,7 +34,7 @@ export interface Message {
   infoSessionMilo?: InfoSessionMilo
 }
 
-export interface MessageListeDiffusion {
+export interface MessageListe {
   id: string
   content: string
   creationDate: DateTime

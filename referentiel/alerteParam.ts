@@ -15,10 +15,10 @@ export enum AlerteParam {
   // Actions
   multiQualificationSNP = 'multiQualificationSNP',
   multiQualificationNonSNP = 'multiQualificationNonSNP',
-  // Listes de diffusion
-  creationListeDiffusion = 'creationListeDiffusion',
-  modificationListeDiffusion = 'modificationListeDiffusion',
-  suppressionListeDiffusion = 'suppressionListeDiffusion',
+  // Listes
+  creationListe = 'creationListe',
+  modificationListe = 'modificationListe',
+  suppressionListe = 'suppressionListe',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',

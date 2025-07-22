@@ -14,7 +14,7 @@ import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -22,18 +22,18 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type ListesDiffusionPageProps = {
-  listesDiffusion: ListeDeDiffusion[]
+type ListesPageProps = {
+  listes: Liste[]
 }
 
-function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
+function ListesPage({ listes }: ListesPageProps) {
   const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
   const ALPHABETIQUE = 'ASC'
   const INVERSE = 'DESC'
-  const [listeTriees, setListesTriees] = useState(listesDiffusion)
+  const [listeTriees, setListesTriees] = useState(listes)
   const [tri, setTri] = useState<typeof ALPHABETIQUE | typeof INVERSE>(
     ALPHABETIQUE
   )
@@ -53,27 +53,27 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
   }
 
   useEffect(() => {
-    setListesTriees((listes) => {
+    setListesTriees((listeListes) => {
       const ordre = tri === ALPHABETIQUE ? 1 : -1
-      return [...listes].sort(
+      return [...listeListes].sort(
         (liste1, liste2) => liste1.titre.localeCompare(liste2.titre) * ordre
       )
     })
   }, [tri])
 
   let tracking = 'Listes diffusion'
-  if (alerte?.key === AlerteParam.creationListeDiffusion)
+  if (alerte?.key === AlerteParam.creationListe)
     tracking += ' - Creation succès'
-  if (alerte?.key === AlerteParam.modificationListeDiffusion)
+  if (alerte?.key === AlerteParam.modificationListe)
     tracking += ' - Modification succès'
-  if (alerte?.key === AlerteParam.suppressionListeDiffusion)
+  if (alerte?.key === AlerteParam.suppressionListe)
     tracking += ' - Suppression succès'
   useMatomo(tracking, aDesBeneficiaires)
 
   return (
     <>
       <PageActionsPortal>
-        <ButtonLink href='/mes-jeunes/listes-de-diffusion/edition-liste'>
+        <ButtonLink href='/mes-jeunes/listes/edition-liste'>
           <IconComponent
             name={IconName.Add}
             focusable={false}
@@ -84,17 +84,17 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
         </ButtonLink>
       </PageActionsPortal>
 
-      {listesDiffusion.length === 0 && (
+      {listes.length === 0 && (
         <div
           className='mx-auto my-0 flex flex-col items-center'
-          data-testid='empty-state-liste-de-diffusion'
+          data-testid='empty-state-liste'
         >
           <EmptyState
             illustrationName={IllustrationName.Send}
-            titre='Vous n’avez pas encore créé de liste de diffusion.'
-            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+            titre='Vous n’avez pas encore créé de liste.'
+            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes.'
             lien={{
-              href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+              href: '/mes-jeunes/listes/edition-liste',
               label: 'Créer une liste',
               iconName: IconName.Add,
             }}
@@ -102,11 +102,11 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
         </div>
       )}
 
-      {listesDiffusion.length > 0 && (
+      {listes.length > 0 && (
         <Table
           caption={{
             text: 'Listes',
-            count: listesDiffusion.length,
+            count: listes.length,
             visible: true,
           }}
         >
@@ -116,10 +116,10 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
                 <button
                   className='flex border-none items-center w-full h-full p-4'
                   onClick={inverserTri}
-                  aria-label={`Trier les listes de diffusion par ordre alphabétique ${
+                  aria-label={`Trier les listes par ordre alphabétique ${
                     tri === ALPHABETIQUE ? 'inversé' : ''
                   }`}
-                  title={`Trier les listes de diffusion par ordre alphabétique ${
+                  title={`Trier les listes par ordre alphabétique ${
                     tri === ALPHABETIQUE ? 'inversé' : ''
                   }`}
                 >
@@ -139,7 +139,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
                 </TD>
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
                 <TDLink
-                  href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
+                  href={`/mes-jeunes/listes/edition-liste?idListe=${liste.id}`}
                   labelPrefix='Consulter la liste'
                 />
               </TR>
@@ -151,7 +151,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
   )
 }
 
-function TitreListe({ liste }: { liste: ListeDeDiffusion }): ReactElement {
+function TitreListe({ liste }: { liste: Liste }): ReactElement {
   const informationLabel =
     'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
 
@@ -181,7 +181,4 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): ReactElement {
   return <>{liste.titre}</>
 }
 
-export default withTransaction(
-  ListesDiffusionPage.name,
-  'page'
-)(ListesDiffusionPage)
+export default withTransaction(ListesPage.name, 'page')(ListesPage)

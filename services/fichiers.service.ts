@@ -5,7 +5,7 @@ import { InfoFichier } from 'interfaces/fichier'
 
 export async function uploadFichier(
   idsJeunes: string[],
-  idsListesDeDiffusion: string[],
+  idsListes: string[],
   fichier: File
 ): Promise<InfoFichier> {
   const session = await getSession()
@@ -14,7 +14,7 @@ export async function uploadFichier(
   idsJeunes.forEach((idJeune) => {
     formData.append('jeunesIds', idJeune)
   })
-  idsListesDeDiffusion.forEach((idListe) => {
+  idsListes.forEach((idListe) => {
     formData.append('listesDeDiffusionIds', idListe)
   })
   formData.append('fichier', fichier)

@@ -5,17 +5,17 @@ import { axe, toHaveNoViolations } from 'jest-axe'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { Liste } from 'interfaces/liste'
 import renderWithContexts from 'tests/renderWithContexts'
 
 expect.extend(toHaveNoViolations)
 
 describe('BeneficiairesMultiselectAutocomplete', () => {
   let beneficiaires: OptionBeneficiaire[]
-  let listes: ListeDeDiffusion[]
+  let listes: Liste[]
   let onUpdate: (selectedIds: {
     beneficiaires?: string[]
-    listesDeDiffusion?: string[]
+    listes?: string[]
   }) => void
 
   let container: HTMLElement
@@ -68,7 +68,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
-        listesDeDiffusion={listes}
+        listes={listes}
         typeSelection='Bénéficiaires'
         onUpdate={onUpdate}
       />
@@ -118,7 +118,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
   })
 
   // TODO : ajouter prefixe pour les options des listes
-  it('permet de sélectionner les listes de diffusion', async () => {
+  it('permet de sélectionner les listes', async () => {
     // Then
     listes.forEach((liste) => {
       expect(
@@ -201,7 +201,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('transmet la sélection de la liste', async () => {
       // Then
-      expect(onUpdate).toHaveBeenCalledWith({ listesDeDiffusion: ['liste-2'] })
+      expect(onUpdate).toHaveBeenCalledWith({ listeListes: ['liste-2'] })
     })
   })
 
@@ -261,7 +261,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('transmet la déselection du bénéficiaire', async () => {
       // Then
-      expect(onUpdate).toHaveBeenCalledWith({ listesDeDiffusion: [] })
+      expect(onUpdate).toHaveBeenCalledWith({ listeListes: [] })
     })
   })
 })
@@ -274,7 +274,7 @@ describe('quand le conseiller utilise Edge', () => {
       { id: 'option-2', value: 'Option 2' },
       { id: 'option-3', value: 'Option 3' },
     ]
-    const listes: ListeDeDiffusion[] = [
+    const listes: Liste[] = [
       {
         id: 'liste-1',
         titre: 'Liste 1',
@@ -320,7 +320,7 @@ describe('quand le conseiller utilise Edge', () => {
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
-        listesDeDiffusion={listes}
+        listes={listes}
         typeSelection='Bénéficiaires'
         onUpdate={onUpdate}
       />

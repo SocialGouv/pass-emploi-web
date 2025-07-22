@@ -31,8 +31,8 @@ import {
 } from 'fixtures/beneficiaire'
 import {
   desMessagesAntechronologiques,
-  desMessagesListeDeDiffusionParJour,
-  desMessagesListeDiffusion,
+  desMessagesListeParJour,
+  desMessagesListe,
   desMessagesParJour,
   unMessage,
 } from 'fixtures/message'
@@ -50,7 +50,7 @@ import {
   desactiverMessageImportant,
   getMessageImportant,
   getMessagesDuMemeJour,
-  getMessagesListeDeDiffusion,
+  getMessagesListe,
   modifierMessage,
   observeConseillerChats,
   observeDerniersMessages,
@@ -186,22 +186,20 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
-  describe('.getMessagesListeDeDiffusion', () => {
-    it('retourne les messages de la liste de diffusion', async () => {
+  describe('.getMessagesListe', () => {
+    it('retourne les messages de la liste', async () => {
       // Given
-      ;(getMessagesGroupe as jest.Mock).mockResolvedValue(
-        desMessagesListeDiffusion()
-      )
+      ;(getMessagesGroupe as jest.Mock).mockResolvedValue(desMessagesListe())
 
       // When
-      const actual = await getMessagesListeDeDiffusion(
-        'id-liste',
-        cleChiffrement
-      )
+      const actual = await getMessagesListe('id-liste', cleChiffrement)
 
       // Then
-      expect(getMessagesGroupe).toHaveBeenCalledWith('id-conseiller-1', 'id-liste')
-      expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
+      expect(getMessagesGroupe).toHaveBeenCalledWith(
+        'id-conseiller-1',
+        'id-liste'
+      )
+      expect(actual).toEqual(desMessagesListeParJour())
     })
   })
 
@@ -437,12 +435,12 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.sendNouveauMessageGroupe', () => {
     let idsBeneficiaires: string[]
-    let idsListesDeDiffusion: string[]
+    let idsListes: string[]
     let newMessageGroupe: string
     beforeEach(async () => {
       // Given
       idsBeneficiaires = desItemsBeneficiaires().map(({ id }) => id)
-      idsListesDeDiffusion = ['liste-1', 'liste-2']
+      idsListes = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
     })
 
@@ -450,7 +448,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // When
       await sendNouveauMessageGroupe({
         idsBeneficiaires: idsBeneficiaires,
-        idsListesDeDiffusion,
+        idsListes: idsListes,
         newMessage: newMessageGroupe,
         cleChiffrement,
       })
@@ -461,7 +459,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller-1',
           idsBeneficiaires,
-          idsListesDeDiffusion,
+          idsListesDeDiffusion: idsListes,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
         },
@@ -473,7 +471,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // When
       await sendNouveauMessageGroupe({
         idsBeneficiaires: idsBeneficiaires,
-        idsListesDeDiffusion,
+        idsListes: idsListes,
         newMessage: newMessageGroupe,
         cleChiffrement,
         infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
@@ -485,7 +483,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller-1',
           idsBeneficiaires,
-          idsListesDeDiffusion,
+          idsListesDeDiffusion: idsListes,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
           infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },

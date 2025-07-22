@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
+import DisplayMessageListe from 'components/chat/DisplayMessageListe'
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import EmptyState from 'components/EmptyState'
@@ -17,25 +17,26 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SpinningLoader from 'components/ui/SpinningLoader'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { ByDay, MessageListeDiffusion, OfDay } from 'interfaces/message'
-import { getMessagesListeDeDiffusion } from 'services/messages.service'
+import { Liste } from 'interfaces/liste'
+import { ByDay, MessageListe, OfDay } from 'interfaces/message'
+import { getMessagesListe } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 
-type MessagesListeDeDiffusionProps = {
-  liste: ListeDeDiffusion
-  onAfficherDetailMessage: (message: MessageListeDiffusion) => void
+type MessagesListeProps = {
+  liste: Liste
+  onAfficherDetailMessage: (message: MessageListe) => void
   onBack: () => void
   messagerieFullScreen?: boolean
 }
-function MessagesListeDeDiffusion(
+
+function MessagesListe(
   {
     liste,
     onAfficherDetailMessage,
     onBack,
     messagerieFullScreen,
-  }: MessagesListeDeDiffusionProps,
+  }: MessagesListeProps,
   ref: ForwardedRef<{
     focusRetour: () => void
     focusMessage: (id: string) => void
@@ -52,7 +53,7 @@ function MessagesListeDeDiffusion(
   const headerRef = useRef<{ focusRetour: () => void }>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>>()
+  const [messages, setMessages] = useState<ByDay<MessageListe>>()
   const [messagerieEstVisible, setMessagerieEstVisible] =
     useState<boolean>(true)
   const [idMessageAFocus, setIdMessageAFocus] = useState<string | undefined>()
@@ -67,10 +68,9 @@ function MessagesListeDeDiffusion(
 
   useEffect(() => {
     if (chatCredentials) {
-      getMessagesListeDeDiffusion(
-        liste.id,
-        chatCredentials.cleChiffrement
-      ).then(setMessages)
+      getMessagesListe(liste.id, chatCredentials.cleChiffrement).then(
+        setMessages
+      )
     }
   }, [chatCredentials, liste.id])
 
@@ -101,7 +101,7 @@ function MessagesListeDeDiffusion(
       <HeaderChat
         ref={headerRef}
         titre={liste.titre}
-        labelRetour='Retour à mes listes de diffusion'
+        labelRetour='Retour à mes listes'
         onBack={onBack}
         onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
         messagerieFullScreen={messagerieFullScreen}
@@ -112,8 +112,8 @@ function MessagesListeDeDiffusion(
         <>
           <div className='hidden layout-s:block w-fit ml-4 mb-8'>
             <ButtonLink
-              href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
-              style={ButtonStyle.TERTIARY}
+              href={`/mes-jeunes/listes/edition-liste?idListe=${liste.id}`}
+              style={ButtonStyle.SECONDARY}
               className='mr-auto'
             >
               <IconComponent
@@ -133,7 +133,7 @@ function MessagesListeDeDiffusion(
               <div className='bg-grey-100 flex flex-col justify-center items-center'>
                 <EmptyState
                   illustrationName={IllustrationName.Send}
-                  titre='Vous n’avez envoyé aucun message à cette liste de diffusion'
+                  titre='Vous n’avez envoyé aucun message à cette liste'
                 />
               </div>
             )}
@@ -141,14 +141,14 @@ function MessagesListeDeDiffusion(
             {messages && messages.days.length > 0 && (
               <>
                 <span className='sr-only' id='description-messages'>
-                  Messages envoyés à la liste de diffusion
+                  Messages envoyés à la liste
                 </span>
                 <ul
                   className='h-full min-h-0 p-4 overflow-y-auto'
                   aria-describedby='description-messages'
                 >
                   {messages.days.map(
-                    (messagesOfADay: OfDay<MessageListeDiffusion>, i) => (
+                    (messagesOfADay: OfDay<MessageListe>, i) => (
                       <li
                         key={messagesOfADay.date.toMillis() + i}
                         className='mb-5'
@@ -176,7 +176,7 @@ function MessagesListeDeDiffusion(
                                 })
                               }
                             >
-                              <DisplayMessageListeDeDiffusion
+                              <DisplayMessageListe
                                 id={`message-${message.id}`}
                                 message={message}
                                 onAfficherDetailMessage={() =>
@@ -205,4 +205,5 @@ function MessagesListeDeDiffusion(
     </>
   )
 }
-export default forwardRef(MessagesListeDeDiffusion)
+
+export default forwardRef(MessagesListe)

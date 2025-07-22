@@ -32,7 +32,7 @@ const MessageImportantModal = dynamic(
 type ChatRoomProps = {
   beneficiairesChats: BeneficiaireEtChat[] | undefined
   onOuvertureMenu: () => void
-  onAccesListesDiffusion: () => void
+  onAccesListes: () => void
   onAccesConversation: (conversation: BeneficiaireEtChat) => void
 }
 
@@ -40,11 +40,11 @@ function ChatRoom(
   {
     beneficiairesChats,
     onOuvertureMenu,
-    onAccesListesDiffusion,
+    onAccesListes,
     onAccesConversation,
   }: ChatRoomProps,
   ref: ForwardedRef<{
-    focusAccesListesDiffusion: () => void
+    focusAccesListes: () => void
     focusConversation: (id: string) => void
   }>
 ) {
@@ -58,9 +58,9 @@ function ChatRoom(
     focus: () => void
     focusConversation: (id: string) => void
   }>(null)
-  const accesListesDiffusionRef = useRef<HTMLButtonElement>(null)
+  const accesListesRef = useRef<HTMLButtonElement>(null)
   useImperativeHandle(ref, () => ({
-    focusAccesListesDiffusion: () => accesListesDiffusionRef.current!.focus(),
+    focusAccesListes: () => accesListesRef.current!.focus(),
     focusConversation: (id: string) =>
       listeConversationsRef.current!.focusConversation(id),
   }))
@@ -337,9 +337,9 @@ function ChatRoom(
           </div>
 
           <button
-            ref={accesListesDiffusionRef}
+            ref={accesListesRef}
             className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
-            onClick={onAccesListesDiffusion}
+            onClick={onAccesListes}
             type='button'
           >
             <IconComponent
@@ -348,7 +348,7 @@ function ChatRoom(
               aria-hidden={true}
               focusable={false}
             />
-            <span className='grow text-left'>Voir mes listes de diffusion</span>
+            <span className='grow text-left'>Voir mes listes</span>
             <IconComponent
               name={IconName.ChevronRight}
               className='mr-2 h-6 w-6 fill-current'
@@ -390,4 +390,5 @@ function ChatRoom(
     </>
   )
 }
+
 export default forwardRef(ChatRoom)

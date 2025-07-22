@@ -36,7 +36,7 @@ import { InfoFichier } from 'interfaces/fichier'
 import {
   InfoOffre,
   Message,
-  MessageListeDiffusion,
+  MessageListe,
   MessageRechercheMatch,
   TypeMessage,
 } from 'interfaces/message'
@@ -393,13 +393,11 @@ export async function getChatDuBeneficiaire(
 export async function getMessagesGroupe(
   idConseiller: string,
   idGroupe: string
-): Promise<MessageListeDiffusion[]> {
+): Promise<MessageListe[]> {
   try {
     const groupeSnapshot = await getGroupeSnapshot(idConseiller, idGroupe)
     if (!groupeSnapshot) {
-      console.error(
-        'Aucun document correspondant à la liste de diffusion ' + idGroupe
-      )
+      console.error('Aucun document correspondant à la liste ' + idGroupe)
       return []
     }
 
@@ -415,7 +413,7 @@ export async function getMessagesGroupe(
         orderBy('creationDate')
       )
     )
-    return querySnapshots.docs.map(docSnapshotToMessageListeDiffusion)
+    return querySnapshots.docs.map(docSnapshotToMessageListe)
   } catch (e) {
     console.error(e)
     captureError(e as Error)
@@ -904,11 +902,11 @@ function firebaseMessageToMessage(
   return message
 }
 
-export function docSnapshotToMessageListeDiffusion(
+export function docSnapshotToMessageListe(
   docSnapshot: QueryDocumentSnapshot<FirebaseMessageGroupe>
-): MessageListeDiffusion {
+): MessageListe {
   const firebaseMessage = docSnapshot.data()
-  const message: MessageListeDiffusion = {
+  const message: MessageListe = {
     content: firebaseMessage.content,
     iv: firebaseMessage.iv,
     creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),

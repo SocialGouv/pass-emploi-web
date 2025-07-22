@@ -108,8 +108,8 @@ export default function OnboardingPEModal({
         >
           <p className='text-m-regular'>
             Dès le compte activé, échangez avec un ou plusieurs bénéficiaires et
-            partagez leur des offres d’emploi. Créez et gérez vos listes de
-            diffusion pour gagner du temps.
+            partagez leur des offres d’emploi. Créez et gérez vos listes pour
+            gagner du temps.
           </p>
           <ProgressBar etapeCourante={2} etapes={3} />
         </OnboardingPEEtapeModal>

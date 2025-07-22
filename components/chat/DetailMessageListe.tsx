@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
+import DisplayMessageListe from 'components/chat/DisplayMessageListe'
 import HeaderChat from 'components/chat/HeaderChat'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -17,18 +17,18 @@ import {
   BeneficiaireEtChat,
   IdentiteBeneficiaire,
 } from 'interfaces/beneficiaire'
-import { MessageListeDiffusion } from 'interfaces/message'
+import { MessageListe } from 'interfaces/message'
 import { getIdentitesBeneficiairesClientSide } from 'services/beneficiaires.service'
 import { toShortDate } from 'utils/date'
 
-function DetailMessageListeDeDiffusion(
+function DetailMessageListe(
   {
     message,
     chats,
     onBack,
     messagerieFullScreen,
   }: {
-    message: MessageListeDiffusion
+    message: MessageListe
     chats: BeneficiaireEtChat[] | undefined
     onBack: () => void
     messagerieFullScreen?: boolean
@@ -108,7 +108,7 @@ function DetailMessageListeDeDiffusion(
             Le {toShortDate(message.creationDate)}
           </div>
 
-          <DisplayMessageListeDeDiffusion
+          <DisplayMessageListe
             id={`message-${message.id}`}
             message={message}
             messagerieFullScreen={messagerieFullScreen}
@@ -162,4 +162,5 @@ function DetailMessageListeDeDiffusion(
     </>
   )
 }
-export default forwardRef(DetailMessageListeDeDiffusion)
+
+export default forwardRef(DetailMessageListe)

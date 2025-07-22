@@ -10,8 +10,8 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/agenda$/, 'Agenda'],
   [/\/agenda\/sessions\/[\w-]+$/, 'Détail session'],
 
-  // Listes de diffusion
-  [/\/mes-jeunes\/listes-de-diffusion$/, 'Mes listes'],
+  // Listes
+  [/\/mes-jeunes\/listes$/, 'Mes listes'],
 
   // Portefeuille
   [/\/mes-jeunes$/, 'Portefeuille'],
