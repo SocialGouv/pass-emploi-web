@@ -15,7 +15,7 @@ import Table from 'components/ui/Table/Table'
 import {
   Action,
   ActionAQualifier,
-  comparerParDateEcheance,
+  comparerParDate,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
@@ -180,7 +180,7 @@ export default function TableauActionsBeneficiaire({
   useEffect(() => {
     setActionsTriees(
       [...actionsFiltrees].sort((action1, action2) =>
-        comparerParDateEcheance(action1, action2, triAntichronologique)
+        comparerParDate(action1, action2, triAntichronologique)
       )
     )
   }, [actionsFiltrees, triAntichronologique])

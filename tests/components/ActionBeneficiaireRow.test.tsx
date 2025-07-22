@@ -9,7 +9,7 @@ import ActionBeneficiaireRow from 'components/action/ActionBeneficiaireRow'
 import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 
-describe('<ActionRow/>', () => {
+describe('<ActionBeneficiaireRow/>', () => {
   beforeEach(async () => {
     ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
   })
@@ -50,7 +50,10 @@ describe('<ActionRow/>', () => {
   })
 
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
-    const actionTerminee = uneAction({ status: StatutAction.Terminee })
+    const actionTerminee = uneAction({
+      status: StatutAction.Terminee,
+      dateFinReelle: '2025-07-22T14:50:46.000Z',
+    })
     renderInTable(
       <ActionBeneficiaireRow
         action={actionTerminee}
@@ -66,6 +69,7 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'À qualifier' quand l'action est à qualifier", () => {
     const actionAQualifier = uneAction({
       status: StatutAction.TermineeAQualifier,
+      dateFinReelle: '2025-07-22T14:50:46.000Z',
     })
     renderInTable(
       <ActionBeneficiaireRow
@@ -82,6 +86,7 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'Qualifiée' quand l'action est qualifiée", () => {
     const actionQualifiee = uneAction({
       status: StatutAction.TermineeQualifiee,
+      dateFinReelle: '2025-07-22T14:50:46.000Z',
     })
     renderInTable(
       <ActionBeneficiaireRow
@@ -109,12 +114,32 @@ describe('<ActionRow/>', () => {
     expect(screen.getByText('En retard')).toBeInTheDocument()
   })
 
+  it('devrait afficher la date de fin réelle quand l’action est terminée', () => {
+    const actionTerminee = uneAction({
+      status: StatutAction.Terminee,
+      dateFinReelle: '2025-07-22T14:50:46.000Z',
+    })
+    renderInTable(
+      <ActionBeneficiaireRow
+        action={actionTerminee}
+        avecQualification={{
+          isChecked: false,
+          onSelection: () => {},
+        }}
+      />
+    )
+    expect(screen.getByText('22 juillet 2025')).toBeInTheDocument()
+  })
+
   describe('selection', () => {
     it('affiche une checkbox non cochée', async () => {
       // When
       renderInTable(
         <ActionBeneficiaireRow
-          action={uneAction({ status: StatutAction.TermineeAQualifier })}
+          action={uneAction({
+            status: StatutAction.TermineeAQualifier,
+            dateFinReelle: '2025-07-22T14:50:46.000Z',
+          })}
           avecQualification={{
             isChecked: false,
             onSelection: () => {},
@@ -134,7 +159,10 @@ describe('<ActionRow/>', () => {
       // When
       renderInTable(
         <ActionBeneficiaireRow
-          action={uneAction({ status: StatutAction.TermineeAQualifier })}
+          action={uneAction({
+            status: StatutAction.TermineeAQualifier,
+            dateFinReelle: '2025-07-22T14:50:46.000Z',
+          })}
           avecQualification={{
             isChecked: true,
             onSelection: () => {},
@@ -171,6 +199,7 @@ describe('<ActionRow/>', () => {
       const onSelection = jest.fn()
       const actionAQualifier = uneAction({
         status: StatutAction.TermineeAQualifier,
+        dateFinReelle: '2025-07-22T14:50:46.000Z',
       })
       renderInTable(
         <ActionBeneficiaireRow
