@@ -48,6 +48,7 @@ import {
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
+  renvoyerEmailActivation,
   supprimerJeuneInactif,
 } from 'services/beneficiaires.service'
 import { Periode } from 'types/dates'
@@ -262,6 +263,24 @@ describe('JeunesApiService', () => {
           commentaire: undefined,
         },
         accessToken
+      )
+    })
+  })
+
+  describe('.renvoyerEmailActivation', () => {
+    it('renvoie un email d’activation au bénéficiaire', async () => {
+      // Given
+      const idConseiller = 'id-conseiller-1'
+      const idBeneficiaire = 'id-beneficiaire-1'
+
+      // When
+      await renvoyerEmailActivation(idConseiller, idBeneficiaire)
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        `/conseillers/${idConseiller}/envoyer-email-activation/${idBeneficiaire}`,
+        {},
+        'accessToken'
       )
     })
   })
