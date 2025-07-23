@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { IconName } from 'components/ui/IconComponent'
@@ -12,39 +12,26 @@ import TH from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import { DetailBeneficiaire } from 'interfaces/beneficiaire'
 import { Offre } from 'interfaces/favoris'
-import { getOffres } from 'services/favoris.service'
-import { Periode } from 'types/dates'
 import { toLongMonthDate, toShortDate } from 'utils/date'
 
 interface TableauOffresProps {
   beneficiaire: DetailBeneficiaire
   shouldFocus: boolean
-  semaine: Periode
+  offres: Offre[]
+  isLoading?: boolean
 }
 
 export default function TableauOffres({
   beneficiaire,
   shouldFocus,
-  semaine,
+  offres,
+  isLoading,
 }: TableauOffresProps) {
-  const [offres, setOffres] = useState<Offre[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    setIsLoading(true)
-
-    getOffres(beneficiaire.id, semaine)
-      .then(setOffres)
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }, [semaine])
-
   return (
     <>
       {isLoading && <SpinningLoader />}
 
-      {!isLoading && offres.length === 0 && (
+      {!isLoading && Boolean(offres.length === 0) && (
         <EmptyState
           illustrationName={IllustrationName.Checklist}
           shouldFocus={shouldFocus}
