@@ -12,9 +12,11 @@ import {
   Onglet,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
 import DetailsBeneficiaire from 'components/jeune/DetailsBeneficiaire'
-import { IconName } from 'components/ui/IconComponent'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { IndicateursSemaine } from 'interfaces/beneficiaire'
 import { estConseillerReferent } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -199,6 +201,30 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
   const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
   const estBeneficiaireMilo = estFicheMilo(props)
 
+  const alerteRenvoiEmailActivationRef = React.useRef<HTMLUListElement>(null)
+
+  const [isRenvoiEmailActivationLoading, setIsRenvoiEmailActivationLoading] =
+    useState<boolean>(false)
+  const [erreurRenvoiEmailActivation, setErreurRenvoiEmailActivation] =
+    useState<boolean>(false)
+  const [succesRenvoiEmailActivation, setSuccesRenvoiEmailActivation] =
+    useState<boolean | undefined>()
+
+  async function handleRenvoyerEmailActivation() {
+    try {
+      setIsRenvoiEmailActivationLoading(true)
+      const { renvoyerEmailActivation: _renvoyerEmailActivation } =
+        await import('services/beneficiaires.service')
+      await _renvoyerEmailActivation(conseiller.id, beneficiaire.id)
+      setSuccesRenvoiEmailActivation(true)
+    } catch (e) {
+      console.error(e)
+      setErreurRenvoiEmailActivation(true)
+    } finally {
+      setIsRenvoiEmailActivationLoading(false)
+    }
+  }
+
   return (
     <>
       {beneficiaire.estAArchiver && (
@@ -222,25 +248,56 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
           )}
 
           {estBeneficiaireMilo && (
-            <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'>
-              <ul className='list-disc pl-[48px]'>
-                <li>
-                  <strong>
-                    Il ne pourra pas échanger de messages avec vous.
-                  </strong>
-                </li>
-                <li>
-                  <strong>
-                    Le lien d’activation envoyé par i-milo à l’adresse e-mail du
-                    bénéficiaire n’est valable que 24h.
-                  </strong>
-                </li>
-                <li>
-                  Si le délai est dépassé, veuillez orienter ce bénéficiaire
-                  vers l’option : mot de passe oublié.
-                </li>
-              </ul>
-            </FailureAlert>
+            <>
+              {succesRenvoiEmailActivation && (
+                <SuccessAlert
+                  label='L’email d’activation a été envoyé à l’adresse du bénéficiaire.'
+                  onAcknowledge={() => {
+                    setSuccesRenvoiEmailActivation(undefined)
+                    alerteRenvoiEmailActivationRef.current!.focus()
+                  }}
+                />
+              )}
+
+              <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application et ne pourra pas échanger de messages avec vous.'>
+                <ul
+                  className='list-disc pl-[48px]'
+                  ref={alerteRenvoiEmailActivationRef}
+                >
+                  <li>
+                    <strong>
+                      Le lien d’activation que le bénéficiaire a reçu n’est
+                      valable que 24h.
+                    </strong>
+                  </li>
+                  <li>
+                    Si le délai est dépassé ou si votre bénéficiaire n’a pas
+                    reçu l’email d’activation, vous pouvez lui renvoyer.
+                  </li>
+                </ul>
+                <Button
+                  onClick={handleRenvoyerEmailActivation}
+                  style={ButtonStyle.WARNING}
+                  className='w-fit mt-4'
+                  isLoading={isRenvoiEmailActivationLoading}
+                >
+                  <IconComponent
+                    name={IconName.Send}
+                    aria-hidden={true}
+                    focusable={false}
+                    className='w-4 h-4 mr-2'
+                  />
+                  Renvoyer l’email d’activation
+                </Button>
+
+                {erreurRenvoiEmailActivation && (
+                  <p className='text-warning mt-2 text-s-regular'>
+                    Une erreur est survenue lors du renvoi d’email d’activation.
+                    Veuillez réessayer ultérieurement.
+                  </p>
+                )}
+              </FailureAlert>
+            </>
           )}
         </>
       )}

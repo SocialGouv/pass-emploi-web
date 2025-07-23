@@ -469,3 +469,15 @@ export async function getComptageHeuresFicheBeneficiaire(
     throw e
   }
 }
+
+export async function renvoyerEmailActivation(
+  idConseiller: string,
+  idBeneficiaire: string
+) {
+  const session = await getSession()
+  await apiPost(
+    `/conseillers/${idConseiller}/envoyer-email-activation/${idBeneficiaire}`,
+    {},
+    session!.accessToken
+  )
+}
