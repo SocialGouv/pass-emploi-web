@@ -15,6 +15,7 @@ import {
   uneListeDeDemarches,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDOffres } from 'fixtures/favoris'
 import {
   BeneficiaireEtChat,
@@ -29,6 +30,7 @@ import {
   getDemarchesBeneficiaireClientSide,
   getIndicateursBeneficiaire,
   modifierDispositif,
+  renvoyerEmailActivation,
 } from 'services/beneficiaires.service'
 import { getOffres } from 'services/favoris.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -289,10 +291,10 @@ describe('FicheBeneficiairePage client side', () => {
     })
 
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
-      it('affiche un message', async () => {
-        // When
+      beforeEach(async () => {
         await renderFicheJeuneMilo({ lastActivity: undefined })
-
+      })
+      it('affiche un message', async () => {
         // Then
         expect(
           screen.getByText(
@@ -301,9 +303,69 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du bénéficiaire n’est valable que 24h/
+            /Le lien d’activation que le bénéficiaire a reçu n’est valable que 24h./
           )
         ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            /Si le délai est dépassé ou si votre bénéficiaire n’a pas reçu l’email d’activation, vous pouvez lui renvoyer./
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: 'Renvoyer l’email d’activation' })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de renvoyer l’email d’activation', async () => {
+        // When
+        ;(renvoyerEmailActivation as jest.Mock).mockResolvedValue(undefined)
+        const conseiller = unConseiller()
+        const beneficiaire = unDetailBeneficiaire({ id: 'id-beneficiaire-1' })
+
+        // Then
+        const renvoyerEmailButton = screen.getByRole('button', {
+          name: 'Renvoyer l’email d’activation',
+        })
+        expect(renvoyerEmailButton).toBeInTheDocument()
+        await userEvent.click(renvoyerEmailButton)
+
+        expect(renvoyerEmailActivation).toHaveBeenCalledWith(
+          conseiller.id,
+          beneficiaire.id
+        )
+        expect(
+          screen.getByText(
+            /L’email d’activation a été envoyé à l’adresse du bénéficiaire./
+          )
+        ).toBeInTheDocument()
+      })
+
+      describe('quand l’envoi de l’email d’activation échoue', () => {
+        it('affiche une erreur', async () => {
+          // When
+          ;(renvoyerEmailActivation as jest.Mock).mockRejectedValue({
+            message: 'Aucun compte trouvé pour ce bénéficiaire',
+          })
+          const conseiller = unConseiller()
+          const beneficiaire = unDetailBeneficiaire({ id: 'id-beneficiaire-1' })
+
+          // Then
+          const renvoyerEmailButton = screen.getByRole('button', {
+            name: 'Renvoyer l’email d’activation',
+          })
+          expect(renvoyerEmailButton).toBeInTheDocument()
+          await userEvent.click(renvoyerEmailButton)
+
+          expect(renvoyerEmailActivation).toHaveBeenCalledWith(
+            conseiller.id,
+            beneficiaire.id
+          )
+          expect(
+            screen.getByText(
+              /Une erreur est survenue lors du renvoi d’email d’activation. Veuillez réessayer ultérieurement./
+            )
+          ).toBeInTheDocument()
+        })
       })
     })
 
