@@ -27,6 +27,10 @@ import { useChats } from 'utils/chat/chatsContext'
 import { useCurrentConversation } from 'utils/chat/currentConversationContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import {
+  peutRenvoyerEmailActivation,
+  stockeRenvoiEmail,
+} from 'utils/renvoiEmailActivation'
 
 const OngletsBeneficiaireMilo = dynamic(
   () => import('components/jeune/OngletsBeneficiaireMilo')
@@ -203,6 +207,8 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
 
   const alerteRenvoiEmailActivationRef = React.useRef<HTMLUListElement>(null)
 
+  const [isRenvoiEmailActivationDisabled, setIsRenvoiEmailActivationDisabled] =
+    useState<boolean>(false)
   const [isRenvoiEmailActivationLoading, setIsRenvoiEmailActivationLoading] =
     useState<boolean>(false)
   const [erreurRenvoiEmailActivation, setErreurRenvoiEmailActivation] =
@@ -216,7 +222,10 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
       const { renvoyerEmailActivation: _renvoyerEmailActivation } =
         await import('services/beneficiaires.service')
       await _renvoyerEmailActivation(conseiller.id, beneficiaire.id)
+
       setSuccesRenvoiEmailActivation(true)
+      stockeRenvoiEmail(beneficiaire.id)
+      setIsRenvoiEmailActivationDisabled(true)
     } catch (e) {
       console.error(e)
       setErreurRenvoiEmailActivation(true)
@@ -224,6 +233,12 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
       setIsRenvoiEmailActivationLoading(false)
     }
   }
+
+  useEffect(() => {
+    setIsRenvoiEmailActivationDisabled(
+      !peutRenvoyerEmailActivation(beneficiaire.id)
+    )
+  }, [])
 
   return (
     <>
@@ -280,6 +295,7 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
                   style={ButtonStyle.WARNING}
                   className='w-fit mt-4'
                   isLoading={isRenvoiEmailActivationLoading}
+                  disabled={isRenvoiEmailActivationDisabled}
                 >
                   <IconComponent
                     name={IconName.Send}
@@ -289,6 +305,12 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
                   />
                   Renvoyer l’email d’activation
                 </Button>
+
+                {isRenvoiEmailActivationDisabled && (
+                  <p className='text-warning mt-2 text-s-regular'>
+                    Le dernier renvoi date de moins de 24h.
+                  </p>
+                )}
 
                 {erreurRenvoiEmailActivation && (
                   <p className='text-warning mt-2 text-s-regular'>
