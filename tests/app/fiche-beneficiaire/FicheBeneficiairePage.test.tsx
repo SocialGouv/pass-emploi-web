@@ -291,10 +291,10 @@ describe('FicheBeneficiairePage client side', () => {
     })
 
     describe('quand le compte du bénéficiaire n’est pas activé', () => {
-      beforeEach(async () => {
-        await renderFicheJeuneMilo({ lastActivity: undefined })
-      })
       it('affiche un message', async () => {
+        // When
+        await renderFicheJeuneMilo({ lastActivity: undefined })
+
         // Then
         expect(
           screen.getByText(
@@ -316,7 +316,41 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
       })
 
+      describe('quand l’envoi de l’email d’activation échoue', () => {
+        it('affiche une erreur', async () => {
+          // Given
+          ;(renvoyerEmailActivation as jest.Mock).mockRejectedValue({
+            message: 'Aucun compte trouvé pour ce bénéficiaire',
+          })
+          const conseiller = unConseiller()
+          const beneficiaire = unDetailBeneficiaire({ id: 'id-beneficiaire-1' })
+
+          // When
+          await renderFicheJeuneMilo({ lastActivity: undefined })
+
+          // Then
+          const renvoyerEmailButton = screen.getByRole('button', {
+            name: 'Renvoyer l’email d’activation',
+          })
+          expect(renvoyerEmailButton).toBeInTheDocument()
+          await userEvent.click(renvoyerEmailButton)
+
+          expect(renvoyerEmailActivation).toHaveBeenCalledWith(
+            conseiller.id,
+            beneficiaire.id
+          )
+          expect(
+            screen.getByText(
+              /Une erreur est survenue lors du renvoi d’email d’activation. Veuillez réessayer ultérieurement./
+            )
+          ).toBeInTheDocument()
+        })
+      })
+
       it('permet de renvoyer l’email d’activation', async () => {
+        // Given
+        await renderFicheJeuneMilo({ lastActivity: undefined })
+
         // When
         ;(renvoyerEmailActivation as jest.Mock).mockResolvedValue(undefined)
         const conseiller = unConseiller()
@@ -338,34 +372,10 @@ describe('FicheBeneficiairePage client side', () => {
             /L’email d’activation a été envoyé à l’adresse du bénéficiaire./
           )
         ).toBeInTheDocument()
-      })
-
-      describe('quand l’envoi de l’email d’activation échoue', () => {
-        it('affiche une erreur', async () => {
-          // When
-          ;(renvoyerEmailActivation as jest.Mock).mockRejectedValue({
-            message: 'Aucun compte trouvé pour ce bénéficiaire',
-          })
-          const conseiller = unConseiller()
-          const beneficiaire = unDetailBeneficiaire({ id: 'id-beneficiaire-1' })
-
-          // Then
-          const renvoyerEmailButton = screen.getByRole('button', {
-            name: 'Renvoyer l’email d’activation',
-          })
-          expect(renvoyerEmailButton).toBeInTheDocument()
-          await userEvent.click(renvoyerEmailButton)
-
-          expect(renvoyerEmailActivation).toHaveBeenCalledWith(
-            conseiller.id,
-            beneficiaire.id
-          )
-          expect(
-            screen.getByText(
-              /Une erreur est survenue lors du renvoi d’email d’activation. Veuillez réessayer ultérieurement./
-            )
-          ).toBeInTheDocument()
-        })
+        expect(renvoyerEmailButton).toBeDisabled()
+        expect(
+          screen.getByText('Le dernier renvoi date de moins de 24h.')
+        ).toBeInTheDocument()
       })
     })
 
