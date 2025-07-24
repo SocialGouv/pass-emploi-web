@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { DetailBeneficiaire } from 'interfaces/beneficiaire'
+import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   RdvEtAnimationCollectivePilotage,
@@ -20,7 +22,10 @@ import {
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { Periode } from 'types/dates'
 import { MetadonneesPagination } from 'types/pagination'
+import { compareDates } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
+
+import { getSessionsMiloBeneficiaire } from './sessions.service'
 
 export async function getRendezVousConseiller(
   idConseiller: string,
@@ -200,4 +205,39 @@ async function getRdvsEtAnimationsCollectivesAClore(
       nombrePages: nombrePages,
     },
   }
+}
+
+export async function chargerRdvsEtSessions(
+  conseiller: Conseiller,
+  beneficiaire: DetailBeneficiaire,
+  semaine: Periode,
+  setErreurRecuperationSessions: (erreur: boolean) => void
+): Promise<EvenementListItem[]> {
+  const rdvs = await getRendezVousJeune(conseiller.id, beneficiaire.id, semaine)
+
+  let sessionsMilo: EvenementListItem[] = []
+  if (
+    peutAccederAuxSessions(conseiller) &&
+    conseiller.structureMilo!.id === beneficiaire.structureMilo?.id
+  ) {
+    try {
+      setErreurRecuperationSessions(false)
+      sessionsMilo = await getSessionsMiloBeneficiaire(beneficiaire.id, semaine)
+    } catch {
+      setErreurRecuperationSessions(true)
+    }
+  }
+
+  return trieParDateRdvsEtSessions(rdvs, sessionsMilo)
+}
+
+function trieParDateRdvsEtSessions(
+  rdvs: EvenementListItem[],
+  sessionsMilo: EvenementListItem[]
+) {
+  return [...rdvs]
+    .concat(sessionsMilo)
+    .sort((event1, event2) =>
+      compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
+    )
 }

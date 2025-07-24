@@ -17,7 +17,10 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { Structure } from 'interfaces/structure'
 import { getActionsBeneficiaire } from 'services/actions.service'
 import { getIndicateursBeneficiaire } from 'services/beneficiaires.service'
-import { getRendezVousJeune } from 'services/evenements.service'
+import {
+  chargerRdvsEtSessions,
+  getRendezVousJeune,
+} from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -50,6 +53,10 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue(sessions)
     ;(getActionsBeneficiaire as jest.Mock).mockResolvedValue(uneListeDActions())
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
+    ;(chargerRdvsEtSessions as jest.Mock).mockResolvedValue([
+      ...rdvs,
+      ...sessions,
+    ])
   })
 
   describe("quand l'utilisateur est un conseiller Milo", () => {

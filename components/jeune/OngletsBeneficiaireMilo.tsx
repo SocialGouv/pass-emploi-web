@@ -10,8 +10,15 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { Action } from 'interfaces/action'
+import { EvenementListItem } from 'interfaces/evenement'
+import { Offre } from 'interfaces/favoris'
+import { getActionsBeneficiaire } from 'services/actions.service'
+import { chargerRdvsEtSessions } from 'services/evenements.service'
+import { getOffres } from 'services/favoris.service'
 import { Periode } from 'types/dates'
-import { LUNDI } from 'utils/date'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { getPeriodeComprenant, LUNDI } from 'utils/date'
 
 const OngletActions = dynamic(() => import('components/action/OngletActions'))
 
@@ -41,11 +48,27 @@ export default function OngletsBeneficiaireMilo({
   onChangementSemaine: (currentTab: OngletMilo, nouveauDebut: DateTime) => void
   trackChangementSemaine: (currentTab: OngletMilo, append?: string) => void
 }) {
+  const [conseiller] = useConseiller()
   const afficherSuiviOffres = Boolean(metadonneesFavoris?.autoriseLePartage)
   const afficherSyntheseFavoris =
     metadonneesFavoris?.autoriseLePartage === false
+  const debutPeriodeInitiale = debutSemaineInitiale
+    ? DateTime.fromISO(debutSemaineInitiale)
+    : DateTime.now().startOf('week')
 
-  const [semaine, setSemaine] = useState<Periode>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [offres, setOffres] = useState<Offre[]>([])
+  const [actions, setActions] = useState<Action[]>([])
+  const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
+  const [erreurRecuperationSessions, setErreurRecuperationSessions] =
+    useState<boolean>(false)
+
+  const [semaine, setSemaine] = useState<Periode>(
+    getPeriodeComprenant(debutPeriodeInitiale, {
+      jourSemaineReference: LUNDI,
+    })
+  )
+
   const [shouldFocus, setShouldFocus] = useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<OngletMilo>(ongletInitial)
@@ -64,7 +87,7 @@ export default function OngletsBeneficiaireMilo({
   function switchTab(newTab: OngletMilo, { withFocus = false } = {}) {
     setFocusCurrentTabContent(withFocus)
     setCurrentTab(newTab)
-    onSwitchTab(newTab, semaine!.debut)
+    onSwitchTab(newTab, semaine.debut)
   }
 
   useEffect(() => {
@@ -76,6 +99,39 @@ export default function OngletsBeneficiaireMilo({
       table?.focus()
     }
   }, [currentTab, focusCurrentTabContent])
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    switch (currentTab) {
+      case 'offres':
+        getOffres(beneficiaire.id, semaine)
+          .then(setOffres)
+          .finally(() => setIsLoading(false))
+        break
+      case 'actions':
+        getActionsBeneficiaire(beneficiaire.id, semaine)
+          .then(setActions)
+          .finally(() => {
+            setIsLoading(false)
+          })
+        break
+      case 'rdvs':
+        chargerRdvsEtSessions(
+          conseiller,
+          beneficiaire,
+          semaine,
+          setErreurRecuperationSessions
+        )
+          .then(setRdvs)
+          .finally(() => {
+            setIsLoading(false)
+          })
+        break
+      default:
+        setIsLoading(false)
+    }
+  }, [semaine, currentTab])
 
   return (
     <>
@@ -147,7 +203,9 @@ export default function OngletsBeneficiaireMilo({
             shouldFocus={shouldFocus}
             onLienExterne={onLienExterne}
             labelSemaine={semaine.label}
-            semaine={semaine}
+            actions={actions}
+            updateActions={setActions}
+            isLoading={isLoading}
           />
         </div>
       )}
@@ -163,7 +221,9 @@ export default function OngletsBeneficiaireMilo({
           <OngletRdvsBeneficiaire
             beneficiaire={beneficiaire}
             shouldFocus={shouldFocus}
-            semaine={semaine}
+            rdvsAAfficher={rdvs}
+            isLoading={isLoading}
+            erreurRecuperationSessions={erreurRecuperationSessions}
           />
         </div>
       )}
@@ -179,7 +239,8 @@ export default function OngletsBeneficiaireMilo({
           <TableauOffres
             beneficiaire={beneficiaire}
             shouldFocus={shouldFocus}
-            semaine={semaine}
+            offres={offres}
+            isLoading={isLoading}
           />
         </div>
       )}

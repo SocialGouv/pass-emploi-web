@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import TableauActionsBeneficiaire from 'components/action/TableauActionsBeneficiaire'
 import EmptyState from 'components/EmptyState'
@@ -15,8 +15,6 @@ import { DetailBeneficiaire, estCEJ } from 'interfaces/beneficiaire'
 import { estConseillerReferent } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getActionsBeneficiaire } from 'services/actions.service'
-import { Periode } from 'types/dates'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
@@ -25,8 +23,10 @@ interface OngletActionsProps {
   categories: SituationNonProfessionnelle[]
   shouldFocus: boolean
   onLienExterne: (label: string) => void
-  semaine: Periode
+  actions: Action[]
+  updateActions: (actions: Action[]) => void
   labelSemaine: string
+  isLoading: boolean
 }
 
 export default function OngletActions({
@@ -34,19 +34,17 @@ export default function OngletActions({
   shouldFocus,
   beneficiaire,
   onLienExterne,
-  semaine,
+  actions,
+  updateActions,
   labelSemaine,
+  isLoading,
 }: OngletActionsProps) {
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
   const lectureSeule = !estConseillerReferent(conseiller, beneficiaire)
 
-  const [actions, setActions] = useState<Action[]>()
-
   const [qualificationEnErreur, setQualificationEnErreur] =
     useState<boolean>(false)
-
-  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   async function qualifierActions(
     qualificationSNP: boolean,
@@ -85,28 +83,18 @@ export default function OngletActions({
       )
     }
 
-    setActions(
-      actions!.map((affichee) =>
+    updateActions(
+      actions.map((affichee) =>
         updateSiQualifiee(affichee, actionsQualifiees, qualificationSNP)
       )
     )
   }
 
-  useEffect(() => {
-    setIsLoading(true)
-
-    getActionsBeneficiaire(beneficiaire.id, semaine)
-      .then(setActions)
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }, [semaine])
-
   return (
     <>
       {isLoading && <SpinningLoader />}
 
-      {!isLoading && actions && actions.length === 0 && !lectureSeule && (
+      {!isLoading && actions.length === 0 && !lectureSeule && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             shouldFocus={shouldFocus}
@@ -121,7 +109,7 @@ export default function OngletActions({
         </div>
       )}
 
-      {!isLoading && actions && actions.length === 0 && lectureSeule && (
+      {!isLoading && actions.length === 0 && lectureSeule && (
         <EmptyState
           shouldFocus={shouldFocus}
           illustrationName={IllustrationName.Checklist}
@@ -136,7 +124,7 @@ export default function OngletActions({
         />
       )}
 
-      {!isLoading && actions && actions.length > 0 && (
+      {!isLoading && actions.length > 0 && (
         <TableauActionsBeneficiaire
           jeune={beneficiaire}
           categories={categories}
