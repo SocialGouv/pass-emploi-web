@@ -7,14 +7,19 @@ import React, { ReactElement, useState } from 'react'
 
 import FormulaireBeneficiaireFranceTravail from 'components/jeune/FormulaireBeneficiaireFranceTravail'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
-import { estConseilDepartemental } from 'interfaces/structure'
+import { Liste } from 'interfaces/liste'
+import { estAvenirPro, estConseilDepartemental } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-function CreationBeneficiaireFranceTravailPage(): ReactElement {
+function CreationBeneficiaireFranceTravailPage({
+  listes,
+}: {
+  listes?: Liste[]
+}): ReactElement {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
@@ -39,6 +44,20 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
         email: nouveauBeneficiaire.email,
       })
 
+      if (estAvenirPro(conseiller.structure)) {
+        if (!nouveauBeneficiaire.idListe) {
+          throw new Error("Aucune liste de diffusion n'est sélectionnée.")
+        }
+
+        const { ajouterBeneficiaireAListe } = await import(
+          'services/listes.service'
+        )
+        await ajouterBeneficiaireAListe(
+          nouveauBeneficiaire.idListe,
+          beneficiaireCree.id,
+          conseiller.id
+        )
+      }
       setPortefeuille(
         portefeuille.concat({
           ...beneficiaireCree,
@@ -65,6 +84,7 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
   return (
     <FormulaireBeneficiaireFranceTravail
       aAccesMap={!estConseilDepartemental(conseiller.structure)}
+      listes={listes}
       creerBeneficiaireFranceTravail={creerBeneficiaireFranceTravail}
       creationError={creationError}
       creationEnCours={creationEnCours}

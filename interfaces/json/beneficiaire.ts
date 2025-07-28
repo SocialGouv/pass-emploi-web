@@ -278,6 +278,7 @@ export interface BeneficiaireFranceTravailFormData {
   prenom: string
   nom: string
   email: string
+  idListe?: string
 }
 
 export interface BeneficiaireMiloFormData {
