@@ -13,13 +13,19 @@ import {
 } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import { Conseiller } from 'interfaces/conseiller'
-import { structureFTCej, structureMilo } from 'interfaces/structure'
+import {
+  structureAvenirPro,
+  structureFTCej,
+  structureMilo,
+} from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toShortDate } from 'utils/date'
+
+import { desListes } from '../../fixtures/listes'
 
 jest.mock('services/messages.service')
 jest.mock('services/beneficiaires.service')
@@ -466,6 +472,65 @@ describe('PortefeuillePage client side', () => {
       expect(() =>
         screen.getByRole('columnheader', { name: 'Situation' })
       ).toThrow()
+    })
+  })
+
+  describe('quand le conseiller est Avenir Pro', () => {
+    it('permet de filtrer bénéficiaires par liste', async () => {
+      // Given
+      const listes = desListes()
+      await renderWithContexts(
+        <PortefeuillePage
+          conseillerJeunes={jeunes}
+          isFromEmail
+          page={1}
+          listes={listes}
+        />,
+        {
+          customConseiller: { structure: structureAvenirPro },
+        }
+      )
+
+      const buttonFiltres = screen.getByRole('button', {
+        name: 'Filtrer par listes',
+      })
+
+      // When
+      await userEvent.click(buttonFiltres)
+      await userEvent.click(
+        screen.getByRole('radio', { name: listes[0].titre })
+      )
+
+      // Then
+      let portefeuille = screen.getByRole('table')
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(
+        jeunes.length + 1
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Valider la sélection des listes',
+        })
+      )
+
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(1 + 1)
+
+      // When
+      await userEvent.click(buttonFiltres)
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Toutes les listes' })
+      )
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Valider la sélection des listes',
+        })
+      )
+
+      // Then
+      portefeuille = screen.getByRole('table')
+      expect(within(portefeuille).getAllByRole('row')).toHaveLength(
+        jeunes.length + 1
+      )
     })
   })
 

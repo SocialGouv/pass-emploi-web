@@ -10,6 +10,7 @@ import React, {
 } from 'react'
 
 import FiltresDispositifs from 'components/action/FiltresDispositifs'
+import FiltresListes from 'components/action/FiltresListes'
 import EmptyState from 'components/EmptyState'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
@@ -20,7 +21,8 @@ import {
   CompteurHeuresPortefeuille,
   estCEJ,
 } from 'interfaces/beneficiaire'
-import { estMilo } from 'interfaces/structure'
+import { Liste } from 'interfaces/liste'
+import { estAvenirPro, estMilo } from 'interfaces/structure'
 import { getComptageHeuresPortefeuille } from 'services/beneficiaires.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
@@ -36,14 +38,17 @@ type TableauBeneficiairesProps = {
   beneficiaires: BeneficiaireAvecInfosComplementaires[]
   total: number
   pageInitiale: number
+  listes?: Liste[]
 }
 
 function TableauBeneficiaires(
-  { beneficiaires, total, pageInitiale }: TableauBeneficiairesProps,
+  { beneficiaires, total, pageInitiale, listes }: TableauBeneficiairesProps,
   ref: ForwardedRef<HTMLTableElement>
 ) {
   const [conseiller] = useConseiller()
   const router = useRouter()
+
+  const estConseillerAvenirPro = estAvenirPro(conseiller.structure)
 
   const nombrePages = Math.ceil(beneficiaires.length / 10)
   const [page, setPage] = useState<number>(pageInitiale)
@@ -51,8 +56,10 @@ function TableauBeneficiaires(
   const DEBUT_PERIODE = DateTime.now().startOf('week')
   const FIN_PERIODE = DateTime.now().endOf('week')
 
-  const filtresDispositifsRef = useRef<HTMLButtonElement>(null)
+  const filtreDispositifRef = useRef<HTMLButtonElement>(null)
   const [filtreDispositif, setFiltreDispositif] = useState<string>()
+  const filtreListeRef = useRef<HTMLButtonElement>(null)
+  const [filtreListe, setFiltreListe] = useState<string>()
   const [triActif, setTriActif] = useState<{
     type: 'nom' | 'heures' | 'activite'
     ordreCroissant: boolean
@@ -88,7 +95,12 @@ function TableauBeneficiaires(
 
   function handleFiltreDispositif(dispositif?: string) {
     setFiltreDispositif(dispositif)
-    filtresDispositifsRef.current!.focus()
+    filtreDispositifRef.current!.focus()
+  }
+
+  function handleFiltreListe(listeId?: string) {
+    setFiltreListe(listeId)
+    filtreListeRef.current!.focus()
   }
 
   function handleTriNom() {
@@ -126,6 +138,24 @@ function TableauBeneficiaires(
     if (!dispositifAFiltrer) return beneficiairesAFiltrer
     return beneficiairesAFiltrer.filter(
       ({ dispositif }) => dispositif === dispositifAFiltrer
+    )
+  }
+
+  function filtrerParListe(
+    beneficiairesAFiltrer: BeneficiaireAvecInfosComplementaires[],
+    listeAFiltrer?: string
+  ) {
+    if (!listeAFiltrer || !listes) return beneficiairesAFiltrer
+    const liste = listes.find((l) => l.id === listeAFiltrer)
+
+    if (!liste) {
+      return beneficiairesAFiltrer
+    }
+
+    const idsBeneficiairesListe = new Set(liste.beneficiaires.map((b) => b.id))
+
+    return beneficiairesAFiltrer.filter((beneficiaire) =>
+      idsBeneficiairesListe.has(beneficiaire.id)
     )
   }
 
@@ -210,6 +240,10 @@ function TableauBeneficiaires(
   }, [beneficiaires, filtreDispositif])
 
   useEffect(() => {
+    setBeneficiairesFiltres(filtrerParListe(beneficiaires, filtreListe))
+  }, [beneficiaires, filtreListe])
+
+  useEffect(() => {
     if (triActif.type === 'nom') {
       setBeneficiairesTries(
         trierParNom(beneficiairesFiltres, triActif.ordreCroissant)
@@ -264,11 +298,20 @@ function TableauBeneficiaires(
           <div className='my-4 flex justify-end gap-6'>
             {afficherFiltres && (
               <FiltresDispositifs
-                ref={filtresDispositifsRef}
+                ref={filtreDispositifRef}
                 defaultValue={filtreDispositif}
                 dispositifs={['CEJ', 'PACEA']}
                 onFiltres={handleFiltreDispositif}
                 className='grow'
+              />
+            )}
+
+            {estConseillerAvenirPro && listes && (
+              <FiltresListes
+                ref={filtreListeRef}
+                defaultValue={filtreListe}
+                listes={listes}
+                onFiltres={handleFiltreListe}
               />
             )}
 
