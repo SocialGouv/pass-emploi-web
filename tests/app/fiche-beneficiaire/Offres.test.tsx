@@ -46,7 +46,9 @@ describe('Suivi des offres dans la fiche jeune', () => {
 
       // Then
       expect(
-        screen.getByRole('table', { name: 'Liste des offres en favoris' })
+        screen.getByRole('table', {
+          name: 'Liste des offres en favoris',
+        })
       ).toBeInTheDocument()
     })
 

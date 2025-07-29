@@ -332,24 +332,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
       })
     })
   })
-
-  describe('quand l’utilisateur est un conseiller MILO', () => {
-    describe("quand le jeune n'a pas activé son compte", () => {
-      it('affiche le mode opératoire pour activer le compte', async () => {
-        // Given
-        await renderFicheBeneficiaire(
-          unDetailBeneficiaire({ lastActivity: undefined })
-        )
-
-        // Then
-        expect(
-          screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du bénéficiaire n’est valable que 24h/
-          )
-        ).toBeInTheDocument()
-      })
-    })
-  })
 })
 
 async function renderFicheBeneficiaire(

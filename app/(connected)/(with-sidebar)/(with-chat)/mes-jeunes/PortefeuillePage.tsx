@@ -18,6 +18,7 @@ import {
   BeneficiaireAvecInfosComplementaires,
 } from 'interfaces/beneficiaire'
 import { utiliseChat } from 'interfaces/conseiller'
+import { Liste } from 'interfaces/liste'
 import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
@@ -38,12 +39,14 @@ type PortefeuilleProps = {
   conseillerJeunes: BeneficiaireAvecCompteursActionsRdvs[]
   isFromEmail: boolean
   page: number
+  listes?: Liste[]
 }
 
 function PortefeuillePage({
   conseillerJeunes,
   isFromEmail,
   page,
+  listes,
 }: PortefeuilleProps) {
   const chatCredentials = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
@@ -233,6 +236,7 @@ function PortefeuillePage({
               beneficiaires={jeunesFiltres}
               total={conseillerJeunes.length}
               pageInitiale={page}
+              listes={listes}
             />
           )}
         </>

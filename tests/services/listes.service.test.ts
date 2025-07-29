@@ -2,6 +2,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { desListes, uneListe } from 'fixtures/listes'
 import { Liste } from 'interfaces/liste'
 import {
+  ajouterBeneficiaireAListe,
   creerListe,
   getListesClientSide,
   getListesServerSide,
@@ -111,6 +112,25 @@ describe('ListesApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/listes-de-diffusion/id-liste',
         { titre, idsBeneficiaires },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.ajouterBeneficiaireAListe', () => {
+    it('ajoute un bénéficiaire à la liste', async () => {
+      // Given
+      const idListe = 'id-liste-1'
+      const idConseiller = 'id-conseiller-1'
+      const idBeneficiaire = 'id-beneficiaire-1'
+
+      // When
+      await ajouterBeneficiaireAListe(idListe, idBeneficiaire, idConseiller)
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        `/conseillers/${idConseiller}/listes-de-diffusion/${idListe}/jeunes/${idBeneficiaire}`,
+        {},
         'accessToken'
       )
     })

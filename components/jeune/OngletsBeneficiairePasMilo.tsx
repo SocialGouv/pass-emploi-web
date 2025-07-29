@@ -6,19 +6,20 @@ import {
   FichePasMiloProps,
   OngletPasMilo,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiaireProps'
+import EmptyState from 'components/EmptyState'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Demarche } from 'interfaces/beneficiaire'
+import { Offre } from 'interfaces/favoris'
 import { estConseilDepartemental } from 'interfaces/structure'
 import { getDemarchesBeneficiaireClientSide } from 'services/beneficiaires.service'
+import { getOffres } from 'services/favoris.service'
 import { Periode } from 'types/dates'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { getPeriodeComprenant, LUNDI } from 'utils/date'
-
-import EmptyState from '../EmptyState'
 
 const TableauOffres = dynamic(
   () => import('components/favoris/offres/TableauOffres')
@@ -50,6 +51,7 @@ export default function OngletsBeneficiairePasMilo({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [demarches, setDemarches] = useState<Demarche[] | undefined>(undefined)
+  const [offres, setOffres] = useState<Offre[]>([])
 
   const trenteJoursAvant = DateTime.now().minus({ days: 30 })
 
@@ -91,22 +93,29 @@ export default function OngletsBeneficiairePasMilo({
 
   useEffect(() => {
     setPeriodePermetDAfficherLesDemarches(semaine.fin >= trenteJoursAvant)
-    if (conseillerEstCD) {
-      setIsLoading(true)
+    setIsLoading(true)
 
-      getDemarchesBeneficiaireClientSide(
-        beneficiaire.id,
-        semaine,
-        conseiller.id
-      )
-        .then((nouvellesDemarches) =>
-          setDemarches(nouvellesDemarches?.data ?? [])
+    switch (currentTab) {
+      case 'demarches':
+        getDemarchesBeneficiaireClientSide(
+          beneficiaire.id,
+          semaine,
+          conseiller.id
         )
-        .finally(() => {
-          setIsLoading(false)
-        })
+          .then((nouvellesDemarches) =>
+            setDemarches(nouvellesDemarches?.data ?? [])
+          )
+          .finally(() => setIsLoading(false))
+        break
+      case 'offres':
+        getOffres(beneficiaire.id, semaine)
+          .then(setOffres)
+          .finally(() => setIsLoading(false))
+        break
+      default:
+        setIsLoading(false)
     }
-  }, [semaine])
+  }, [semaine, currentTab])
 
   return (
     <>
@@ -153,7 +162,6 @@ export default function OngletsBeneficiairePasMilo({
         {conseillerEstCD && (
           <Tab
             label='Démarches'
-            count={periodePermetDAfficherLesDemarches ? demarches?.length : 0}
             selected={currentTab === 'demarches'}
             controls='liste-demarches'
             onSelectTab={() => switchTab('demarches')}
@@ -172,10 +180,6 @@ export default function OngletsBeneficiairePasMilo({
         {!afficherSuiviOffres && afficherSyntheseFavoris && (
           <Tab
             label='Synthèse des favoris'
-            count={
-              metadonneesFavoris.offres.total +
-              metadonneesFavoris.recherches.total
-            }
             selected={currentTab === 'favoris'}
             controls='favoris'
             onSelectTab={() => switchTab('favoris')}
@@ -224,7 +228,8 @@ export default function OngletsBeneficiairePasMilo({
           <TableauOffres
             beneficiaire={beneficiaire}
             shouldFocus={shouldFocus}
-            semaine={semaine}
+            offres={offres}
+            isLoading={isLoading}
           />
         </div>
       )}
