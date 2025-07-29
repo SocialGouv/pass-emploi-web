@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import Checkbox from 'components/offres/Checkbox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -8,13 +8,15 @@ import InputError from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import { Liste } from 'interfaces/liste'
+import { estAvenirPro } from 'interfaces/structure'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { isEmailValid } from 'utils/helpers'
-
-import { estAvenirPro } from '../../interfaces/structure'
 
 type FormulaireBeneficiaireFranceTravailProps = {
   aAccesMap: boolean
@@ -33,6 +35,8 @@ function FormulaireBeneficiaireFranceTravail({
   creationError,
   creationEnCours,
 }: FormulaireBeneficiaireFranceTravailProps) {
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+
   const [conseiller] = useConseiller()
   const estConseillerAvenirPro = estAvenirPro(conseiller.structure)
 
@@ -55,10 +59,6 @@ function FormulaireBeneficiaireFranceTravail({
     useState<ValueWithError<boolean>>({ value: false })
 
   const [error, setError] = useState<string | undefined>(creationError)
-
-  useEffect(() => {
-    setError(creationError)
-  }, [creationError])
 
   const validate = () => {
     let isValid = true
@@ -100,9 +100,11 @@ function FormulaireBeneficiaireFranceTravail({
     }
 
     if (estConseillerAvenirPro && !aBeneficiairePlusDeQuinzeAns.value) {
-      setError(
-        'Le bénéficiaire doit avoir plus de 15 ans pour créer un compte France Travail. Sélectionnez la case à cocher pour valider l’âge minimum requis.'
-      )
+      setABeneficiairePlusDeQuinzeAns({
+        ...aBeneficiairePlusDeQuinzeAns,
+        error:
+          'Le bénéficiaire doit avoir plus de 15 ans pour créer un compte France Travail. Sélectionnez la case à cocher pour valider l’âge minimum requis.',
+      })
       isValid = false
     }
 
@@ -112,6 +114,12 @@ function FormulaireBeneficiaireFranceTravail({
   function handleBeneficiaireSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const isValid = validate()
+
+    if (!isValid) {
+      formErrorsRef.current!.focus()
+      return
+    }
+
     if (isValid && !creationEnCours) {
       const newBeneficiaire: BeneficiaireFranceTravailFormData = {
         prenom: prenom.value,
@@ -146,14 +154,55 @@ function FormulaireBeneficiaireFranceTravail({
         error: 'Veuillez sélectionner une liste',
       })
     }
+    setError('')
   }
 
-  function mettreAJourAgeMinimumBeneficiaire() {
+  function handleAgeMinimumBeneficiaireChanges() {
     setABeneficiairePlusDeQuinzeAns({
       value: !aBeneficiairePlusDeQuinzeAns.value,
       error: '',
     })
+    setError('')
   }
+
+  function getErreurs(): LigneErreur[] {
+    const erreurs = []
+    if (prenom.error)
+      erreurs.push({
+        ancre: '#jeune-prenom',
+        label: 'Le champ Prénom est vide.',
+        titreChamp: 'Prénom',
+      })
+    if (nom.error)
+      erreurs.push({
+        ancre: '#jeune-nom',
+        label: 'Le champ Nom est vide.',
+        titreChamp: 'Nom',
+      })
+    if (email.error)
+      erreurs.push({
+        ancre: '#jeune-email',
+        label: 'Le champ Email est vide.',
+        titreChamp: 'Email',
+      })
+    if (idListeSelectionnee.error)
+      erreurs.push({
+        ancre: '#select-id-liste',
+        label: 'Le champ Liste est vide.',
+        titreChamp: 'Sélectionnez la liste du bénéficiaire',
+      })
+    if (!aBeneficiairePlusDeQuinzeAns.value)
+      erreurs.push({
+        ancre: '#age-beneficiaire',
+        label: 'La case Validation de l’âge du bénéficiaire n’est pas cochée.',
+        titreChamp: 'Heure De Fin',
+      })
+    return erreurs
+  }
+
+  useEffect(() => {
+    setError(creationError)
+  }, [creationError])
 
   return (
     <>
@@ -162,7 +211,12 @@ function FormulaireBeneficiaireFranceTravail({
         un compte
       </p>
 
-      <form method='POST' onSubmit={handleBeneficiaireSubmit}>
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
+
+      <form onSubmit={handleBeneficiaireSubmit} noValidate={true}>
         <div className='text-s-bold mb-8'>
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
@@ -271,11 +325,11 @@ function FormulaireBeneficiaireFranceTravail({
                 </InputError>
               )}
               <Checkbox
-                id='checkbox-age-beneficiaire-cgu'
+                id='age-beneficiaire'
                 label='Je certifie que le jeune renseigné est âgé de 15 ans ou plus à la date de création du compte.'
                 checked={aBeneficiairePlusDeQuinzeAns.value}
                 value='beneficiairePlusDeQuinzeAns'
-                onChange={mettreAJourAgeMinimumBeneficiaire}
+                onChange={handleAgeMinimumBeneficiaireChanges}
               />
             </div>
           </>
@@ -291,7 +345,6 @@ function FormulaireBeneficiaireFranceTravail({
           id='submit'
           type='submit'
           isLoading={creationEnCours}
-          disabled={Boolean(error)}
           describedBy={error && 'submit--error'}
         >
           Créer le compte
