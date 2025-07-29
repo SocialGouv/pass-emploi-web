@@ -8,9 +8,16 @@ import {
   BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import { estFTConnect, estMilo, labelStructure } from 'interfaces/structure'
+import { Liste } from 'interfaces/liste'
+import {
+  estAvenirPro,
+  estFTConnect,
+  estMilo,
+  labelStructure,
+} from 'interfaces/structure'
 import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
 import { getBeneficiairesDuConseillerServerSide } from 'services/beneficiaires.service'
+import { getListesServerSide } from 'services/listes.service'
 import getMandatorySessionServerSide from 'utils/auth/getMandatorySessionServerSide'
 
 export const metadata: Metadata = { title: 'Portefeuille' }
@@ -59,6 +66,15 @@ export default async function Portefeuille({
     }))
   }
 
+  let listes: Liste[] | undefined = undefined
+  if (estAvenirPro(user.structure)) {
+    try {
+      listes = await getListesServerSide(user.id, accessToken)
+    } catch (error) {
+      console.error('Erreur lors de la récupération des listes:', error)
+    }
+  }
+
   const beneficiairesAlphabetiques = [...beneficiairesAvecCompteurs].sort(
     compareBeneficiairesByNom
   )
@@ -74,6 +90,7 @@ export default async function Portefeuille({
         conseillerJeunes={beneficiairesAlphabetiques}
         isFromEmail={Boolean(source)}
         page={parsedPage || 1}
+        listes={listes}
       />
     </>
   )
