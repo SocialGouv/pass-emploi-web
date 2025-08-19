@@ -1,15 +1,10 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import EditionListePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes/edition-liste/EditionListePage'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
-import {
-  creerListe,
-  modifierListe,
-  supprimerListe,
-} from 'services/listes.service'
 
+import EditionListePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes/edition-liste/EditionListePage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { uneListe } from 'fixtures/listes'
 import {
@@ -18,6 +13,11 @@ import {
 } from 'interfaces/beneficiaire'
 import { Liste } from 'interfaces/liste'
 import { AlerteParam } from 'referentiel/alerteParam'
+import {
+  creerListe,
+  modifierListe,
+  supprimerListe,
+} from 'services/listes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/listes.service')
@@ -71,7 +71,7 @@ describe('Page d’édition d’une liste ', () => {
         screen.getByRole('combobox', {
           name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
         })
-      ).toHaveAttribute('aria-required', 'true')
+      ).toHaveAttribute('aria-required', 'false')
 
       expect(
         screen.getByRole('button', { name: 'Créer la liste' })
@@ -115,7 +115,7 @@ describe('Page d’édition d’une liste ', () => {
         ).toBeInTheDocument()
       })
 
-      it('ne soumet pas le formulaire quand aucun bénéficiaire n’est renseigné', async () => {
+      it('soumet le formulaire quand aucun bénéficiaire n’est renseigné', async () => {
         //Given
         await userEvent.type(titreInput, 'Liste métiers aéronautique')
 
@@ -123,12 +123,7 @@ describe('Page d’édition d’une liste ', () => {
         await userEvent.click(creationButton)
 
         // Then
-        expect(creerListe).not.toHaveBeenCalled()
-        expect(
-          screen.getByText(
-            'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.'
-          )
-        ).toBeInTheDocument()
+        expect(creerListe).toHaveBeenCalled()
       })
     })
 
