@@ -191,7 +191,7 @@ function FormulaireBeneficiaireFranceTravail({
         label: 'Le champ Liste est vide.',
         titreChamp: 'Sélectionnez la liste du bénéficiaire',
       })
-    if (!aBeneficiairePlusDeQuinzeAns.value)
+    if (aBeneficiairePlusDeQuinzeAns.error)
       erreurs.push({
         ancre: '#age-beneficiaire',
         label: 'La case Validation de l’âge du bénéficiaire n’est pas cochée.',
