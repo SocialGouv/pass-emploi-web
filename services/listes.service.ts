@@ -58,6 +58,20 @@ export async function modifierListe(
   )
 }
 
+export async function ajouterBeneficiaireAListe(
+  idListe: string,
+  idBeneficiaire: string,
+  idConseiller: string
+): Promise<void> {
+  const session = await getSession()
+
+  await apiPost(
+    `/conseillers/${idConseiller}/listes-de-diffusion/${idListe}/jeunes/${idBeneficiaire}`,
+    {},
+    session!.accessToken
+  )
+}
+
 export async function supprimerListe(idListe: string): Promise<void> {
   const session = await getSession()
 
