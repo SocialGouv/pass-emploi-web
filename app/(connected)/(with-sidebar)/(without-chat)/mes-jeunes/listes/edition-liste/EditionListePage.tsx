@@ -65,7 +65,6 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
 
   function formIsValid(): boolean {
     const titreEstValide = Boolean(titre.value)
-    const idsBeneficiairesEstValide = idsBeneficiaires.value.length > 0
 
     if (!titreEstValide)
       setTitre({
@@ -73,14 +72,7 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
         error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
 
-    if (!idsBeneficiairesEstValide)
-      setIdsBeneficiaires({
-        ...idsBeneficiaires,
-        error:
-          'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
-      })
-
-    return titreEstValide && idsBeneficiairesEstValide
+    return titreEstValide
   }
 
   function hasChanges(): boolean {
@@ -90,7 +82,7 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
     const currentIds = [...idsBeneficiaires.value].sort(compareParId)
     return (
       previousIds.toString() !== currentIds.toString() ||
-      liste!.titre !== titre.value
+      liste?.titre !== titre.value
     )
   }
 
@@ -122,9 +114,7 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
   function updateIdsBeneficiaires(selectedIds: { beneficiaires?: string[] }) {
     setIdsBeneficiaires({
       value: selectedIds.beneficiaires!,
-      error: selectedIds.beneficiaires!.length
-        ? undefined
-        : 'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
+      error: undefined,
     })
   }
 
@@ -244,7 +234,7 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
       />
 
       <p className='text-s-bold text-content-color mb-4'>
-        Tous les champs sont obligatoires
+        Les champs marqués d’une * sont obligatoires.
       </p>
 
       <form onSubmit={soumettreListe} noValidate={true}>
@@ -270,7 +260,7 @@ function EditionListePage({ returnTo, liste }: EditionListeProps) {
           typeSelection='Bénéficiaires'
           onUpdate={updateIdsBeneficiaires}
           defaultBeneficiaires={defaultBeneficiaires}
-          required={true}
+          required={false}
           error={idsBeneficiaires.error}
           Indication={BeneficiaireIndicationReaffectaction}
         />
