@@ -301,22 +301,22 @@ describe('FicheBeneficiairePage client side', () => {
             /Ce bénéficiaire ne s’est pas encore connecté à l’application/
           )
         ).toBeInTheDocument()
-        // expect(
-        //   screen.getByText(
-        //     /Le lien d’activation que le bénéficiaire a reçu n’est valable que 24h./
-        //   )
-        // ).toBeInTheDocument()
-        // expect(
-        //   screen.getByText(
-        //     /Si le délai est dépassé ou si votre bénéficiaire n’a pas reçu l’email d’activation, vous pouvez lui renvoyer./
-        //   )
-        // ).toBeInTheDocument()
-        // expect(
-        //   screen.getByRole('button', { name: 'Renvoyer l’email d’activation' })
-        // ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            /Le lien d’activation que le bénéficiaire a reçu n’est valable que 24h./
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            /Si le délai est dépassé ou si votre bénéficiaire n’a pas reçu l’email d’activation, vous pouvez lui renvoyer./
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: 'Renvoyer l’email d’activation' })
+        ).toBeInTheDocument()
       })
 
-      xdescribe('quand l’envoi de l’email d’activation échoue', () => {
+      describe('quand l’envoi de l’email d’activation échoue', () => {
         it('affiche une erreur', async () => {
           // Given
           ;(renvoyerEmailActivation as jest.Mock).mockRejectedValue({
@@ -347,7 +347,7 @@ describe('FicheBeneficiairePage client side', () => {
         })
       })
 
-      xit('permet de renvoyer l’email d’activation', async () => {
+      it('permet de renvoyer l’email d’activation', async () => {
         // Given
         await renderFicheJeuneMilo({ lastActivity: undefined })
 

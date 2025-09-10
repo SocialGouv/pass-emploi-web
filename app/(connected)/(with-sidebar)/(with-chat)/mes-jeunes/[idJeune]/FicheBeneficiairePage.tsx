@@ -275,52 +275,48 @@ function Messages(props: FicheBeneficiaireProps): ReactElement {
               )}
 
               <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application et ne pourra pas échanger de messages avec vous.'>
-                {false && (
-                  <>
-                    <ul
-                      className='list-disc pl-[48px]'
-                      ref={alerteRenvoiEmailActivationRef}
-                    >
-                      <li>
-                        <strong>
-                          Le lien d’activation que le bénéficiaire a reçu n’est
-                          valable que 24h.
-                        </strong>
-                      </li>
-                      <li>
-                        Si le délai est dépassé ou si votre bénéficiaire n’a pas
-                        reçu l’email d’activation, vous pouvez lui renvoyer.
-                      </li>
-                    </ul>
-                    <Button
-                      onClick={handleRenvoyerEmailActivation}
-                      style={ButtonStyle.WARNING}
-                      className='w-fit mt-4'
-                      isLoading={isRenvoiEmailActivationLoading}
-                      disabled={isRenvoiEmailActivationDisabled}
-                    >
-                      <IconComponent
-                        name={IconName.Send}
-                        aria-hidden={true}
-                        focusable={false}
-                        className='w-4 h-4 mr-2'
-                      />
-                      Renvoyer l’email d’activation
-                    </Button>
+                <ul
+                  className='list-disc pl-[48px]'
+                  ref={alerteRenvoiEmailActivationRef}
+                >
+                  <li>
+                    <strong>
+                      Le lien d’activation que le bénéficiaire a reçu n’est
+                      valable que 24h.
+                    </strong>
+                  </li>
+                  <li>
+                    Si le délai est dépassé ou si votre bénéficiaire n’a pas
+                    reçu l’email d’activation, vous pouvez lui renvoyer.
+                  </li>
+                </ul>
+                <Button
+                  onClick={handleRenvoyerEmailActivation}
+                  style={ButtonStyle.WARNING}
+                  className='w-fit mt-4'
+                  isLoading={isRenvoiEmailActivationLoading}
+                  disabled={isRenvoiEmailActivationDisabled}
+                >
+                  <IconComponent
+                    name={IconName.Send}
+                    aria-hidden={true}
+                    focusable={false}
+                    className='w-4 h-4 mr-2'
+                  />
+                  Renvoyer l’email d’activation
+                </Button>
 
-                    {isRenvoiEmailActivationDisabled && (
-                      <p className='text-warning mt-2 text-s-regular'>
-                        Le dernier renvoi date de moins de 24h.
-                      </p>
-                    )}
+                {isRenvoiEmailActivationDisabled && (
+                  <p className='text-warning mt-2 text-s-regular'>
+                    Le dernier renvoi date de moins de 24h.
+                  </p>
+                )}
 
-                    {erreurRenvoiEmailActivation && (
-                      <p className='text-warning mt-2 text-s-regular'>
-                        Une erreur est survenue lors du renvoi d’email
-                        d’activation. Veuillez réessayer ultérieurement.
-                      </p>
-                    )}
-                  </>
+                {erreurRenvoiEmailActivation && (
+                  <p className='text-warning mt-2 text-s-regular'>
+                    Une erreur est survenue lors du renvoi d’email d’activation.
+                    Veuillez réessayer ultérieurement.
+                  </p>
                 )}
               </FailureAlert>
             </>
