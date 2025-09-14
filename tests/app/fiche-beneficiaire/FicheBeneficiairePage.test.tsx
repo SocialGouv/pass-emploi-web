@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -203,20 +203,60 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
       })
 
-      it('permet de changer la visibilité du compteur d’heures', async () => {
+      it("demande une confirmation avant d'activer puis active après confirmation", async () => {
         // Given
         const switchComptageHeures = screen.getByRole('switch', {
           name: 'Afficher le compteur à votre bénéficiaire',
         })
+        expect(switchComptageHeures).not.toBeChecked()
 
-        // When
+        // When: clic sur le switch -> ouvre le modal
         await userEvent.click(switchComptageHeures)
 
-        // Then
+        // Then: le modal s'affiche
+        const modalTitle = await screen.findByText(
+          'Information sur le comptage des heures'
+        )
+        expect(modalTitle).toBeInTheDocument()
+
+        // When: confirmation
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Activer le compteur d’heures' })
+        )
+
+        // Then: l'appel API est fait et le switch devient coché
+        await waitFor(() =>
+          expect(changerVisibiliteComptageHeures).toHaveBeenCalledWith(
+            'id-beneficiaire-1',
+            true
+          )
+        )
         expect(switchComptageHeures).toBeChecked()
-        expect(changerVisibiliteComptageHeures).toHaveBeenCalledWith(
-          'id-beneficiaire-1',
-          true
+      })
+
+      it("annule l'activation si on ferme le modal", async () => {
+        // Given
+        const switchComptageHeures = screen.getByRole('switch', {
+          name: 'Afficher le compteur à votre bénéficiaire',
+        })
+        expect(switchComptageHeures).not.toBeChecked()
+
+        // When: clic -> ouvre le modal
+        await userEvent.click(switchComptageHeures)
+        await screen.findByText('Information sur le comptage des heures')
+
+        // When: clic sur Annuler
+        await userEvent.click(screen.getByRole('button', { name: 'Annuler' }))
+
+        // Then: pas d'appel API, switch reste décoché, modal fermé
+        expect(changerVisibiliteComptageHeures).not.toHaveBeenCalled()
+        expect(switchComptageHeures).not.toBeChecked()
+        await waitFor(() =>
+          expect(
+            screen.queryByRole('heading', {
+              name: 'Information sur le comptage des heures',
+            })
+          ).not.toBeInTheDocument()
         )
       })
     })

@@ -9,6 +9,8 @@ import {
 } from 'interfaces/beneficiaire'
 import { toFrenchDateTime } from 'utils/date'
 
+import ConfirmationActivationCompteurModal from '../ConfirmationActivationCompteurModal'
+
 export function CompteursHeuresBeneficiaireFicheBeneficiaire({
   comptageHeures,
   beneficiaire,
@@ -20,6 +22,7 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
     useState<boolean>(false)
   const [peutVoirLeComptageDesHeures, setPeutVoirLeComptageDesHeures] =
     useState<boolean>(beneficiaire.peutVoirLeComptageDesHeures ?? false)
+  const [showModalActivation, setShowModalActivation] = useState<boolean>(false)
 
   async function handleChangerVisibilite() {
     setLoadingChangerVisibilite(true)
@@ -34,6 +37,19 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
 
     setPeutVoirLeComptageDesHeures(!peutVoirLeComptageDesHeures)
     setLoadingChangerVisibilite(false)
+  }
+
+  function handleSwitchActivationToggle() {
+    if (!peutVoirLeComptageDesHeures) {
+      setShowModalActivation(true)
+      return
+    }
+    handleChangerVisibilite()
+  }
+
+  async function confirmerActivation() {
+    await handleChangerVisibilite()
+    setShowModalActivation(false)
   }
 
   return (
@@ -67,7 +83,7 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
             <Switch
               id='afficher-compteur-heures'
               checked={peutVoirLeComptageDesHeures}
-              onChange={handleChangerVisibilite}
+              onChange={handleSwitchActivationToggle}
               isLoading={loadingChangerVisibilite}
             />
           </div>
@@ -78,6 +94,13 @@ export function CompteursHeuresBeneficiaireFicheBeneficiaire({
         <div className='flex flex-col gap-2 w-full bg-primary-lighten px-6 py-4 rounded-md mt-2 text-sm text-warning'>
           Comptage des heures indisponible
         </div>
+      )}
+
+      {showModalActivation && (
+        <ConfirmationActivationCompteurModal
+          onClose={() => setShowModalActivation(false)}
+          onConfirmation={confirmerActivation}
+        />
       )}
     </>
   )
