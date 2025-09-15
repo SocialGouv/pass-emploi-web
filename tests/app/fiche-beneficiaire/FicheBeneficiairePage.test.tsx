@@ -214,7 +214,7 @@ describe('FicheBeneficiairePage client side', () => {
         await userEvent.click(switchComptageHeures)
 
         // Then: le modal s'affiche
-        const modalTitle = await screen.findByText(
+        const modalTitle = screen.getByText(
           'Information sur le comptage des heures'
         )
         expect(modalTitle).toBeInTheDocument()
@@ -243,7 +243,7 @@ describe('FicheBeneficiairePage client side', () => {
 
         // When: clic -> ouvre le modal
         await userEvent.click(switchComptageHeures)
-        await screen.findByText('Information sur le comptage des heures')
+        screen.getByText('Information sur le comptage des heures')
 
         // When: clic sur Annuler
         await userEvent.click(screen.getByRole('button', { name: 'Annuler' }))
