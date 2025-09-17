@@ -1,10 +1,9 @@
 ## Configuration
 
-Créez un nouveau fichier à la racine du projet et nommez le `.env.local`. Copiez ensuite le contenu du fichier
-`.env.example.local` et collez le dans votre nouveau fichier.
-
-Allez sur l'application scalingo et choississez `pa-front-staging > Environment > switch to bulk edit`. Copiez tout le
-contenu pour le mettre dans le fichier `.env.local`
+- Copier le fichier `.env.local.template` et nommez le `.env.local`.
+- Demander la dotvault key à l'equipe (ou voir su vaulwarden)
+- Obtenir la dernière version des vars d'env : `npx dotvault decrypt`
+- Pensez à mettre à jour le fichier d'env (dans le cas d'une modification/ajout): `npx dotvault encrypt`
 
 ## Lancement
 
